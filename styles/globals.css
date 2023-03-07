@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@media screen and (max-width: 576px) {
+    .md{
+        display: none;
+        padding-left: 1.75rem;
+    }
+
+}
+
+.grid-rows-header{
+    grid-template-rows: 96px auto;
+    background-color: white;
+}
