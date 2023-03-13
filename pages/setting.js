@@ -3,7 +3,7 @@ import { FaBeer } from 'react-icons/fa';
 import { Container, Row, Col, Card, Grid, Text, Button } from "@nextui-org/react";
 
 
-export default function setting() {
+export default function Setting() {
 
 
   return (

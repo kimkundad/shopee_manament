@@ -28,9 +28,12 @@ import {
 } from '@chakra-ui/react'
 import { useDisclosure } from '@chakra-ui/react'
 import Image from 'next/image'
-import { AddIcon, EditIcon, DeleteIcon, ArrowLeftIcon, ArrowRightIcon, SearchIcon } from '@chakra-ui/icons';
+import {
+  AddIcon, EditIcon, DeleteIcon,
+  ArrowLeftIcon, ArrowRightIcon, SearchIcon
+} from '@chakra-ui/icons';
 
-export default function adminManagement() {
+export default function AdminManagement() {
 
   const modalAdd = useDisclosure()
   const modalCopy = useDisclosure()
