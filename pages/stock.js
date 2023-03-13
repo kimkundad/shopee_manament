@@ -69,15 +69,27 @@ export default function stock() {
   ];
 
   const [isCheckedAll, setIsCheckedAll] = useState(false);
-  const [isCheckedOne, setIsCheckedOne] = useState([]);
+  const [isCheckedOne, setIsCheckedOne] = useState(
+    Array(products.length).fill(false)
+  );
 
   function handleAllSwitchChange() {
     setIsCheckedAll(!isCheckedAll);
+    const myArr = Array(products.length).fill(!isCheckedAll);
+    setIsCheckedOne(myArr);
   }
 
-  function handleOneSwitchChange() {
-    setIsCheckedOne(!isCheckedOne);
-  }
+  const handleOneSwitchChange = (id) => {
+    const newItem = [...isCheckedOne];
+    newItem[id] = event.target.checked;
+    const allTrue = newItem.every((value) => value === true);
+    setIsCheckedOne(newItem);
+    if (allTrue) {
+      setIsCheckedAll(true);
+    } else {
+      setIsCheckedAll(false);
+    }
+  };
 
   return (
     <>
@@ -97,7 +109,7 @@ export default function stock() {
               <Table.Column
                 style={{ backgroundColor: "red", color: "white" }}
                 key={index}
-                onClick={handleAllSwitchChange}
+                onClick={(event) => handleAllSwitchChange()}
               >
                 <Text>{item.label}</Text>
 
@@ -113,7 +125,11 @@ export default function stock() {
             return (
               <Table.Row key={index}>
                 <Table.Cell>
-                  <Switch colorScheme="green" isChecked={isCheckedOne} onChange={handleOneSwitchChange}/>
+                  <Switch
+                    colorScheme="green"
+                    isChecked={isCheckedOne[index]}
+                    onChange={(event) => handleOneSwitchChange(index)}
+                  />
                 </Table.Cell>
                 <Table.Cell>{item.id}</Table.Cell>
                 <Table.Cell>{item.image}</Table.Cell>
