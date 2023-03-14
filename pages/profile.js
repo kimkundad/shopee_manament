@@ -36,22 +36,6 @@ export default function Profile() {
                         </HStack>
                     </Center>
                 </Box>
-
-
-                {/* <Box mt={'10'}>
-                    <HStack>
-                        <InputGroup width='auto'>
-                            <InputLeftElement
-                                pointerEvents='none'
-                                children={<SearchIcon color='gray.300' />}
-                            />
-                            <Input type='text' placeholder='ค้นหารายการ' />
-                        </InputGroup>
-                        <Spacer />
-                        <Input width='auto' placeholder='เลือกวันที่' size='md' type="datetime-local" />
-                        <Button onClick={''} leftIcon={<AddIcon />} background='#f84c01' color='white'>เพิ่มแอดมิน</Button >
-                    </HStack>
-                </Box> */}
             </Box>
 
             <Box bg={'#f3f4f6'} pl={10} pt={2} pb={2}>
@@ -63,7 +47,6 @@ export default function Profile() {
 
             <Box pt={10} pb={10}>
                 <Grid
-                    h='100%'
                     templateColumns='repeat(3, 1fr)'
                     gap={2}
                 >

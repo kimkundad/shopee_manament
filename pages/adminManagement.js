@@ -50,7 +50,7 @@ export default function AdminManagement() {
           <Center>
             <HStack>
               <Image width={42} height={42} src={'/images/menu/จัดการแอดมิน.png'} />
-              <Text as='b' fontSize='4xl' color='#f84c01'> จัดการแอดมิน</Text>
+              <Text as='b' fontSize='4xl' color='#f84c01' pt={3}> จัดการแอดมิน</Text>
             </HStack>
           </Center>
         </Box>

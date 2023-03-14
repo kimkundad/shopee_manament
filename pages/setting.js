@@ -1,6 +1,7 @@
 import React from "react";
 import { FaBeer } from 'react-icons/fa';
 import { Container, Row, Col, Card, Grid, Text, Button } from "@nextui-org/react";
+import Image from 'next/image'
 
 
 export default function Setting() {
@@ -11,12 +12,8 @@ export default function Setting() {
 
       <Grid.Container gap={2}>
         <Grid sm={12} md={12} justify="center">
-          <Text
-            size={36}
-            weight="bold"
-          >
-            ตั้งค่า
-          </Text>
+          <Image width={36} height={36} src={'/images/menu/ตั้งค่า.png'} />
+          <Text as='b' fontSize='4xl' pt={3}> ตั้งค่า</Text>
         </Grid>
 
         <Grid sm={12} md={12}>
