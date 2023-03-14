@@ -17,11 +17,60 @@ import {
   Button,
   MenuItem,
   CheckboxGroup,
+  Table,
+  Thead,
+  Tbody,
+  Tfoot,
+  Tr,
+  Th,
+  Td,
+  HStack,
+  TableContainer,
 } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
-import { Table } from "@nextui-org/react"; // icons
+
 export default function stock() {
   const products = [
+    {
+      id: "sadasld",
+      image: "/images/edit.png",
+      name: "dfjshsd",
+      quantity: 100,
+      cost: 120,
+      price: 100,
+      created_date: "15/10/2555",
+      maker: "asdsa",
+    },
+    {
+      id: "sadasld",
+      image: "/images/edit.png",
+      name: "dfjshsd",
+      quantity: 100,
+      cost: 120,
+      price: 100,
+      created_date: "15/10/2555",
+      maker: "asdsa",
+    },
+    {
+      id: "sadasld",
+      image: "/images/edit.png",
+      name: "dfjshsd",
+      quantity: 100,
+      cost: 120,
+      price: 100,
+      created_date: "15/10/2555",
+      maker: "asdsa",
+    },
+    {
+      id: "sadasld",
+      image: "/images/edit.png",
+      name: "dfjshsd",
+      quantity: 100,
+      cost: 120,
+      price: 100,
+      created_date: "15/10/2555",
+      maker: "asdsa",
+    },
     {
       id: "sadasld",
       image: "/images/edit.png",
@@ -108,15 +157,53 @@ export default function stock() {
       setIsCheckedAll(false);
     }
   };
-  const [selectedOptions, setSelectedOptions] = useState([]);
+  const [itemsPerpage, setItemsPerpage] = useState(1);
 
-  const handleOptionChange = (option) => {
-    if (selectedOptions.includes(option)) {
-      setSelectedOptions(selectedOptions.filter((item) => item !== option));
-    } else {
-      setSelectedOptions([...selectedOptions, option]);
-    }
+  let items = itemsPerpage;
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
   };
+
+  const totalPages = Math.ceil(products.length / items);
+  const startIndex = (currentPage - 1) * items;
+  const endIndex = startIndex + items;
+  const currentItems = products.slice(startIndex, endIndex);
+
+
+  const displayRange = 5;
+  let displayPages = [];
+
+  if (totalPages <= displayRange) {
+    for (let i = 1; i <= totalPages; i++) {
+      displayPages.push(i);
+    }
+  } else {
+    const middlePage = Math.floor(displayRange / 2);
+    let start = currentPage - middlePage;
+    let end = currentPage + middlePage;
+
+    if (start < 1) {
+      end += Math.abs(start) + 1;
+      start = 1;
+    }
+    if (end > totalPages) {
+      start -= end - totalPages;
+      end = totalPages;
+    }
+
+    if (start === 1) {
+      displayPages = [1, 2, 3, 4, 5];
+    } else if (end === totalPages) {
+      displayPages = [end - 4, end - 3, end - 2, end - 1, end];
+    } else {
+      displayPages = [start - 1, start, start + 1, end - 1, end];
+    }
+  }
+
+  const startPage = displayPages[0];
+  const endPage = displayPages[displayPages.length - 1];
   return (
     <>
       <Box>
@@ -222,75 +309,70 @@ export default function stock() {
             </Menu>
           </Box>
         </Flex>
-        <Box m="10px">
-          <Table
-            striped
-            sticked
-            aria-label="Example table with static content"
-            css={{
-              height: "auto",
-              minWidth: "100%",
-              border: "0px",
-              fontSize: "21px",
-              borderCollapse: "collapse",
-              padding: "10px",
-            }}
-          >
-            <Table.Header bg="red">
-              {colunm.map((item, index) => {
-                return (
-                  <Table.Column
-                    style={{
-                      backgroundColor: "red",
-                      color: "white",
-                      fontSize: "21px",
-                    }}
-                    key={index}
-                    onClick={
-                      index == 0 ? (event) => handleAllSwitchChange() : null
-                    }
-                  >
-                    <Text>{item.label}</Text>
 
-                    {index == 0 ? (
-                      <Switch colorScheme="brand" isChecked={isCheckedAll} />
-                    ) : null}
-                  </Table.Column>
-                );
-              })}
-            </Table.Header>
-            <Table.Body>
-              {products.map((item, index) => {
+        <TableContainer height="auto" m="10px">
+          <Table>
+            <Thead>
+              <Tr>
+                {colunm.map((item, index) => {
+                  return (
+                    <Th
+                      key={index}
+                      bg="red"
+                      borderLeftRadius={index === 0 ? "md" : ""}
+                      borderRightRadius={
+                        index === colunm.length - 1 ? "md" : ""
+                      }
+                      fontSize="21px"
+                      color="white"
+                    >
+                      <Box>
+                        {item.label}
+                        {index == 0 ? (
+                          <Switch
+                            colorScheme="brand"
+                            isChecked={isCheckedAll}
+                            onChange={(event) => handleAllSwitchChange()}
+                          />
+                        ) : null}
+                      </Box>
+                    </Th>
+                  );
+                })}
+              </Tr>
+            </Thead>
+            <Tbody>
+              {currentItems.map((item, index) => {
                 return (
-                  <Table.Row
-                    key={index}
-                    css={
-                      index % 2 !== 0
-                        ? {
-                            background: "$gray100 !important",
-                            position: "none !important",
-                          }
-                        : { position: "none !important" }
-                    }
-                  >
-                    <Table.Cell>
+                  <Tr key={index} fontSize="21px">
+                    <Td
+                      bg={index % 2 !== 0 ? "gray.100" : ""}
+                      borderLeftRadius="md"
+                    >
                       <Switch
                         colorScheme="brand"
                         isChecked={isCheckedOne[index]}
                         onChange={(event) => handleOneSwitchChange(index)}
                       />
-                    </Table.Cell>
-                    <Table.Cell>{item.id}</Table.Cell>
-                    <Table.Cell>
+                    </Td>
+                    <Td bg={index % 2 !== 0 ? "gray.100" : ""}>{item.id}</Td>
+                    <Td bg={index % 2 !== 0 ? "gray.100" : ""}>
                       <Image src={item.image} h="30px" w="30px" />
-                    </Table.Cell>
-                    <Table.Cell>{item.name}</Table.Cell>
-                    <Table.Cell>{item.quantity}</Table.Cell>
-                    <Table.Cell>{item.cost}</Table.Cell>
-                    <Table.Cell>{item.price}</Table.Cell>
-                    <Table.Cell>{item.created_date}</Table.Cell>
-                    <Table.Cell>{item.maker}</Table.Cell>
-                    <Table.Cell>
+                    </Td>
+                    <Td bg={index % 2 !== 0 ? "gray.100" : ""}>{item.name}</Td>
+                    <Td bg={index % 2 !== 0 ? "gray.100" : ""}>
+                      {item.quantity}
+                    </Td>
+                    <Td bg={index % 2 !== 0 ? "gray.100" : ""}>{item.cost}</Td>
+                    <Td bg={index % 2 !== 0 ? "gray.100" : ""}>{item.price}</Td>
+                    <Td bg={index % 2 !== 0 ? "gray.100" : ""}>
+                      {item.created_date}
+                    </Td>
+                    <Td bg={index % 2 !== 0 ? "gray.100" : ""}>{item.maker}</Td>
+                    <Td
+                      bg={index % 2 !== 0 ? "gray.100" : ""}
+                      borderRightRadius="md"
+                    >
                       <Flex>
                         <Link href="/">
                           <Image src="/images/edit.png" h="25px" />
@@ -303,13 +385,52 @@ export default function stock() {
                           />
                         </Link>
                       </Flex>
-                    </Table.Cell>
-                  </Table.Row>
+                    </Td>
+                  </Tr>
                 );
               })}
-            </Table.Body>
+            </Tbody>
           </Table>
-        </Box>
+          <Flex m="10px" justifyContent="flex-end">
+            <HStack mt="4" spacing="2">
+              <Button
+                disabled={currentPage === 1}
+                onClick={() => handlePageChange(currentPage - 1)}
+              >
+                Previous
+              </Button>
+              {startPage > 1 && (
+                <>
+                  <Button onClick={() => handlePageChange(1)}>1</Button>
+                  {startPage > 2 && <Button disabled>...</Button>}
+                </>
+              )}
+              {displayPages.map((page) => (
+                <Button
+                  key={page}
+                  onClick={() => handlePageChange(page)}
+                  variant={page === currentPage ? "solid" : "ghost"}
+                >
+                  {page}
+                </Button>
+              ))}
+              {endPage < totalPages && (
+                <>
+                  {endPage < totalPages - 1 && <Button disabled>...</Button>}
+                  <Button onClick={() => handlePageChange(totalPages)}>
+                    {totalPages}
+                  </Button>
+                </>
+              )}
+              <Button
+                disabled={currentPage === totalPages}
+                onClick={() => handlePageChange(currentPage + 1)}
+              >
+                Next
+              </Button>
+            </HStack>
+          </Flex>
+        </TableContainer>
       </Box>
     </>
   );

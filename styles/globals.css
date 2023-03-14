@@ -23,10 +23,6 @@
 }
 
 html,
-body {
+body,th {
     font-family: 'DBAdmanX', sans-serif !important;
-}
-
-td{
-    position: unset !important;
 }
