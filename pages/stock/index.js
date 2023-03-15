@@ -34,7 +34,7 @@ import { SearchIcon } from "@chakra-ui/icons";
 export default function stock() {
   const initialProducts = [
     {
-      id: "001",
+      id: 1,
       image: "/images/edit.png",
       name: "dfjshsd",
       quantity: 100,
@@ -45,7 +45,7 @@ export default function stock() {
       active: 0,
     },
     {
-      id: "002",
+      id: 2,
       image: "/images/edit.png",
       name: "dfjshsd",
       quantity: 100,
@@ -56,7 +56,7 @@ export default function stock() {
       active: 0,
     },
     {
-      id: "003",
+      id: 3,
       image: "/images/edit.png",
       name: "dfjshsd",
       quantity: 100,
@@ -67,7 +67,7 @@ export default function stock() {
       active: 0,
     },
     {
-      id: "004",
+      id: 4,
       image: "/images/edit.png",
       name: "dfjshsd",
       quantity: 100,
@@ -78,7 +78,7 @@ export default function stock() {
       active: 0,
     },
     {
-      id: "005",
+      id: 5,
       image: "/images/edit.png",
       name: "dfjshsd",
       quantity: 100,
@@ -89,7 +89,7 @@ export default function stock() {
       active: 0,
     },
     {
-      id: "006",
+      id: 6,
       image: "/images/edit.png",
       name: "dfjshsd",
       quantity: 100,
@@ -100,7 +100,7 @@ export default function stock() {
       active: 0,
     },
     {
-      id: "007",
+      id: 7,
       image: "/images/edit.png",
       name: "dfjshsd",
       quantity: 100,
@@ -149,12 +149,11 @@ export default function stock() {
   const [isCheckedAll, setIsCheckedAll] = useState(false);
   function handleAllSwitchChange() {
     const updatedProducts = products.map((product) => {
-      if(!isCheckedAll === true){
+      if (!isCheckedAll === true) {
         return { ...product, active: 1 };
-      }else {
+      } else {
         return { ...product, active: 0 };
       }
-      
     });
     setIsCheckedAll(!isCheckedAll);
     setProducts(updatedProducts);
@@ -162,7 +161,6 @@ export default function stock() {
 
   function handleActivateProduct(id) {
     let checkAll = true;
-    console.log(id);
     const updatedProducts = products.map((product) => {
       if (product.id === id && product.active === 0) {
         return { ...product, active: 1 };
@@ -180,7 +178,6 @@ export default function stock() {
     setIsCheckedAll(checkAll);
     setProducts(updatedProducts);
   }
-  console.log(products);
   //pagination
   const [itemsPerPage, setItemPerpages] = useState(5);
   const handleSelectChange = (event) => {
@@ -189,7 +186,6 @@ export default function stock() {
   const [currentPage, setCurrentPage] = useState(1);
   const [inputValue, setinputValue] = useState(1);
   const handleInputChange = (event) => {
-    console.log(event.target.value);
     if (
       event.target.value !== "" &&
       event.target.value >= 1 &&
@@ -206,7 +202,7 @@ export default function stock() {
     setinputValue(page);
   };
 
-  let item = itemsPerPage;
+  let item = parseInt(itemsPerPage);
   const totalPages = Math.ceil(products.length / item);
   const startIndex = (currentPage - 1) * item;
   const endIndex = startIndex + item;
@@ -237,22 +233,27 @@ export default function stock() {
           </Box>
           <Spacer />
           <Box borderWidth="1px" borderColor="red" borderRadius="md">
-            <Button
-              fontSize="21px"
-              leftIcon={<Image src="/images/pluswhite.png" h="25px" w="25px" />}
-              bg="red"
-              variant="solid"
-              color="white"
-            >
-              เพิ่มสินค้า
-            </Button>
+            <Link href="/stock/addProduct">
+              <Button
+                fontSize="21px"
+                leftIcon={
+                  <Image src="/images/pluswhite.png" h="25px" w="25px" />
+                }
+                bg="red"
+                variant="solid"
+                color="white"
+                _hover={{ bg: "red" }}
+              >
+                เพิ่มสินค้า
+              </Button>
+            </Link>
           </Box>
 
           <Box ml="5px" border="1px" borderColor="red" borderRadius="md">
             <Menu closeOnSelect={false}>
               <MenuButton
                 as={Button}
-                bg="white"
+                bg="white !important"
                 fontSize="21px"
                 leftIcon={<Image src="/images/menu.png" h="25px" w="25px" />}
                 rightIcon={
@@ -262,6 +263,7 @@ export default function stock() {
                     w="20px"
                   />
                 }
+                _hover={{ bg: "white" }}
               >
                 เลือกตัวแสดงผล
               </MenuButton>
@@ -443,6 +445,7 @@ export default function stock() {
                   )
                 }
                 background="white"
+                _hover={{ bg: "white" }}
               >
                 <Image
                   src="/images/arrow/left-arrow.png"
@@ -455,7 +458,7 @@ export default function stock() {
               <Text>หน้า</Text>
               <Input
                 htmlSize={1}
-                placeholder="1"
+                placeholder={inputValue}
                 size="xs"
                 onChange={handleInputChange}
                 value={inputValue}
@@ -469,6 +472,7 @@ export default function stock() {
                   )
                 }
                 background="white"
+                _hover={{ bg: "white" }}
               >
                 <Image
                   src="/images/arrow/right-arrow.png"

@@ -30,7 +30,7 @@ export const defaultNavItems: NavItem[] = [
   {
     label: "รายงาน",
     href: "/report",
-    icon: <Image src="/images/menu/รายงาน.png" alt="My Image" width={30} height={30} />,
+    icon: <Image src="/images/menu/report.png" alt="My Image" width={30} height={30} />,
     iconcurrentpage: <Image src="/images/menu/รายงาน ขาว.png" alt="My Image" width={30} height={30} />,
   },
   {
