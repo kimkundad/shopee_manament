@@ -20,12 +20,14 @@ import {
   Table,
   Thead,
   Tbody,
-  Tfoot,
+  Wrap,
   Tr,
   Th,
   Td,
   HStack,
   TableContainer,
+  WrapItem,
+  Select,
 } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
 
@@ -157,53 +159,32 @@ export default function stock() {
       setIsCheckedAll(false);
     }
   };
-  const [itemsPerpage, setItemsPerpage] = useState(1);
 
-  let items = itemsPerpage;
+  const itemsPerPage = 5;
   const [currentPage, setCurrentPage] = useState(1);
-
+  const [inputValue, setinputValue] = useState(1);
+  const handleInputChange = (event) => {
+    console.log(event.target.value);
+    if( event.target.value !== "" && event.target.value >=1 && event.target.value <= totalPages){
+      setCurrentPage(parseInt(event.target.value));
+      setinputValue(parseInt(event.target.value))
+    }else if(event.target.value === ""){
+      setinputValue('');
+    }
+    
+  };
   const handlePageChange = (page) => {
     setCurrentPage(page);
+    setinputValue(page);
   };
 
-  const totalPages = Math.ceil(products.length / items);
-  const startIndex = (currentPage - 1) * items;
-  const endIndex = startIndex + items;
+  const totalPages = Math.ceil(products.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
   const currentItems = products.slice(startIndex, endIndex);
-
-
-  const displayRange = 5;
-  let displayPages = [];
-
-  if (totalPages <= displayRange) {
-    for (let i = 1; i <= totalPages; i++) {
-      displayPages.push(i);
-    }
-  } else {
-    const middlePage = Math.floor(displayRange / 2);
-    let start = currentPage - middlePage;
-    let end = currentPage + middlePage;
-
-    if (start < 1) {
-      end += Math.abs(start) + 1;
-      start = 1;
-    }
-    if (end > totalPages) {
-      start -= end - totalPages;
-      end = totalPages;
-    }
-
-    if (start === 1) {
-      displayPages = [1, 2, 3, 4, 5];
-    } else if (end === totalPages) {
-      displayPages = [end - 4, end - 3, end - 2, end - 1, end];
-    } else {
-      displayPages = [start - 1, start, start + 1, end - 1, end];
-    }
-  }
-
-  const startPage = displayPages[0];
-  const endPage = displayPages[displayPages.length - 1];
+  console.log(currentPage);
+  console.log('-----');
+  console.log(totalPages);
   return (
     <>
       <Box>
@@ -244,7 +225,7 @@ export default function stock() {
                 leftIcon={<Image src="/images/menu.png" h="25px" w="25px" />}
                 rightIcon={
                   <Image
-                    src="/images/down-filled-triangular-arrow.png"
+                    src="/images/arrow/down-filled-triangular-arrow.png"
                     h="10px"
                     w="20px"
                   />
@@ -355,7 +336,10 @@ export default function stock() {
                         onChange={(event) => handleOneSwitchChange(index)}
                       />
                     </Td>
-                    <Td bg={index % 2 !== 0 ? "gray.100" : ""}>{item.id}</Td>
+                    <Td bg={index % 2 !== 0 ? "gray.100" : ""}>
+                      {item.id}
+                      {index}
+                    </Td>
                     <Td bg={index % 2 !== 0 ? "gray.100" : ""}>
                       <Image src={item.image} h="30px" w="30px" />
                     </Td>
@@ -391,42 +375,62 @@ export default function stock() {
               })}
             </Tbody>
           </Table>
-          <Flex m="10px" justifyContent="flex-end">
-            <HStack mt="4" spacing="2">
+          <Flex m="10px">
+            <Wrap alignSelf="center">
+              <WrapItem>
+                <Text>แสดงผล : </Text>
+              </WrapItem>
+              <WrapItem>
+                <Select size="xs">
+                  <option value="option1">10</option>
+                  <option value="option2">20</option>
+                  <option value="option3">30</option>
+                </Select>
+              </WrapItem>
+              <WrapItem>
+                <Text>จำนวนสินค้า : </Text>
+              </WrapItem>
+              <WrapItem>
+                <Text>{products.length}</Text>
+              </WrapItem>
+            </Wrap>
+            <Spacer />
+            <HStack spacing="2" alignSelf="center">
               <Button
-                disabled={currentPage === 1}
-                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1 || currentPage < 1}
+                onClick={() =>
+                  handlePageChange(
+                    currentPage === 1 ? currentPage : currentPage - 1
+                  )
+                }
+                background="white"
               >
-                Previous
+                <Image
+                  src="/images/arrow/left-arrow.png"
+                  alt=""
+                  h="15px"
+                  w="10px"
+                />
               </Button>
-              {startPage > 1 && (
-                <>
-                  <Button onClick={() => handlePageChange(1)}>1</Button>
-                  {startPage > 2 && <Button disabled>...</Button>}
-                </>
-              )}
-              {displayPages.map((page) => (
-                <Button
-                  key={page}
-                  onClick={() => handlePageChange(page)}
-                  variant={page === currentPage ? "solid" : "ghost"}
-                >
-                  {page}
-                </Button>
-              ))}
-              {endPage < totalPages && (
-                <>
-                  {endPage < totalPages - 1 && <Button disabled>...</Button>}
-                  <Button onClick={() => handlePageChange(totalPages)}>
-                    {totalPages}
-                  </Button>
-                </>
-              )}
+
+              <Text>หน้า</Text>
+              <Input htmlSize={1} placeholder="1" size="xs" onChange={handleInputChange} value={inputValue}/>
+              <Text>จาก {totalPages}</Text>
               <Button
-                disabled={currentPage === totalPages}
-                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage >= totalPages}
+                onClick={() =>
+                  handlePageChange(
+                    currentPage === totalPages ? currentPage : currentPage + 1
+                  )
+                }
+                background="white"
               >
-                Next
+                <Image
+                  src="/images/arrow/right-arrow.png"
+                  alt=""
+                  h="15px"
+                  w="10px"
+                />
               </Button>
             </HStack>
           </Flex>
