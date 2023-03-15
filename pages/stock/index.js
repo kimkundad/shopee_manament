@@ -10,13 +10,7 @@ import {
   InputLeftElement,
   Box,
   Spacer,
-  Checkbox,
-  Menu,
-  MenuButton,
-  MenuList,
   Button,
-  MenuItem,
-  CheckboxGroup,
   Table,
   Thead,
   Tbody,
@@ -29,8 +23,7 @@ import {
   WrapItem,
   Select,
 } from "@chakra-ui/react";
-import { SearchIcon } from "@chakra-ui/icons";
-
+import ListCheck from "@/components/MenuList";
 export default function stock() {
   const initialProducts = [
     {
@@ -250,78 +243,7 @@ export default function stock() {
           </Box>
 
           <Box ml="5px" border="1px" borderColor="red" borderRadius="md">
-            <Menu closeOnSelect={false}>
-              <MenuButton
-                as={Button}
-                bg="white !important"
-                fontSize="21px"
-                leftIcon={<Image src="/images/menu.png" h="25px" w="25px" />}
-                rightIcon={
-                  <Image
-                    src="/images/arrow/down-filled-triangular-arrow.png"
-                    h="10px"
-                    w="20px"
-                  />
-                }
-                _hover={{ bg: "white" }}
-              >
-                เลือกตัวแสดงผล
-              </MenuButton>
-              <MenuList
-                minWidth="200px"
-                border="1px"
-                borderColor="red"
-                borderRadius="md"
-              >
-                <CheckboxGroup>
-                  <MenuItem>
-                    <Checkbox
-                      value="item1"
-                      sx={{
-                        ".chakra-checkbox__control": {
-                          background: "white !important",
-                          borderColor: "black !important",
-                          color: "#3FFF33 !important",
-                          border: "1px solid",
-                        },
-                      }}
-                    >
-                      Item 1
-                    </Checkbox>
-                  </MenuItem>
-                  <MenuItem>
-                    <Checkbox
-                      value="item2"
-                      sx={{
-                        ".chakra-checkbox__control": {
-                          background: "white !important",
-                          borderColor: "black !important",
-                          color: "#3FFF33 !important",
-                          border: "1px solid",
-                        },
-                      }}
-                    >
-                      Item 2
-                    </Checkbox>
-                  </MenuItem>
-                  <MenuItem>
-                    <Checkbox
-                      value="item3"
-                      sx={{
-                        ".chakra-checkbox__control": {
-                          background: "white !important",
-                          borderColor: "black !important",
-                          color: "#3FFF33 !important",
-                          border: "1px solid",
-                        },
-                      }}
-                    >
-                      Item 3
-                    </Checkbox>
-                  </MenuItem>
-                </CheckboxGroup>
-              </MenuList>
-            </Menu>
+          <ListCheck data={colunm} />
           </Box>
         </Flex>
 

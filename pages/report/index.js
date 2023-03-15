@@ -29,6 +29,7 @@ import {
   WrapItem,
   Select,
 } from "@chakra-ui/react";
+import ListCheck from "@/components/MenuList";
 function index() {
   const initialProducts = [
     {
@@ -184,7 +185,7 @@ function index() {
         </Box>
         <Spacer />
         <Box borderWidth="1px" borderColor="red" borderRadius="md">
-          <Link href="/stock/addProduct">
+          <Link href="/">
             <Button
               fontSize="21px"
               leftIcon={<Image src="/images/print.png" h="25px" w="25px" />}
@@ -199,78 +200,7 @@ function index() {
         </Box>
 
         <Box ml="5px" border="1px" borderColor="red" borderRadius="md">
-          <Menu closeOnSelect={false}>
-            <MenuButton
-              as={Button}
-              bg="white !important"
-              fontSize="21px"
-              leftIcon={<Image src="/images/menu.png" h="25px" w="25px" />}
-              rightIcon={
-                <Image
-                  src="/images/arrow/down-filled-triangular-arrow.png"
-                  h="10px"
-                  w="20px"
-                />
-              }
-              _hover={{ bg: "white" }}
-            >
-              เลือกตัวแสดงผล
-            </MenuButton>
-            <MenuList
-              minWidth="200px"
-              border="1px"
-              borderColor="red"
-              borderRadius="md"
-            >
-              <CheckboxGroup>
-                <MenuItem>
-                  <Checkbox
-                    value="item1"
-                    sx={{
-                      ".chakra-checkbox__control": {
-                        background: "white !important",
-                        borderColor: "black !important",
-                        color: "#3FFF33 !important",
-                        border: "1px solid",
-                      },
-                    }}
-                  >
-                    Item 1
-                  </Checkbox>
-                </MenuItem>
-                <MenuItem>
-                  <Checkbox
-                    value="item2"
-                    sx={{
-                      ".chakra-checkbox__control": {
-                        background: "white !important",
-                        borderColor: "black !important",
-                        color: "#3FFF33 !important",
-                        border: "1px solid",
-                      },
-                    }}
-                  >
-                    Item 2
-                  </Checkbox>
-                </MenuItem>
-                <MenuItem>
-                  <Checkbox
-                    value="item3"
-                    sx={{
-                      ".chakra-checkbox__control": {
-                        background: "white !important",
-                        borderColor: "black !important",
-                        color: "#3FFF33 !important",
-                        border: "1px solid",
-                      },
-                    }}
-                  >
-                    Item 3
-                  </Checkbox>
-                </MenuItem>
-              </CheckboxGroup>
-            </MenuList>
-          </Menu>
+          <ListCheck data={colunm} />
         </Box>
       </Flex>
       <TableContainer height="auto" m="10px">
@@ -303,20 +233,27 @@ function index() {
                   <Td bg={index % 2 !== 0 ? "gray.100" : ""}>
                     {item.nameshop}
                   </Td>
-                  <Td bg={index % 2 !== 0 ? "gray.100" : ""}>{item.nameproduct}</Td>
                   <Td bg={index % 2 !== 0 ? "gray.100" : ""}>
-                  {item.productId}
+                    {item.nameproduct}
+                  </Td>
+                  <Td bg={index % 2 !== 0 ? "gray.100" : ""}>
+                    {item.productId}
                   </Td>
                   <Td bg={index % 2 !== 0 ? "gray.100" : ""} display="flex">
-                  {item.linkshop}<Image pl="5px" src="/images/copy.png" alt="" h="20px" />
+                    {item.linkshop}
+                    <Image pl="5px" src="/images/copy.png" alt="" h="20px" />
                   </Td>
-                  <Td bg={index % 2 !== 0 ? "gray.100" : ""}>{item.numberInvoice}</Td>
-                  <Td bg={index % 2 !== 0 ? "gray.100" : ""}>{item.customername}</Td>
                   <Td bg={index % 2 !== 0 ? "gray.100" : ""}>
-                    {item.address}
+                    {item.numberInvoice}
                   </Td>
+                  <Td bg={index % 2 !== 0 ? "gray.100" : ""}>
+                    {item.customername}
+                  </Td>
+                  <Td bg={index % 2 !== 0 ? "gray.100" : ""}>{item.address}</Td>
                   <Td bg={index % 2 !== 0 ? "gray.100" : ""}>{item.tel}</Td>
-                  <Td bg={index % 2 !== 0 ? "gray.100" : ""}>{item.orderQuantity}</Td>
+                  <Td bg={index % 2 !== 0 ? "gray.100" : ""}>
+                    {item.orderQuantity}
+                  </Td>
                   <Td bg={index % 2 !== 0 ? "gray.100" : ""}>{item.sales}</Td>
                 </Tr>
               );
