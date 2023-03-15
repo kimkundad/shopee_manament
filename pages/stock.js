@@ -84,7 +84,7 @@ export default function stock() {
       maker: "asdsa",
     },
     {
-      id: "sadasld",
+      id: "sssss",
       image: "/images/edit.png",
       name: "dfjshsd",
       quantity: 100,
@@ -94,7 +94,7 @@ export default function stock() {
       maker: "asdsa",
     },
     {
-      id: "sadasld",
+      id: "aaaaa",
       image: "/images/edit.png",
       name: "dfjshsd",
       quantity: 100,
@@ -137,6 +137,7 @@ export default function stock() {
     },
   ];
 
+  //setChecked Switch
   const [isCheckedAll, setIsCheckedAll] = useState(false);
   const [isCheckedOne, setIsCheckedOne] = useState(
     Array(products.length).fill(false)
@@ -160,31 +161,38 @@ export default function stock() {
     }
   };
 
-  const itemsPerPage = 5;
+  //pagination
+  const [itemsPerPage, setItemPerpages] = useState(5);
+  const handleSelectChange = (event) => {
+    setItemPerpages(event.target.value);
+  };
   const [currentPage, setCurrentPage] = useState(1);
   const [inputValue, setinputValue] = useState(1);
   const handleInputChange = (event) => {
     console.log(event.target.value);
-    if( event.target.value !== "" && event.target.value >=1 && event.target.value <= totalPages){
+    if (
+      event.target.value !== "" &&
+      event.target.value >= 1 &&
+      event.target.value <= totalPages
+    ) {
       setCurrentPage(parseInt(event.target.value));
-      setinputValue(parseInt(event.target.value))
-    }else if(event.target.value === ""){
-      setinputValue('');
+      setinputValue(parseInt(event.target.value));
+    } else if (event.target.value === "") {
+      setinputValue("");
     }
-    
   };
   const handlePageChange = (page) => {
     setCurrentPage(page);
     setinputValue(page);
   };
 
-  const totalPages = Math.ceil(products.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
+  let item = itemsPerPage;
+  const totalPages = Math.ceil(products.length / item);
+  const startIndex = (currentPage - 1) * item;
+  const endIndex = startIndex + item;
   const currentItems = products.slice(startIndex, endIndex);
-  console.log(currentPage);
-  console.log('-----');
-  console.log(totalPages);
+
+  //sorting colunm
   return (
     <>
       <Box>
@@ -307,14 +315,21 @@ export default function stock() {
                       fontSize="21px"
                       color="white"
                     >
-                      <Box>
-                        {item.label}
+                      <Box textAlign="center">
+
+                        <Text>{item.label}</Text>
                         {index == 0 ? (
-                          <Switch
-                            colorScheme="brand"
-                            isChecked={isCheckedAll}
-                            onChange={(event) => handleAllSwitchChange()}
-                          />
+                          <Flex>
+                            <Switch
+                              colorScheme="brand"
+                              isChecked={isCheckedAll}
+                              onChange={(event) => handleAllSwitchChange()}
+                              size="sm"
+                            />
+                            <Text pl="5px" fontSize="15px">
+                              เปิด/ปิดทั้งหมด
+                            </Text>
+                          </Flex>
                         ) : null}
                       </Box>
                     </Th>
@@ -329,6 +344,7 @@ export default function stock() {
                     <Td
                       bg={index % 2 !== 0 ? "gray.100" : ""}
                       borderLeftRadius="md"
+                      textAlign="center"
                     >
                       <Switch
                         colorScheme="brand"
@@ -376,15 +392,16 @@ export default function stock() {
             </Tbody>
           </Table>
           <Flex m="10px">
-            <Wrap alignSelf="center">
+            <Wrap alignSelf="center" fontSize="21px">
               <WrapItem>
                 <Text>แสดงผล : </Text>
               </WrapItem>
               <WrapItem>
-                <Select size="xs">
-                  <option value="option1">10</option>
-                  <option value="option2">20</option>
-                  <option value="option3">30</option>
+                <Select size="xs" onChange={handleSelectChange}>
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="20">20</option>
+                  <option value="30">30</option>
                 </Select>
               </WrapItem>
               <WrapItem>
@@ -395,7 +412,7 @@ export default function stock() {
               </WrapItem>
             </Wrap>
             <Spacer />
-            <HStack spacing="2" alignSelf="center">
+            <HStack spacing="2" alignSelf="center" fontSize="21px">
               <Button
                 disabled={currentPage === 1 || currentPage < 1}
                 onClick={() =>
@@ -414,7 +431,13 @@ export default function stock() {
               </Button>
 
               <Text>หน้า</Text>
-              <Input htmlSize={1} placeholder="1" size="xs" onChange={handleInputChange} value={inputValue}/>
+              <Input
+                htmlSize={1}
+                placeholder="1"
+                size="xs"
+                onChange={handleInputChange}
+                value={inputValue}
+              />
               <Text>จาก {totalPages}</Text>
               <Button
                 disabled={currentPage >= totalPages}
