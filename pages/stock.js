@@ -32,9 +32,9 @@ import {
 import { SearchIcon } from "@chakra-ui/icons";
 
 export default function stock() {
-  const products = [
+  const initialProducts = [
     {
-      id: "sadasld",
+      id: "001",
       image: "/images/edit.png",
       name: "dfjshsd",
       quantity: 100,
@@ -42,9 +42,10 @@ export default function stock() {
       price: 100,
       created_date: "15/10/2555",
       maker: "asdsa",
+      active: 0,
     },
     {
-      id: "sadasld",
+      id: "002",
       image: "/images/edit.png",
       name: "dfjshsd",
       quantity: 100,
@@ -52,9 +53,10 @@ export default function stock() {
       price: 100,
       created_date: "15/10/2555",
       maker: "asdsa",
+      active: 0,
     },
     {
-      id: "sadasld",
+      id: "003",
       image: "/images/edit.png",
       name: "dfjshsd",
       quantity: 100,
@@ -62,9 +64,10 @@ export default function stock() {
       price: 100,
       created_date: "15/10/2555",
       maker: "asdsa",
+      active: 0,
     },
     {
-      id: "sadasld",
+      id: "004",
       image: "/images/edit.png",
       name: "dfjshsd",
       quantity: 100,
@@ -72,9 +75,10 @@ export default function stock() {
       price: 100,
       created_date: "15/10/2555",
       maker: "asdsa",
+      active: 0,
     },
     {
-      id: "sadasld",
+      id: "005",
       image: "/images/edit.png",
       name: "dfjshsd",
       quantity: 100,
@@ -82,9 +86,10 @@ export default function stock() {
       price: 100,
       created_date: "15/10/2555",
       maker: "asdsa",
+      active: 0,
     },
     {
-      id: "sssss",
+      id: "006",
       image: "/images/edit.png",
       name: "dfjshsd",
       quantity: 100,
@@ -92,9 +97,10 @@ export default function stock() {
       price: 100,
       created_date: "15/10/2555",
       maker: "asdsa",
+      active: 0,
     },
     {
-      id: "aaaaa",
+      id: "007",
       image: "/images/edit.png",
       name: "dfjshsd",
       quantity: 100,
@@ -102,8 +108,10 @@ export default function stock() {
       price: 100,
       created_date: "15/10/2555",
       maker: "asdsa",
+      active: 0,
     },
   ];
+  const [products, setProducts] = useState(initialProducts);
   const colunm = [
     {
       label: "เปิด/ปิด",
@@ -139,28 +147,40 @@ export default function stock() {
 
   //setChecked Switch
   const [isCheckedAll, setIsCheckedAll] = useState(false);
-  const [isCheckedOne, setIsCheckedOne] = useState(
-    Array(products.length).fill(false)
-  );
-
   function handleAllSwitchChange() {
+    const updatedProducts = products.map((product) => {
+      if(!isCheckedAll === true){
+        return { ...product, active: 1 };
+      }else {
+        return { ...product, active: 0 };
+      }
+      
+    });
     setIsCheckedAll(!isCheckedAll);
-    const myArr = Array(products.length).fill(!isCheckedAll);
-    setIsCheckedOne(myArr);
+    setProducts(updatedProducts);
   }
 
-  const handleOneSwitchChange = (id) => {
-    const newItem = [...isCheckedOne];
-    newItem[id] = event.target.checked;
-    const allTrue = newItem.every((value) => value === true);
-    setIsCheckedOne(newItem);
-    if (allTrue) {
-      setIsCheckedAll(true);
-    } else {
-      setIsCheckedAll(false);
-    }
-  };
-
+  function handleActivateProduct(id) {
+    let checkAll = true;
+    console.log(id);
+    const updatedProducts = products.map((product) => {
+      if (product.id === id && product.active === 0) {
+        return { ...product, active: 1 };
+      } else if (product.id === id && product.active === 1) {
+        return { ...product, active: 0 };
+      } else {
+        return product;
+      }
+    });
+    updatedProducts.map((products) => {
+      if (products.active === 0) {
+        return (checkAll = false);
+      }
+    });
+    setIsCheckedAll(checkAll);
+    setProducts(updatedProducts);
+  }
+  console.log(products);
   //pagination
   const [itemsPerPage, setItemPerpages] = useState(5);
   const handleSelectChange = (event) => {
@@ -192,6 +212,10 @@ export default function stock() {
   const endIndex = startIndex + item;
   const currentItems = products.slice(startIndex, endIndex);
 
+  if (currentPage > totalPages) {
+    setCurrentPage(1);
+    setinputValue(1);
+  }
   //sorting colunm
   return (
     <>
@@ -316,7 +340,6 @@ export default function stock() {
                       color="white"
                     >
                       <Box textAlign="center">
-
                         <Text>{item.label}</Text>
                         {index == 0 ? (
                           <Flex>
@@ -348,14 +371,13 @@ export default function stock() {
                     >
                       <Switch
                         colorScheme="brand"
-                        isChecked={isCheckedOne[index]}
-                        onChange={(event) => handleOneSwitchChange(index)}
+                        isChecked={
+                          isCheckedAll ? true : item.active === 0 ? false : true
+                        }
+                        onChange={(event) => handleActivateProduct(item.id)}
                       />
                     </Td>
-                    <Td bg={index % 2 !== 0 ? "gray.100" : ""}>
-                      {item.id}
-                      {index}
-                    </Td>
+                    <Td bg={index % 2 !== 0 ? "gray.100" : ""}>{item.id}</Td>
                     <Td bg={index % 2 !== 0 ? "gray.100" : ""}>
                       <Image src={item.image} h="30px" w="30px" />
                     </Td>
