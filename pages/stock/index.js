@@ -11,19 +11,14 @@ import {
   Box,
   Spacer,
   Button,
-  Table,
-  Thead,
-  Tbody,
   Wrap,
-  Tr,
-  Th,
-  Td,
   HStack,
-  TableContainer,
   WrapItem,
   Select,
+  Center,
 } from "@chakra-ui/react";
 import ListCheck from "@/components/MenuList";
+import { Table } from "@nextui-org/react"; // icons
 export default function stock() {
   const initialProducts = [
     {
@@ -95,12 +90,12 @@ export default function stock() {
     {
       id: 7,
       image: "/images/edit.png",
-      name: "dfjshsd",
+      name: "dfjshsaaaaaaaaaad",
       quantity: 100,
       cost: 120,
       price: 100,
       created_date: "15/10/2555",
-      maker: "asdsa",
+      maker: "asdsaaaaaaaaaaaaaaaaa",
       active: 0,
     },
   ];
@@ -243,169 +238,174 @@ export default function stock() {
           </Box>
 
           <Box ml="5px" border="1px" borderColor="red" borderRadius="md">
-          <ListCheck data={colunm} />
+            <ListCheck data={colunm} />
           </Box>
         </Flex>
 
-        <TableContainer height="auto" m="10px">
-          <Table>
-            <Thead>
-              <Tr>
-                {colunm.map((item, index) => {
-                  return (
-                    <Th
-                      key={index}
-                      bg="red"
-                      borderLeftRadius={index === 0 ? "md" : ""}
-                      borderRightRadius={
-                        index === colunm.length - 1 ? "md" : ""
-                      }
-                      fontSize="21px"
-                      color="white"
-                    >
-                      <Box textAlign="center">
-                        <Text>{item.label}</Text>
-                        {index == 0 ? (
-                          <Flex>
-                            <Switch
-                              colorScheme="brand"
-                              isChecked={isCheckedAll}
-                              onChange={(event) => handleAllSwitchChange()}
-                              size="sm"
-                            />
-                            <Text pl="5px" fontSize="15px">
-                              เปิด/ปิดทั้งหมด
-                            </Text>
-                          </Flex>
-                        ) : null}
-                      </Box>
-                    </Th>
-                  );
-                })}
-              </Tr>
-            </Thead>
-            <Tbody>
-              {currentItems.map((item, index) => {
-                return (
-                  <Tr key={index} fontSize="21px">
-                    <Td
-                      bg={index % 2 !== 0 ? "gray.100" : ""}
-                      borderLeftRadius="md"
-                      textAlign="center"
-                    >
+        <Table
+          striped
+          sticked
+          aria-label="Example table with static content"
+          css={{
+            height: "auto",
+            minWidth: "100%",
+            border: "0px",
+            boxShadow: "none"
+          }}
+        >
+          <Table.Header bg="red">
+            {colunm.map((item, index) => {
+              return (
+                <Table.Column
+                  style={{ backgroundColor: "red", color: "white" }}
+                  key={index}
+                  onClick={
+                    index == 0 ? (event) => handleAllSwitchChange() : null
+                  }
+                  css={{ textAlign: "center",
+                padding: "0px !important" }}
+                >
+                  <Text fontSize="21px">{item.label}</Text>
+                  {index == 0 ? (
+                    <Flex justifyContent="center">
                       <Switch
                         colorScheme="brand"
-                        isChecked={
-                          isCheckedAll ? true : item.active === 0 ? false : true
-                        }
-                        onChange={(event) => handleActivateProduct(item.id)}
+                        isChecked={isCheckedAll}
+                        onChange={(event) => handleAllSwitchChange()}
+                        size="sm"
                       />
-                    </Td>
-                    <Td bg={index % 2 !== 0 ? "gray.100" : ""}>{item.id}</Td>
-                    <Td bg={index % 2 !== 0 ? "gray.100" : ""}>
+                      <Text pl="5px" fontSize="15px">
+                        เปิด/ปิดทั้งหมด
+                      </Text>
+                    </Flex>
+                  ) : null}
+                </Table.Column>
+              );
+            })}
+          </Table.Header>
+          <Table.Body>
+            {currentItems.map((item, index) => {
+              return (
+                <Table.Row key={index} css={index % 2 !==0? { fontSize: "21px",background: "$gray100" }:{fontSize: "21px"}}>
+                  <Table.Cell css={{ textAlign: "center" }}>
+                    <Switch
+                      colorScheme="brand"
+                      isChecked={
+                        isCheckedAll ? true : item.active === 0 ? false : true
+                      }
+                      onChange={(event) => handleActivateProduct(item.id)}
+                    />
+                  </Table.Cell>
+                  <Table.Cell css={{ textAlign: "center" }}>
+                    {item.id}
+                  </Table.Cell>
+                  <Table.Cell>
+                    <Center>
                       <Image src={item.image} h="30px" w="30px" />
-                    </Td>
-                    <Td bg={index % 2 !== 0 ? "gray.100" : ""}>{item.name}</Td>
-                    <Td bg={index % 2 !== 0 ? "gray.100" : ""}>
-                      {item.quantity}
-                    </Td>
-                    <Td bg={index % 2 !== 0 ? "gray.100" : ""}>{item.cost}</Td>
-                    <Td bg={index % 2 !== 0 ? "gray.100" : ""}>{item.price}</Td>
-                    <Td bg={index % 2 !== 0 ? "gray.100" : ""}>
-                      {item.created_date}
-                    </Td>
-                    <Td bg={index % 2 !== 0 ? "gray.100" : ""}>{item.maker}</Td>
-                    <Td
-                      bg={index % 2 !== 0 ? "gray.100" : ""}
-                      borderRightRadius="md"
-                    >
-                      <Flex>
-                        <Link href="/">
-                          <Image src="/images/edit.png" h="25px" />
-                        </Link>
-                        <Link href="/">
-                          <Image
-                            pl="7px"
-                            src="/images/trash-bin.png"
-                            h="25px"
-                          />
-                        </Link>
-                      </Flex>
-                    </Td>
-                  </Tr>
-                );
-              })}
-            </Tbody>
-          </Table>
-          <Flex m="10px">
-            <Wrap alignSelf="center" fontSize="21px">
-              <WrapItem>
-                <Text>แสดงผล : </Text>
-              </WrapItem>
-              <WrapItem>
-                <Select size="xs" onChange={handleSelectChange}>
-                  <option value="5">5</option>
-                  <option value="10">10</option>
-                  <option value="20">20</option>
-                  <option value="30">30</option>
-                </Select>
-              </WrapItem>
-              <WrapItem>
-                <Text>จำนวนสินค้า : </Text>
-              </WrapItem>
-              <WrapItem>
-                <Text>{products.length}</Text>
-              </WrapItem>
-            </Wrap>
-            <Spacer />
-            <HStack spacing="2" alignSelf="center" fontSize="21px">
-              <Button
-                disabled={currentPage === 1 || currentPage < 1}
-                onClick={() =>
-                  handlePageChange(
-                    currentPage === 1 ? currentPage : currentPage - 1
-                  )
-                }
-                background="white"
-                _hover={{ bg: "white" }}
-              >
-                <Image
-                  src="/images/arrow/left-arrow.png"
-                  alt=""
-                  h="15px"
-                  w="10px"
-                />
-              </Button>
-
-              <Text>หน้า</Text>
-              <Input
-                htmlSize={1}
-                placeholder={inputValue}
-                size="xs"
-                onChange={handleInputChange}
-                value={inputValue}
+                    </Center>
+                  </Table.Cell>
+                  <Table.Cell css={{ textAlign: "center" }}>
+                    {item.name}
+                  </Table.Cell>
+                  <Table.Cell css={{ textAlign: "center" }}>
+                    {item.quantity}
+                  </Table.Cell>
+                  <Table.Cell css={{ textAlign: "center" }}>
+                    {item.cost}
+                  </Table.Cell>
+                  <Table.Cell css={{ textAlign: "center" }}>
+                    {item.price}
+                  </Table.Cell>
+                  <Table.Cell css={{ textAlign: "center" }}>
+                    {item.created_date}
+                  </Table.Cell>
+                  <Table.Cell css={{ textAlign: "center" }}>
+                    {item.maker}
+                  </Table.Cell>
+                  <Table.Cell css={{ textAlign: "center" }}>
+                    <Flex justifyContent="center">
+                      <Link href="/">
+                        <Image src="/images/edit.png" h="25px" />
+                      </Link>
+                      <Link href="/">
+                        <Image pl="7px" src="/images/trash-bin.png" h="25px" />
+                      </Link>
+                    </Flex>
+                  </Table.Cell>
+                </Table.Row>
+              );
+            })}
+          </Table.Body>
+        </Table>
+        <Flex m="10px">
+          <Wrap alignSelf="center" fontSize="21px">
+            <WrapItem>
+              <Text>แสดงผล : </Text>
+            </WrapItem>
+            <WrapItem>
+              <Select size="xs" onChange={handleSelectChange}>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="30">30</option>
+              </Select>
+            </WrapItem>
+            <WrapItem>
+              <Text>จำนวนสินค้า : </Text>
+            </WrapItem>
+            <WrapItem>
+              <Text>{products.length}</Text>
+            </WrapItem>
+          </Wrap>
+          <Spacer />
+          <HStack spacing="2" alignSelf="center" fontSize="21px">
+            <Button
+              disabled={currentPage === 1 || currentPage < 1}
+              onClick={() =>
+                handlePageChange(
+                  currentPage === 1 ? currentPage : currentPage - 1
+                )
+              }
+              background="white"
+              _hover={{ bg: "white" }}
+            >
+              <Image
+                src="/images/arrow/left-arrow.png"
+                alt=""
+                h="15px"
+                w="10px"
               />
-              <Text>จาก {totalPages}</Text>
-              <Button
-                disabled={currentPage >= totalPages}
-                onClick={() =>
-                  handlePageChange(
-                    currentPage === totalPages ? currentPage : currentPage + 1
-                  )
-                }
-                background="white"
-                _hover={{ bg: "white" }}
-              >
-                <Image
-                  src="/images/arrow/right-arrow.png"
-                  alt=""
-                  h="15px"
-                  w="10px"
-                />
-              </Button>
-            </HStack>
-          </Flex>
-        </TableContainer>
+            </Button>
+
+            <Text>หน้า</Text>
+            <Input
+              htmlSize={1}
+              placeholder={inputValue}
+              size="xs"
+              onChange={handleInputChange}
+              value={inputValue}
+            />
+            <Text whitespace="nowrap">จาก</Text>
+            <Text whitespace="nowrap">{totalPages}</Text>
+            <Button
+              disabled={currentPage >= totalPages}
+              onClick={() =>
+                handlePageChange(
+                  currentPage === totalPages ? currentPage : currentPage + 1
+                )
+              }
+              background="white"
+              _hover={{ bg: "white" }}
+            >
+              <Image
+                src="/images/arrow/right-arrow.png"
+                alt=""
+                h="15px"
+                w="10px"
+              />
+            </Button>
+          </HStack>
+        </Flex>
       </Box>
     </>
   );

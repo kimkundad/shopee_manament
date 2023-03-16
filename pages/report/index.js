@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import {
   Link,
   Flex,
-  Switch,
   Text,
   Image,
   Input,
@@ -10,13 +9,7 @@ import {
   InputLeftElement,
   Box,
   Spacer,
-  Checkbox,
-  Menu,
-  MenuButton,
-  MenuList,
   Button,
-  MenuItem,
-  CheckboxGroup,
   Table,
   Thead,
   Tbody,
@@ -28,6 +21,7 @@ import {
   TableContainer,
   WrapItem,
   Select,
+  Tfoot,
 } from "@chakra-ui/react";
 import ListCheck from "@/components/MenuList";
 function index() {
@@ -146,8 +140,28 @@ function index() {
     setCurrentPage(1);
     setinputValue(1);
   }
+  
+  //sum
+  const [sumSales, setSumSales] = useState(1);
+  const [sumOrder, setSumOrder] = useState(1);
+
+  useEffect(() => {
+    let sum = 0;
+    products.forEach((item) => {
+      sum += item.sales;
+    });
+    setSumSales(sum);
+  }, []);
+
+  useEffect(() => {
+    let sum = 0;
+    products.forEach((item) => {
+      sum += item.orderQuantity;
+    });
+    setSumOrder(sum);
+  }, []);
   return (
-    <Box>
+    <Box w="100%">
       <Flex justifyContent="center" alignItems="center">
         <Image src="/images/menu/report.png" alt="" h="40px" w="40px" />
         <Text pl="10px" fontSize="40px" fontWeight="bold" color="red">
@@ -228,8 +242,8 @@ function index() {
           <Tbody>
             {currentItems.map((item, index) => {
               return (
-                <Tr key={index} fontSize="21px">
-                  <Td bg={index % 2 !== 0 ? "gray.100" : ""}>{item.date}</Td>
+                <Tr key={index} fontSize="21px" >
+                  <Td bg={index % 2 !== 0 ? "gray.100" : ""} borderLeftRadius="md">{item.date}</Td>
                   <Td bg={index % 2 !== 0 ? "gray.100" : ""}>
                     {item.nameshop}
                   </Td>
@@ -254,11 +268,26 @@ function index() {
                   <Td bg={index % 2 !== 0 ? "gray.100" : ""}>
                     {item.orderQuantity}
                   </Td>
-                  <Td bg={index % 2 !== 0 ? "gray.100" : ""}>{item.sales}</Td>
+                  <Td bg={index % 2 !== 0 ? "gray.100" : ""} borderRightRadius="md">{item.sales}</Td>
                 </Tr>
               );
             })}
           </Tbody>
+          <Tfoot>
+            <Tr>
+                <Th fontSize="21px" bg="gray.100" borderLeftRadius="md"><Text fontWeight="bold" >ยอดขาย</Text></Th>
+                <Th bg="gray.100"></Th>
+                <Th bg="gray.100"></Th>
+                <Th bg="gray.100"></Th>
+                <Th bg="gray.100"></Th>
+                <Th bg="gray.100"></Th>
+                <Th bg="gray.100"></Th>
+                <Th bg="gray.100"></Th>
+                <Th bg="gray.100"></Th>
+                <Th fontSize="21px" bg="gray.100"><Text fontWeight="bold" >{sumOrder}</Text></Th>
+                <Th fontSize="21px" bg="gray.100" borderRightRadius="md"><Text fontWeight="bold" >{sumSales}</Text></Th>
+            </Tr>
+          </Tfoot>
         </Table>
         <Flex m="10px">
           <Wrap alignSelf="center" fontSize="21px">

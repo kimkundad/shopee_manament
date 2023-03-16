@@ -39,7 +39,6 @@ function index(props) {
             return (
               <MenuItem key={index}>
                 <Checkbox
-                  value="item1"
                   sx={{
                     ".chakra-checkbox__control": {
                       background: "white !important",
