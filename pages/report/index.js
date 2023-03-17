@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import {
-  Link,
   Flex,
   Text,
   Image,
@@ -10,20 +9,15 @@ import {
   Box,
   Spacer,
   Button,
-  Table,
-  Thead,
-  Tbody,
   Wrap,
-  Tr,
-  Th,
-  Td,
   HStack,
-  TableContainer,
   WrapItem,
   Select,
   Tfoot,
 } from "@chakra-ui/react";
 import ListCheck from "@/components/MenuList";
+import { Table } from "@nextui-org/react";
+import Link from "next/link";
 function index() {
   const initialProducts = [
     {
@@ -206,7 +200,7 @@ function index() {
               bg="red"
               variant="solid"
               color="white"
-              _hover={{ bg: "red" }}
+              _hover={{}}
             >
               พิมพ์รายงาน
             </Button>
@@ -217,77 +211,75 @@ function index() {
           <ListCheck data={colunm} />
         </Box>
       </Flex>
-      <TableContainer height="auto" m="10px">
-        <Table>
-          <Thead>
-            <Tr>
-              {colunm.map((item, index) => {
-                return (
-                  <Th
-                    key={index}
-                    bg="red"
-                    borderLeftRadius={index === 0 ? "md" : ""}
-                    borderRightRadius={index === colunm.length - 1 ? "md" : ""}
-                    fontSize="21px"
-                    color="white"
-                  >
-                    <Box textAlign="center">
-                      <Text>{item.label}</Text>
-                    </Box>
-                  </Th>
-                );
-              })}
-            </Tr>
-          </Thead>
-          <Tbody>
-            {currentItems.map((item, index) => {
+      <Table
+          striped
+          sticked
+          aria-label="Example table with static content"
+          css={{
+            height: "auto",
+            minWidth: "100%",
+            border: "0px",
+            boxShadow: "none"
+          }}
+        >
+          <Table.Header bg="red">
+            {colunm.map((item, index) => {
               return (
-                <Tr key={index} fontSize="21px" >
-                  <Td bg={index % 2 !== 0 ? "gray.100" : ""} borderLeftRadius="md">{item.date}</Td>
-                  <Td bg={index % 2 !== 0 ? "gray.100" : ""}>
-                    {item.nameshop}
-                  </Td>
-                  <Td bg={index % 2 !== 0 ? "gray.100" : ""}>
-                    {item.nameproduct}
-                  </Td>
-                  <Td bg={index % 2 !== 0 ? "gray.100" : ""}>
-                    {item.productId}
-                  </Td>
-                  <Td bg={index % 2 !== 0 ? "gray.100" : ""} display="flex">
-                    {item.linkshop}
-                    <Image pl="5px" src="/images/copy.png" alt="" h="20px" />
-                  </Td>
-                  <Td bg={index % 2 !== 0 ? "gray.100" : ""}>
-                    {item.numberInvoice}
-                  </Td>
-                  <Td bg={index % 2 !== 0 ? "gray.100" : ""}>
-                    {item.customername}
-                  </Td>
-                  <Td bg={index % 2 !== 0 ? "gray.100" : ""}>{item.address}</Td>
-                  <Td bg={index % 2 !== 0 ? "gray.100" : ""}>{item.tel}</Td>
-                  <Td bg={index % 2 !== 0 ? "gray.100" : ""}>
-                    {item.orderQuantity}
-                  </Td>
-                  <Td bg={index % 2 !== 0 ? "gray.100" : ""} borderRightRadius="md">{item.sales}</Td>
-                </Tr>
+                <Table.Column
+                  style={{ backgroundColor: "red", color: "white" }}
+                  key={index}
+                  onClick={
+                    index == 0 ? (event) => handleAllSwitchChange() : null
+                  }
+                  css={{ textAlign: "center",
+                padding: "0px !important" }}
+                >
+                  <Text fontSize="21px">{item.label}</Text>
+                </Table.Column>
               );
             })}
-          </Tbody>
-          <Tfoot>
-            <Tr>
-                <Th fontSize="21px" bg="gray.100" borderLeftRadius="md"><Text fontWeight="bold" >ยอดขาย</Text></Th>
-                <Th bg="gray.100"></Th>
-                <Th bg="gray.100"></Th>
-                <Th bg="gray.100"></Th>
-                <Th bg="gray.100"></Th>
-                <Th bg="gray.100"></Th>
-                <Th bg="gray.100"></Th>
-                <Th bg="gray.100"></Th>
-                <Th bg="gray.100"></Th>
-                <Th fontSize="21px" bg="gray.100"><Text fontWeight="bold" >{sumOrder}</Text></Th>
-                <Th fontSize="21px" bg="gray.100" borderRightRadius="md"><Text fontWeight="bold" >{sumSales}</Text></Th>
-            </Tr>
-          </Tfoot>
+          </Table.Header>
+          <Table.Body>
+            {currentItems.map((item, index) => {
+              return (
+                <Table.Row key={index} css={index % 2 !==0? { fontSize: "21px",background: "$gray100" }:{fontSize: "21px"}}>
+                  <Table.Cell css={{ textAlign: "center" }}>
+                    {item.date}
+                  </Table.Cell>
+                  <Table.Cell css={{ textAlign: "center" }}>
+                    {item.nameshop}
+                  </Table.Cell>
+                  <Table.Cell>
+                    {item.nameproduct}
+                  </Table.Cell>
+                  <Table.Cell css={{ textAlign: "center" }}>
+                    {item.productId}
+                  </Table.Cell>
+                  <Table.Cell css={{ textAlign: "center" }}>
+                    {item.linkshop}
+                  </Table.Cell>
+                  <Table.Cell css={{ textAlign: "center" }}>
+                    {item.numberInvoice}
+                  </Table.Cell>
+                  <Table.Cell css={{ textAlign: "center" }}>
+                    {item.customername}
+                  </Table.Cell>
+                  <Table.Cell css={{ textAlign: "center" }}>
+                    {item.address}
+                  </Table.Cell>
+                  <Table.Cell css={{ textAlign: "center" }}>
+                    {item.tel}
+                  </Table.Cell>
+                  <Table.Cell css={{ textAlign: "center" }}>
+                    {item.orderQuantity}
+                  </Table.Cell>
+                  <Table.Cell css={{ textAlign: "center" }}>
+                    {item.sales}
+                  </Table.Cell>
+                </Table.Row>
+              );
+            })}
+          </Table.Body>
         </Table>
         <Flex m="10px">
           <Wrap alignSelf="center" fontSize="21px">
@@ -319,7 +311,7 @@ function index() {
                 )
               }
               background="white"
-              _hover={{ bg: "white" }}
+              _hover={{}}
             >
               <Image
                 src="/images/arrow/left-arrow.png"
@@ -337,7 +329,8 @@ function index() {
               onChange={handleInputChange}
               value={inputValue}
             />
-            <Text>จาก {totalPages}</Text>
+            <Text whitespace="nowrap">จาก</Text>
+            <Text whitespace="nowrap">{totalPages}</Text>
             <Button
               disabled={currentPage >= totalPages}
               onClick={() =>
@@ -346,7 +339,7 @@ function index() {
                 )
               }
               background="white"
-              _hover={{ bg: "white" }}
+              _hover={{}}
             >
               <Image
                 src="/images/arrow/right-arrow.png"
@@ -357,7 +350,6 @@ function index() {
             </Button>
           </HStack>
         </Flex>
-      </TableContainer>
     </Box>
   );
 }

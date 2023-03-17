@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import {
-  Link,
   Flex,
   Switch,
   Text,
@@ -16,9 +15,17 @@ import {
   WrapItem,
   Select,
   Center,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  useDisclosure,
 } from "@chakra-ui/react";
 import ListCheck from "@/components/MenuList";
-import { Table } from "@nextui-org/react"; // icons
+import { Table } from "@nextui-org/react";
+import Link from "next/link";
 export default function stock() {
   const initialProducts = [
     {
@@ -201,6 +208,32 @@ export default function stock() {
     setinputValue(1);
   }
   //sorting colunm
+
+  //active button
+  const {
+    isOpen: isOpenForm1,
+    onOpen: onOpenForm1,
+    onClose: onCloseForm1,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenForm2,
+    onOpen: onOpenForm2,
+    onClose: onCloseForm2,
+  } = useDisclosure();
+
+  const comfirmDelete = () => {
+    onOpenForm1();
+  };
+  const closeModal = () => {
+    onCloseForm1();
+    onCloseForm2();
+  };
+
+  const deleteSuccess = () => {
+    onCloseForm1();
+    onOpenForm2();
+  };
+
   return (
     <>
       <Box>
@@ -230,7 +263,7 @@ export default function stock() {
                 bg="red"
                 variant="solid"
                 color="white"
-                _hover={{ bg: "red" }}
+                _hover={{}}
               >
                 เพิ่มสินค้า
               </Button>
@@ -250,7 +283,7 @@ export default function stock() {
             height: "auto",
             minWidth: "100%",
             border: "0px",
-            boxShadow: "none"
+            boxShadow: "none",
           }}
         >
           <Table.Header bg="red">
@@ -262,8 +295,7 @@ export default function stock() {
                   onClick={
                     index == 0 ? (event) => handleAllSwitchChange() : null
                   }
-                  css={{ textAlign: "center",
-                padding: "0px !important" }}
+                  css={{ textAlign: "center", padding: "0px !important" }}
                 >
                   <Text fontSize="21px">{item.label}</Text>
                   {index == 0 ? (
@@ -286,7 +318,14 @@ export default function stock() {
           <Table.Body>
             {currentItems.map((item, index) => {
               return (
-                <Table.Row key={index} css={index % 2 !==0? { fontSize: "21px",background: "$gray100" }:{fontSize: "21px"}}>
+                <Table.Row
+                  key={index}
+                  css={
+                    index % 2 !== 0
+                      ? { fontSize: "21px", background: "$gray100" }
+                      : { fontSize: "21px" }
+                  }
+                >
                   <Table.Cell css={{ textAlign: "center" }}>
                     <Switch
                       colorScheme="brand"
@@ -327,9 +366,7 @@ export default function stock() {
                       <Link href="/">
                         <Image src="/images/edit.png" h="25px" />
                       </Link>
-                      <Link href="/">
-                        <Image pl="7px" src="/images/trash-bin.png" h="25px" />
-                      </Link>
+                      <Image pl="7px" src="/images/trash-bin.png" h="25px" onClick={comfirmDelete} />
                     </Flex>
                   </Table.Cell>
                 </Table.Row>
@@ -367,7 +404,7 @@ export default function stock() {
                 )
               }
               background="white"
-              _hover={{ bg: "white" }}
+              _hover={{}}
             >
               <Image
                 src="/images/arrow/left-arrow.png"
@@ -395,7 +432,7 @@ export default function stock() {
                 )
               }
               background="white"
-              _hover={{ bg: "white" }}
+              _hover={{}}
             >
               <Image
                 src="/images/arrow/right-arrow.png"
@@ -406,6 +443,70 @@ export default function stock() {
             </Button>
           </HStack>
         </Flex>
+        <Modal onClose={onCloseForm1} size="md" isOpen={isOpenForm1} isCentered>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader alignSelf="flex-end" pr="10px" pt="10px">
+              <Image
+                src="/images/close.png"
+                alt=""
+                h="25px"
+                w="25px"
+                onClick={() => closeModal()}
+              />
+            </ModalHeader>
+            <ModalBody>
+              <Box textAlign="-webkit-center">
+                <Image
+                  src="/images/binred.png"
+                  alt=""
+                  h="120px"
+                  w="120px"
+                />
+                <Text fontSize="40px" fontWeight="bold">
+                  ยืนยันการลบสินค้า
+                </Text>
+              </Box>
+            </ModalBody>
+            <ModalFooter justifyContent="center">
+              <Flex>
+                <Button bg="white">ยกเลิก</Button>
+                <Button bg="red" color="white" onClick={() => deleteSuccess()}>
+                  ยืนยัน
+                </Button>
+              </Flex>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+        <Modal onClose={onCloseForm2} size="xs" isOpen={isOpenForm2} isCentered>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader alignSelf="flex-end" pr="10px" pt="10px">
+              <Image
+                src="/images/close.png"
+                alt=""
+                h="25px"
+                w="25px"
+                onClick={() => closeModal()}
+              />
+            </ModalHeader>
+            <ModalBody>
+              <Box textAlign="-webkit-center">
+                <Image src="/images/check.png" alt="" h="120px" w="120px" />
+                <Text fontSize="40px" fontWeight="bold">
+                  ลบสินค้าสำเร็จ
+                </Text>
+              </Box>
+            </ModalBody>
+            <ModalFooter justifyContent="center">
+              <Link href="/stock">
+                <Button bg="red" color="white" _hover={{  }} onClick={() => closeModal()}>
+                  ไปที่หน้าคลังสินค้า
+                </Button>
+              </Link>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       </Box>
     </>
   );

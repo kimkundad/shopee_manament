@@ -24,7 +24,7 @@ function index(props) {
             w="20px"
           />
         }
-        _hover={{ bg: "white" }}
+        _hover={{}}
       >
         เลือกตัวแสดงผล
       </MenuButton>

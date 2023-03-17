@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
+import { BsArrowLeftCircle } from "react-icons/bs";
 import {
   Box,
   Flex,
@@ -17,18 +18,10 @@ import {
   InputGroup,
   InputRightElement,
   FormControl,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  useDisclosure,
-  Spacer,
   Icon,
+  Spacer,
 } from "@chakra-ui/react";
 import Link from "next/link";
-import { BsArrowLeftCircle } from "react-icons/bs";
 const thumbsContainer = {
   display: "flex",
   flexDirection: "row",
@@ -57,7 +50,7 @@ const img = {
   height: "100%",
 };
 
-function addProduct() {
+function index() {
   const [files, setFiles] = useState([]);
   const { getRootProps, getInputProps } = useDropzone({
     accept: {
@@ -93,37 +86,7 @@ function addProduct() {
     return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
   }, []);
 
-  const [buttonActive, setButtonActive] = useState([true, false]);
-
-  const handelButton = (event) => {
-    event.target.id === "0"
-      ? setButtonActive([true, false])
-      : setButtonActive([false, true]);
-  };
-
-  const {
-    isOpen: isOpenForm1,
-    onOpen: onOpenForm1,
-    onClose: onCloseForm1,
-  } = useDisclosure();
-  const {
-    isOpen: isOpenForm2,
-    onOpen: onOpenForm2,
-    onClose: onCloseForm2,
-  } = useDisclosure();
-
-  const comfirmSave = () => {
-    onOpenForm1();
-  };
-  const closeModal = () => {
-    onCloseForm1();
-    onCloseForm2();
-  };
-
-  const saveSuccess = () => {
-    onCloseForm1();
-    onOpenForm2();
-  };
+  const [buttonActive, setButtonActive] = useState([false, true]);
 
   return (
     <Box>
@@ -167,7 +130,6 @@ function addProduct() {
                     borderRadius="3xl"
                     w="150px"
                     _hover={{}}
-                    onClick={handelButton}
                   >
                     สินค้าชิ้นเดียว
                   </Button>
@@ -188,7 +150,6 @@ function addProduct() {
                     borderRadius="3xl"
                     w="150px"
                     _hover={{}}
-                    onClick={handelButton}
                   >
                     สินค้ามีตัวเลือก
                   </Button>
@@ -447,88 +408,29 @@ function addProduct() {
                 </GridItem>
               </Grid>
               <Flex justifyContent="center" pt="10px">
-                <Button ml="200px">ยกเลิก</Button>
-                <Button
-                  type="submit"
-                  ml="10px"
-                  bg="red"
-                  leftIcon={<Image src="/images/save.png" alt="" h="25px" />}
-                  _hover={{}}
-                  onClick={() => comfirmSave()}
-                >
-                  บันทึก
-                </Button>
+                <Link href="/stock/addProductMultiSelect/option">
+                  <Button
+                    ml="200px"
+                    type="submit"
+                    bg="red"
+                    leftIcon={
+                      <Image src="/images/pluswhite.png" alt="" h="15px" />
+                    }
+                    _hover={{}}
+                    color="white"
+                    h="35px"
+                    fontSize="21px"
+                  >
+                    เพิ่มตัวเลือกสินค้า
+                  </Button>
+                </Link>
               </Flex>
             </GridItem>
           </Grid>
         </Box>
-        <Modal onClose={onCloseForm1} size="md" isOpen={isOpenForm1} isCentered>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader alignSelf="flex-end" pr="10px" pt="10px">
-              <Image
-                src="/images/close.png"
-                alt=""
-                h="25px"
-                w="25px"
-                onClick={() => closeModal()}
-              />
-            </ModalHeader>
-            <ModalBody>
-              <Box textAlign="-webkit-center">
-                <Image
-                  src="/images/addproduct.png"
-                  alt=""
-                  h="120px"
-                  w="120px"
-                />
-                <Text fontSize="40px" fontWeight="bold">
-                  ยืนยันการเพิ่มสินค้า
-                </Text>
-              </Box>
-            </ModalBody>
-            <ModalFooter justifyContent="center">
-              <Flex>
-                <Button bg="white">ยกเลิก</Button>
-                <Button bg="red" color="white" onClick={() => saveSuccess()}>
-                  ยืนยัน
-                </Button>
-              </Flex>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-        <Modal onClose={onCloseForm2} size="xs" isOpen={isOpenForm2} isCentered>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader alignSelf="flex-end" pr="10px" pt="10px">
-              <Image
-                src="/images/close.png"
-                alt=""
-                h="25px"
-                w="25px"
-                onClick={() => closeModal()}
-              />
-            </ModalHeader>
-            <ModalBody>
-              <Box textAlign="-webkit-center">
-                <Image src="/images/check.png" alt="" h="120px" w="120px" />
-                <Text fontSize="40px" fontWeight="bold">
-                  เพิ่มสินค้าสำเร็จ
-                </Text>
-              </Box>
-            </ModalBody>
-            <ModalFooter justifyContent="center">
-              <Link href="/stock">
-                <Button bg="red" color="white" _hover={{  }}>
-                  ไปที่หน้าคลังสินค้า
-                </Button>
-              </Link>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
       </FormControl>
     </Box>
   );
 }
 
-export default addProduct;
+export default index;
