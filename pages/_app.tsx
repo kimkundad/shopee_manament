@@ -10,7 +10,7 @@ const theme = extendTheme({
       100: "#B794F4",
       500: "#3FFF33", // you need this
     }
-  }
+  },
 });
 function MyApp({ Component, pageProps }: AppProps) {
   return (

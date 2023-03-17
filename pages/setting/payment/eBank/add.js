@@ -3,10 +3,10 @@ import Image from 'next/image';
 import {
     Box, Text, HStack, Center, Input, Button,
     Spacer, Avatar, AvatarBadge, Select, IconButton, Flex, Stack,
-    InputGroup, InputLeftElement, Wrap, WrapItem,
+    InputGroup, InputLeftElement, Wrap, WrapItem, Link,
     FormControl, FormLabel, Lorem, LinkBox, Grid, GridItem,
     Switch, VStack, InputRightElement, Textarea, ButtonGroup,
-    RadioGroup, Radio, StackDivider, Link, SkeletonCircle,
+    RadioGroup, Radio, StackDivider, SkeletonCircle,
     AbsoluteCenter, Container,
 } from "@chakra-ui/react"
 import {
@@ -17,7 +17,7 @@ import { BsArrowLeftCircle, BsArrowRightCircle, BsPerson, BsCameraFill, BsCashCo
 import { FaRegSave } from "react-icons/fa";
 import { VscSave } from "react-icons/vsc";
 
-export default function Purchase() {
+export default function EbankAdd() {
 
 
     return (
@@ -102,9 +102,9 @@ export default function Purchase() {
                                 </Box>
                                 <Box w='75%'>
                                     <Select fontSize='17'>
-                                        <option value='option1'>Option 1</option>
-                                        <option value='option2'>Option 2</option>
-                                        <option value='option3'>Option 3</option>
+                                        <option value='option1'>ไทยพาณิชน์</option>
+                                        <option value='option2'>กสิกรไทย</option>
+                                        <option value='option3'>กรุงศรีอยุธยา</option>
                                     </Select>
                                 </Box>
                             </HStack>
@@ -148,10 +148,10 @@ export default function Purchase() {
 
 
 
-                <HStack justify='center' mt={10}>
+                <HStack justify='center' mt='10'>
                     <ButtonGroup gap='4'>
                         <Button colorScheme='gray'>ยกเลิก</Button>
-                        <Button onClick={''} leftIcon={<VscSave />} background='#f84c01' color='white'>บันทึก</Button >
+                        <Button leftIcon={<VscSave />} background='#f84c01' color='white'>บันทึก</Button >
                     </ButtonGroup>
                 </HStack>
             </Box>

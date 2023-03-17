@@ -1,12 +1,13 @@
 import React from "react";
 import Image from 'next/image';
+import Link from "next/link";
 import {
     Box, Text, HStack, Center, Input, Button,
     Spacer, Avatar, AvatarBadge, Select, IconButton, Flex, Stack,
     InputGroup, InputLeftElement, Wrap, WrapItem,
     FormControl, FormLabel, Lorem, LinkBox, Grid, GridItem,
     Switch, VStack, InputRightElement, Textarea, ButtonGroup,
-    RadioGroup, Radio, StackDivider, Link, SkeletonCircle, AbsoluteCenter
+    RadioGroup, Radio, StackDivider, SkeletonCircle, AbsoluteCenter
 } from "@chakra-ui/react"
 import {
     AddIcon, EditIcon, DeleteIcon, Icon,
@@ -27,7 +28,7 @@ export default function Purchase() {
             >
                 <Box>
                     <Button
-                        onClick={''}
+
                         leftIcon={<BsArrowLeftCircle />}
                         size='sm'
                         borderRadius="3xl"
@@ -41,7 +42,7 @@ export default function Purchase() {
                 <Box>
                     <Center>
                         <HStack>
-                            <Image width={36} height={36} src={'/images/menu/ตั้งค่า.png'} />
+                            <Image width={36} height={36} src={'/images/menu/ตั้งค่า.png'} alt={'ตั้งค่า'} />
                             <Text as='b' fontSize='4xl' pt={3}> ตั้งค่า</Text>
                         </HStack>
                     </Center>
@@ -126,16 +127,17 @@ export default function Purchase() {
                 </Flex>
 
                 <Center mt={10}>
-                    <Button
-                        onClick={''}
-                        leftIcon={<AddIcon />}
-                        borderRadius="3xl"
-                        color='white'
-                        fontSize='21'
-                        background='#f84c01'
-                    >
-                        เพิ่มการชำระเงินแบบโอน
-                    </Button >
+                    <Link href={'/setting/payment/eBank/add'} style={{ textDecoration: 'none' }}>
+                        <Button
+                            leftIcon={<AddIcon />}
+                            borderRadius="3xl"
+                            color='white'
+                            fontSize='21'
+                            background='#f84c01'
+                        >
+                            เพิ่มการชำระเงินแบบโอน
+                        </Button >
+                    </Link>
                 </Center>
             </Box>
 

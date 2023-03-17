@@ -1,90 +1,123 @@
 import React from "react";
-import { FaBeer } from 'react-icons/fa';
-import { Container, Row, Col, Card, Grid, Text, Button } from "@nextui-org/react";
-import Image from 'next/image'
+import Image from 'next/image';
+import {
+    Box, Text, HStack, Center, Input, Button,
+    Spacer, Avatar, AvatarBadge, Select, IconButton, Flex, Stack,
+    InputGroup, InputLeftElement, Wrap, WrapItem,
+    FormControl, FormLabel, Lorem, LinkBox, Grid, GridItem,
+    Switch, VStack, InputRightElement, Textarea, ButtonGroup,
+    RadioGroup, Radio, StackDivider, Link
+} from "@chakra-ui/react"
+import {
+    AddIcon, EditIcon, DeleteIcon, Icon,
+    ArrowLeftIcon, ArrowRightIcon, SearchIcon
+} from '@chakra-ui/icons';
+import { BsReceipt, BsArrowRightCircle, BsPerson, BsShop, BsCashCoin, BsBell } from "react-icons/bs";
+import { FaRegSave } from "react-icons/fa";
+import { VscSave } from "react-icons/vsc";
+
+export default function Purchase() {
 
 
-export default function Setting() {
+    return (
+        <>
+
+            <Box p='10'>
+                <Box>
+                    <Center>
+                        <HStack>
+                            <Image width='36' height='36' src={'/images/menu/ตั้งค่า.png'} />
+                            <Text as='b' fontSize='4xl' pt={3}> ตั้งค่า</Text>
+                        </HStack>
+                    </Center>
+                </Box>
+            </Box>
+
+            <Box p={10} minHeight={400}>
+                <VStack
+                    spacing={5}
+                    align='stretch'
+                >
+                    <Box p='5' borderWidth='2px' borderColor='gray.500' borderRadius='lg'>
+                        <Flex color='gray.600'>
+                            <HStack>
+                                <Icon as={BsPerson} boxSize={10} />
+                                <Text pt='1' pl='2' as='b' fontSize='21' >โปรไฟล์ของฉัน</Text>
+                            </HStack>
+                            <Spacer />
+                            <Box>
+                                <Link href="/setting/profile">
+                                    <Icon as={BsArrowRightCircle} boxSize={8} />
+                                </Link>
+                            </Box>
+                        </Flex>
+                    </Box>
+
+                    <Box p='5' borderWidth='2px' borderColor='gray.500' borderRadius='lg'>
+                        <Flex color='gray.600'>
+                            <HStack>
+                                <Icon as={BsShop} boxSize={8} />
+                                <Text pt='1' pl='2' as='b' fontSize='21' >ตั้งค่าร้าน</Text>
+                            </HStack>
+                            <Spacer />
+                            <Box>
+                                <Link href="/setting">
+                                    <Icon as={BsArrowRightCircle} boxSize={8} />
+                                </Link>
+                            </Box>
+                        </Flex>
+                    </Box>
+
+                    <Box p='5' borderWidth='2px' borderColor='gray.500' borderRadius='lg'>
+                        <Flex color='gray.600'>
+                            <HStack>
+                                <Icon as={BsCashCoin} boxSize={8} />
+                                <Text pt='1' pl='2' as='b' fontSize='21' >ช่องทางการชำระเงิน</Text>
+                            </HStack>
+                            <Spacer />
+                            <Box>
+                                <Link href="/setting/payment">
+                                    <Icon as={BsArrowRightCircle} boxSize={8} />
+                                </Link>
+                            </Box>
+                        </Flex>
+                    </Box>
+
+                    <Box p='5' borderWidth='2px' borderColor='gray.500' borderRadius='lg'>
+                        <Flex color='gray.600'>
+                            <HStack>
+                                <Icon as={BsReceipt} boxSize={8} />
+                                <Text pt='1' pl='2' as='b' fontSize='21' >ใบเสร็จ/ใบกำกับภาษี</Text>
+                            </HStack>
+                            <Spacer />
+                            <Box>
+                                <Link href="/setting">
+                                    <Icon as={BsArrowRightCircle} boxSize={8} />
+                                </Link>
+                            </Box>
+                        </Flex>
+                    </Box>
+
+                    <Box p='5' borderWidth='2px' borderColor='gray.500' borderRadius='lg'>
+                        <Flex color='gray.600'>
+                            <HStack>
+                                <Icon as={BsBell} boxSize={8} />
+                                <Text pt='1' pl='2' as='b' fontSize='21' >แจ้งเตือน</Text>
+                            </HStack>
+                            <Spacer />
+                            <Box>
+                                <Link href="/setting">
+                                    <Icon as={BsArrowRightCircle} boxSize={8} />
+                                </Link>
+                            </Box>
+                        </Flex>
+                    </Box>
 
 
-  return (
-    <>
 
-      <Grid.Container gap={2}>
-        <Grid sm={12} md={12} justify="center">
-          <Image width={36} height={36} src={'/images/menu/ตั้งค่า.png'} />
-          <Text as='b' fontSize='4xl' pt={3}> ตั้งค่า</Text>
-        </Grid>
+                </VStack>
+            </Box>
 
-        <Grid sm={12} md={12}>
-          <Card css={{ mw: "100%" }}>
-            <Card.Header css={{ bg: 'red' }}>
-              <Text b color={'white'}><FaBeer />ข้อมูลทั่วไป</Text>
-            </Card.Header>
-            <Card.Divider />
-
-            <Card.Body css={{ py: "$5" }}>
-              <Text>โปรไฟล์ของฉัน</Text>
-            </Card.Body>
-          </Card>
-        </Grid>
-
-        <Grid sm={12} md={12}>
-          <Card css={{ mw: "100%" }}>
-            <Card.Header css={{ bg: 'red' }}>
-              <Text b color={'white'}>ตั้งค่าหน้าร้าน</Text>
-            </Card.Header>
-            <Card.Divider />
-
-            <Card.Body css={{ py: "$5" }}>
-              <Text>แก้ไขข้อมูล</Text>
-            </Card.Body>
-            <Card.Divider />
-
-            <Card.Body css={{ py: "$5" }}>
-              <Text>รูปแบบร้านค้า</Text>
-            </Card.Body>
-            <Card.Divider />
-
-            <Card.Body css={{ py: "$5" }}>
-              <Text>ตกแต่งร้าน</Text>
-            </Card.Body>
-          </Card>
-        </Grid>
-
-        <Grid sm={12} md={12}>
-          <Card css={{ mw: "100%" }}>
-            <Card.Header css={{ bg: 'red' }}>
-              <Text b color={'white'}>ช่องทางการชำระเงิน</Text>
-            </Card.Header>
-            <Card.Divider />
-
-            <Card.Body css={{ py: "$5" }}>
-              <Text>ชำระเงินแบบโอน</Text>
-            </Card.Body>
-            <Card.Divider />
-
-            <Card.Body css={{ py: "$5" }}>
-              <Text>เก็บเงินปลายทาง (COD)</Text>
-            </Card.Body>
-          </Card>
-        </Grid>
-
-        <Grid sm={12} md={12}>
-          <Card css={{ mw: "100%" }}>
-            <Card.Header css={{ bg: 'red' }}>
-              <Text b color={'white'}>แจ้งเตือน</Text>
-            </Card.Header>
-            <Card.Divider />
-
-            <Card.Body css={{ py: "$5" }}>
-              <Text>แจ้งเตือนออเดอร์</Text>
-            </Card.Body>
-          </Card>
-        </Grid>
-
-      </Grid.Container>
-
-    </>
-  );
+        </>
+    );
 }

@@ -41,7 +41,7 @@ export default function Profile() {
             <Box bg={'#f3f4f6'} pl={10} pt={2} pb={2}>
                 <HStack>
                     <Icon as={BsPerson} boxSize={8} />
-                    <Text as='b'> โปรไฟล์ของฉัน</Text>
+                    <Text pt='1' pl='2' as='b' fontSize='21' > โปรไฟล์ของฉัน</Text>
                 </HStack>
             </Box>
 
