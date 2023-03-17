@@ -23,7 +23,7 @@ const Layout = (props: PropsWithChildren) => {
               "m-5 bg-white rounded-[20px]": true,
             })}
           >
-            <div className="">{props.children}</div>
+            {props.children}
           </div>
         </div>
       </div>
