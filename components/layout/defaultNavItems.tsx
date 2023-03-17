@@ -113,7 +113,7 @@ export const defaultNavItems: NavItem[] = [
 
   {
     label: "จัดการแอดมิน",
-    href: "/adminManagement",
+    href: "/admin",
     icon: (
       <Image
         src="/images/menu/จัดการแอดมิน.png"

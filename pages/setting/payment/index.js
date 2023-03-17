@@ -66,7 +66,7 @@ export default function Purchase() {
                             </Box>
                             <Spacer />
                             <Box as='span' color='gray.600' fontSize='sm'>
-                                <Link href="">
+                                <Link href="/setting/payment/eBank">
                                     <Icon as={BsArrowRightCircle} boxSize={8} />
                                 </Link>
                             </Box>
@@ -78,7 +78,7 @@ export default function Purchase() {
                             <Box as='span' color='gray.600' fontSize='sm'>
                                 <Text as='b' fontSize='lg'>ชำระเงินแบบเก็บปลายทาง (COD)</Text> <br />
                                 <Text as='b'>รับชำระเงินแบบเก็บปลายทาง คลิ๊ก
-                                    <Link href="" color={'red.500'}> ตั้งค่าบัญชีรับเงินปลายทาง</Link>
+                                    <Link href="/setting/payment/COD" color={'red.500'}> ตั้งค่าบัญชีรับเงินปลายทาง</Link>
                                 </Text>
                             </Box>
                             <Spacer />

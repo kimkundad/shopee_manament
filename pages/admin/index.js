@@ -95,11 +95,13 @@ export default function AdminManagement() {
                   <Td>
                     <HStack>
                       <IconButton
+                        borderRadius="3xl"
                         colorScheme='blue'
                         aria-label='Edit'
                         icon={<EditIcon />}
                       />
                       <IconButton
+                        borderRadius="3xl"
                         colorScheme='red'
                         aria-label='Delete'
                         icon={<DeleteIcon />}
@@ -117,11 +119,13 @@ export default function AdminManagement() {
                   <Td>
                     <HStack>
                       <IconButton
+                        borderRadius="3xl"
                         colorScheme='blue'
                         aria-label='Edit'
                         icon={<EditIcon />}
                       />
                       <IconButton
+                        borderRadius="3xl"
                         colorScheme='red'
                         aria-label='Delete'
                         icon={<DeleteIcon />}
@@ -139,11 +143,13 @@ export default function AdminManagement() {
                   <Td>
                     <HStack>
                       <IconButton
+                        borderRadius="3xl"
                         colorScheme='blue'
                         aria-label='Edit'
                         icon={<EditIcon />}
                       />
                       <IconButton
+                        borderRadius="3xl"
                         colorScheme='red'
                         aria-label='Delete'
                         icon={<DeleteIcon />}
@@ -161,11 +167,13 @@ export default function AdminManagement() {
                   <Td>
                     <HStack>
                       <IconButton
+                        borderRadius="3xl"
                         colorScheme='blue'
                         aria-label='Edit'
                         icon={<EditIcon />}
                       />
                       <IconButton
+                        borderRadius="3xl"
                         colorScheme='red'
                         aria-label='Delete'
                         icon={<DeleteIcon />}
