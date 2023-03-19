@@ -1,13 +1,13 @@
 import React from "react";
 import Image from 'next/image';
 import {
-    Box, Text, HStack, Center, Button,
-    Spacer, Flex, Switch, VStack, Link
-} from "@chakra-ui/react";
+    Box, Text, HStack, Center, Flex,
+    VStack, Button, Spacer, Link
+} from "@chakra-ui/react"
 import { Icon } from '@chakra-ui/icons';
-import { BsArrowLeftCircle, BsArrowRightCircle, BsCashCoin } from "react-icons/bs";
+import { BsArrowLeftCircle, BsArrowRightCircle, BsReceipt } from "react-icons/bs"
 
-export default function Purchase() {
+export default function Receipt() {
 
 
     return (
@@ -40,8 +40,8 @@ export default function Purchase() {
 
             <Box bg={'#f3f4f6'} pl={10} pt={2} pb={2}>
                 <HStack>
-                    <Icon as={BsCashCoin} boxSize={8} />
-                    <Text as='b' fontSize='lg'> ช่องทางการชำระเงิน</Text>
+                    <Icon as={BsReceipt} boxSize={8} />
+                    <Text as='b' fontSize='lg'> ใบเสร็จ/ใบกำกับภาษี</Text>
                 </HStack>
             </Box>
 
@@ -50,31 +50,32 @@ export default function Purchase() {
                     spacing={5}
                     align='stretch'
                 >
-                    <Box p={5} borderWidth='2px' borderColor={'gray.500'} borderRadius='lg'>
-                        <Flex>
-                            <Box as='span' color='gray.600' fontSize='sm'>
-                                <Text as='b' fontSize='lg' >ชำระเงินแบบโอน</Text>
+                    <Box p={5} color='gray.600' fontSize='17' borderWidth='2px' borderColor={'gray.500'} borderRadius='lg'>
+                        <Flex align={'center'}>
+                            <Box>
+                                <Text as='b' fontSize='21' >ใบเสร็จ</Text>
+                                <br /><Text>ตั้งค่าสำหรับพิมพ์เอกสารใบเสร็จ</Text>
                             </Box>
                             <Spacer />
-                            <Box as='span' color='gray.600' fontSize='sm'>
-                                <Link href="/setting/payment/eBank">
+                            <Box>
+                                <Link href="/setting/receipt/bill">
                                     <Icon as={BsArrowRightCircle} boxSize={8} />
                                 </Link>
                             </Box>
                         </Flex>
                     </Box>
 
-                    <Box p={5} borderWidth='2px' borderColor={'gray.500'} borderRadius='lg'>
+                    <Box p={5} color='gray.600' fontSize='17' borderWidth='2px' borderColor={'gray.500'} borderRadius='lg'>
                         <Flex align={'center'}>
-                            <Box as='span' color='gray.600' fontSize='sm'>
-                                <Text as='b' fontSize='lg'>ชำระเงินแบบเก็บปลายทาง (COD)</Text> <br />
-                                <Text as='b'>รับชำระเงินแบบเก็บปลายทาง คลิ๊ก
-                                    <Link href="/setting/payment/COD" color={'red.500'}> ตั้งค่าบัญชีรับเงินปลายทาง</Link>
-                                </Text>
+                            <Box>
+                                <Text as='b' fontSize='21' >ใบกำกับภาษี</Text>
+                                <br /><Text>ตั้งค่าสำหรับพิมพ์เอกสารใบกำกับภาษี</Text>
                             </Box>
                             <Spacer />
-                            <Box as='span' color='gray.600' fontSize='sm'>
-                                <Switch size='lg' colorScheme='green' />
+                            <Box>
+                                <Link href="/setting/receipt/invoice">
+                                    <Icon as={BsArrowRightCircle} boxSize={8} />
+                                </Link>
                             </Box>
                         </Flex>
                     </Box>

@@ -3,14 +3,13 @@ import {
   Box, Text, HStack, Center, Input, Button,
   Spacer, Avatar, Select, IconButton, Flex, Stack,
   InputGroup, InputLeftElement, Wrap, WrapItem,
-  FormControl, FormLabel, Lorem, LinkBox, Grid, GridItem,
+  FormControl, FormLabel, Grid, GridItem,
   Switch, VStack, InputRightElement,
 } from "@chakra-ui/react"
 import {
   Table,
   Thead,
   Tbody,
-  Tfoot,
   Tr,
   Th,
   Td,
@@ -49,7 +48,7 @@ export default function AdminManagement() {
         <Box>
           <Center>
             <HStack>
-              <Image width={42} height={42} src={'/images/menu/จัดการแอดมิน.png'} />
+              <Image width={42} height={42} src={'/images/menu/จัดการแอดมิน.png'} alt='admin' />
               <Text as='b' fontSize='4xl' color='#f84c01' pt={3}> จัดการแอดมิน</Text>
             </HStack>
           </Center>
@@ -71,28 +70,41 @@ export default function AdminManagement() {
         </Box>
 
         <Box mt={10}>
-          <TableContainer>
+          <TableContainer fontSize='17'>
             <Table variant='striped' colorScheme='gray'>
-              <Thead>
+              <Thead >
                 <Tr bg={'#f84c01'}>
-                  <Th color={'white'}>รูปภาพ</Th>
-                  <Th color={'white'}>ชื่อ - นามสกุล</Th>
-                  <Th color={'white'}>Email</Th>
-                  <Th color={'white'}>สถานะ</Th>
-                  <Th color={'white'}>สิทธิ์การเข้าถึง</Th>
-                  <Th color={'white'}>วันที่สร้าง</Th>
-                  <Th color={'white'}>เพิ่มเติม</Th>
+                  <Th color={'white'} borderLeftRadius={'10'} fontSize='15' py='8'>รูปภาพ</Th>
+                  <Th color={'white'} fontSize='15'>ชื่อ - นามสกุล</Th>
+                  <Th color={'white'} fontSize='15'>Email</Th>
+                  <Th color={'white'} fontSize='15'>สถานะ</Th>
+                  <Th color={'white'} fontSize='15'>สิทธิ์การเข้าถึง</Th>
+                  <Th color={'white'} fontSize='15'>วันที่สร้าง</Th>
+                  <Th color={'white'} borderRightRadius={'10'} fontSize='15'>เพิ่มเติม</Th>
                 </Tr>
               </Thead>
               <Tbody>
-                <Tr>
-                  <Td><Avatar size='md' name='adebayo' src='https://bit.ly/sage-adebayo' /></Td>
+
+
+                <Tr display={'none'}> {/* Row Gray */}
+                  <Td borderLeftRadius={'10'}></Td>
+                  <Td></Td>
+                  <Td></Td>
+                  <Td></Td>
+                  <Td></Td>
+                  <Td></Td>
+                  <Td borderRightRadius={'10'}></Td>
+                </Tr>
+
+
+                <Tr> {/* Row White */}
+                  <Td borderLeftRadius={'10'}><Avatar size='md' name='adebayo' src='https://bit.ly/sage-adebayo' /></Td>
                   <Td>Segun Adebayo</Td>
                   <Td>Segun_Adebayo@gmail.com</Td>
                   <Td>Admin</Td>
                   <Td>ร้านค้าของฉัน/คลังสินค้า</Td>
                   <Td>25/02/2566</Td>
-                  <Td>
+                  <Td borderRightRadius={'10'}>
                     <HStack>
                       <IconButton
                         borderRadius="3xl"
@@ -109,14 +121,16 @@ export default function AdminManagement() {
                     </HStack>
                   </Td>
                 </Tr>
-                <Tr>
-                  <Td><Avatar size='md' name='adebayo' src='https://bit.ly/dan-abramov' /></Td>
+
+
+                <Tr> {/* Row Gray */}
+                  <Td borderLeftRadius={'10'}><Avatar size='md' name='adebayo' src='https://bit.ly/dan-abramov' /></Td>
                   <Td>Dan Abrahmov</Td>
                   <Td>Dan_Abrahmov@gmail.com</Td>
                   <Td>Super Admin</Td>
                   <Td>ทุกเมนู</Td>
                   <Td>12/01/2565</Td>
-                  <Td>
+                  <Td borderRightRadius={'10'}>
                     <HStack>
                       <IconButton
                         borderRadius="3xl"
@@ -133,14 +147,16 @@ export default function AdminManagement() {
                     </HStack>
                   </Td>
                 </Tr>
-                <Tr>
-                  <Td><Avatar size='md' name='adebayo' src='https://bit.ly/kent-c-dodds' /></Td>
+
+
+                <Tr> {/* Row White */}
+                  <Td borderLeftRadius={'10'} borderColor='white'><Avatar size='md' name='adebayo' src='https://bit.ly/kent-c-dodds' /></Td>
                   <Td>Kent Dodds</Td>
                   <Td>Kent_Dodds@gmail.com</Td>
                   <Td>Admin</Td>
                   <Td>คลังสินค้า/รายงาน</Td>
                   <Td>01/04/2565</Td>
-                  <Td>
+                  <Td borderRightRadius={'10'}>
                     <HStack>
                       <IconButton
                         borderRadius="3xl"
@@ -157,14 +173,16 @@ export default function AdminManagement() {
                     </HStack>
                   </Td>
                 </Tr>
-                <Tr>
-                  <Td><Avatar size='md' name='adebayo' src='https://bit.ly/code-beast' /></Td>
+
+
+                <Tr> {/* Row Gray */}
+                  <Td borderLeftRadius={'10'}><Avatar size='md' name='adebayo' src='https://bit.ly/code-beast' /></Td>
                   <Td>Christian Nwamba</Td>
                   <Td>Christian_Nwamba@gmail.com</Td>
                   <Td>Admin</Td>
                   <Td>คลังสินค้า/รายงาน</Td>
                   <Td>16/02/2565</Td>
-                  <Td>
+                  <Td borderRightRadius={'10'}>
                     <HStack>
                       <IconButton
                         borderRadius="3xl"
@@ -192,7 +210,7 @@ export default function AdminManagement() {
 
             <Wrap>
               <WrapItem>
-                <Text>แสดงผล: </Text>
+                <Text>แสดงผล:</Text>
               </WrapItem>
               <WrapItem>
                 <Select size='xs' >
@@ -218,7 +236,7 @@ export default function AdminManagement() {
                   <Text>หน้า</Text>
                 </WrapItem>
                 <WrapItem>
-                  <Input htmlSize={2} placeholder='1' size='xs' />
+                  <Input htmlSize={2} textAlign='center' placeholder='1' size='xs' />
                 </WrapItem>
                 <WrapItem>
                   <Text>จาก 5</Text>
@@ -247,7 +265,7 @@ export default function AdminManagement() {
               <Box mt={10} mb={5}>
                 <Center>
                   <HStack>
-                    <Image width={28} height={28} src={'/images/menu/จัดการแอดมิน.png'} />
+                    <Image width={28} height={28} src={'/images/menu/จัดการแอดมิน.png'} alt='admin' />
                     <Text as='b' fontSize='4md' >เพิ่มแอดมิน</Text>
                   </HStack>
                 </Center>
@@ -284,42 +302,42 @@ export default function AdminManagement() {
                   <GridItem>
                     <HStack>
                       <Switch id='switch-dashboard' colorScheme={'green'} />
-                      <Image width={24} height={24} src={'/images/menu/dashboard.png'} />
+                      <Image width={24} height={24} src={'/images/menu/dashboard.png'} alt='dashboard' />
                       <Text>Dashboard</Text>
                     </HStack>
                   </GridItem>
                   <GridItem>
                     <HStack>
                       <Switch id='switch-report' colorScheme={'green'} />
-                      <Image width={24} height={24} src={'/images/menu/รายงาน.png'} />
+                      <Image width={24} height={24} src={'/images/menu/report.png'} alt='report' />
                       <Text>รายงาน</Text>
                     </HStack>
                   </GridItem>
                   <GridItem>
                     <HStack>
                       <Switch id='switch-shop' colorScheme={'green'} />
-                      <Image width={24} height={24} src={'/images/menu/ร้านค้าของฉัน.png'} />
+                      <Image width={24} height={24} src={'/images/menu/ร้านค้าของฉัน.png'} alt='shop' />
                       <Text>ร้านค้าของฉัน</Text>
                     </HStack>
                   </GridItem>
                   <GridItem>
                     <HStack>
                       <Switch id='switch-admin-management' colorScheme={'green'} />
-                      <Image width={24} height={24} src={'/images/menu/จัดการแอดมิน.png'} />
+                      <Image width={24} height={24} src={'/images/menu/จัดการแอดมิน.png'} alt='admin' />
                       <Text>จัดการแอดมิน</Text>
                     </HStack>
                   </GridItem>
                   <GridItem>
                     <HStack>
                       <Switch id='switch-store' colorScheme={'green'} />
-                      <Image width={24} height={24} src={'/images/menu/คลังสินค้า.png'} />
+                      <Image width={24} height={24} src={'/images/menu/คลังสินค้า.png'} alt='stock' />
                       <Text>คลังสินค้า</Text>
                     </HStack>
                   </GridItem>
                   <GridItem>
                     <HStack>
                       <Switch id='switch-setting' colorScheme={'green'} />
-                      <Image width={24} height={24} src={'/images/menu/ตั้งค่า.png'} />
+                      <Image width={24} height={24} src={'/images/menu/ตั้งค่า.png'} alt='setting' />
                       <Text>ตั้งค่า</Text>
                     </HStack>
                   </GridItem>

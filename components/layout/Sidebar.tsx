@@ -30,7 +30,7 @@ const Sidebar = ({ open, navItems = defaultNavItems, setOpen }: Props) => {
   const handleMouseOver = (index: number) => {
     setIsHovering(index);
   };
-  
+
   const handleMouseOut = () => {
     setIsHovering(-1);
   };
@@ -102,7 +102,7 @@ const Sidebar = ({ open, navItems = defaultNavItems, setOpen }: Props) => {
               alt="profile image"
             />
             <div className="flex flex-col ">
-              <Link href="/" className="text-black text-xl">
+              <Link href="/contact" className="text-black text-xl">
                 ติดต่อทีมงาน
               </Link>
             </div>

@@ -1,22 +1,16 @@
 import React from "react";
 import Image from 'next/image';
 import {
-    Box, Text, HStack, Center, Input, Button,
-    Spacer, Avatar, AvatarBadge, Select, IconButton, Flex, Stack,
-    InputGroup, InputLeftElement, Wrap, WrapItem,
-    FormControl, FormLabel, Lorem, LinkBox, Grid, GridItem,
-    Switch, VStack, InputRightElement, Textarea, ButtonGroup,
-    RadioGroup, Radio, StackDivider, Link
+    Box, Text, HStack, Center,
+    VStack, Link, Spacer, Flex
 } from "@chakra-ui/react"
+import { Icon } from '@chakra-ui/icons'
 import {
-    AddIcon, EditIcon, DeleteIcon, Icon,
-    ArrowLeftIcon, ArrowRightIcon, SearchIcon
-} from '@chakra-ui/icons';
-import { BsReceipt, BsArrowRightCircle, BsPerson, BsShop, BsCashCoin, BsBell } from "react-icons/bs";
-import { FaRegSave } from "react-icons/fa";
-import { VscSave } from "react-icons/vsc";
+    BsReceipt, BsArrowRightCircle,
+    BsPerson, BsShop, BsCashCoin, BsBell
+} from "react-icons/bs"
 
-export default function Purchase() {
+export default function Setting() {
 
 
     return (
@@ -91,7 +85,7 @@ export default function Purchase() {
                             </HStack>
                             <Spacer />
                             <Box>
-                                <Link href="/setting">
+                                <Link href="/setting/receipt">
                                     <Icon as={BsArrowRightCircle} boxSize={8} />
                                 </Link>
                             </Box>
@@ -106,7 +100,7 @@ export default function Purchase() {
                             </HStack>
                             <Spacer />
                             <Box>
-                                <Link href="/setting">
+                                <Link href="/setting/notification">
                                     <Icon as={BsArrowRightCircle} boxSize={8} />
                                 </Link>
                             </Box>
@@ -116,7 +110,7 @@ export default function Purchase() {
 
 
                 </VStack>
-            </Box>
+            </Box >
 
         </>
     );
