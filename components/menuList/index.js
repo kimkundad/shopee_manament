@@ -12,10 +12,12 @@ import {
 function index(props) {
   return (
     <Menu closeOnSelect={false}>
+
       <MenuButton
         as={Button}
         bg="white !important"
         fontSize="21px"
+        minWidth={'200'}
         leftIcon={<Image src="/images/menu.png" h="25px" w="25px" />}
         rightIcon={
           <Image
@@ -28,10 +30,12 @@ function index(props) {
       >
         เลือกตัวแสดงผล
       </MenuButton>
+
+
       <MenuList
         minWidth="200px"
-        border="1px"
-        borderColor="red"
+        border="2px"
+        borderColor="gray"
         borderRadius="md"
       >
         <CheckboxGroup>
@@ -55,6 +59,7 @@ function index(props) {
           })}
         </CheckboxGroup>
       </MenuList>
+
     </Menu>
   );
 }

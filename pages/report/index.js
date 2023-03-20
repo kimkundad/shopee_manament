@@ -211,6 +211,7 @@ function index() {
           <ListCheck data={colunm} />
         </Box>
       </Flex>
+      
       <Table
           striped
           sticked
@@ -281,6 +282,7 @@ function index() {
             })}
           </Table.Body>
         </Table>
+
         <Flex m="10px">
           <Wrap alignSelf="center" fontSize="21px">
             <WrapItem>

@@ -55,7 +55,7 @@ export default function Setting() {
                             </HStack>
                             <Spacer />
                             <Box>
-                                <Link href="/setting">
+                                <Link href="/setting/store">
                                     <Icon as={BsArrowRightCircle} boxSize={8} />
                                 </Link>
                             </Box>
