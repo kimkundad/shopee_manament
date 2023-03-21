@@ -24,89 +24,26 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import ListCheck from "@/components/MenuList";
-import { Table } from "@nextui-org/react";
+import { Table, useAsyncList, useCollator } from "@nextui-org/react";
 import Link from "next/link";
+import axios from "axios";
 export default function stock() {
-  const initialProducts = [
-    {
-      id: 1,
-      image: "/images/edit.png",
-      name: "dfjshsd",
-      quantity: 100,
-      cost: 120,
-      price: 100,
-      created_date: "15/10/2555",
-      maker: "asdsa",
-      active: 0,
-    },
-    {
-      id: 2,
-      image: "/images/edit.png",
-      name: "dfjshsd",
-      quantity: 100,
-      cost: 120,
-      price: 100,
-      created_date: "15/10/2555",
-      maker: "asdsa",
-      active: 0,
-    },
-    {
-      id: 3,
-      image: "/images/edit.png",
-      name: "dfjshsd",
-      quantity: 100,
-      cost: 120,
-      price: 100,
-      created_date: "15/10/2555",
-      maker: "asdsa",
-      active: 0,
-    },
-    {
-      id: 4,
-      image: "/images/edit.png",
-      name: "dfjshsd",
-      quantity: 100,
-      cost: 120,
-      price: 100,
-      created_date: "15/10/2555",
-      maker: "asdsa",
-      active: 0,
-    },
-    {
-      id: 5,
-      image: "/images/edit.png",
-      name: "dfjshsd",
-      quantity: 100,
-      cost: 120,
-      price: 100,
-      created_date: "15/10/2555",
-      maker: "asdsa",
-      active: 0,
-    },
-    {
-      id: 6,
-      image: "/images/edit.png",
-      name: "dfjshsd",
-      quantity: 100,
-      cost: 120,
-      price: 100,
-      created_date: "15/10/2555",
-      maker: "asdsa",
-      active: 0,
-    },
-    {
-      id: 7,
-      image: "/images/edit.png",
-      name: "dfjshsaaaaaaaaaad",
-      quantity: 100,
-      cost: 120,
-      price: 100,
-      created_date: "15/10/2555",
-      maker: "asdsaaaaaaaaaaaaaaaaa",
-      active: 0,
-    },
-  ];
-  const [products, setProducts] = useState(initialProducts);
+  const [products, setProducts] = useState(null);
+  useEffect(() => {
+    async function fetchData() {
+      let checkAll = true;
+      const res = await axios.get("http://127.0.0.1:8000/api/allProduct");
+      setProducts(res.data);
+      res.data.product.map((products) => {
+        if (products.active === 0) {
+          return (checkAll = false);
+        }
+      });
+      setIsCheckedAll(checkAll);
+    }
+
+    fetchData();
+  }, []);
   const colunm = [
     {
       label: "เปิด/ปิด",
@@ -143,40 +80,32 @@ export default function stock() {
   //setChecked Switch
   const [isCheckedAll, setIsCheckedAll] = useState(false);
   function handleAllSwitchChange() {
-    const updatedProducts = products.map((product) => {
-      if (!isCheckedAll === true) {
-        return { ...product, active: 1 };
-      } else {
-        return { ...product, active: 0 };
-      }
-    });
-    setIsCheckedAll(!isCheckedAll);
-    setProducts(updatedProducts);
+    async function fetchData() {
+      const res = await axios.put(
+        `http://127.0.0.1:8000/api/setActiveAllProduct/?checked=${!isCheckedAll}`
+      );
+      setProducts(res.data);
+      setIsCheckedAll(!isCheckedAll);
+    }
+    fetchData();
   }
 
-  function handleActivateProduct(id) {
-    let checkAll = true;
-    const updatedProducts = products.map((product) => {
-      if (product.id === id && product.active === 0) {
-        return { ...product, active: 1 };
-      } else if (product.id === id && product.active === 1) {
-        return { ...product, active: 0 };
-      } else {
-        return product;
-      }
-    });
-    updatedProducts.map((products) => {
-      if (products.active === 0) {
-        return (checkAll = false);
-      }
-    });
-    setIsCheckedAll(checkAll);
-    setProducts(updatedProducts);
+  async function handleActivateProduct(id) {
+    const res = await axios.put(
+      `http://127.0.0.1:8000/api/setActiveProduct/?id=${id}&checked=${event.target.checked}`
+    );
+    setProducts(res.data);
+    setIsCheckedAll(res.data.product.every((product) => product.active === 1));
   }
+
   //pagination
   const [itemsPerPage, setItemPerpages] = useState(5);
-  const handleSelectChange = (event) => {
-    setItemPerpages(event.target.value);
+  const handleSelectChange = async (event) => {
+    await setItemPerpages(event.target.value);
+    if (event.target.value > totalPages) {
+      setCurrentPage(1);
+      setinputValue(1);
+    }
   };
   const [currentPage, setCurrentPage] = useState(1);
   const [inputValue, setinputValue] = useState(1);
@@ -196,18 +125,19 @@ export default function stock() {
     setCurrentPage(page);
     setinputValue(page);
   };
-
-  let item = parseInt(itemsPerPage);
-  const totalPages = Math.ceil(products.length / item);
-  const startIndex = (currentPage - 1) * item;
-  const endIndex = startIndex + item;
-  const currentItems = products.slice(startIndex, endIndex);
-
-  if (currentPage > totalPages) {
-    setCurrentPage(1);
-    setinputValue(1);
+  let totalPages = 0;
+  let startIndex = 0;
+  let endIndex = 0;
+  let totalItem = 0;
+  let currentItems = [];
+  if (products !== null) {
+    let item = parseInt(itemsPerPage);
+    totalPages = Math.ceil(products.product.length / item);
+    startIndex = (currentPage - 1) * item;
+    endIndex = startIndex + item;
+    currentItems = products.product.slice(startIndex, endIndex);
+    totalItem = products.product.length;
   }
-  //sorting colunm
 
   //active button
   const {
@@ -221,18 +151,37 @@ export default function stock() {
     onClose: onCloseForm2,
   } = useDisclosure();
 
-  const comfirmDelete = () => {
+  const [id, setId] = useState(null);
+  const comfirmDelete = (id) => {
     onOpenForm1();
+    setId(id);
   };
   const closeModal = () => {
+    setId(null);
     onCloseForm1();
     onCloseForm2();
   };
 
-  const deleteSuccess = () => {
+  //delete product
+  function deleteProduct() {
+    async function fetchData() {
+      console.log(id);
+      const res = await axios.post(
+        `http://127.0.0.1:8000/api/deleteProduct/${id}`
+      );
+      setProducts(res.data);
+      setIsCheckedAll(
+        res.data.product.every((product) => product.active === 1)
+      );
+    }
+
+    fetchData();
     onCloseForm1();
     onOpenForm2();
-  };
+    setId(null);
+  }
+
+  //sorting colunm
 
   return (
     <>
@@ -292,9 +241,7 @@ export default function stock() {
                 <Table.Column
                   style={{ backgroundColor: "red", color: "white" }}
                   key={index}
-                  onClick={
-                    index == 0 ? (event) => handleAllSwitchChange() : null
-                  }
+                  onClick={index == 0 ? () => handleAllSwitchChange() : null}
                   css={{ textAlign: "center", padding: "0px !important" }}
                 >
                   <Text fontSize="21px">{item.label}</Text>
@@ -303,7 +250,7 @@ export default function stock() {
                       <Switch
                         colorScheme="brand"
                         isChecked={isCheckedAll}
-                        onChange={(event) => handleAllSwitchChange()}
+                        onChange={() => handleAllSwitchChange()}
                         size="sm"
                       />
                       <Text pl="5px" fontSize="15px">
@@ -329,10 +276,8 @@ export default function stock() {
                   <Table.Cell css={{ textAlign: "center" }}>
                     <Switch
                       colorScheme="brand"
-                      isChecked={
-                        isCheckedAll ? true : item.active === 0 ? false : true
-                      }
-                      onChange={(event) => handleActivateProduct(item.id)}
+                      isChecked={isCheckedAll || item.active !== 0}
+                      onChange={() => handleActivateProduct(item.id)}
                     />
                   </Table.Cell>
                   <Table.Cell css={{ textAlign: "center" }}>
@@ -344,10 +289,10 @@ export default function stock() {
                     </Center>
                   </Table.Cell>
                   <Table.Cell css={{ textAlign: "center" }}>
-                    {item.name}
+                    {item.name_product}
                   </Table.Cell>
                   <Table.Cell css={{ textAlign: "center" }}>
-                    {item.quantity}
+                    {item.stock}
                   </Table.Cell>
                   <Table.Cell css={{ textAlign: "center" }}>
                     {item.cost}
@@ -366,7 +311,12 @@ export default function stock() {
                       <Link href="/">
                         <Image src="/images/edit.png" h="25px" />
                       </Link>
-                      <Image pl="7px" src="/images/trash-bin.png" h="25px" onClick={comfirmDelete} />
+                      <Image
+                        pl="7px"
+                        src="/images/trash-bin.png"
+                        h="25px"
+                        onClick={() => comfirmDelete(item.id)}
+                      />
                     </Flex>
                   </Table.Cell>
                 </Table.Row>
@@ -391,7 +341,7 @@ export default function stock() {
               <Text>จำนวนสินค้า : </Text>
             </WrapItem>
             <WrapItem>
-              <Text>{products.length}</Text>
+              <Text>{totalItem}</Text>
             </WrapItem>
           </Wrap>
           <Spacer />
@@ -457,12 +407,7 @@ export default function stock() {
             </ModalHeader>
             <ModalBody>
               <Box textAlign="-webkit-center">
-                <Image
-                  src="/images/binred.png"
-                  alt=""
-                  h="120px"
-                  w="120px"
-                />
+                <Image src="/images/binred.png" alt="" h="120px" w="120px" />
                 <Text fontSize="40px" fontWeight="bold">
                   ยืนยันการลบสินค้า
                 </Text>
@@ -471,7 +416,7 @@ export default function stock() {
             <ModalFooter justifyContent="center">
               <Flex>
                 <Button bg="white">ยกเลิก</Button>
-                <Button bg="red" color="white" onClick={() => deleteSuccess()}>
+                <Button bg="red" color="white" onClick={deleteProduct}>
                   ยืนยัน
                 </Button>
               </Flex>
@@ -500,7 +445,12 @@ export default function stock() {
             </ModalBody>
             <ModalFooter justifyContent="center">
               <Link href="/stock">
-                <Button bg="red" color="white" _hover={{  }} onClick={() => closeModal()}>
+                <Button
+                  bg="red"
+                  color="white"
+                  _hover={{}}
+                  onClick={() => closeModal()}
+                >
                   ไปที่หน้าคลังสินค้า
                 </Button>
               </Link>

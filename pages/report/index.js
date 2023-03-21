@@ -229,9 +229,6 @@ function index() {
                 <Table.Column
                   style={{ backgroundColor: "red", color: "white" }}
                   key={index}
-                  onClick={
-                    index == 0 ? (event) => handleAllSwitchChange() : null
-                  }
                   css={{ textAlign: "center",
                 padding: "0px !important" }}
                 >
