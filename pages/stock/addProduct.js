@@ -519,7 +519,7 @@ function addProduct() {
             </ModalBody>
             <ModalFooter justifyContent="center">
               <Link href="/stock">
-                <Button bg="red" color="white" _hover={{  }}>
+                <Button bg="red" color="white" _hover={{}}>
                   ไปที่หน้าคลังสินค้า
                 </Button>
               </Link>

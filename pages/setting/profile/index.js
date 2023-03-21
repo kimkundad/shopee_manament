@@ -1,5 +1,7 @@
 import React from "react";
 import Image from 'next/image';
+import Link from 'next/link';
+import ButtonBack from '@/components/button/ButtonBack'
 import {
     Box, Text, HStack, Center, Input, Button,
     Spacer, Avatar, AvatarBadge, Select, IconButton, Flex, Stack,
@@ -26,7 +28,7 @@ export default function Profile() {
                 p={[5, 10]}
             >
                 <Box>
-                    <Button size='sm' onClick={''} leftIcon={<BsArrowLeftCircle />} background='#f84c01' color='white'>ย้อนกลับ</Button >
+                    <ButtonBack />
                 </Box>
                 <Box>
                     <Center>
@@ -52,7 +54,7 @@ export default function Profile() {
                 >
                     <GridItem>
                         <Center>
-                            <Avatar size='2xl' name='Segun Adebayo' src='https://bit.ly/sage-adebayo'>
+                            <Avatar size='2xl' name='Segun Adebayo' src='https://bit.ly/sage-adebayo' alt='demo'>
                                 <AvatarBadge
                                     boxSize={10}
                                     borderColor="#f84c01"
@@ -178,7 +180,7 @@ export default function Profile() {
                             <HStack justify='right' mt={2}>
                                 <Box>
                                     <FormLabel>
-                                        <Image width={36} height={36} src={'/images/social/facebook.png'} />
+                                        <Image width={36} height={36} src={'/images/social/facebook.png'} alt='demo' />
                                     </FormLabel>
                                 </Box>
                                 <Box>
@@ -189,7 +191,7 @@ export default function Profile() {
                             <HStack justify='right' mt={2}>
                                 <Box>
                                     <FormLabel>
-                                        <Image width={36} height={36} src={'/images/social/line.png'} />
+                                        <Image width={36} height={36} src={'/images/social/line.png'} alt='demo' />
                                     </FormLabel>
                                 </Box>
                                 <Box>
@@ -200,7 +202,7 @@ export default function Profile() {
                             <HStack justify='right' mt={2}>
                                 <Box>
                                     <FormLabel>
-                                        <Image width={36} height={36} src={'/images/social/instagram.png'} />
+                                        <Image width={36} height={36} src={'/images/social/instagram.png'} alt='demo' />
                                     </FormLabel>
                                 </Box>
                                 <Box>
@@ -211,7 +213,7 @@ export default function Profile() {
                             <HStack justify='right' mt={2}>
                                 <Box>
                                     <FormLabel>
-                                        <Image width={36} height={36} src={'/images/social/twitter.png'} />
+                                        <Image width={36} height={36} src={'/images/social/twitter.png'} alt='demo' />
                                     </FormLabel>
                                 </Box>
                                 <Box>
@@ -222,7 +224,7 @@ export default function Profile() {
                             <HStack justify='right' mt={2}>
                                 <Box>
                                     <FormLabel>
-                                        <Image width={36} height={36} src={'/images/social/tik-tok.png'} />
+                                        <Image width={36} height={36} src={'/images/social/tik-tok.png'} alt='demo' />
                                     </FormLabel>
                                 </Box>
                                 <Box>
@@ -233,7 +235,7 @@ export default function Profile() {
                             <HStack justify='right' mt={2}>
                                 <Box>
                                     <FormLabel>
-                                        <Image width={36} height={36} src={'/images/social/youtube.png'} />
+                                        <Image width={36} height={36} src={'/images/social/youtube.png'} alt='demo' />
                                     </FormLabel>
                                 </Box>
                                 <Box>

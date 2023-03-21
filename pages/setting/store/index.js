@@ -1,5 +1,7 @@
 import React from "react";
 import Image from "next/image";
+import Link from 'next/link'
+import ButtonBack from '@/components/button/ButtonBack'
 import {
     Box,
     Text,
@@ -8,7 +10,6 @@ import {
     Button,
     Flex,
     VStack,
-    Link,
     Card,
     CardBody,
     Spacer,
@@ -96,16 +97,7 @@ export default function StoreFront() {
         <>
             <Box px='10' py='5'>
                 <Box>
-                    <Button
-                        onClick={""}
-                        leftIcon={<BsArrowLeftCircle />}
-                        size="sm"
-                        borderRadius="3xl"
-                        color="white"
-                        background="#f84c01"
-                    >
-                        ย้อนกลับ
-                    </Button>
+                    <ButtonBack />
                 </Box>
                 <Box>
                     <Center>

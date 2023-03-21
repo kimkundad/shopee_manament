@@ -1,12 +1,13 @@
 import React from "react";
 import Image from 'next/image';
+import Link from 'next/link'
 import {
     Box, Text, HStack, Center, Input, Button,
     Spacer, Avatar, AvatarBadge, Select, IconButton, Flex, Stack,
     InputGroup, InputLeftElement, Wrap, WrapItem,
     FormControl, FormLabel, Lorem, LinkBox, Grid, GridItem,
     Switch, VStack, InputRightElement, Textarea, ButtonGroup,
-    RadioGroup, Radio, StackDivider, Link
+    RadioGroup, Radio, StackDivider,
 } from "@chakra-ui/react"
 import {
     AddIcon, EditIcon, DeleteIcon, Icon,

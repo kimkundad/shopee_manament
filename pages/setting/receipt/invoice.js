@@ -1,8 +1,10 @@
 import React from "react";
 import Image from 'next/image';
+import Link from 'next/link';
+import ButtonBack from '@/components/button/ButtonBack'
 import {
     Box, Text, HStack, Center, Button,
-    Flex, VStack, Link, Card, CardBody
+    Flex, VStack, Card, CardBody
 } from "@chakra-ui/react";
 import { Icon } from '@chakra-ui/icons';
 import { BsArrowLeftCircle, BsReceipt } from "react-icons/bs";
@@ -18,16 +20,7 @@ export default function Invoice() {
                 p={[5, 10]}
             >
                 <Box>
-                    <Button
-                        onClick={''}
-                        leftIcon={<BsArrowLeftCircle />}
-                        size='sm'
-                        borderRadius="3xl"
-                        color='white'
-                        background='#f84c01'
-                    >
-                        ย้อนกลับ
-                    </Button >
+                    <ButtonBack />
                 </Box>
                 <Box>
                     <Center>

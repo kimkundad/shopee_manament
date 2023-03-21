@@ -1,8 +1,9 @@
 import React from "react";
 import Image from 'next/image';
+import Link from 'next/link'
 import {
     Box, Text, HStack, Center,
-    GridItem, Grid, Spacer, Flex, Container, Link, Wrap, VStack,
+    GridItem, Grid, Spacer, Flex, Container, Wrap, VStack,
 } from "@chakra-ui/react"
 import { Icon } from '@chakra-ui/icons'
 import {

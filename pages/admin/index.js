@@ -1,4 +1,5 @@
 import React from 'react'
+import Link from 'next/link'
 import {
   Box, Text, HStack, Center, Input, Button,
   Spacer, Avatar, Select, IconButton, Flex, Stack,

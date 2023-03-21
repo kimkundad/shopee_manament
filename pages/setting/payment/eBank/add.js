@@ -1,9 +1,11 @@
 import React from "react";
 import Image from 'next/image';
+import Link from 'next/link'
+import ButtonBack from '@/components/button/ButtonBack'
 import {
     Box, Text, HStack, Center, Input, Button,
     Spacer, Avatar, AvatarBadge, Select, IconButton, Flex, Stack,
-    InputGroup, InputLeftElement, Wrap, WrapItem, Link,
+    InputGroup, InputLeftElement, Wrap, WrapItem,
     FormControl, FormLabel, Lorem, LinkBox, Grid, GridItem,
     Switch, VStack, InputRightElement, Textarea, ButtonGroup,
     RadioGroup, Radio, StackDivider, SkeletonCircle,
@@ -27,16 +29,7 @@ export default function EbankAdd() {
                 p={5}
             >
                 <Box>
-                    <Button
-                        leftIcon={<BsArrowLeftCircle />}
-                        size='sm'
-                        borderRadius="3xl"
-                        fontSize='17'
-                        color='white'
-                        background='#f84c01'
-                    >
-                        ย้อนกลับ
-                    </Button >
+                    <ButtonBack />
                 </Box>
                 <Box>
                     <Center>
