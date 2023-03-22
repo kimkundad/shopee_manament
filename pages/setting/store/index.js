@@ -24,10 +24,21 @@ import {
     Switch,
     Stack,
     Avatar,
+    useDisclosure,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalFooter,
+    ModalBody,
+    ModalCloseButton,
+    Grid,
+    GridItem,
+    Skeleton
 } from "@chakra-ui/react";
 import { Icon } from "@chakra-ui/icons";
-import { BsArrowLeftCircle, BsStar, BsShop, BsFillPencilFill } from "react-icons/bs";
-
+import { BsPlusLg, BsStar, BsShop, BsFillPencilFill, BsEye } from "react-icons/bs";
+import { VscSave } from "react-icons/vsc";
 import ListCheck from "@/components/MenuList";
 const colunm = [
     { label: "วันที่" },
@@ -46,55 +57,291 @@ const colunm = [
 
 
 function AddCard() {
+    const { isOpen, onOpen, onClose } = useDisclosure()
     return (
-        <Card>
-            <CardBody align='center'>
-                <Flex pb='4'>
-                    <Switch size='sm' colorScheme='green' />
-                    <Text pl='2' as='span'>เปิด/ปิด เพื่อแสดง</Text>
-                    <Spacer />
-                    <Icon as={BsStar} boxSize={5} color='gray' />
-                </Flex>
+        <>
+            <Card minWidth={'50px'}>
+                <CardBody align='center'>
+                    <Flex pb='4'>
+                        <Switch size='sm' colorScheme='green' />
+                        <Text pl='2' as='span'>เปิด/ปิด เพื่อแสดง</Text>
+                        <Spacer />
+                        <Icon as={BsStar} boxSize={5} color='gray' />
+                    </Flex>
 
-                <Image
-                    width='350'
-                    height='350'
-                    src={'/images/my_shop.jpeg'}
-                    alt='My Shop Image'
-                    borderRadius='20px'
-                />
-                <Box pos="absolute" left='0' right='0' top='100px'>
-                    <Avatar size='2xl' borderColor='white' borderWidth='5px' name='Segun Adebayo' src='https://bit.ly/sage-adebayo' />
-                </Box>
+                    <Image
+                        width='350'
+                        height='350'
+                        src={'/images/my_shop.jpeg'}
+                        alt='My Shop Image'
+                        borderRadius='20px'
+                    />
+                    <Box pos="absolute" left='0' right='0' top='100px'>
+                        <Avatar size='2xl' borderColor='white' borderWidth='5px' name='Segun Adebayo' src='https://bit.ly/sage-adebayo' />
+                    </Box>
 
-                <Box mt='4'>
-                    <Text as='b' fontSize='2xl'>รองเท้าน้องหลาม ส่งไว</Text>
-                    <SimpleGrid columns={3}>
-                        <Text fontSize='12'>จำนวนผู้เข้าชม: 5,650</Text>
-                        <Text fontSize='12'>วันที่สร้าง: 07/05/2566</Text>
-                        <Text fontSize='12'>แก้ไขล่าสุด: 07/05/2566</Text>
-                    </SimpleGrid>
-                </Box>
-            </CardBody>
+                    <Box mt='4'>
+                        <Text as='b' fontSize='2xl'>รองเท้าน้องหลาม ส่งไว</Text>
+                        <SimpleGrid columns={3}>
+                            <Text fontSize='12'>จำนวนผู้เข้าชม: 5,650</Text>
+                            <Text fontSize='12'>วันที่สร้าง: 07/05/2566</Text>
+                            <Text fontSize='12'>แก้ไขล่าสุด: 07/05/2566</Text>
+                        </SimpleGrid>
+                    </Box>
+                </CardBody>
 
-            <CardFooter justifyContent={'center'}>
-                <Button leftIcon={<BsShop />} size='sm' colorScheme='red' fontWeight='none'>
-                    รูปแบบร้านค้า
-                </Button>
-                <Button leftIcon={<BsFillPencilFill />} size='sm' ml='4' colorScheme='gray' variant='outline' fontWeight='none'>
-                    แก้ไขข้อมูล
-                </Button>
-            </CardFooter>
-        </Card>
+                <CardFooter justifyContent={'center'}>
+                    <Button leftIcon={<BsShop />} size='sm' colorScheme='red' fontWeight='none' onClick={onOpen}>
+                        รูปแบบร้านค้า
+                    </Button>
+                    <Button leftIcon={<BsFillPencilFill />} size='sm' ml='4' colorScheme='gray' variant='outline' fontWeight='none'>
+                        แก้ไขข้อมูล
+                    </Button>
+
+                </CardFooter>
+            </Card>
+
+            <Modal size='4xl' isOpen={isOpen} onClose={onClose}>
+                <ModalOverlay />
+                <ModalContent py='10'>
+                    <HStack justifyContent={'center'} alignItems="center">
+                        <Image width={36} height={36} src={"/images/menu/ร้านค้าของฉัน.png"} />
+                        <Text as="b" fontSize="4xl">
+                            รูปแบบร้านค้า
+                        </Text>
+                    </HStack>
+                    <ModalCloseButton />
+                    <ModalBody py='10'>
+                        <SimpleGrid minChildWidth={'250px'} columns={2} spacing={5}>
+                            <Skeleton>
+                                <Box bg='tomato' height='80px'></Box>
+                            </Skeleton>
+
+
+                            <Box>
+                                <SimpleGrid columns={2} textAlign={'right'}>
+                                    <Box p='2'>
+                                        <Grid templateColumns='repeat(4, 1fr)' gap='4' alignItems="center">
+                                            <GridItem colSpan={2} as='b' fontSize='17'>รูปแบบร้านค้า:</GridItem>
+                                            <GridItem colSpan={2}>
+                                                <Select>
+                                                    <option value='option1'>Option 1</option>
+                                                    <option value='option2'>Option 2</option>
+                                                    <option value='option3'>Option 3</option>
+                                                </Select>
+                                            </GridItem>
+                                        </Grid>
+                                    </Box>
+                                </SimpleGrid>
+
+
+
+                                <SimpleGrid columns={2} textAlign={'right'}>
+                                    <Box p='2'>
+                                        <Grid templateColumns='repeat(4, 1fr)' gap='4' alignItems="center">
+                                            <GridItem colSpan={2} as='b' fontSize='17'>สีหน้าร้าน:</GridItem>
+                                            <GridItem colSpan={2}>
+                                                <Select placeholder='Select option'>
+                                                    <option value='option1'>Option 1</option>
+                                                    <option value='option2'>Option 2</option>
+                                                    <option value='option3'>Option 3</option>
+                                                </Select>
+                                            </GridItem>
+                                        </Grid>
+                                    </Box>
+                                    <Box p='2'>
+                                        <Grid templateColumns='repeat(4, 1fr)' gap='4' alignItems="center">
+                                            <GridItem colSpan={2} as='b' fontSize='17'>สีข้อความหลัก:</GridItem>
+                                            <GridItem colSpan={2}>
+                                                <Select placeholder='Select option'>
+                                                    <option value='option1'>Option 1</option>
+                                                    <option value='option2'>Option 2</option>
+                                                    <option value='option3'>Option 3</option>
+                                                </Select>
+                                            </GridItem>
+                                        </Grid>
+                                    </Box>
+                                    <Box p='2'>
+                                        <Grid templateColumns='repeat(4, 1fr)' gap='4' alignItems="center">
+                                            <GridItem colSpan={2} as='b' fontSize='17'>สีพื้นหลัง</GridItem>
+                                            <GridItem colSpan={2}>
+                                                <Select placeholder='Select option'>
+                                                    <option value='option1'>Option 1</option>
+                                                    <option value='option2'>Option 2</option>
+                                                    <option value='option3'>Option 3</option>
+                                                </Select>
+                                            </GridItem>
+                                        </Grid>
+                                    </Box>
+                                    <Box p='2'>
+                                        <Grid templateColumns='repeat(4, 1fr)' gap='4' alignItems="center">
+                                            <GridItem colSpan={2} as='b' fontSize='17'>สีข้อความรอง</GridItem>
+                                            <GridItem colSpan={2}>
+                                                <Select placeholder='Select option'>
+                                                    <option value='option1'>Option 1</option>
+                                                    <option value='option2'>Option 2</option>
+                                                    <option value='option3'>Option 3</option>
+                                                </Select>
+                                            </GridItem>
+                                        </Grid>
+                                    </Box>
+                                </SimpleGrid>
+
+
+                                <SimpleGrid>
+                                    <Box p='2'>
+                                        <Grid templateColumns='repeat(8, 1fr)' gap='4' alignItems="center">
+                                            <GridItem as='b' fontSize='17' colSpan={2} textAlign={'right'}>เมนูร้านค้า:</GridItem>
+                                            <GridItem colSpan={3}>
+                                                <Button
+                                                    leftIcon={<BsPlusLg />}
+                                                    justifyContent={'left'}
+                                                    color='black.500'
+                                                    borderColor='gray.500'
+                                                    variant='outline'
+                                                    fontSize='17'
+                                                    fontWeight='none'
+                                                    w='100%'
+                                                >
+                                                    สินค้าแนะนำ
+                                                </Button>
+                                            </GridItem>
+                                            <GridItem colSpan={3}>
+                                                <Button
+                                                    leftIcon={<BsPlusLg />}
+                                                    justifyContent={'left'}
+                                                    color='black.500'
+                                                    borderColor='gray.500'
+                                                    variant='outline'
+                                                    fontSize='17'
+                                                    fontWeight='none'
+                                                    w='100%'
+                                                >
+                                                    หมวดหมู่
+                                                </Button>
+                                            </GridItem>
+                                        </Grid>
+                                    </Box>
+                                    <Box p='2'>
+                                        <Grid templateColumns='repeat(8, 1fr)' gap='4' alignItems="center">
+                                            <GridItem colSpan={2}></GridItem>
+                                            <GridItem colSpan={3}>
+                                                <Button
+                                                    leftIcon={<BsPlusLg />}
+                                                    justifyContent={'left'}
+                                                    color='black.500'
+                                                    borderColor='gray.500'
+                                                    variant='outline'
+                                                    fontSize='17'
+                                                    fontWeight='none'
+                                                    w='100%'
+                                                >
+                                                    ป้ายโฆษณา
+                                                </Button>
+                                            </GridItem>
+                                            <GridItem colSpan={3}>
+                                                <Button
+                                                    leftIcon={<BsPlusLg />}
+                                                    justifyContent={'left'}
+                                                    color='black.500'
+                                                    borderColor='gray.500'
+                                                    variant='outline'
+                                                    fontSize='17'
+                                                    fontWeight='none'
+                                                    w='100%'
+                                                >
+                                                    โปรโมชั่นแนะนำ
+                                                </Button>
+                                            </GridItem>
+                                        </Grid>
+                                    </Box>
+                                    <Box p='2'>
+                                        <Grid templateColumns='repeat(8, 1fr)' gap='4' alignItems="center">
+                                            <GridItem colSpan={2}></GridItem>
+                                            <GridItem colSpan={3}>
+                                                <Button
+                                                    leftIcon={<BsPlusLg />}
+                                                    justifyContent={'left'}
+                                                    color='black.500'
+                                                    borderColor='gray.500'
+                                                    variant='outline'
+                                                    fontSize='17'
+                                                    fontWeight='none'
+                                                    w='100%'
+                                                >
+                                                    สินค้าลดราคา
+                                                </Button>
+                                            </GridItem>
+                                            <GridItem colSpan={3}>
+                                                <Button
+                                                    leftIcon={<BsPlusLg />}
+                                                    justifyContent={'left'}
+                                                    color='black.500'
+                                                    borderColor='gray.500'
+                                                    variant='outline'
+                                                    fontSize='17'
+                                                    fontWeight='none'
+                                                    w='100%'
+                                                >
+                                                    สินค้าแนะนำ
+                                                </Button>
+                                            </GridItem>
+                                        </Grid>
+                                    </Box>
+                                </SimpleGrid>
+                            </Box>
+
+
+                        </SimpleGrid>
+                    </ModalBody>
+
+                    <ModalFooter justifyContent={'center'}>
+                        <Button
+                            leftIcon={<BsEye />}
+                            color='#fe4900'
+                            borderColor='#fe4900'
+                            borderWidth={2}
+                            variant='outline'
+                            mr={3}
+                        >
+                            ดูตัวอย่าง
+                        </Button>
+                        <Button
+                            color='gray.500'
+                            borderColor='gray.500'
+                            borderWidth={2}
+                            variant='outline'
+                            mr={3}
+                            onClick={onClose}
+                        >
+                            ยกเลิก
+                        </Button>
+                        <Button
+                            leftIcon={<VscSave />}
+                            bg="#fe4900"
+                            color='white'
+                            variant='solid'
+                            mr={3}
+                        >
+                            บันทึก
+                        </Button>
+                    </ModalFooter>
+
+
+                </ModalContent>
+            </Modal>
+        </>
 
     );
 }
 
 
-
 export default function StoreFront() {
+
+
     return (
         <>
+
             <Box px='10' py='5'>
                 <Box>
                     <ButtonBack />
