@@ -34,12 +34,14 @@ export default function stock() {
       let checkAll = true;
       const res = await axios.get("http://127.0.0.1:8000/api/allProduct");
       setProducts(res.data);
-      res.data.product.map((products) => {
-        if (products.active === 0) {
-          return (checkAll = false);
-        }
-      });
-      setIsCheckedAll(checkAll);
+      if (res.data.product.length > 0) {
+        res.data.product.map((products) => {
+          if (products.active === 0) {
+            return (checkAll = false);
+          }
+        });
+        setIsCheckedAll(checkAll);
+      }
     }
 
     fetchData();
@@ -90,14 +92,19 @@ export default function stock() {
     fetchData();
   }
 
-  async function handleActivateProduct(id) {
-    const res = await axios.put(
-      `http://127.0.0.1:8000/api/setActiveProduct/?id=${id}&checked=${event.target.checked}`
-    );
-    setProducts(res.data);
-    setIsCheckedAll(res.data.product.every((product) => product.active === 1));
+  const handleActivateProduct = (event) => {
+    async function fetchData() {
+      const res = await axios.put(
+        `http://127.0.0.1:8000/api/setActiveProduct/?id=${event.target.id}&checked=${event.target.checked}`
+      );
+      setProducts(res.data);
+      setIsCheckedAll(
+        res.data.product.every((product) => product.active === 1)
+      );
+    }
+    fetchData();
   }
-
+ 
   //pagination
   const [itemsPerPage, setItemPerpages] = useState(5);
   const handleSelectChange = async (event) => {
@@ -165,7 +172,6 @@ export default function stock() {
   //delete product
   function deleteProduct() {
     async function fetchData() {
-      console.log(id);
       const res = await axios.post(
         `http://127.0.0.1:8000/api/deleteProduct/${id}`
       );
@@ -276,8 +282,9 @@ export default function stock() {
                   <Table.Cell css={{ textAlign: "center" }}>
                     <Switch
                       colorScheme="brand"
-                      isChecked={isCheckedAll || item.active !== 0}
-                      onChange={() => handleActivateProduct(item.id)}
+                      isChecked={isCheckedAll ? true : item.active === 0 ? false : true}
+                      onChange={handleActivateProduct}
+                      id={item.id}
                     />
                   </Table.Cell>
                   <Table.Cell css={{ textAlign: "center" }}>
@@ -285,7 +292,7 @@ export default function stock() {
                   </Table.Cell>
                   <Table.Cell>
                     <Center>
-                      <Image src={item.image} h="30px" w="30px" />
+                      <Image src={item.img_product} h="30px" w="30px" />
                     </Center>
                   </Table.Cell>
                   <Table.Cell css={{ textAlign: "center" }}>

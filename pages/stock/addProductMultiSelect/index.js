@@ -22,6 +22,7 @@ import {
   Spacer,
 } from "@chakra-ui/react";
 import Link from "next/link";
+
 const thumbsContainer = {
   display: "flex",
   flexDirection: "row",
@@ -51,6 +52,23 @@ const img = {
 };
 
 function index() {
+  const [name_product, setName_product] = useState("");
+  const [detail_product, setDetail_product] = useState("");
+  const [price, setPrice] = useState("");
+  const [price_sales, setPrice_sales] = useState("");
+  const [cost, setCost] = useState("");
+  const [stock, setStock] = useState("");
+  const [weight, setWeight] = useState("");
+  const data = {
+    name_product,
+    detail_product,
+    price,
+    price_sales,
+    cost,
+    stock,
+    weight,
+  };
+  
   const [files, setFiles] = useState([]);
   const { getRootProps, getInputProps } = useDropzone({
     accept: {
@@ -160,7 +178,7 @@ function index() {
         </Wrap>
       </Box>
 
-      <FormControl>
+      <form>
         <Box>
           <Grid
             templateColumns="repeat(2, 1fr)"
@@ -181,8 +199,10 @@ function index() {
                     <Input
                       pr="100px"
                       type="text"
+                      value={name_product}
                       placeholder="ระบุชื่อสินค้า"
                       borderColor="gray.400"
+                      onChange={(e) => setName_product(e.target.value)}
                     />
                     <InputRightElement pr="45px">
                       <Text>0/100</Text>
@@ -205,6 +225,8 @@ function index() {
                         borderColor="gray.400"
                         placeholder="ระบุรายละเอียดสินค้า"
                         pr="60px"
+                        value={detail_product}
+                        onChange={(e) => setDetail_product(e.target.value)}
                       />
                       <InputRightElement h="100%" alignItems="end" p="10px">
                         <Text pr="45px">0/3000</Text>
@@ -310,8 +332,10 @@ function index() {
                   <InputGroup>
                     <Input
                       pr="40px"
-                      type="text"
+                      type="number"
                       placeholder="ระบุต้นทุนสินค้า"
+                      value={cost}
+                      onChange={(e) => setCost(parseInt(e.target.value))}
                     />
                     <InputRightElement>
                       <Text>฿</Text>
@@ -325,7 +349,13 @@ function index() {
                 </GridItem>
                 <GridItem colSpan={2}>
                   <InputGroup>
-                    <Input pr="40px" type="text" placeholder="ระบุราคาสินค้า" />
+                    <Input
+                      pr="40px"
+                      type="number"
+                      placeholder="ระบุราคาสินค้า"
+                      value={price}
+                      onChange={(e) => setPrice(parseInt(e.target.value))}
+                    />
                     <InputRightElement>
                       <Text>฿</Text>
                     </InputRightElement>
@@ -338,7 +368,13 @@ function index() {
                 </GridItem>
                 <GridItem colSpan={2}>
                   <InputGroup>
-                    <Input pr="40px" type="text" placeholder="ระบุลดราคา" />
+                    <Input
+                      pr="40px"
+                      type="number"
+                      placeholder="ระบุลดราคา"
+                      value={price_sales}
+                      onChange={(e) => setPrice_sales(parseInt(e.target.value))}
+                    />
                     <InputRightElement>
                       <Text>฿</Text>
                     </InputRightElement>
@@ -350,7 +386,13 @@ function index() {
                   </Box>
                 </GridItem>
                 <GridItem colSpan={2}>
-                  <Input pr="50px" type="text" placeholder="ระบุจำนวนสินค้า" />
+                  <Input
+                    pr="50px"
+                    type="number"
+                    placeholder="ระบุจำนวนสินค้า"
+                    value={stock}
+                    onChange={(e) => setStock(parseInt(e.target.value))}
+                  />
                 </GridItem>
                 <GridItem colSpan={1} justifySelf="end">
                   <Box pr="5px">
@@ -363,6 +405,8 @@ function index() {
                       pr="40px"
                       type="text"
                       placeholder="ระบุน้ำหนักสินค้า"
+                      value={weight}
+                      onChange={(e) => setWeight(e.target.value)}
                     />
                     <InputRightElement>
                       <Text>Kg</Text>
@@ -408,7 +452,12 @@ function index() {
                 </GridItem>
               </Grid>
               <Flex justifyContent="center" pt="10px">
-                <Link href="/stock/addProductMultiSelect/option">
+                <Link
+                  href={{
+                    pathname: "/stock/addProductMultiSelect/option",
+                    query: data, // the data
+                  }}
+                >
                   <Button
                     ml="200px"
                     type="submit"
@@ -428,7 +477,7 @@ function index() {
             </GridItem>
           </Grid>
         </Box>
-      </FormControl>
+      </form>
     </Box>
   );
 }

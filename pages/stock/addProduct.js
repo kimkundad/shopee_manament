@@ -29,6 +29,8 @@ import {
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { BsArrowLeftCircle } from "react-icons/bs";
+import axios from "axios";
+
 const thumbsContainer = {
   display: "flex",
   flexDirection: "row",
@@ -58,6 +60,30 @@ const img = {
 };
 
 function addProduct() {
+  const [name_product, setName_product] = useState("");
+  const [detail_product, setDetail_product] = useState("");
+  const [price, setPrice] = useState("");
+  const [price_sales, setPrice_sales] = useState("");
+  const [cost, setCost] = useState("");
+  const [stock, setStock] = useState("");
+  const [weight, setWeight] = useState("");
+  async function handleSubmit(event) {
+    event.preventDefault();
+
+    const data = {
+      name_product,
+      detail_product,
+      price,
+      price_sales,
+      cost,
+      stock,
+      weight,
+    };
+    const response = await axios.post(
+      "http://127.0.0.1:8000/api/addProduct",
+      data
+    );
+  }
   const [files, setFiles] = useState([]);
   const { getRootProps, getInputProps } = useDropzone({
     accept: {
@@ -199,7 +225,7 @@ function addProduct() {
         </Wrap>
       </Box>
 
-      <FormControl>
+      <form onSubmit={handleSubmit}>
         <Box>
           <Grid
             templateColumns="repeat(2, 1fr)"
@@ -220,8 +246,11 @@ function addProduct() {
                     <Input
                       pr="100px"
                       type="text"
+                      value={name_product}
                       placeholder="ระบุชื่อสินค้า"
                       borderColor="gray.400"
+                      onChange={(e) => setName_product(e.target.value)}
+                      isRequired
                     />
                     <InputRightElement pr="45px">
                       <Text>0/100</Text>
@@ -244,6 +273,8 @@ function addProduct() {
                         borderColor="gray.400"
                         placeholder="ระบุรายละเอียดสินค้า"
                         pr="60px"
+                        value={detail_product}
+                        onChange={(e) => setDetail_product(e.target.value)}
                       />
                       <InputRightElement h="100%" alignItems="end" p="10px">
                         <Text pr="45px">0/3000</Text>
@@ -349,8 +380,10 @@ function addProduct() {
                   <InputGroup>
                     <Input
                       pr="40px"
-                      type="text"
+                      type="number"
                       placeholder="ระบุต้นทุนสินค้า"
+                      value={cost}
+                      onChange={(e) => setCost(parseInt(e.target.value))}
                     />
                     <InputRightElement>
                       <Text>฿</Text>
@@ -364,7 +397,14 @@ function addProduct() {
                 </GridItem>
                 <GridItem colSpan={2}>
                   <InputGroup>
-                    <Input pr="40px" type="text" placeholder="ระบุราคาสินค้า" />
+                    <Input
+                      pr="40px"
+                      type="number"
+                      placeholder="ระบุราคาสินค้า"
+                      value={price}
+                      onChange={(e) => setPrice(parseInt(e.target.value))}
+                      isRequired
+                    />
                     <InputRightElement>
                       <Text>฿</Text>
                     </InputRightElement>
@@ -377,7 +417,13 @@ function addProduct() {
                 </GridItem>
                 <GridItem colSpan={2}>
                   <InputGroup>
-                    <Input pr="40px" type="text" placeholder="ระบุลดราคา" />
+                    <Input
+                      pr="40px"
+                      type="number"
+                      placeholder="ระบุลดราคา"
+                      value={price_sales}
+                      onChange={(e) => setPrice_sales(parseInt(e.target.value))}
+                    />
                     <InputRightElement>
                       <Text>฿</Text>
                     </InputRightElement>
@@ -389,7 +435,13 @@ function addProduct() {
                   </Box>
                 </GridItem>
                 <GridItem colSpan={2}>
-                  <Input pr="50px" type="text" placeholder="ระบุจำนวนสินค้า" />
+                  <Input
+                    pr="50px"
+                    type="number"
+                    placeholder="ระบุจำนวนสินค้า"
+                    value={stock}
+                    onChange={(e) => setStock(parseInt(e.target.value))}
+                  />
                 </GridItem>
                 <GridItem colSpan={1} justifySelf="end">
                   <Box pr="5px">
@@ -402,6 +454,8 @@ function addProduct() {
                       pr="40px"
                       type="text"
                       placeholder="ระบุน้ำหนักสินค้า"
+                      value={weight}
+                      onChange={(e) => setWeight(e.target.value)}
                     />
                     <InputRightElement>
                       <Text>Kg</Text>
@@ -449,8 +503,8 @@ function addProduct() {
               <Flex justifyContent="center" pt="10px">
                 <Button ml="200px">ยกเลิก</Button>
                 <Button
-                  type="submit"
                   ml="10px"
+                  type="submit"
                   bg="red"
                   leftIcon={<Image src="/images/save.png" alt="" h="25px" />}
                   _hover={{}}
@@ -490,7 +544,12 @@ function addProduct() {
             <ModalFooter justifyContent="center">
               <Flex>
                 <Button bg="white">ยกเลิก</Button>
-                <Button bg="red" color="white" onClick={() => saveSuccess()}>
+                <Button
+                  bg="red"
+                  type="submit"
+                  color="white"
+                  onClick={() => saveSuccess()}
+                >
                   ยืนยัน
                 </Button>
               </Flex>
@@ -526,7 +585,7 @@ function addProduct() {
             </ModalFooter>
           </ModalContent>
         </Modal>
-      </FormControl>
+      </form>
     </Box>
   );
 }
