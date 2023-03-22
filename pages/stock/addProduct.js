@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect  } from "react";
 import { useDropzone } from "react-dropzone";
 import {
   Box,
@@ -84,23 +84,23 @@ function addProduct() {
       data
     );
   }
-  const [files, setFiles] = useState([]);
+  const [img_product, setImg_product] = useState([]);
   const { getRootProps, getInputProps } = useDropzone({
     accept: {
       "image/*": [],
     },
     onDrop: (acceptedFiles) => {
-      setFiles(
-        acceptedFiles.map((file) =>
-          Object.assign(file, {
-            preview: URL.createObjectURL(file),
+      setImg_product(
+        acceptedFiles.map((img_product) =>
+          Object.assign(img_product, {
+            preview: URL.createObjectURL(img_product),
           })
         )
       );
     },
   });
 
-  const thumbs = files.map((file) => (
+  const thumbs = img_product.map((file) => (
     <div style={thumb} key={file.name}>
       <div style={thumbInner}>
         <img
@@ -116,7 +116,7 @@ function addProduct() {
   ));
   useEffect(() => {
     // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
-    return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
+    return () => img_product.forEach((file) => URL.revokeObjectURL(file.preview));
   }, []);
 
   const [buttonActive, setButtonActive] = useState([true, false]);
@@ -145,8 +145,22 @@ function addProduct() {
     onCloseForm1();
     onCloseForm2();
   };
-
-  const saveSuccess = () => {
+  const saveSuccess = async () => {
+    
+    const data = {
+      name_product,
+      detail_product,
+      price,
+      price_sales,
+      cost,
+      stock,
+      weight,
+      img_product,
+    };
+    const response = await axios.post(
+      "http://127.0.0.1:8000/api/addProduct",
+      data
+    );
     onCloseForm1();
     onOpenForm2();
   };
@@ -363,16 +377,6 @@ function addProduct() {
               <Grid templateColumns="repeat(3, 1fr)" gap={2}>
                 <GridItem colSpan={1} justifySelf="end">
                   <Box pr="5px">
-                    <Text>รหัสสินค้า : </Text>
-                  </Box>
-                </GridItem>
-                <GridItem colSpan={2}>
-                  <InputGroup>
-                    <Input pr="40px" type="text" placeholder="ระบุรหัสสินค้า" />
-                  </InputGroup>
-                </GridItem>
-                <GridItem colSpan={1} justifySelf="end">
-                  <Box pr="5px">
                     <Text>ต้นทุน : </Text>
                   </Box>
                 </GridItem>
@@ -504,8 +508,8 @@ function addProduct() {
                 <Button ml="200px">ยกเลิก</Button>
                 <Button
                   ml="10px"
-                  type="submit"
                   bg="red"
+                  color="white"
                   leftIcon={<Image src="/images/save.png" alt="" h="25px" />}
                   _hover={{}}
                   onClick={() => comfirmSave()}
@@ -543,7 +547,7 @@ function addProduct() {
             </ModalBody>
             <ModalFooter justifyContent="center">
               <Flex>
-                <Button bg="white">ยกเลิก</Button>
+                <Button bg="white" onClick={() => closeModal()}>ยกเลิก</Button>
                 <Button
                   bg="red"
                   type="submit"

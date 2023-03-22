@@ -315,16 +315,6 @@ function index() {
               <Grid templateColumns="repeat(3, 1fr)" gap={2}>
                 <GridItem colSpan={1} justifySelf="end">
                   <Box pr="5px">
-                    <Text>รหัสสินค้า : </Text>
-                  </Box>
-                </GridItem>
-                <GridItem colSpan={2}>
-                  <InputGroup>
-                    <Input pr="40px" type="text" placeholder="ระบุรหัสสินค้า" />
-                  </InputGroup>
-                </GridItem>
-                <GridItem colSpan={1} justifySelf="end">
-                  <Box pr="5px">
                     <Text>ต้นทุน : </Text>
                   </Box>
                 </GridItem>
