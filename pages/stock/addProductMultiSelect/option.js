@@ -110,6 +110,26 @@ function option() {
 
   const [selectedOptionsColor, setSelectedOptionsColor] = useState([]);
   const [selectedOptionsSize, setSelectedOptionsSize] = useState([]);
+  const [dataTable, setDataTable] = useState([]);
+  function handleOptionColor(options) {
+    setSelectedOptionsColor(options);
+    const size = selectedOptionsSize;
+    const newArr = options.map((item) => ({
+      ...item,
+      size,
+    }));
+    setDataTable(newArr);
+  }
+  function handleOptionSize(size) {
+    setSelectedOptionsSize(size);
+    const newArr = selectedOptionsColor.map((item) => ({
+      ...item,
+      size,
+    }));
+    setDataTable(newArr);
+  }
+
+  function clearSize() {}
   return (
     <Box>
       <Box>
@@ -168,7 +188,21 @@ function option() {
                         ? selectedOptions[index].value === "color"
                           ? colorOptions
                           : sizeOptions
+                        : null
+                    }
+                    onChange={
+                      selectedOptions[index] !== ""
+                        ? selectedOptions[index].value === "color"
+                          ? handleOptionColor
+                          : handleOptionSize
                         : option
+                    }
+                    value={
+                      selectedOptions[index] !== ""
+                        ? selectedOptions[index].value === "color"
+                          ? selectedOptionsColor
+                          : selectedOptionsSize
+                        : null
                     }
                   />
                 </Box>
@@ -201,45 +235,58 @@ function option() {
                 </Tr>
               </Thead>
               <Tbody>
-                <Tr>
-                  <Td border="1px solid" rowSpan={2}>
-                    แดง
-                  </Td>
-                  <Td border="1px solid">s</Td>
-                  <Td border="1px solid">
-                    <Input placeholder="ระบุราคา" />
-                  </Td>
-                  <Td border="1px solid">
-                    <Input placeholder="ระบุจำนวน" />
-                  </Td>
-                  <Td border="1px solid">
-                    <Input placeholder="ระบุจำนวนสินค้า" />
-                  </Td>
-                  <Td border="1px solid">
-                    <Switch colorScheme="brand" />
-                  </Td>
-                  <Td border="1px solid">
-                    <Image src="/images/trash-bin.png" h="25px" />
-                  </Td>
-                </Tr>
-                <Tr>
-                  <Td border="1px solid">m</Td>
-                  <Td border="1px solid">
-                    <Input placeholder="ระบุราคา" />
-                  </Td>
-                  <Td border="1px solid">
-                    <Input placeholder="ระบุจำนวน" />
-                  </Td>
-                  <Td border="1px solid">
-                    <Input placeholder="ระบุจำนวนสินค้า" />
-                  </Td>
-                  <Td border="1px solid">
-                    <Switch colorScheme="brand" />
-                  </Td>
-                  <Td border="1px solid">
-                    <Image src="/images/trash-bin.png" h="25px" />
-                  </Td>
-                </Tr>
+                {dataTable.map((item, index) => (
+                  <React.Fragment key={item.label}>
+                    <Tr>
+                      <Td
+                        border="1px solid"
+                        rowSpan={item.size.length > 0 ? item.size.length : 1}
+                      >
+                        {item.label}
+                      </Td>
+                      <Td border="1px solid">
+                        {item.size.length > 0 ? item.size[0].label : null}
+                      </Td>
+                      <Td border="1px solid">
+                        <Input placeholder="ระบุราคา" />
+                      </Td>
+                      <Td border="1px solid">
+                        <Input placeholder="ระบุจำนวน" />
+                      </Td>
+                      <Td border="1px solid">
+                        <Input placeholder="ระบุจำนวนสินค้า" />
+                      </Td>
+                      <Td border="1px solid">
+                        <Switch colorScheme="brand" />
+                      </Td>
+                      <Td border="1px solid">
+                        <Image src="/images/trash-bin.png" h="25px" />
+                      </Td>
+                    </Tr>
+                    {item.size.map((subItem, subIndex) => {
+                      return subIndex !== 0 ? (
+                        <Tr key={`${item.label}-${subIndex}`}>
+                          <Td border="1px solid">{subItem.label}</Td>
+                          <Td border="1px solid">
+                            <Input placeholder="ระบุราคา" />
+                          </Td>
+                          <Td border="1px solid">
+                            <Input placeholder="ระบุจำนวน" />
+                          </Td>
+                          <Td border="1px solid">
+                            <Input placeholder="ระบุจำนวนสินค้า" />
+                          </Td>
+                          <Td border="1px solid">
+                            <Switch colorScheme="brand" />
+                          </Td>
+                          <Td border="1px solid">
+                            <Image src="/images/trash-bin.png" h="25px" />
+                          </Td>
+                        </Tr>
+                      ) : null;
+                    })}
+                  </React.Fragment>
+                ))}
               </Tbody>
             </Table>
           </Box>
@@ -249,6 +296,7 @@ function option() {
               ml="10px"
               type="submit"
               bg="red"
+              color="white"
               leftIcon={<Image src="/images/save.png" alt="" h="25px" />}
               _hover={{}}
               onClick={() => comfirmSave()}
