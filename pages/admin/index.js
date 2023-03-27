@@ -35,16 +35,40 @@ import {
 
 export default function AdminManagement() {
 
-  const modalAdd = useDisclosure()
-  const modalCopy = useDisclosure()
-  const modalSuccess = useDisclosure()
+  // const modalAdd = useDisclosure();
+  // const modalCopy = useDisclosure()
+  // const modalSuccess = useDisclosure()
+  let {
+    isOpen: isOpenAddModal,
+    onOpen: onOpenAddModal,
+    onClose: onCloseAddModal
+  } = useDisclosure()
 
+  let {
+    isOpen: isOpenCopyModal,
+    onOpen: onOpenCopyModal,
+    onClose: onCloseCopyModal
+  } = useDisclosure()
+
+  const {
+    isOpen: isOpenSuccessModal,
+    onOpen: onOpenSuccessModal,
+    onClose: onCloseSuccessModal
+  } = useDisclosure()
+
+  // console.log(modalAdd);
+  // console.log(modalCopy);
+  // console.log(modalSuccess);
+  // console.log('------------------------')
+
+  if (isOpenCopyModal === true) isOpenAddModal = false;
+  if (isOpenSuccessModal === true) isOpenCopyModal = false;
 
 
   return (
     <>
 
-      <Box p={[5, 10]}>
+      <Box p='10'>
 
         <Box>
           <Center>
@@ -66,7 +90,7 @@ export default function AdminManagement() {
             </InputGroup>
             <Spacer />
             <Input width='auto' placeholder='เลือกวันที่' size='md' type="datetime-local" />
-            <Button onClick={modalAdd.onOpen} leftIcon={<AddIcon />} background='#f84c01' color='white'>เพิ่มแอดมิน</Button >
+            <Button onClick={onOpenAddModal} leftIcon={<AddIcon />} background='#f84c01' color='white'>เพิ่มแอดมิน</Button >
           </HStack>
         </Box>
 
@@ -257,8 +281,8 @@ export default function AdminManagement() {
 
         {/* Start Modal Add New Admin */}
         <Modal
-          isOpen={modalAdd.isOpen}
-          onClose={modalAdd.onClose}
+          isOpen={isOpenAddModal}
+          onClose={onCloseAddModal}
         >
           <ModalOverlay />
           <ModalContent>
@@ -346,10 +370,10 @@ export default function AdminManagement() {
               </FormControl>
             </ModalBody>
             <ModalFooter mt={10}>
-              <Button onClick={modalCopy.onOpen} background='#f84c01' color='white' mr={3}>
+              <Button onClick={onOpenCopyModal} background='#f84c01' color='white' mr={3}>
                 เพิ่มแอดมิน
               </Button>
-              <Button onClick={modalAdd.onClose}>ยกเลิก</Button>
+              <Button onClick={onCloseAddModal}>ยกเลิก</Button>
             </ModalFooter>
           </ModalContent>
         </Modal>
@@ -357,8 +381,8 @@ export default function AdminManagement() {
 
         {/* Start Modal Copy Link */}
         <Modal
-          isOpen={modalCopy.isOpen}
-          onClose={modalCopy.onClose}
+          isOpen={isOpenCopyModal}
+          onClose={onCloseCopyModal}
         >
           <ModalOverlay />
           <ModalContent>
@@ -424,10 +448,10 @@ export default function AdminManagement() {
 
             </ModalBody>
             <ModalFooter mt={10}>
-              <Button onClick={modalSuccess.onOpen} background='#f84c01' color='white' mr={3} >
+              <Button onClick={onOpenSuccessModal} background='#f84c01' color='white' mr={3} >
                 คัดลอก
               </Button>
-              <Button onClick={modalCopy.onClose}>ยกเลิก</Button>
+              <Button onClick={onCloseCopyModal}>ยกเลิก</Button>
             </ModalFooter>
           </ModalContent>
         </Modal>
@@ -435,8 +459,8 @@ export default function AdminManagement() {
 
 
         <Modal
-          isOpen={modalSuccess.isOpen}
-          onClose={modalSuccess.onClose}
+          isOpen={isOpenSuccessModal}
+          onClose={onCloseSuccessModal}
         >
           <ModalOverlay />
           <ModalContent pt={20} pb={20}>
@@ -452,7 +476,7 @@ export default function AdminManagement() {
 
             <ModalFooter justifyContent={'center'}>
 
-              <Button size={'lg'} background='#f84c01' color='white' mt={10} onClick={modalSuccess.onClose}>
+              <Button size={'lg'} background='#f84c01' color='white' mt={10} onClick={onCloseSuccessModal}>
                 ยืนยัน
               </Button>
 

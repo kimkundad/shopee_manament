@@ -34,7 +34,8 @@ import {
     ModalCloseButton,
     Grid,
     GridItem,
-    Skeleton
+    Skeleton,
+    Textarea
 } from "@chakra-ui/react";
 import { Icon } from "@chakra-ui/icons";
 import { BsPlusLg, BsStar, BsShop, BsFillPencilFill, BsEye } from "react-icons/bs";
@@ -57,9 +58,12 @@ const colunm = [
 
 
 function AddCard() {
-    const { isOpen, onOpen, onClose } = useDisclosure()
+
+    const modalViewStore = useDisclosure();
+    const modalEditStore = useDisclosure();
     return (
         <>
+            {/* Start Card */}
             <Card minWidth={'50px'}>
                 <CardBody align='center'>
                     <Flex pb='4'>
@@ -91,17 +95,19 @@ function AddCard() {
                 </CardBody>
 
                 <CardFooter justifyContent={'center'}>
-                    <Button leftIcon={<BsShop />} size='sm' colorScheme='red' fontWeight='none' onClick={onOpen}>
+                    <Button leftIcon={<BsShop />} size='sm' colorScheme='red' fontWeight='none' onClick={modalViewStore.onOpen}>
                         รูปแบบร้านค้า
                     </Button>
-                    <Button leftIcon={<BsFillPencilFill />} size='sm' ml='4' colorScheme='gray' variant='outline' fontWeight='none'>
+                    <Button leftIcon={<BsFillPencilFill />} size='sm' ml='4' colorScheme='gray' variant='outline' fontWeight='none' onClick={modalEditStore.onOpen}>
                         แก้ไขข้อมูล
                     </Button>
 
                 </CardFooter>
             </Card>
+            {/* End Card */}
 
-            <Modal size='4xl' isOpen={isOpen} onClose={onClose}>
+            {/* Start Modal button รูปแบบร้านค้า */}
+            <Modal size='4xl' isOpen={modalViewStore.isOpen} onClose={modalViewStore.onClose}>
                 <ModalOverlay />
                 <ModalContent py='10'>
                     <HStack justifyContent={'center'} alignItems="center">
@@ -312,7 +318,7 @@ function AddCard() {
                             borderWidth={2}
                             variant='outline'
                             mr={3}
-                            onClick={onClose}
+                            onClick={modalViewStore.onClose}
                         >
                             ยกเลิก
                         </Button>
@@ -330,6 +336,116 @@ function AddCard() {
 
                 </ModalContent>
             </Modal>
+            {/* End button รูปแบบร้านค้า Modal */}
+
+            {/* Start Modal button แก้ไขข้อมูล */}
+            <Modal size='xl' isOpen={modalEditStore.isOpen} onClose={modalEditStore.onClose}>
+                <ModalOverlay />
+                <ModalContent py='10'>
+                    <HStack justifyContent={'center'} alignItems="center">
+                        <Image width={36} height={36} src={"/images/menu/ร้านค้าของฉัน.png"} />
+                        <Text as="b" fontSize="4xl">
+                            แก้ไขข้อมูล
+                        </Text>
+                    </HStack>
+                    <ModalCloseButton />
+
+                    <ModalBody py='10'>
+                        <SimpleGrid columns={1} spacing={5} textAlign={'right'}>
+                            <Grid templateColumns='repeat(6, 1fr)' gap={4} alignItems="center">
+                                <GridItem colSpan={2} as='b' fontSize='17'><Text as='span' color='#fe4900'>* </Text>ชื่อร้านค้า:</GridItem>
+                                <GridItem colSpan={3}>
+                                    <Input placeholder='ชื่อของร้านค้าของคุณ' />
+                                </GridItem>
+                            </Grid>
+
+                            <Grid templateColumns='repeat(6, 1fr)' gap={4} alignItems="center">
+                                <GridItem colSpan={2} as='b' fontSize='17'><Text as='span' color='#fe4900'>* </Text>รายละเอียด:</GridItem>
+                                <GridItem colSpan={3}>
+                                    <Textarea
+                                        placeholder='รายละเอียดเกี่ยวกับร้านค้าของคุณ'
+                                    />
+                                </GridItem>
+                            </Grid>
+
+                            <Grid templateColumns='repeat(6, 1fr)' gap={4} alignItems="center">
+                                <GridItem colSpan={2} as='b' fontSize='17'>รูปโปรไฟล์ร้านค้า:</GridItem>
+                                <GridItem colSpan={1}>
+                                    <Select>
+                                        <option value='option1'>Option 1</option>
+                                        <option value='option2'>Option 2</option>
+                                        <option value='option3'>Option 3</option>
+                                    </Select>
+                                </GridItem>
+                                <GridItem colSpan={2} align="left">
+                                    <Text as='span' color='#fe4900'>* ต้องมีขนาดไม่เกิน 500 MB</Text>
+                                </GridItem>
+                            </Grid>
+
+                            <Grid templateColumns='repeat(6, 1fr)' gap={4} alignItems="center">
+                                <GridItem colSpan={2} as='b' fontSize='17'>รูปโปรไฟล์ร้านค้า:</GridItem>
+                                <GridItem colSpan={1}>
+                                    <Select>
+                                        <option value='option1'>Option 1</option>
+                                        <option value='option2'>Option 2</option>
+                                        <option value='option3'>Option 3</option>
+                                    </Select>
+                                </GridItem>
+                                <GridItem colSpan={2} align="left">
+                                    <Text as='span' color='#fe4900'>* ต้องมีขนาดไม่เกิน 500 MB</Text>
+                                </GridItem>
+                            </Grid>
+
+                            <Grid templateColumns='repeat(6, 1fr)' gap={4} alignItems="center">
+                                <GridItem colSpan={2} as='b' fontSize='17'>รูปแบบร้านค้า:</GridItem>
+                                <GridItem colSpan={1}>
+                                    <Select>
+                                        <option value='option1'>Option 1</option>
+                                        <option value='option2'>Option 2</option>
+                                        <option value='option3'>Option 3</option>
+                                    </Select>
+                                </GridItem>
+                            </Grid>
+                        </SimpleGrid>
+                    </ModalBody>
+
+                    <ModalFooter justifyContent={'center'}>
+                        <Button
+                            leftIcon={<BsEye />}
+                            color='#fe4900'
+                            borderColor='#fe4900'
+                            borderWidth={2}
+                            variant='outline'
+                            mr={3}
+                        >
+                            ดูตัวอย่าง
+                        </Button>
+                        <Button
+                            color='gray.500'
+                            borderColor='gray.500'
+                            borderWidth={2}
+                            variant='outline'
+                            mr={3}
+                            onClick={modalEditStore.onClose}
+                        >
+                            ยกเลิก
+                        </Button>
+                        <Button
+                            leftIcon={<VscSave />}
+                            bg="#fe4900"
+                            color='white'
+                            variant='solid'
+                            mr={3}
+                        >
+                            บันทึก
+                        </Button>
+                    </ModalFooter>
+
+
+                </ModalContent>
+            </Modal>
+            {/* End Modal button แก้ไขข้อมูล */}
+
         </>
 
     );
