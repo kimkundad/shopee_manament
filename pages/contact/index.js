@@ -97,8 +97,8 @@ export default function Contact() {
                     <VStack p='4'>
                         <Box>
                             <Text as='b' fontSize='17'>เกี่ยวกับเรา</Text>
-                            <Text fontSize='17'><Link>รู้จักกับ Testpang</Link></Text>
-                            <Text fontSize='17'><Link>เริ่มต้นกับ Testpang</Link></Text>
+                            <Text fontSize='17'><Link href='/'>รู้จักกับ Testpang</Link></Text>
+                            <Text fontSize='17'><Link href='/'>เริ่มต้นกับ Testpang</Link></Text>
                         </Box>
                     </VStack>
                 </GridItem>
@@ -106,8 +106,8 @@ export default function Contact() {
                     <VStack p='4'>
                         <Box>
                             <Text as='b' fontSize='17'>ซัพพอร์ต</Text>
-                            <Text fontSize='17'><Link>บทความ</Link></Text>
-                            <Text fontSize='17'><Link>คำถามที่พบบ่อย</Link></Text>
+                            <Text fontSize='17'><Link href='/'>บทความ</Link></Text>
+                            <Text fontSize='17'><Link href='/'>คำถามที่พบบ่อย</Link></Text>
                         </Box>
                     </VStack>
                 </GridItem>
@@ -115,8 +115,8 @@ export default function Contact() {
                     <VStack p='4'>
                         <Box>
                             <Text as='b' fontSize='17'>บริษัท</Text>
-                            <Text fontSize='17'><Link>เงื่อนไขการใช้งาน</Link></Text>
-                            <Text fontSize='17'><Link>นโยบายความเป็นส่วนตัว</Link></Text>
+                            <Text fontSize='17'><Link href='/'>เงื่อนไขการใช้งาน</Link></Text>
+                            <Text fontSize='17'><Link href='/'>นโยบายความเป็นส่วนตัว</Link></Text>
                         </Box>
                     </VStack>
                 </GridItem>
