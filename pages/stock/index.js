@@ -32,7 +32,7 @@ export default function stock() {
   useEffect(() => {
     async function fetchData() {
       let checkAll = true;
-      const res = await axios.get("http://127.0.0.1:8000/api/allProduct");
+      const res = await axios.get("http://192.168.0.86:8000/api/allProduct");
       setProducts(res.data);
       if (res.data.product.length > 0) {
         res.data.product.map((products) => {
@@ -84,7 +84,7 @@ export default function stock() {
   function handleAllSwitchChange() {
     async function fetchData() {
       const res = await axios.put(
-        `http://127.0.0.1:8000/api/setActiveAllProduct/?checked=${!isCheckedAll}`
+        `http://192.168.0.86:8000/api/setActiveAllProduct/?checked=${!isCheckedAll}`
       );
       setProducts(res.data);
       setIsCheckedAll(!isCheckedAll);
@@ -95,7 +95,7 @@ export default function stock() {
   const handleActivateProduct = (event) => {
     async function fetchData() {
       const res = await axios.put(
-        `http://127.0.0.1:8000/api/setActiveProduct/?id=${event.target.id}&checked=${event.target.checked}`
+        `http://192.168.0.86:8000/api/setActiveProduct/?id=${event.target.id}&checked=${event.target.checked}`
       );
       setProducts(res.data);
       setIsCheckedAll(
@@ -173,7 +173,7 @@ export default function stock() {
   function deleteProduct() {
     async function fetchData() {
       const res = await axios.post(
-        `http://127.0.0.1:8000/api/deleteProduct/${id}`
+        `http://192.168.0.86:8000/api/deleteProduct/${id}`
       );
       setProducts(res.data);
       setIsCheckedAll(
@@ -191,7 +191,7 @@ export default function stock() {
 
   return (
     <>
-      <Box>
+      <Box w="100%">
         <Flex m="10px" pt="10px">
           <Box>
             <InputGroup>
@@ -308,13 +308,13 @@ export default function stock() {
                     {item.price}
                   </Table.Cell>
                   <Table.Cell css={{ textAlign: "center" }}>
-                    {item.created_date}
+                    {item.created_at}
                   </Table.Cell>
                   <Table.Cell css={{ textAlign: "center" }}>
                     {item.maker}
                   </Table.Cell>
                   <Table.Cell css={{ textAlign: "center" }}>
-                    <Flex justifyContent="center">
+                    <Flex justifyContent="center" w="70px">
                       <Link href="/">
                         <Image src="/images/edit.png" h="25px" />
                       </Link>

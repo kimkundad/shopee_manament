@@ -313,6 +313,22 @@ function index() {
             </GridItem>
             <GridItem fontSize="25px" width="100%">
               <Grid templateColumns="repeat(3, 1fr)" gap={2}>
+              <GridItem colSpan={1} justifySelf="end">
+                  <Box pr="5px">
+                    <Text>รหัสสินค้า : </Text>
+                  </Box>
+                </GridItem>
+                <GridItem colSpan={2}>
+                  <InputGroup>
+                    <Input
+                      pr="40px"
+                      type="number"
+                      placeholder="ระบุรหัสสินค้า"
+                      value={cost}
+                      onChange={(e) => setCost(parseInt(e.target.value))}
+                    />
+                  </InputGroup>
+                </GridItem>
                 <GridItem colSpan={1} justifySelf="end">
                   <Box pr="5px">
                     <Text>ต้นทุน : </Text>

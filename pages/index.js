@@ -8,9 +8,10 @@ import {
   GridItem,
   Spacer,
 } from "@chakra-ui/react";
-import { Line, Doughnut } from "react-chartjs-2";
+import { Line, Doughnut, Pie, Bar } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Table } from "@nextui-org/react";
+import faker from "faker";
 import Chart from "chart.js/auto";
 
 export default function DashBoard() {
@@ -77,36 +78,159 @@ export default function DashBoard() {
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText(
-        'จำนวน \n'+sum.toLocaleString(),
+        "จำนวน \n" + sum.toLocaleString(),
         chart.getDatasetMeta(0).data[0].x,
         chart.getDatasetMeta(0).data[0].y
       );
     },
   };
+
+  const dataPie = {
+    labels: [],
+    datasets: [
+      {
+        label: "My First Dataset",
+        data: [300, 50, 100],
+        backgroundColor: [
+          "rgba(255, 99, 132, 1)",
+          "rgba(54, 162, 235, 1)",
+          "rgba(255, 206, 86, 1)",
+        ],
+        borderColor: [
+          "rgba(255, 99, 132, 1)",
+          "rgba(54, 162, 235, 1)",
+          "rgba(255, 206, 86, 1)",
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const optionsPie = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: "bottom",
+      },
+    },
+  };
+
+  const optionsBar = {
+    plugins: {
+      title: {
+        display: true,
+        text: "Chart.js Bar Chart - Stacked",
+      },
+    },
+    responsive: true,
+    scales: {
+      x: {
+        stacked: true,
+      },
+      y: {
+        stacked: true,
+      },
+    },
+  };
+
+  const labels = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+  ];
+
+  const dataBar = {
+    labels,
+    datasets: [
+      {
+        label: "Dataset 1",
+        data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
+        backgroundColor: "rgb(255, 99, 132)",
+      },
+      {
+        label: "Dataset 2",
+        data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
+        backgroundColor: "rgb(75, 192, 192)",
+      },
+      {
+        label: "Dataset 3",
+        data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
+        backgroundColor: "rgb(53, 162, 235)",
+      },
+    ],
+  };
   return (
     <Box bg="gray.100">
+      <Box>test</Box>
+
       <Grid templateColumns="repeat(2, 1fr)" gap={6}>
-        <GridItem
-          textAlign="-webkit-center"
-          w="100%"
-          h="500px"
-          p="15px"
-          bg="white"
-          borderRadius="xl"
-        >
-          สินค้าขายดี
-        </GridItem>
-        <GridItem
-          textAlign="-webkit-center"
-          w="100%"
-          h="500px"
-          p="15px"
-          bg="white"
-          borderRadius="xl"
-        >
-          สินค้าขายดี
-        </GridItem>
+        <Box bg="white" borderRadius="xl">
+          <GridItem textAlign="-webkit-center" w="100%" h="300px" p="15px">
+            สินค้าขายดี
+            <Pie data={dataPie} options={optionsPie} />
+          </GridItem>
+          <Box p="25px">
+            <Flex py="5px" borderBottom="1px solid">
+              <Text>จำนวนขายรวม</Text>
+              <Spacer />
+              <Text>4,578</Text>
+              <Spacer />
+              <Text>จำนวนขายรวม</Text>
+              <Spacer />
+              <Text>4,578</Text>
+            </Flex>
+            <Flex py="5px" borderBottom="1px solid">
+              <Text>จำนวนขายรวม</Text>
+              <Spacer />
+              <Text>4,578</Text>
+              <Spacer />
+              <Text>จำนวนขายรวม</Text>
+              <Spacer />
+              <Text>4,578</Text>
+            </Flex>
+            <Flex py="5px" justifyContent="center">
+              <Text>จำนวนขายรวม</Text>
+              <Text pl="70px">4,578</Text>
+            </Flex>
+          </Box>
+        </Box>
+        <Box bg="white" borderRadius="xl">
+          <GridItem textAlign="-webkit-center" w="100%" h="300px" p="15px">
+            ร้านค้าขายดี
+            <Pie data={dataPie} options={optionsPie} />
+          </GridItem>
+          <Box p="25px">
+            <Flex py="5px" borderBottom="1px solid">
+              <Text>จำนวนขายรวม</Text>
+              <Spacer />
+              <Text>4,578</Text>
+              <Spacer />
+              <Text>จำนวนขายรวม</Text>
+              <Spacer />
+              <Text>4,578</Text>
+            </Flex>
+            <Flex py="5px" borderBottom="1px solid">
+              <Text>จำนวนขายรวม</Text>
+              <Spacer />
+              <Text>4,578</Text>
+              <Spacer />
+              <Text>จำนวนขายรวม</Text>
+              <Spacer />
+              <Text>4,578</Text>
+            </Flex>
+            <Flex py="5px" justifyContent="center">
+              <Text>จำนวนขายรวม</Text>
+              <Text pl="70px">4,578</Text>
+            </Flex>
+          </Box>
+        </Box>
       </Grid>
+
       <Box
         bg="white"
         textAlign="center"
@@ -173,7 +297,8 @@ export default function DashBoard() {
           bg="white"
           borderRadius="xl"
         >
-          สินค้าขายดี
+          ยอดขายร้านค้า
+          <Bar options={optionsBar} data={dataBar} />
         </GridItem>
       </Grid>
       <Grid templateColumns="repeat(3, 1fr)" gap={6}>
