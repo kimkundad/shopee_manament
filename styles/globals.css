@@ -54,3 +54,7 @@ td {
 .dropzone:focus {
     border-color: #2196f3;
 }
+
+.anticon-eye{
+    display: none !important;
+}

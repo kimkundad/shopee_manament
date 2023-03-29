@@ -74,13 +74,18 @@ export default function DashBoard() {
       const { ctx, data } = chart;
       let sum = 1200;
       ctx.save();
-      ctx.font = "bolder 30px sans-serif";
+      ctx.font = "20px sans-serif";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText(
-        "จำนวน \n" + sum.toLocaleString(),
+        "จำนวน",
         chart.getDatasetMeta(0).data[0].x,
-        chart.getDatasetMeta(0).data[0].y
+        chart.getDatasetMeta(0).data[0].y-10
+      );
+      ctx.fillText(
+        sum.toLocaleString(),
+        chart.getDatasetMeta(0).data[0].x,
+        chart.getDatasetMeta(0).data[0].y+20
       );
     },
   };
@@ -107,11 +112,20 @@ export default function DashBoard() {
   };
 
   const optionsPie = {
-    responsive: true,
-    maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: "bottom",
+        labels: {
+          font: {
+            size: 14,
+          },
+        },
+      },
+      tooltip: {
+        callbacks: {
+          label: function (context) {
+            return `${context.label}: ${context.parsed}%`;
+          },
+        },
       },
     },
   };
@@ -120,7 +134,6 @@ export default function DashBoard() {
     plugins: {
       title: {
         display: true,
-        text: "Chart.js Bar Chart - Stacked",
       },
     },
     responsive: true,
@@ -144,22 +157,25 @@ export default function DashBoard() {
     "July",
   ];
 
+  const test = [
+    10,12,12,45,78,42,10
+  ]
   const dataBar = {
     labels,
     datasets: [
       {
         label: "Dataset 1",
-        data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
+        data: test.map((item) => item),
         backgroundColor: "rgb(255, 99, 132)",
       },
       {
         label: "Dataset 2",
-        data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
+        data: test.map((item) => item),
         backgroundColor: "rgb(75, 192, 192)",
       },
       {
         label: "Dataset 3",
-        data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
+        data: test.map((item) => item),
         backgroundColor: "rgb(53, 162, 235)",
       },
     ],
@@ -247,23 +263,23 @@ export default function DashBoard() {
         <GridItem
           textAlign="-webkit-center"
           w="100%"
-          h="100%"
+          h="350px"
           p="15px"
           bg="white"
+          overflow="auto"
           borderRadius="xl"
         >
-          สินค้าขายดี
           <Table
             aria-label="Example table with static content"
             css={{
-              height: "auto",
+              height: "350px",
               minWidth: "100%",
             }}
           >
             <Table.Header>
-              <Table.Column>NAME</Table.Column>
-              <Table.Column>ROLE</Table.Column>
-              <Table.Column>STATUS</Table.Column>
+              <Table.Column>ชื่อร้าน</Table.Column>
+              <Table.Column>ยอดขาย</Table.Column>
+              <Table.Column>สินค้าขายดี</Table.Column>
             </Table.Header>
             <Table.Body>
               <Table.Row key="1">
@@ -280,6 +296,21 @@ export default function DashBoard() {
                 <Table.Cell>Jane Fisher</Table.Cell>
                 <Table.Cell>Senior Developer</Table.Cell>
                 <Table.Cell>Active</Table.Cell>
+              </Table.Row>
+              <Table.Row key="4">
+                <Table.Cell>William Howard</Table.Cell>
+                <Table.Cell>Community Manager</Table.Cell>
+                <Table.Cell>Vacation</Table.Cell>
+              </Table.Row>
+              <Table.Row key="4">
+                <Table.Cell>William Howard</Table.Cell>
+                <Table.Cell>Community Manager</Table.Cell>
+                <Table.Cell>Vacation</Table.Cell>
+              </Table.Row>
+              <Table.Row key="4">
+                <Table.Cell>William Howard</Table.Cell>
+                <Table.Cell>Community Manager</Table.Cell>
+                <Table.Cell>Vacation</Table.Cell>
               </Table.Row>
               <Table.Row key="4">
                 <Table.Cell>William Howard</Table.Cell>
@@ -311,11 +342,13 @@ export default function DashBoard() {
           borderRadius="xl"
         >
           สินค้า
-          <Doughnut
-            data={dataDonut}
-            options={optionsDonut}
-            plugins={[textCenter]}
-          />
+          <Box h="200px">
+            <Doughnut
+              data={dataDonut}
+              options={optionsDonut}
+              plugins={[textCenter]}
+            />
+          </Box>
           <Box>
             <Flex>
               <Text>จำนวนคงเหลือ</Text>
@@ -338,11 +371,13 @@ export default function DashBoard() {
           borderRadius="xl"
         >
           การจัดส่ง
-          <Doughnut
-            data={dataDonut}
-            options={optionsDonut}
-            plugins={[textCenter]}
-          />
+          <Box h="200px">
+            <Doughnut
+              data={dataDonut}
+              options={optionsDonut}
+              plugins={[textCenter]}
+            />
+          </Box>
           <Box>
             <Flex>
               <Text>การจัดส่งพัสดุด่วน</Text>
@@ -365,11 +400,13 @@ export default function DashBoard() {
           borderRadius="xl"
         >
           การชำระเงิน
-          <Doughnut
-            data={dataDonut}
-            options={optionsDonut}
-            plugins={[textCenter]}
-          />
+          <Box h="200px">
+            <Doughnut
+              data={dataDonut}
+              options={optionsDonut}
+              plugins={[textCenter]}
+            />
+          </Box>
           <Box>
             <Flex>
               <Text>โอนเงิน</Text>

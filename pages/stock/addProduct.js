@@ -1,4 +1,4 @@
-import React, { useState, useEffect  } from "react";
+import React, { useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import {
   Box,
@@ -30,35 +30,71 @@ import {
 import Link from "next/link";
 import { BsArrowLeftCircle } from "react-icons/bs";
 import axios from "axios";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { Upload } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
+/* import "antd/dist/antd.css"; */
 
-const thumbsContainer = {
-  display: "flex",
-  flexDirection: "row",
-  flexWrap: "wrap",
-  marginTop: 16,
-};
+class PicturesWall extends React.Component {
+  state = {
+    fileList: [],
+  };
+  handleChange = ({ fileList }) => {
+    this.props.setFileImage(fileList);
+    this.setState({ fileList })
+  };
 
-const thumb = {
-  display: "inline-flex",
-  borderRadius: 2,
-  width: 100,
-  height: 100,
-  marginBottom: 15,
-  boxSizing: "border-box",
-};
+  render() {
+    const { fileList } = this.state;
+    const uploadButton = (
+      <div>
+        <PlusOutlined />
+        <div style={{ marginTop: 8 }}>เพิ่มรูปภาพ ({fileList.length}/10)</div>
+      </div>
+    );
+    return (
+      <>
+        <Upload
+          listType="picture-card"
+          fileList={fileList}
+          onChange={this.handleChange}
+        >
+          {fileList.length >= 10 ? null : uploadButton}
+        </Upload>
+      </>
+    );
+  }
+}
+class VideoWall extends React.Component {
+  state = {
+    fileList: [],
+  };
+  handleChange = ({ fileList }) => {
+    this.props.setFileVideo(fileList);
+    this.setState({ fileList })
+  };
 
-const thumbInner = {
-  display: "flex",
-  minWidth: 0,
-  overflow: "hidden",
-};
-
-const img = {
-  display: "block",
-  width: "auto",
-  height: "100%",
-};
-
+  render() {
+    const { fileList } = this.state;
+    const uploadButton = (
+      <div>
+        <PlusOutlined />
+        <div style={{ marginTop: 8 }}>เพิ่มวิดีโอ ({fileList.length}/2)</div>
+      </div>
+    );
+    return (
+      <>
+        <Upload
+          listType="picture-card"
+          fileList={fileList}
+          onChange={this.handleChange}
+        >
+          {fileList.length >= 2 ? null : uploadButton}
+        </Upload>
+      </>
+    );
+  }
+}
 function addProduct() {
   const [name_product, setName_product] = useState("");
   const [detail_product, setDetail_product] = useState("");
@@ -67,6 +103,7 @@ function addProduct() {
   const [cost, setCost] = useState("");
   const [stock, setStock] = useState("");
   const [weight, setWeight] = useState("");
+  const [sku, setSku] = useState("");
   async function handleSubmit(event) {
     event.preventDefault();
 
@@ -78,46 +115,14 @@ function addProduct() {
       cost,
       stock,
       weight,
+      fileImage,
     };
     const response = await axios.post(
-      "http://127.0.0.1:8000/api/addProduct",
+      "http://192.168.0.86:8000/api/addProduct",
       data
     );
   }
   const [img_product, setImg_product] = useState([]);
-  const { getRootProps, getInputProps } = useDropzone({
-    accept: {
-      "image/*": [],
-    },
-    onDrop: (acceptedFiles) => {
-      setImg_product(
-        acceptedFiles.map((img_product) =>
-          Object.assign(img_product, {
-            preview: URL.createObjectURL(img_product),
-          })
-        )
-      );
-    },
-  });
-
-  const thumbs = img_product.map((file) => (
-    <div style={thumb} key={file.name}>
-      <div style={thumbInner}>
-        <img
-          src={file.preview}
-          style={img}
-          // Revoke data uri after image is loaded
-          onLoad={() => {
-            URL.revokeObjectURL(file.preview);
-          }}
-        />
-      </div>
-    </div>
-  ));
-  useEffect(() => {
-    // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
-    return () => img_product.forEach((file) => URL.revokeObjectURL(file.preview));
-  }, []);
 
   const [buttonActive, setButtonActive] = useState([true, false]);
 
@@ -146,7 +151,6 @@ function addProduct() {
     onCloseForm2();
   };
   const saveSuccess = async () => {
-    
     const data = {
       name_product,
       detail_product,
@@ -155,14 +159,25 @@ function addProduct() {
       cost,
       stock,
       weight,
-      img_product,
+      fileImage,
+      sku,
     };
     const response = await axios.post(
-      "http://127.0.0.1:8000/api/addProduct",
+      "http://192.168.0.86:8000/api/addProduct",
       data
     );
     onCloseForm1();
     onOpenForm2();
+  };
+
+  const [fileImage, setFileImage] = useState([]);
+  const handleSetFileImage = (fileList) => {
+    setFileImage(fileList);
+  };
+  console.log(fileImage);
+  const [fileVideo, setFileVideo] = useState([]);
+  const handleSetFileVideo = (fileList) => {
+    setFileVideo(fileList);
   };
 
   return (
@@ -322,23 +337,7 @@ function addProduct() {
                 </GridItem>
                 <GridItem colSpan={2}>
                   <Box>
-                    <Box
-                      {...getRootProps({ className: "dropzone" })}
-                      borderRadius="xl"
-                      bg="gray.100"
-                    >
-                      <Input {...getInputProps()} />
-                      <Image
-                        src="/images/addImage.png"
-                        alt=""
-                        h="60px"
-                        w="70px"
-                      />
-                      <Text>กดเพื่ออัพโหลดรูป</Text>
-                      <Text>(0/10)</Text>
-                    </Box>
-                    <aside style={thumbsContainer}>{thumbs}</aside>
-                    <Text color="orange">*ต้องมีขนาดไฟล์ไม่เกิน 150 MB</Text>
+                    <PicturesWall setFileImage={handleSetFileImage}/>
                   </Box>
                 </GridItem>
                 <GridItem colSpan={1} justifySelf="end">
@@ -347,35 +346,13 @@ function addProduct() {
                   </Box>
                 </GridItem>
                 <GridItem colSpan={2}>
-                  <Box>
-                    <Box
-                      {...getRootProps({ className: "dropzone" })}
-                      borderRadius="xl"
-                      bg="gray.100"
-                      h="100px"
-                      w="100px"
-                      fontSize="15px"
-                      p="10px"
-                    >
-                      <Input {...getInputProps()} />
-                      <Image
-                        src="/images/addVideo.png"
-                        alt=""
-                        h="40px"
-                        w="40px"
-                      />
-                      <Text pt="5px">เพิ่มวิดีโอ</Text>
-                      <Text>(0/2)</Text>
-                    </Box>
-                    <aside style={thumbsContainer}>{thumbs}</aside>
-                    <Text color="orange">*ต้องมีขนาดไฟล์ไม่เกิน 500 MB</Text>
-                  </Box>
+                  <VideoWall setFileVideo={handleSetFileVideo}/>
                 </GridItem>
               </Grid>
             </GridItem>
             <GridItem fontSize="25px" width="100%">
               <Grid templateColumns="repeat(3, 1fr)" gap={2}>
-              <GridItem colSpan={1} justifySelf="end">
+                <GridItem colSpan={1} justifySelf="end">
                   <Box pr="5px">
                     <Text>รหัสสินค้า : </Text>
                   </Box>
@@ -386,8 +363,8 @@ function addProduct() {
                       pr="40px"
                       type="number"
                       placeholder="ระบุรหัสสินค้า"
-                      value={cost}
-                      onChange={(e) => setCost(parseInt(e.target.value))}
+                      value={sku}
+                      onChange={(e) => setSku(parseInt(e.target.value))}
                     />
                   </InputGroup>
                 </GridItem>
@@ -563,7 +540,9 @@ function addProduct() {
             </ModalBody>
             <ModalFooter justifyContent="center">
               <Flex>
-                <Button bg="white" onClick={() => closeModal()}>ยกเลิก</Button>
+                <Button bg="white" onClick={() => closeModal()}>
+                  ยกเลิก
+                </Button>
                 <Button
                   bg="red"
                   type="submit"
