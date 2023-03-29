@@ -30,7 +30,16 @@ export default function OrderNavbar() {
                     >
                         <Icon as={BsAlarm} boxSize={5} />
                         <Text as='b' fontSize={17}>ออเดอร์</Text>
-                        <Badge boxSize={5} fontSize={15} color={'white'} bg='red.400' textAlign={'center'} borderRadius={'50%'}>10</Badge>
+                        <Badge
+                            boxSize={5}
+                            fontSize={15}
+                            color={'white'}
+                            bg='red.400'
+                            textAlign={'center'}
+                            borderRadius={'50%'}
+                        >
+                            10
+                        </Badge>
                     </WrapItem>
 
                     <WrapItem
@@ -41,7 +50,16 @@ export default function OrderNavbar() {
                     >
                         <Icon as={BsBoxSeam} boxSize={5} />
                         <Text as='b' fontSize={17}>กำลังแพ็ค</Text>
-                        <Badge boxSize={5} fontSize={15} color={'white'} bg='blue.400' textAlign={'center'} borderRadius={'50%'}>3</Badge>
+                        <Badge
+                            boxSize={5}
+                            fontSize={15}
+                            color={'white'}
+                            bg='blue.400'
+                            textAlign={'center'}
+                            borderRadius={'50%'}
+                        >
+                            3
+                        </Badge>
                     </WrapItem>
 
                     <WrapItem
@@ -52,7 +70,16 @@ export default function OrderNavbar() {
                     >
                         <Icon as={BsTruck} boxSize={5} />
                         <Text as='b' fontSize={17}>พร้อมส่ง</Text>
-                        <Badge boxSize={5} fontSize={15} color={'white'} bg='yellow.400' textAlign={'center'} borderRadius={'50%'}>5</Badge>
+                        <Badge
+                            boxSize={5}
+                            fontSize={15}
+                            color={'white'}
+                            bg='yellow.400'
+                            textAlign={'center'}
+                            borderRadius={'50%'}
+                        >
+                            5
+                        </Badge>
                     </WrapItem>
 
                     <WrapItem
@@ -63,7 +90,16 @@ export default function OrderNavbar() {
                     >
                         <Icon as={BsFillClipboardCheckFill} boxSize={5} />
                         <Text as='b' fontSize={17}>ส่งแล้ว</Text>
-                        <Badge boxSize={5} fontSize={15} color={'white'} bg='green.400' textAlign={'center'} borderRadius={'50%'}>7</Badge>
+                        <Badge
+                            boxSize={5}
+                            fontSize={15}
+                            color={'white'}
+                            bg='green.400'
+                            textAlign={'center'}
+                            borderRadius={'50%'}
+                        >
+                            7
+                        </Badge>
                     </WrapItem>
 
                     <WrapItem
@@ -74,7 +110,16 @@ export default function OrderNavbar() {
                     >
                         <Icon as={BsPatchCheckFill} boxSize={5} />
                         <Text as='b' fontSize={17}>ส่งสำเร็จ</Text>
-                        <Badge boxSize={5} fontSize={15} color={'white'} bg='purple.400' textAlign={'center'} borderRadius={'50%'}>3</Badge>
+                        <Badge
+                            boxSize={5}
+                            fontSize={15}
+                            color={'white'}
+                            bg='purple.400'
+                            textAlign={'center'}
+                            borderRadius={'50%'}
+                        >
+                            3
+                        </Badge>
                     </WrapItem>
 
                     <WrapItem
@@ -85,7 +130,16 @@ export default function OrderNavbar() {
                     >
                         <Icon as={BsArrowReturnLeft} boxSize={5} />
                         <Text as='b' fontSize={17}>ตีกลับ</Text>
-                        <Badge boxSize={5} fontSize={15} color={'white'} bg='orange.400' textAlign={'center'} borderRadius={'50%'}>2</Badge>
+                        <Badge
+                            boxSize={5}
+                            fontSize={15}
+                            color={'white'}
+                            bg='orange.400'
+                            textAlign={'center'}
+                            borderRadius={'50%'}
+                        >
+                            2
+                        </Badge>
                     </WrapItem>
 
                     <WrapItem
@@ -96,7 +150,16 @@ export default function OrderNavbar() {
                     >
                         <Icon as={BsXOctagonFill} boxSize={5} />
                         <Text as='b' fontSize={17}>ยกเลิก</Text>
-                        <Badge boxSize={5} fontSize={15} color={'white'} bg='pink.400' textAlign={'center'} borderRadius={'50%'}>4</Badge>
+                        <Badge
+                            boxSize={5}
+                            fontSize={15}
+                            color={'white'}
+                            bg='pink.400'
+                            textAlign={'center'}
+                            borderRadius={'50%'}
+                        >
+                            4
+                        </Badge>
                     </WrapItem>
                 </Wrap>
                 <Box bg='gray.200' h='1'></Box>

@@ -9,6 +9,7 @@ import {
 	Button,
 	Spacer,
 	Avatar,
+	AvatarBadge,
 	Select,
 	IconButton,
 	Flex,
@@ -24,6 +25,8 @@ import {
 	Switch,
 	VStack,
 	InputRightElement,
+	Icon,
+	Circle,
 } from "@chakra-ui/react";
 import {
 	Table,
@@ -54,11 +57,10 @@ import {
 	ArrowRightIcon,
 	SearchIcon,
 } from "@chakra-ui/icons";
+import { BsArrowLeftCircle, BsTrash3Fill, BsCameraFill } from "react-icons/bs";
 
 export default function AdminManagement() {
-	// const modalAdd = useDisclosure();
-	// const modalCopy = useDisclosure()
-	// const modalSuccess = useDisclosure()
+
 	let {
 		isOpen: isOpenAddModal,
 		onOpen: onOpenAddModal,
@@ -77,10 +79,17 @@ export default function AdminManagement() {
 		onClose: onCloseSuccessModal,
 	} = useDisclosure();
 
-	// console.log(modalAdd);
-	// console.log(modalCopy);
-	// console.log(modalSuccess);
-	// console.log('------------------------')
+	const {
+		isOpen: isOpenEditModal,
+		onOpen: onOpenEditModal,
+		onClose: onCloseEditModal,
+	} = useDisclosure();
+
+	const {
+		isOpen: isOpenDeleteModal,
+		onOpen: onOpenDeleteModal,
+		onClose: onCloseDeleteModal,
+	} = useDisclosure();
 
 	if (isOpenCopyModal === true) isOpenAddModal = false;
 	if (isOpenSuccessModal === true) isOpenCopyModal = false;
@@ -88,6 +97,8 @@ export default function AdminManagement() {
 	return (
 		<>
 			<Box p="10">
+
+				{/* Start Header */}
 				<Box>
 					<Center>
 						<HStack>
@@ -104,8 +115,10 @@ export default function AdminManagement() {
 						</HStack>
 					</Center>
 				</Box>
+				{/* End Header */}
 
-				<Box mt={"10"}>
+				{/* Start Navbar */}
+				<Box mt={10}>
 					<HStack>
 						<InputGroup width="auto">
 							<InputLeftElement
@@ -131,7 +144,9 @@ export default function AdminManagement() {
 						</Button>
 					</HStack>
 				</Box>
+				{/* End Navbar */}
 
+				{/* Start Table */}
 				<Box mt={10}>
 					<TableContainer fontSize="17">
 						<Table variant="striped" colorScheme="gray">
@@ -145,22 +160,16 @@ export default function AdminManagement() {
 									>
 										รูปภาพ
 									</Th>
-									<Th color={"white"} fontSize="15">
-										ชื่อ - นามสกุล
-									</Th>
-									<Th color={"white"} fontSize="15">
-										Email
-									</Th>
-									<Th color={"white"} fontSize="15">
-										สถานะ
-									</Th>
-									<Th color={"white"} fontSize="15">
-										สิทธิ์การเข้าถึง
-									</Th>
-									<Th color={"white"} fontSize="15">
-										วันที่สร้าง
-									</Th>
-									<Th color={"white"} borderRightRadius={"10"} fontSize="15">
+									<Th color={"white"} fontSize="15">ชื่อ - นามสกุล</Th>
+									<Th color={"white"} fontSize="15">Email</Th>
+									<Th color={"white"} fontSize="15">สถานะ</Th>
+									<Th color={"white"} fontSize="15">สิทธิ์การเข้าถึง</Th>
+									<Th color={"white"} fontSize="15">วันที่สร้าง</Th>
+									<Th
+										color={"white"}
+										borderRightRadius={"10"}
+										fontSize="15"
+									>
 										เพิ่มเติม
 									</Th>
 								</Tr>
@@ -196,12 +205,14 @@ export default function AdminManagement() {
 									<Td borderRightRadius={"10"}>
 										<HStack>
 											<IconButton
+												onClick={onOpenEditModal}
 												borderRadius="3xl"
 												colorScheme="blue"
 												aria-label="Edit"
 												icon={<EditIcon />}
 											/>
 											<IconButton
+												onClick={onOpenDeleteModal}
 												borderRadius="3xl"
 												colorScheme="red"
 												aria-label="Delete"
@@ -313,8 +324,10 @@ export default function AdminManagement() {
 						</Table>
 					</TableContainer>
 				</Box>
+				{/* End Table */}
 
-				<Box mt={"10"}>
+				{/* Start Pagination */}
+				<Box mt={10}>
 					<HStack>
 						<Wrap>
 							<WrapItem>
@@ -365,6 +378,7 @@ export default function AdminManagement() {
 						</Stack>
 					</HStack>
 				</Box>
+				{/* End Pagination */}
 
 				{/* Start Modal Add New Admin */}
 				<Modal isOpen={isOpenAddModal} onClose={onCloseAddModal}>
@@ -606,9 +620,10 @@ export default function AdminManagement() {
 				</Modal>
 				{/* End Modal Copy Link */}
 
+				{/* Start Modal Success */}
 				<Modal isOpen={isOpenSuccessModal} onClose={onCloseSuccessModal}>
 					<ModalOverlay />
-					<ModalContent pt={20} pb={20}>
+					<ModalContent py={20}>
 						<ModalHeader>
 							<Center>
 								<Image
@@ -639,6 +654,157 @@ export default function AdminManagement() {
 						</ModalFooter>
 					</ModalContent>
 				</Modal>
+				{/* End Modal Success */}
+
+				{/* Start Modal Edit */}
+				<Modal isOpen={isOpenEditModal} onClose={onCloseEditModal}>
+					<ModalOverlay />
+					<ModalContent p={4}>
+						<ModalHeader>
+							<Flex my={2} justifyContent={'center'} gap={2}>
+								<Image
+									width={28}
+									height={28}
+									src={"/images/menu/จัดการแอดมิน.png"}
+								/>
+								<Text as="b" fontSize="21">
+									แก้ไขแอดมิน
+								</Text>
+							</Flex>
+						</ModalHeader>
+						<ModalCloseButton />
+
+						<ModalBody>
+							<Grid templateColumns='repeat(8, 1fr)' gap={2} alignItems="center">
+								<GridItem colSpan={8} pb={5} align={'center'}>
+									<Avatar size='2xl' name='Segun Adebayo' src='https://bit.ly/sage-adebayo' alt='demo'>
+										<Link href={'/'}>
+											<AvatarBadge
+												boxSize={10}
+												borderColor="#f84c01"
+												bg='white'
+												borderWidth={2}
+
+											>
+												<Icon as={BsCameraFill} boxSize={6} color={'#f84c01'} />
+											</AvatarBadge>
+										</Link>
+									</Avatar>
+								</GridItem>
+
+								<GridItem colSpan={2} textAlign={'right'}>
+									<Text as='b' fontSize={17}>ชื่อ - นามสกุล :</Text>
+								</GridItem>
+								<GridItem colSpan={6}>
+									<FormControl>
+										<Input placeholder='กรอก ชื่อ - นามสกุล ของคุณ' />
+									</FormControl>
+								</GridItem>
+
+								<GridItem colSpan={2} textAlign={'right'}>
+									<Text as='b' fontSize={17}>อีเมลล์ :</Text>
+								</GridItem>
+								<GridItem colSpan={6}>
+									<FormControl>
+										<Input type='email' placeholder='example@gmail.com' />
+									</FormControl>
+								</GridItem>
+
+								<GridItem colSpan={2} textAlign={'right'}>
+									<Text as='b' fontSize={17}>สถานะ :</Text>
+								</GridItem>
+								<GridItem colSpan={6}>
+									<FormControl>
+										<Select>
+											<option value='option1'>Super Admin</option>
+											<option value='option2'>Admin</option>
+										</Select>
+									</FormControl>
+								</GridItem>
+
+								<GridItem colSpan={2} textAlign={'right'} alignSelf='stretch' >
+									<Text as='b' fontSize={17} >สิทธิ์การเข้าถึง :</Text>
+								</GridItem>
+								<GridItem colSpan={6}>
+									<FormControl>
+										<Grid templateColumns='repeat(4, 1fr)' gap={4}>
+											<GridItem colSpan={2} display={'flex'} alignItems={'center'}>
+												<Switch id='switch-all' colorScheme='green' mr={2} />
+												<FormLabel htmlFor='switch-all' mb='0'>
+													ทุกเมนู
+												</FormLabel>
+											</GridItem>
+
+											<GridItem colSpan={2} display={'flex'} alignItems={'center'}>
+												<Switch id='switch-my-shop' colorScheme='green' mr={2} />
+												<FormLabel htmlFor='switch-my-shop' mb='0'>
+													ร้าค้าของฉัน
+												</FormLabel>
+											</GridItem>
+
+											<GridItem colSpan={2} display={'flex'} alignItems={'center'}>
+												<Switch id='switch-store' colorScheme='green' mr={2} />
+												<FormLabel htmlFor='switch-store' mb='0'>
+													คลังสินค้า
+												</FormLabel>
+											</GridItem>
+
+											<GridItem colSpan={2} display={'flex'} alignItems={'center'}>
+												<Switch id='switch-report' colorScheme='green' mr={2} />
+												<FormLabel htmlFor='switch-report' mb='0'>
+													รายงาน
+												</FormLabel>
+											</GridItem>
+										</Grid>
+									</FormControl>
+								</GridItem>
+							</Grid>
+						</ModalBody>
+						<ModalFooter mt={5}>
+							<Button mr={3} onClick={onCloseEditModal}>ยกเลิก</Button>
+							<Button
+								onClick={onCloseEditModal}
+								background="#f84c01"
+								color="white"
+							>
+								บันทึก
+							</Button>
+						</ModalFooter>
+					</ModalContent>
+				</Modal>
+				{/* End Modal Edit */}
+
+				{/* Start Modal Delete */}
+				<Modal isOpen={isOpenDeleteModal} onClose={onCloseDeleteModal}>
+					<ModalOverlay />
+					<ModalContent p={5}>
+						<ModalHeader display={'flex'} justifyContent={'center'}>
+							<Circle size="110px" bg="#f84c01" color="white" >
+								<BsTrash3Fill fontSize={50} />
+							</Circle>
+						</ModalHeader>
+						<ModalCloseButton />
+						<ModalBody textAlign={"center"}>
+							<Text as="b" fontSize="2xl">
+								คุณแน่ใจหรือไม่ ?
+							</Text>
+							<Text fontSize="21">
+								ทำการลบ <Text as='b' color={'#f84c01'}>Segun Adebayo</Text> ออกจากแอดมิน
+							</Text>
+						</ModalBody>
+						<ModalFooter>
+							<Button mr={3} onClick={onCloseDeleteModal}>ยกเลิก</Button>
+							<Button
+								background="#f84c01"
+								color="white"
+								onClick={onCloseDeleteModal}
+							>
+								ยืนยัน
+							</Button>
+						</ModalFooter>
+					</ModalContent>
+				</Modal>
+				{/* End Modal Delete */}
 			</Box>
 		</>
 	);
