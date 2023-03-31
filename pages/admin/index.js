@@ -59,7 +59,7 @@ import {
 } from "@chakra-ui/icons";
 import { BsArrowLeftCircle, BsTrash3Fill, BsCameraFill } from "react-icons/bs";
 
-export default function AdminManagement() {
+export default function AdminIndex() {
 
 	let {
 		isOpen: isOpenAddModal,

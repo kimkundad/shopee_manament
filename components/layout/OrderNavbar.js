@@ -7,7 +7,7 @@ export default function OrderNavbar() {
 
     return (
         <>
-            <Box py={10}>
+            <Box pt={10}>
                 <Box>
                     <Center>
                         <HStack>
