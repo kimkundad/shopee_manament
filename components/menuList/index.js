@@ -34,8 +34,8 @@ function index(props) {
 
       <MenuList
         minWidth="200px"
-        border="2px"
-        borderColor="gray"
+        border="1px"
+        borderColor="red"
         borderRadius="md"
       >
         <CheckboxGroup>

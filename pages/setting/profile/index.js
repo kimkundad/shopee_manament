@@ -49,13 +49,7 @@ export default function Profile() {
             </Box>
 
 
-
-            {/* -------------------------------------------------------------- */}
-
-            <Box
-                px={10}
-                py={5}
-            >
+            <Box p={10}>
                 <form onSubmit={''}>
                     <SimpleGrid minChildWidth='300px' spacing='40px'>
                         <Box>
