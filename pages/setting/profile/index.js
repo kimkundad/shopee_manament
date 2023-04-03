@@ -8,7 +8,7 @@ import {
     InputGroup, InputLeftElement, Wrap, WrapItem,
     FormControl, FormLabel, Lorem, LinkBox, Grid, GridItem,
     Switch, VStack, InputRightElement, Textarea, ButtonGroup,
-    RadioGroup, Radio,
+    RadioGroup, Radio, SimpleGrid,
 } from "@chakra-ui/react"
 import {
     AddIcon, EditIcon, DeleteIcon, Icon,
@@ -25,7 +25,8 @@ export default function Profile() {
         <>
 
             <Box
-                p={[5, 10]}
+                px={10}
+                py={5}
             >
                 <Box>
                     <ButtonBack />
@@ -47,44 +48,53 @@ export default function Profile() {
                 </HStack>
             </Box>
 
-            <Box pt={10} pb={10}>
-                <Grid
-                    templateColumns='repeat(3, 1fr)'
-                    gap={2}
-                >
-                    <GridItem>
-                        <Center>
-                            <Avatar size='2xl' name='Segun Adebayo' src='https://bit.ly/sage-adebayo' alt='demo'>
-                                <AvatarBadge
-                                    boxSize={10}
-                                    borderColor="#f84c01"
-                                    bg='white'
-                                    borderWidth={2}
 
+
+            {/* -------------------------------------------------------------- */}
+
+            <Box
+                px={10}
+                py={5}
+            >
+                <form onSubmit={''}>
+                    <SimpleGrid minChildWidth='300px' spacing='40px'>
+                        <Box>
+                            <Grid templateColumns='repeat(8, 1fr)' gap={6}>
+                                <GridItem colSpan={8} align={'center'}>
+                                    <Avatar size='2xl' name='Segun Adebayo' src='https://bit.ly/sage-adebayo' alt='demo'>
+                                        <AvatarBadge
+                                            boxSize={10}
+                                            borderColor="#f84c01"
+                                            bg='white'
+                                            borderWidth={2}
+
+                                        >
+                                            <Link href={'/'}><Icon as={BsCameraFill} mt={-2} boxSize={6} color={'#f84c01'} /></Link>
+                                        </AvatarBadge>
+                                    </Avatar>
+                                </GridItem>
+                            </Grid>
+                        </Box>
+                        <Box>
+                            <Grid templateColumns='repeat(8, 1fr)' gap={2} alignItems={'center'}>
+                                <GridItem colSpan={2}
+                                    display={'flex'}
+                                    justifyContent={'right'}
                                 >
-                                    <Icon as={BsCameraFill} boxSize={6} color={'#f84c01'} />
-                                </AvatarBadge>
-                            </Avatar>
-                        </Center>
-                    </GridItem>
-
-
-                    <GridItem pr={10}>
-                        <FormControl>
-                            <HStack justify='right'>
-                                <Box>
-                                    <FormLabel>ชื่อ-นามสกุล : </FormLabel>
-                                </Box>
-                                <Box>
+                                    <FormLabel m={0}>ชื่อ-นามสกุล : </FormLabel>
+                                </GridItem>
+                                <GridItem colSpan={6}>
                                     <Input placeholder='Christian Nwamba' />
-                                </Box>
-                            </HStack>
+                                </GridItem>
 
-                            <HStack justify='right' mt={2}>
-                                <Box>
-                                    <FormLabel>เพศ : </FormLabel>
-                                </Box>
-                                <Box>
+                                <GridItem colSpan={2}
+                                    display={'flex'}
+                                    justifyContent={'right'}
+                                    alignSelf='stretch'
+                                >
+                                    <FormLabel mt={2}>เพศ : </FormLabel>
+                                </GridItem>
+                                <GridItem colSpan={6}>
                                     <RadioGroup defaultValue='2'>
                                         <Stack spacing={5} direction='row'>
                                             <Radio colorScheme='green' value='1'>ชาย</Radio>
@@ -93,170 +103,162 @@ export default function Profile() {
                                             <Radio colorScheme='green' value='4'>ไม่ระบุ</Radio>
                                         </Stack>
                                     </RadioGroup>
-                                </Box>
+                                </GridItem>
 
-                            </HStack>
-
-                            <HStack justify='right' mt={2}>
-                                <Box>
-                                    <FormLabel>ที่อยู่ : </FormLabel>
-                                </Box>
-                                <Box>
+                                <GridItem colSpan={2}
+                                    display={'flex'}
+                                    justifyContent={'right'}
+                                    alignSelf='stretch'
+                                >
+                                    <FormLabel mt={2}>ที่อยู่ : </FormLabel>
+                                </GridItem>
+                                <GridItem colSpan={6}>
                                     <Textarea placeholder='26985 Brighton Lane, Lake Forest, CA 92630' />
-                                </Box>
-                            </HStack>
+                                </GridItem>
 
-                            <HStack justify='right' mt={2}>
-                                <Box>
-                                    <FormLabel>ตำบล : </FormLabel>
-                                </Box>
-                                <Box>
+                                <GridItem colSpan={2}
+                                    display={'flex'}
+                                    justifyContent={'right'}
+                                >
+                                    <FormLabel m={0}>ตำบล : </FormLabel>
+                                </GridItem>
+                                <GridItem colSpan={6}>
                                     <Input placeholder='ตำบล' />
-                                </Box>
-                            </HStack>
+                                </GridItem>
 
-                            <HStack justify='right' mt={2}>
-                                <Box>
-                                    <FormLabel>อำเภอ : </FormLabel>
-                                </Box>
-                                <Box>
+                                <GridItem colSpan={2}
+                                    display={'flex'}
+                                    justifyContent={'right'}
+                                >
+                                    <FormLabel m={0}>อำเภอ : </FormLabel>
+                                </GridItem>
+                                <GridItem colSpan={6}>
                                     <Input placeholder='อำเภอ' />
-                                </Box>
-                            </HStack>
+                                </GridItem>
 
-                            <HStack justify='right' mt={2}>
-                                <Box>
-                                    <FormLabel>จังหวัด : </FormLabel>
-                                </Box>
-                                <Box>
+                                <GridItem colSpan={2}
+                                    display={'flex'}
+                                    justifyContent={'right'}
+                                >
+                                    <FormLabel m={0}>จังหวัด : </FormLabel>
+                                </GridItem>
+                                <GridItem colSpan={6}>
                                     <Input placeholder='จังหวัด' />
-                                </Box>
-                            </HStack>
+                                </GridItem>
 
-                            <HStack justify='right' mt={2}>
-                                <Box>
-                                    <FormLabel>ไปรษณีย์ : </FormLabel>
-                                </Box>
-                                <Box>
-                                    <Input placeholder='รหัสไปรษณีย์' />
-                                </Box>
-                            </HStack>
+                                <GridItem colSpan={2}
+                                    display={'flex'}
+                                    justifyContent={'right'}
+                                >
+                                    <FormLabel m={0}>ไปรษณีย์ : </FormLabel>
+                                </GridItem>
+                                <GridItem colSpan={6}>
+                                    <Input placeholder='ไปรษณีย์' />
+                                </GridItem>
 
-                            <HStack justify='right' mt={2}>
-                                <Box>
-                                    <FormLabel>ประเทศ : </FormLabel>
-                                </Box>
-                                <Box>
+                                <GridItem colSpan={2}
+                                    display={'flex'}
+                                    justifyContent={'right'}
+                                >
+                                    <FormLabel m={0}>ประเทศ : </FormLabel>
+                                </GridItem>
+                                <GridItem colSpan={6}>
                                     <Input placeholder='ประเทศ' />
-                                </Box>
-                            </HStack>
-
-                        </FormControl>
-
-                    </GridItem>
-
-
-                    <GridItem pr={10}>
-
-                        <FormControl>
-                            <HStack justify='right'>
-                                <Box>
-                                    <FormLabel>เบอร์โทร : </FormLabel>
-                                </Box>
-                                <Box>
+                                </GridItem>
+                            </Grid>
+                        </Box>
+                        <Box>
+                            <Grid templateColumns='repeat(8, 1fr)' gap={2} alignItems={'center'}>
+                                <GridItem colSpan={2}
+                                    display={'flex'}
+                                    justifyContent={'right'}
+                                >
+                                    <FormLabel m={0}>เบอร์โทร : </FormLabel>
+                                </GridItem>
+                                <GridItem colSpan={6}>
                                     <Input placeholder='xxx-xxxx-xxx' />
-                                </Box>
-                            </HStack>
+                                </GridItem>
 
-                            <HStack justify='right' mt={2}>
-                                <Box>
-                                    <FormLabel>อีเมลล์ : </FormLabel>
-                                </Box>
-                                <Box>
-                                    <Input placeholder='Christian_N@gmail' />
-                                </Box>
-                            </HStack>
+                                <GridItem colSpan={2}
+                                    display={'flex'}
+                                    justifyContent={'right'}
+                                >
+                                    <FormLabel m={0}>อีเมลล์ : </FormLabel>
+                                </GridItem>
+                                <GridItem colSpan={6}>
+                                    <Input placeholder='Christian_N@gmail.com' />
+                                </GridItem>
 
-                            <HStack justify='right' mt={2}>
-                                <Box>
-                                    <FormLabel>
-                                        <Image width={36} height={36} src={'/images/social/facebook.png'} alt='demo' />
-                                    </FormLabel>
-                                </Box>
-                                <Box>
+                                <GridItem colSpan={2}
+                                    display={'flex'}
+                                    justifyContent={'right'}
+                                >
+                                    <FormLabel m={0}><Image width={36} height={36} src={'/images/social/facebook.png'} alt='demo' /></FormLabel>
+                                </GridItem>
+                                <GridItem colSpan={6}>
                                     <Input placeholder='facebook' />
-                                </Box>
-                            </HStack>
+                                </GridItem>
 
-                            <HStack justify='right' mt={2}>
-                                <Box>
-                                    <FormLabel>
-                                        <Image width={36} height={36} src={'/images/social/line.png'} alt='demo' />
-                                    </FormLabel>
-                                </Box>
-                                <Box>
+                                <GridItem colSpan={2}
+                                    display={'flex'}
+                                    justifyContent={'right'}
+                                >
+                                    <FormLabel m={0}><Image width={36} height={36} src={'/images/social/line.png'} alt='demo' /></FormLabel>
+                                </GridItem>
+                                <GridItem colSpan={6}>
                                     <Input placeholder='LINE' />
-                                </Box>
-                            </HStack>
+                                </GridItem>
 
-                            <HStack justify='right' mt={2}>
-                                <Box>
-                                    <FormLabel>
-                                        <Image width={36} height={36} src={'/images/social/instagram.png'} alt='demo' />
-                                    </FormLabel>
-                                </Box>
-                                <Box>
+                                <GridItem colSpan={2}
+                                    display={'flex'}
+                                    justifyContent={'right'}
+                                >
+                                    <FormLabel m={0}><Image width={36} height={36} src={'/images/social/instagram.png'} alt='demo' /></FormLabel>
+                                </GridItem>
+                                <GridItem colSpan={6}>
                                     <Input placeholder='Instagram' />
-                                </Box>
-                            </HStack>
+                                </GridItem>
 
-                            <HStack justify='right' mt={2}>
-                                <Box>
-                                    <FormLabel>
-                                        <Image width={36} height={36} src={'/images/social/twitter.png'} alt='demo' />
-                                    </FormLabel>
-                                </Box>
-                                <Box>
+                                <GridItem colSpan={2}
+                                    display={'flex'}
+                                    justifyContent={'right'}
+                                >
+                                    <FormLabel m={0}><Image width={36} height={36} src={'/images/social/twitter.png'} alt='demo' /></FormLabel>
+                                </GridItem>
+                                <GridItem colSpan={6}>
                                     <Input placeholder='Twitter' />
-                                </Box>
-                            </HStack>
+                                </GridItem>
 
-                            <HStack justify='right' mt={2}>
-                                <Box>
-                                    <FormLabel>
-                                        <Image width={36} height={36} src={'/images/social/tik-tok.png'} alt='demo' />
-                                    </FormLabel>
-                                </Box>
-                                <Box>
+                                <GridItem colSpan={2}
+                                    display={'flex'}
+                                    justifyContent={'right'}
+                                >
+                                    <FormLabel m={0}><Image width={36} height={36} src={'/images/social/tik-tok.png'} alt='demo' /></FormLabel>
+                                </GridItem>
+                                <GridItem colSpan={6}>
                                     <Input placeholder='Tik-Tok' />
-                                </Box>
-                            </HStack>
+                                </GridItem>
 
-                            <HStack justify='right' mt={2}>
-                                <Box>
-                                    <FormLabel>
-                                        <Image width={36} height={36} src={'/images/social/youtube.png'} alt='demo' />
-                                    </FormLabel>
-                                </Box>
-                                <Box>
+                                <GridItem colSpan={2}
+                                    display={'flex'}
+                                    justifyContent={'right'}
+                                >
+                                    <FormLabel m={0}><Image width={36} height={36} src={'/images/social/youtube.png'} alt='demo' /></FormLabel>
+                                </GridItem>
+                                <GridItem colSpan={6}>
                                     <Input placeholder='Youtube' />
-                                </Box>
-                            </HStack>
-
-
-
-                        </FormControl>
-
-                    </GridItem>
-                </Grid>
-                <HStack justify='center' mt={10}>
-                    <ButtonGroup gap='4'>
-                        <Button colorScheme='gray'>ยกเลิก</Button>
-                        <Button onClick={''} leftIcon={<VscSave />} background='#f84c01' color='white'>บันทึก</Button >
-                    </ButtonGroup>
-                </HStack>
+                                </GridItem>
+                            </Grid>
+                        </Box>
+                    </SimpleGrid>
+                    <HStack justify='center' mt={10}>
+                        <ButtonGroup gap='4'>
+                            <Button colorScheme='gray'>ยกเลิก</Button>
+                            <Button onClick={null} leftIcon={<VscSave />} background='#f84c01' color='white'>บันทึก</Button >
+                        </ButtonGroup>
+                    </HStack>
+                </form>
             </Box>
-
         </>
     );
 }
