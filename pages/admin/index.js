@@ -61,16 +61,17 @@ import { BsArrowLeftCircle, BsTrash3Fill, BsCameraFill } from "react-icons/bs";
 
 export default function AdminIndex() {
 
-	let {
+	const {
 		isOpen: isOpenAddModal,
 		onOpen: onOpenAddModal,
 		onClose: onCloseAddModal,
 	} = useDisclosure();
 
-	let {
+	const {
 		isOpen: isOpenCopyModal,
 		onOpen: onOpenCopyModal,
 		onClose: onCloseCopyModal,
+
 	} = useDisclosure();
 
 	const {
@@ -91,8 +92,16 @@ export default function AdminIndex() {
 		onClose: onCloseDeleteModal,
 	} = useDisclosure();
 
-	if (isOpenCopyModal === true) isOpenAddModal = false;
-	if (isOpenSuccessModal === true) isOpenCopyModal = false;
+	function handleModals(isModal) {
+		console.log(isModal)
+		if (isModal === 'openCopy') {
+			onOpenCopyModal();
+			onCloseAddModal();
+		} else if (isModal == 'openSuccess') {
+			onOpenSuccessModal();
+			onCloseCopyModal();
+		}
+	}
 
 	return (
 		<>
@@ -512,7 +521,7 @@ export default function AdminIndex() {
 						</ModalBody>
 						<ModalFooter mt={10}>
 							<Button
-								onClick={onOpenCopyModal}
+								onClick={() => handleModals('openCopy')}
 								background="#f84c01"
 								color="white"
 								mr={3}
@@ -607,7 +616,7 @@ export default function AdminIndex() {
 						</ModalBody>
 						<ModalFooter mt={10}>
 							<Button
-								onClick={onOpenSuccessModal}
+								onClick={() => handleModals('openSuccess')}
 								background="#f84c01"
 								color="white"
 								mr={3}
