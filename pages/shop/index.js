@@ -62,34 +62,72 @@ import {
 import ListCheck from "@/components/MenuList";
 import CardShop from "@/components/cardShop";
 import Axios from "axios";
+import { PlusOutlined } from "@ant-design/icons";
+import { Upload } from "antd";
 
-const thumbsContainer = {
-  display: "flex",
-  flexDirection: "row",
-  flexWrap: "wrap",
-  marginTop: 16,
-};
+// component upload image shop
+class PicturesShop extends React.Component {
+  state = {
+    fileList: [],
+  };
+  handleChange = ({ fileList }) => {
+    this.props.setFileImgShop(fileList);
+    this.setState({ fileList });
+  };
 
-const thumb = {
-  display: "inline-flex",
-  borderRadius: 2,
-  width: 100,
-  height: 100,
-  marginBottom: 15,
-  boxSizing: "border-box",
-};
+  render() {
+    const { fileList } = this.state;
+    const uploadButton = (
+      <div>
+        <PlusOutlined />
+        <div style={{ marginTop: 8 }}>เพิ่มรูปภาพ ({fileList.length}/1)</div>
+      </div>
+    );
+    return (
+      <>
+        <Upload
+          listType="picture-card"
+          fileList={fileList}
+          onChange={this.handleChange}
+        >
+          {fileList.length >= 1 ? null : uploadButton}
+        </Upload>
+      </>
+    );
+  }
+}
 
-const thumbInner = {
-  display: "flex",
-  minWidth: 0,
-  overflow: "hidden",
-};
+// component upload image cover shop
+class PicturesCoverShop extends React.Component {
+  state = {
+    fileList: [],
+  };
+  handleChange = ({ fileList }) => {
+    this.props.setFileImgCoverShop(fileList);
+    this.setState({ fileList });
+  };
 
-const img = {
-  display: "block",
-  width: "auto",
-  height: "100%",
-};
+  render() {
+    const { fileList } = this.state;
+    const uploadButton = (
+      <div>
+        <PlusOutlined />
+        <div style={{ marginTop: 8 }}>เพิ่มรูปภาพ ({fileList.length}/1)</div>
+      </div>
+    );
+    return (
+      <>
+        <Upload
+          listType="picture-card"
+          fileList={fileList}
+          onChange={this.handleChange}
+        >
+          {fileList.length >= 1 ? null : uploadButton}
+        </Upload>
+      </>
+    );
+  }
+}
 
 export default function shop() {
   const [getProducts, setProducts] = useState([]);
@@ -149,41 +187,6 @@ export default function shop() {
       checked: false,
     },
   ]);
-
-  const [files, setFiles] = useState([]);
-  const { getRootProps, getInputProps } = useDropzone({
-    accept: {
-      "image/*": [],
-    },
-    onDrop: (acceptedFiles) => {
-      setFiles(
-        acceptedFiles.map((file) =>
-          Object.assign(file, {
-            preview: URL.createObjectURL(file),
-          })
-        )
-      );
-    },
-  });
-
-  const thumbs = files.map((file) => (
-    <div style={thumb} key={file.name}>
-      <div style={thumbInner}>
-        <img
-          src={file.preview}
-          style={img}
-          // Revoke data uri after image is loaded
-          onLoad={() => {
-            URL.revokeObjectURL(file.preview);
-          }}
-        />
-      </div>
-    </div>
-  ));
-  useEffect(() => {
-    // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
-    return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
-  }, []);
 
   const [buttonActive, setButtonActive] = useState([false, true]);
   const colunm = [
@@ -265,8 +268,8 @@ export default function shop() {
   const handleSearch = (event) => {
     const searchQuery = event.target.value;
     setQuery(searchQuery);
-    setSearchDateShops('');
-    setFilterShops('');
+    setSearchDateShops("");
+    setFilterShops("");
     if (searchQuery === "") {
       setQuery(null);
     }
@@ -275,8 +278,8 @@ export default function shop() {
   const handleSearchDateShops = (event) => {
     const DateShops = event.target.value;
     setSearchDateShops(DateShops);
-    setQuery('');
-    setFilterShops('');
+    setQuery("");
+    setFilterShops("");
     if (DateShops === "") {
       setSearchDateShops(null);
     }
@@ -311,8 +314,8 @@ export default function shop() {
   const handleFilterShops = (value) => {
     const TypeShops = value;
     setFilterShops(TypeShops);
-    setSearchDateShops('');
-    setQuery('');
+    setSearchDateShops("");
+    setQuery("");
   };
 
   useEffect(() => {
@@ -327,6 +330,31 @@ export default function shop() {
       fetchData();
     }
   }, [filterShops]);
+
+  const [fileImgShop, setFileImgShop] = useState([]);
+  const handleSetFileImgShop = (fileList) => {
+    setFileImgShop(fileList);
+  };
+
+  const [fileImgCoverShop, setFileImgCoverShop] = useState([]);
+  const handleSetFileImgCoverShop = (fileList) => {
+    setFileImgCoverShop(fileList);
+    console.log(fileImgCoverShop);
+  };
+
+//   count name shop /100
+  const [lengthNameShop, setLengthNameShop] = useState(0);
+  const handleChangeNameShop = (e) => {
+    const NameShop = e.target.value;
+    setLengthNameShop(NameShop.length);
+  };
+
+//   count detail shop /3000
+  const [lengthDetailShop, setLengthDetailShop] = useState(0);
+  const handleChangeDetailShop = (e) => {
+    const DetailShop = e.target.value;
+    setLengthDetailShop(DetailShop.length);
+  };
 
   return (
     <>
@@ -390,7 +418,7 @@ export default function shop() {
                 borderRadius="md"
               >
                 <RadioGroup onChange={handleFilterShops} value={filterShops}>
-                <MenuItem>
+                  <MenuItem>
                     <Radio
                       sx={{
                         ".chakra-radio__control": {
@@ -541,11 +569,12 @@ export default function shop() {
                           <Input
                             pr="100px"
                             type="text"
-                            placeholder="ระบุชื่อสินค้า"
+                            placeholder="ระบุชื่อร้านค้า"
                             borderColor="gray.400"
+                            onChange={handleChangeNameShop}
                           />
                           <InputRightElement pr="45px">
-                            <Text>0/100</Text>
+                            <Text>{lengthNameShop}/100</Text>
                           </InputRightElement>
                         </InputGroup>
                       </GridItem>
@@ -567,13 +596,14 @@ export default function shop() {
                               borderColor="gray.400"
                               placeholder="ระบุรายละเอียดสินค้า"
                               pr="60px"
+							  onChange={handleChangeDetailShop}
                             />
                             <InputRightElement
                               h="100%"
                               alignItems="end"
                               p="10px"
                             >
-                              <Text pr="45px">0/3000</Text>
+                              <Text pr="45px">{lengthDetailShop}/3000</Text>
                             </InputRightElement>
                           </InputGroup>
                         </Box>
@@ -585,26 +615,7 @@ export default function shop() {
                       </GridItem>
                       <GridItem colSpan={2}>
                         <Box>
-                          <Box
-                            {...getRootProps({ className: "dropzone" })}
-                            borderRadius="xl"
-                            bg="gray.100"
-                            h="100px"
-                            w="100px"
-                            fontSize="15px"
-                            p="10px"
-                          >
-                            <Input {...getInputProps()} />
-                            <Image
-                              src="/images/addImage.png"
-                              alt=""
-                              h="40px"
-                              w="40px"
-                            />
-                            <Text>เพิ่มรูปภาพ</Text>
-                            <Text>(0/1)</Text>
-                          </Box>
-                          <aside style={thumbsContainer}>{thumbs}</aside>
+                          <PicturesShop setFileImgShop={handleSetFileImgShop} />
                         </Box>
                       </GridItem>
                       <GridItem colSpan={1} justifySelf="end">
@@ -614,26 +625,9 @@ export default function shop() {
                       </GridItem>
                       <GridItem colSpan={2}>
                         <Box>
-                          <Box
-                            {...getRootProps({ className: "dropzone" })}
-                            borderRadius="xl"
-                            bg="gray.100"
-                            h="100px"
-                            w="100px"
-                            fontSize="15px"
-                            p="10px"
-                          >
-                            <Input {...getInputProps()} />
-                            <Image
-                              src="/images/addImage.png"
-                              alt=""
-                              h="40px"
-                              w="40px"
-                            />
-                            <Text pt="5px">เพิ่มรูปภาพ</Text>
-                            <Text>(0/1)</Text>
-                          </Box>
-                          <aside style={thumbsContainer}>{thumbs}</aside>
+                          <PicturesCoverShop
+                            setFileImgCoverShop={handleSetFileImgCoverShop}
+                          />
                         </Box>
                       </GridItem>
                       <GridItem colSpan={1} justifySelf="end">
