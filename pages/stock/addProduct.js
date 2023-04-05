@@ -41,7 +41,7 @@ class PicturesWall extends React.Component {
   };
   handleChange = ({ fileList }) => {
     this.props.setFileImage(fileList);
-    this.setState({ fileList })
+    this.setState({ fileList });
   };
 
   render() {
@@ -71,7 +71,7 @@ class VideoWall extends React.Component {
   };
   handleChange = ({ fileList }) => {
     this.props.setFileVideo(fileList);
-    this.setState({ fileList })
+    this.setState({ fileList });
   };
 
   render() {
@@ -104,25 +104,6 @@ function addProduct() {
   const [stock, setStock] = useState("");
   const [weight, setWeight] = useState("");
   const [sku, setSku] = useState("");
-  async function handleSubmit(event) {
-    event.preventDefault();
-
-    const data = {
-      name_product,
-      detail_product,
-      price,
-      price_sales,
-      cost,
-      stock,
-      weight,
-      fileImage,
-    };
-    const response = await axios.post(
-      "http://192.168.0.86:8000/api/addProduct",
-      data
-    );
-  }
-  const [img_product, setImg_product] = useState([]);
 
   const [buttonActive, setButtonActive] = useState([true, false]);
 
@@ -151,20 +132,22 @@ function addProduct() {
     onCloseForm2();
   };
   const saveSuccess = async () => {
-    const data = {
-      name_product,
-      detail_product,
-      price,
-      price_sales,
-      cost,
-      stock,
-      weight,
-      fileImage,
-      sku,
-    };
+    const formData = new FormData();
+    formData.append("name_product", name_product);
+    formData.append("detail_product", detail_product);
+    formData.append("price", price);
+    formData.append("price_sales", price_sales);
+    formData.append("cost", cost);
+    formData.append("stock", stock);
+    formData.append("weight", weight);
+    formData.append("sku", sku);
+    fileImage.forEach((file, index) => {
+      formData.append(`file[${index}]`, file.originFileObj);
+    });
     const response = await axios.post(
-      "http://192.168.0.86:8000/api/addProduct",
-      data
+      "https://shopee-api.deksilp.com/api/addProduct",
+      formData,
+      { headers: { 'Content-Type': 'multipart/form-data' } }
     );
     onCloseForm1();
     onOpenForm2();
@@ -174,7 +157,6 @@ function addProduct() {
   const handleSetFileImage = (fileList) => {
     setFileImage(fileList);
   };
-  console.log(fileImage);
   const [fileVideo, setFileVideo] = useState([]);
   const handleSetFileVideo = (fileList) => {
     setFileVideo(fileList);
@@ -254,7 +236,7 @@ function addProduct() {
         </Wrap>
       </Box>
 
-      <form onSubmit={handleSubmit}>
+      <form>
         <Box>
           <Grid
             templateColumns="repeat(2, 1fr)"
@@ -337,7 +319,7 @@ function addProduct() {
                 </GridItem>
                 <GridItem colSpan={2}>
                   <Box>
-                    <PicturesWall setFileImage={handleSetFileImage}/>
+                    <PicturesWall setFileImage={handleSetFileImage} />
                   </Box>
                 </GridItem>
                 <GridItem colSpan={1} justifySelf="end">
@@ -346,7 +328,7 @@ function addProduct() {
                   </Box>
                 </GridItem>
                 <GridItem colSpan={2}>
-                  <VideoWall setFileVideo={handleSetFileVideo}/>
+                  <VideoWall setFileVideo={handleSetFileVideo} />
                 </GridItem>
               </Grid>
             </GridItem>

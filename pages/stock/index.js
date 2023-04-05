@@ -32,7 +32,7 @@ export default function stock() {
   useEffect(() => {
     async function fetchData() {
       let checkAll = true;
-      const res = await axios.get("http://192.168.0.86:8000/api/allProduct");
+      const res = await axios.get("https://shopee-api.deksilp.com/api/getAllProduct");
       setProducts(res.data);
       if (res.data.product.length > 0) {
         res.data.product.map((products) => {
@@ -84,7 +84,7 @@ export default function stock() {
   function handleAllSwitchChange() {
     async function fetchData() {
       const res = await axios.put(
-        `http://192.168.0.86:8000/api/setActiveAllProduct/?checked=${!isCheckedAll}`
+        `https://shopee-api.deksilp.com/api/setActiveAllProduct/?checked=${!isCheckedAll}`
       );
       setProducts(res.data);
       setIsCheckedAll(!isCheckedAll);
@@ -95,7 +95,7 @@ export default function stock() {
   const handleActivateProduct = (event) => {
     async function fetchData() {
       const res = await axios.put(
-        `http://192.168.0.86:8000/api/setActiveProduct/?id=${event.target.id}&checked=${event.target.checked}`
+        `https://shopee-api.deksilp.com/api/setActiveProduct/?id=${event.target.id}&checked=${event.target.checked}`
       );
       setProducts(res.data);
       setIsCheckedAll(
@@ -173,7 +173,7 @@ export default function stock() {
   function deleteProduct() {
     async function fetchData() {
       const res = await axios.post(
-        `http://192.168.0.86:8000/api/deleteProduct/${id}`
+        `https://shopee-api.deksilp.com/api/deleteProduct/${id}`
       );
       setProducts(res.data);
       setIsCheckedAll(
