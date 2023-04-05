@@ -296,7 +296,9 @@ export default function stock() {
                     </Center>
                   </Table.Cell>
                   <Table.Cell css={{ textAlign: "center" }}>
-                    {item.name_product}
+                  {item.name_product.length > 10
+                            ? item.name_product.substr(0, 10) + "..."
+                            : item.name_product}
                   </Table.Cell>
                   <Table.Cell css={{ textAlign: "center" }}>
                     {item.stock}
