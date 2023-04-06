@@ -220,8 +220,25 @@ export default function shop() {
   };
 
   const handleConfirmSuccess = () => {
-    modalConfirm.onClose();
-    modalConfirmSuccess.onOpen();
+    const formData = new FormData();
+    formData.append("nameShop", nameShop);
+    formData.append("detailShop", detailShop);
+    fileImgShop.forEach((file, index) => {
+      formData.append(`file[${index}]`, file.originFileObj);
+    });
+    fileImgCoverShop.forEach((file, index) => {
+      formData.append(`file2[${index}]`, file.originFileObj);
+    });
+
+    Axios.post("https://shopee-api.deksilp.com/api/createShop", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    }).then(function (response) {
+      if (response.data.success) {
+        modalConfirm.onClose();
+        modalConfirmSuccess.onOpen();
+        fetchAllShops();
+      }
+    });
   };
 
   const handleSelectAllChange = (e) => {
@@ -245,6 +262,14 @@ export default function shop() {
   const isIndeterminate =
     getProduct.some((product) => product.checked) && !allChecked;
 
+  const fetchAllShops = async () => {
+    Axios.get("https://shopee-api.deksilp.com/api/getAllShops").then(function (
+      response
+    ) {
+      setShops(response.data.shops);
+    });
+  };
+
   useEffect(() => {
     Axios.get("https://shopee-api.deksilp.com/api/getAllProduct").then(
       function (response) {
@@ -254,11 +279,7 @@ export default function shop() {
   }, []);
 
   useEffect(() => {
-    Axios.get("https://shopee-api.deksilp.com/api/getAllShops").then(function (
-      response
-    ) {
-      setShops(response.data.shops);
-    });
+    fetchAllShops();
   }, []);
 
   const [query, setQuery] = useState("");
@@ -339,21 +360,24 @@ export default function shop() {
   const [fileImgCoverShop, setFileImgCoverShop] = useState([]);
   const handleSetFileImgCoverShop = (fileList) => {
     setFileImgCoverShop(fileList);
-    console.log(fileImgCoverShop);
   };
 
-//   count name shop /100
+  //   count name shop /100
   const [lengthNameShop, setLengthNameShop] = useState(0);
+  const [nameShop, setNameShop] = useState("");
   const handleChangeNameShop = (e) => {
     const NameShop = e.target.value;
     setLengthNameShop(NameShop.length);
+    setNameShop(NameShop);
   };
 
-//   count detail shop /3000
+  //   count detail shop /3000
   const [lengthDetailShop, setLengthDetailShop] = useState(0);
+  const [detailShop, setDetailShop] = useState("");
   const handleChangeDetailShop = (e) => {
     const DetailShop = e.target.value;
     setLengthDetailShop(DetailShop.length);
+    setDetailShop(DetailShop);
   };
 
   return (
@@ -596,7 +620,7 @@ export default function shop() {
                               borderColor="gray.400"
                               placeholder="ระบุรายละเอียดสินค้า"
                               pr="60px"
-							  onChange={handleChangeDetailShop}
+                              onChange={handleChangeDetailShop}
                             />
                             <InputRightElement
                               h="100%"
