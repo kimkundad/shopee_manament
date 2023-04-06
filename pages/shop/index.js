@@ -208,6 +208,7 @@ export default function shop() {
   const modalPreview = useDisclosure();
   const modalConfirm = useDisclosure();
   const modalConfirmSuccess = useDisclosure();
+  const [statusDelete, setStatusDelete] = useState(false);
 
   const handleClickNextStopAdd = () => {
     modalAdd.onClose();
@@ -280,7 +281,7 @@ export default function shop() {
 
   useEffect(() => {
     fetchAllShops();
-  }, []);
+  }, [statusDelete]);
 
   const [query, setQuery] = useState("");
   const [searchDateShops, setSearchDateShops] = useState("");
@@ -539,7 +540,7 @@ export default function shop() {
       </Box>
       <Box pt="5px" pb={"5px"}>
         <Flex flexWrap={"wrap"} justifyContent={"space-around"}>
-          <CardShop Products={getProducts} Shops={getShops} />
+          <CardShop Products={getProducts} Shops={getShops} statusDelete={setStatusDelete} />
         </Flex>
       </Box>
 

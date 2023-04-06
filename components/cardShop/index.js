@@ -52,6 +52,7 @@ import {
   Checkbox,
 } from "@chakra-ui/react";
 import ModalEditStep1 from "@/components/modalEditShop/modalEditStep1";
+import Axios from "axios";
 
 function index(product) {
   const modalEdit = useDisclosure();
@@ -61,10 +62,23 @@ function index(product) {
   // const modalConfirmEdit = useDisclosure();
   // const modalConfirmEditSuccess = useDisclosure();
   const [bookmarks, setBookmarks] = useState({});
+  const [deleteShopID, setDeleteShopID] = useState("");
+  const [deleteNameShop, setDeleteNameShop] = useState("");
 
   const handleConfirmDelete = () => {
-    modalDelete.onClose();
-    modalConfirmDelete.onOpen();
+    const data = {
+      shopID: deleteShopID,
+    }
+
+    Axios.post("https://shopee-api.deksilp.com/api/DeleteShop", data).then(function (
+      response
+    ) {
+      if (response.data.success) {
+        modalDelete.onClose();
+        modalConfirmDelete.onOpen();
+        product.statusDelete(true);
+      }
+    });
   };
 
   const toggleBookmark = (productId) => {
@@ -83,6 +97,7 @@ function index(product) {
       ...prevState,
       [shopId]: !prevState[shopId],
     }));
+    console.log(modalStates);
   };
 
   const [copiedShopUrl, setCopiedShopUrl] = useState(null);
@@ -90,6 +105,12 @@ function index(product) {
   const handleCopyClick = (shopUrl) => () => {
     navigator.clipboard.writeText(shopUrl);
     setCopiedShopUrl(shopUrl);
+  };
+
+  const handleDeleteShop = (nameShop,shopID) => {
+    setDeleteShopID(shopID);
+    setDeleteNameShop(nameShop);
+    modalDelete.onOpen();
   };
 
   return (
@@ -111,11 +132,7 @@ function index(product) {
               <CardBody>
                 <Box>
                   <Flex alignItems="center">
-                    <Switch
-                      colorScheme="brand"
-                      size="sm"
-                      mr={"5px"}
-                    />
+                    <Switch colorScheme="brand" size="sm" mr={"5px"} />
                     เปิด/ปิดเพื่อแสดง
                     <Spacer />
                     <Image
@@ -191,7 +208,9 @@ function index(product) {
                       bgColor={"white"}
                       border={"2px solid black"}
                       height={"30px"}
-                      onClick={modalDelete.onOpen}
+                      onClick={() => {
+                        handleDeleteShop(shopName,shops.id);
+                      }}
                     >
                       <Image
                         src="/images/binshop.png"
@@ -259,12 +278,12 @@ function index(product) {
             <Flex flexDirection={"column"} alignItems={"center"}>
               <Image
                 src="/images/binDeleteAlert.png"
-                width={"150px"}
+                width={"125px"}
                 // height={"35px"}
                 mr={"10px"}
               />
-              <Text fontSize={"5xl"} fontWeight={"bold"} mt={"20px"}>
-                ยืนยันการลบร้านค้า
+              <Text fontSize={"4xl"} fontWeight={"bold"} mt={"20px"}>
+                ยืนยันการลบร้านค้า {deleteNameShop}
               </Text>
             </Flex>
           </ModalBody>

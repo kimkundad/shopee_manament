@@ -51,41 +51,108 @@ import {
   NumberDecrementStepper,
   Checkbox,
 } from "@chakra-ui/react";
+import { PlusOutlined } from "@ant-design/icons";
+import { Upload } from "antd";
 
-const thumbsContainer = {
-  display: "flex",
-  flexDirection: "row",
-  flexWrap: "wrap",
-  marginTop: 16,
-};
+class PicturesShop extends React.Component {
+  state = {
+    fileList: [
+      {
+        uid: '-1',
+        name: this.props.nameImgShop,
+        status: 'done',
+        url: `https://shopee-api.deksilp.com/images/shopee/shop/${this.props.nameImgShop}`,
+      },
+    ],
+  };
+  handleChange = ({ fileList }) => {
+    this.props.setEditFileImgShop(fileList);
+    this.setState({ fileList });
+  };
 
-const thumb = {
-  display: "inline-flex",
-  borderRadius: 2,
-  width: 100,
-  height: 100,
-  marginBottom: 15,
-  boxSizing: "border-box",
-};
+  render() {
+    const { fileList } = this.state;
+    const uploadButton = (
+      <div>
+        <PlusOutlined />
+        <div style={{ marginTop: 8 }}>เพิ่มรูปภาพ ({fileList.length}/1)</div>
+      </div>
+    );
+    return (
+      <>
+        <Upload
+          listType="picture-card"
+          fileList={fileList}
+          onChange={this.handleChange}
+        >
+          {fileList.length >= 1 ? null : uploadButton}
+        </Upload>
+      </>
+    );
+  }
+}
 
-const thumbInner = {
-  display: "flex",
-  minWidth: 0,
-  overflow: "hidden",
-};
+// component upload image cover shop
+class PicturesCoverShop extends React.Component {
+  state = {
+    fileList: [
+      {
+        uid: '-1',
+        name: this.props.nameImgCoverShop,
+        status: 'done',
+        url: `https://shopee-api.deksilp.com/images/shopee/cover_img_shop/${this.props.nameImgCoverShop}`,
+      },
+    ],
+  };
+  handleChange = ({ fileList }) => {
+    this.props.setEditFileImgCoverShop(fileList);
+    this.setState({ fileList });
+  };
 
-const img = {
-  display: "block",
-  width: "auto",
-  height: "100%",
-};
+  render() {
+    const { fileList } = this.state;
+    const uploadButton = (
+      <div>
+        <PlusOutlined />
+        <div style={{ marginTop: 8 }}>เพิ่มรูปภาพ ({fileList.length}/1)</div>
+      </div>
+    );
+    return (
+      <>
+        <Upload
+          listType="picture-card"
+          fileList={fileList}
+          onChange={this.handleChange}
+        >
+          {fileList.length >= 1 ? null : uploadButton}
+        </Upload>
+      </>
+    );
+  }
+}
 
 function modalEditStep1(props) {
   const { isOpen, onClose, Shops } = props;
   const modalEditNextStep = useDisclosure();
   const modalConfirmEdit = useDisclosure();
   const modalConfirmEditSuccess = useDisclosure();
-  const [files, setFiles] = useState([]);
+  const [editNameShop, setEditNameShop] = useState(Shops.name_shop);
+  const [editDetailShop, setEditDetailShop] = useState(Shops.detail_shop);
+  const [editNameShopLength, setEditNameShopLength] = useState(Shops.name_shop.length);
+  const [editDetailShopLength, setEditDetailShopLength] = useState(Shops.detail_shop.length);
+
+  const onChangeNameShop = (e) => {
+    const nameShop = e.target.value;
+    setEditNameShop(nameShop);
+    setEditNameShopLength(nameShop.length);
+  }
+
+  const onChangeDetailShop = (e) => {
+    const detailShop = e.target.value;
+    setEditDetailShop(detailShop);
+    setEditDetailShopLength(detailShop.length);
+  }
+
   const [getProduct, setGetProduct] = useState([
     {
       id: 1,
@@ -141,39 +208,6 @@ function modalEditStep1(props) {
       checked: false,
     },
   ]);
-  const { getRootProps, getInputProps } = useDropzone({
-    accept: {
-      "image/*": [],
-    },
-    onDrop: (acceptedFiles) => {
-      setFiles(
-        acceptedFiles.map((file) =>
-          Object.assign(file, {
-            preview: URL.createObjectURL(file),
-          })
-        )
-      );
-    },
-  });
-
-  const thumbs = files.map((file) => (
-    <div style={thumb} key={file.name}>
-      <div style={thumbInner}>
-        <img
-          src={file.preview}
-          style={img}
-          // Revoke data uri after image is loaded
-          onLoad={() => {
-            URL.revokeObjectURL(file.preview);
-          }}
-        />
-      </div>
-    </div>
-  ));
-  useEffect(() => {
-    // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
-    return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
-  }, []);
 
   const handleEditNextStep = () => {
     onClose();
@@ -211,6 +245,16 @@ function modalEditStep1(props) {
     modalConfirmEditSuccess.onOpen();
   };
 
+  const [editFileImgShop, setEditFileImgShop] = useState([]);
+  const handleSetEditFileImgShop = (fileList) => {
+    setEditFileImgShop(fileList);
+  };
+
+  const [editFileImgCoverShop, setEditFileImgCoverShop] = useState([]);
+  const handleSetEditFileImgCoverShop = (fileList) => {
+    setEditFileImgCoverShop(fileList);
+  };
+  
   return (
     <>
       {/* Modal แก้ไขร้านค้า */}
@@ -265,10 +309,11 @@ function modalEditStep1(props) {
                             type="text"
                             placeholder="ระบุชื่อสินค้า"
                             borderColor="gray.400"
-                            value={Shops.name_shop}
+                            value={editNameShop}
+                            onChange={onChangeNameShop}
                           />
                           <InputRightElement pr="45px">
-                            <Text>{Shops.name_shop.length}/100</Text>
+                            <Text>{editNameShopLength}/100</Text>
                           </InputRightElement>
                         </InputGroup>
                       </GridItem>
@@ -290,7 +335,8 @@ function modalEditStep1(props) {
                               borderColor="gray.400"
                               placeholder="ระบุรายละเอียดสินค้า"
                               pr="60px"
-                              value={Shops.detail_shop}
+                              value={editDetailShop}
+                              onChange={onChangeDetailShop}
                             />
                             <InputRightElement
                               h="100%"
@@ -298,7 +344,7 @@ function modalEditStep1(props) {
                               p="10px"
                             >
                               <Text pr="45px">
-                                {Shops.detail_shop.length}/3000
+                                {editDetailShopLength}/3000
                               </Text>
                             </InputRightElement>
                           </InputGroup>
@@ -311,26 +357,10 @@ function modalEditStep1(props) {
                       </GridItem>
                       <GridItem colSpan={2}>
                         <Box>
-                          <Box
-                            {...getRootProps({ className: "dropzone" })}
-                            borderRadius="xl"
-                            bg="gray.100"
-                            h="100px"
-                            w="100px"
-                            fontSize="15px"
-                            p="10px"
-                          >
-                            <Input {...getInputProps()} />
-                            <Image
-                              src="/images/addImage.png"
-                              alt=""
-                              h="40px"
-                              w="40px"
-                            />
-                            <Text>เพิ่มรูปภาพ</Text>
-                            <Text>(0/1)</Text>
-                          </Box>
-                          <aside style={thumbsContainer}>{thumbs}</aside>
+                          <PicturesShop
+                            setEditFileImgShop={handleSetEditFileImgShop}
+                            nameImgShop={Shops.img_shop}
+                          />
                         </Box>
                       </GridItem>
                       <GridItem colSpan={1} justifySelf="end">
@@ -340,26 +370,12 @@ function modalEditStep1(props) {
                       </GridItem>
                       <GridItem colSpan={2}>
                         <Box>
-                          <Box
-                            {...getRootProps({ className: "dropzone" })}
-                            borderRadius="xl"
-                            bg="gray.100"
-                            h="100px"
-                            w="100px"
-                            fontSize="15px"
-                            p="10px"
-                          >
-                            <Input {...getInputProps()} />
-                            <Image
-                              src="/images/addImage.png"
-                              alt=""
-                              h="40px"
-                              w="40px"
-                            />
-                            <Text pt="5px">เพิ่มรูปภาพ</Text>
-                            <Text>(0/1)</Text>
-                          </Box>
-                          <aside style={thumbsContainer}>{thumbs}</aside>
+                          <PicturesCoverShop
+                            setEditFileImgCoverShop={
+                              handleSetEditFileImgCoverShop
+                            }
+                            nameImgCoverShop={Shops.cover_img_shop}
+                          />
                         </Box>
                       </GridItem>
                       <GridItem colSpan={1} justifySelf="end">
