@@ -25,63 +25,54 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import Link from "next/link";
-import Select from "react-select";
 import axios from "axios";
+import { Upload } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
+class PicturesWall extends React.Component {
+  state = {
+    fileList: [],
+  };
+  handleChange = ({ fileList }) => {
+    this.props.setFileImage(fileList);
+    this.setState({ fileList });
+  };
+
+  render() {
+    const { fileList } = this.state;
+    const uploadButton = (
+      <div>
+        <PlusOutlined />
+        <div style={{ marginTop: 8 }}>เพิ่มรูปภาพ ({fileList.length}/10)</div>
+      </div>
+    );
+    return (
+      <>
+        <Upload
+          listType="picture-card"
+          fileList={fileList}
+          onChange={this.handleChange}
+        >
+          {fileList.length >= 1 ? null : uploadButton}
+        </Upload>
+      </>
+    );
+  }
+}
+
 function option() {
   const router = useRouter();
   const data = router.query;
-  async function handleSubmit(event) {
-    event.preventDefault();
-    const response = await axios.post(
-      "http://127.0.0.1:8000/api/addProduct",
-      data
-    );
-  }
-  //setting select
-  const [div, setDiv] = useState([true]);
 
+  const [div, setDiv] = useState([true]);
   const handleSelectChange = () => {
     setDiv([...div, true]);
   };
-  const option = [];
-  const [type, setType] = useState([
-    { value: "color", label: "สี" },
-    { value: "size", label: "ขนาด" },
-  ]);
-  const colorOptions = [
-    { value: "blue", label: "Blue" },
-    { value: "purple", label: "Purple" },
-    { value: "red", label: "Red" },
-    { value: "orange", label: "Orange" },
-    { value: "yellow", label: "Yellow" },
-    { value: "green", label: "Green" },
-  ];
 
-  const sizeOptions = [
-    { value: "s", label: "S" },
-    { value: "m", label: "M" },
-    { value: "xl", label: "Xl" },
-    { value: "2xl", label: "2Xl" },
-    { value: "3xl", label: "3Xl" },
-  ];
-  const [selectedOptions, setSelectedOptions] = useState(["", ""]);
-  const [filteredType, setFilteredType] = useState(type);
-
-  const handleOnChange = (selectedOption, selectKey) => {
-    const newValue = [...selectedOptions];
-    newValue[selectKey] = selectedOption;
-    setSelectedOptions(newValue);
-
-    let filtered = type;
-    if (selectedOption.value === "color") {
-      filtered = type.filter((type) => type.value !== "color");
-    } else {
-      filtered = type.filter((type) => type.value !== "size");
-    }
-
-    setFilteredType(filtered);
-  };
+  const [dataTableOption1, setDataTableOption1] = useState([]);
+  const [dataTableOption2, setDataTableOption2] = useState([]);
+  const [option1, setOption1] = useState(null);
+  const [option2, setOption2] = useState(null);
 
   //modal
   const {
@@ -94,7 +85,6 @@ function option() {
     onOpen: onOpenForm2,
     onClose: onCloseForm2,
   } = useDisclosure();
-
   const comfirmSave = () => {
     onOpenForm1();
   };
@@ -102,33 +92,11 @@ function option() {
     onCloseForm1();
     onCloseForm2();
   };
-
   const saveSuccess = () => {
     onCloseForm1();
     onOpenForm2();
   };
-
-  const [selectedOptionsColor, setSelectedOptionsColor] = useState([]);
-  const [selectedOptionsSize, setSelectedOptionsSize] = useState([]);
-  const [dataTable, setDataTable] = useState([]);
-  function handleOptionColor(options) {
-    setSelectedOptionsColor(options);
-    const size = selectedOptionsSize;
-    const newArr = options.map((item) => ({
-      ...item,
-      size,
-    }));
-    setDataTable(newArr);
-  }
-  function handleOptionSize(size) {
-    setSelectedOptionsSize(size);
-    const newArr = selectedOptionsColor.map((item) => ({
-      ...item,
-      size,
-    }));
-    setDataTable(newArr);
-  }
-  function clearSize() {}
+  console.log(data);
   return (
     <Box>
       <Box>
@@ -158,57 +126,33 @@ function option() {
           </Link>
         </Flex>
       </Box>
-      <form onSubmit={handleSubmit}>
-        <Box px="50px">
-          {div.map((item, index) => {
-            return item ? (
+      <form>
+        <Box px="10%">
+          {div?.map((item, index) => {
+            return (
               <Flex pt="10px" justifyContent="center" key={index}>
                 <Text fontSize="24px" px="15px" whiteSpace="nowrap">
                   รูปแบบที่ {index + 1} :
                 </Text>
                 <Box width="-webkit-fill-available">
-                  <Select
-                    options={filteredType}
-                    pl="15px"
-                    placeholder="เลือกรูปแบบ..."
-                    onChange={(selectedOption) =>
-                      handleOnChange(selectedOption, index)
-                    }
-                  />
-                </Box>
-                <Text fontSize="24px" px="15px" whiteSpace="nowrap">
-                  ตัวเลือก :
-                </Text>
-                <Box width="-webkit-fill-available">
-                  <Select
-                    isMulti
-                    options={
-                      selectedOptions[index] !== ""
-                        ? selectedOptions[index].value === "color"
-                          ? colorOptions
-                          : sizeOptions
-                        : null
-                    }
+                  <Input
                     onChange={
-                      selectedOptions[index] !== ""
-                        ? selectedOptions[index].value === "color"
-                          ? handleOptionColor
-                          : handleOptionSize
-                        : option
-                    }
-                    value={
-                      selectedOptions[index] !== ""
-                        ? selectedOptions[index].value === "color"
-                          ? selectedOptionsColor
-                          : selectedOptionsSize
-                        : null
+                      index == 0
+                        ? (e) => setOption1(e.target.value)
+                        : (e) => setOption2(e.target.value)
                     }
                   />
+                  <Button mt="15px" onClick={() => comfirmSave()}>
+                    เพิ่มตัวเลือก
+                  </Button>
+                  <Button ml="15px" mt="15px">
+                    ลบรูปแบบ
+                  </Button>
                 </Box>
               </Flex>
-            ) : null;
+            );
           })}
-          <Box pl="115px" pt="15px">
+          <Box pl="116px" pt="15px">
             <Button
               border="2px solid black"
               bg="white"
@@ -220,76 +164,89 @@ function option() {
               เพิ่มรูปแบบ ({div.length}/2)
             </Button>
           </Box>
-          <Box pl="115px" pt="15px">
-            <Table minWidth="100%" border="1px solid" textAlign="center">
-              <Thead>
-                <Tr>
-                  <Td border="1px solid">สี</Td>
-                  <Td border="1px solid">ขนาด</Td>
-                  <Td border="1px solid">ราคา</Td>
-                  <Td border="1px solid">สต็อกสินค้า</Td>
-                  <Td border="1px solid">รหัสสินค้า</Td>
-                  <Td border="1px solid">ใช้งาน</Td>
-                  <Td border="1px solid">ดำเนินการ</Td>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {dataTable.map((item, index) => (
-                  <React.Fragment key={item.label}>
-                    <Tr>
-                      <Td
-                        border="1px solid"
-                        rowSpan={item.size.length > 0 ? item.size.length : 1}
-                      >
-                        {item.label}
-                      </Td>
-                      <Td border="1px solid">
-                        {item.size.length > 0 ? item.size[0].label : null}
-                      </Td>
-                      <Td border="1px solid">
-                        <Input placeholder="ระบุราคา" />
-                      </Td>
-                      <Td border="1px solid">
-                        <Input placeholder="ระบุจำนวน" />
-                      </Td>
-                      <Td border="1px solid">
-                        <Input placeholder="ระบุจำนวนสินค้า" />
-                      </Td>
-                      <Td border="1px solid">
-                        <Switch colorScheme="brand" />
-                      </Td>
-                      <Td border="1px solid">
-                        <Image src="/images/trash-bin.png" h="25px" />
-                      </Td>
-                    </Tr>
-                    {item.size.map((subItem, subIndex) => {
-                      return subIndex !== 0 ? (
-                        <Tr key={`${item.label}-${subIndex}`}>
-                          <Td border="1px solid">{subItem.label}</Td>
-                          <Td border="1px solid">
-                            <Input placeholder="ระบุราคา" />
-                          </Td>
-                          <Td border="1px solid">
-                            <Input placeholder="ระบุจำนวน" />
-                          </Td>
-                          <Td border="1px solid">
-                            <Input placeholder="ระบุจำนวนสินค้า" />
-                          </Td>
-                          <Td border="1px solid">
-                            <Switch colorScheme="brand" />
-                          </Td>
-                          <Td border="1px solid">
-                            <Image src="/images/trash-bin.png" h="25px" />
-                          </Td>
-                        </Tr>
-                      ) : null;
-                    })}
-                  </React.Fragment>
-                ))}
-              </Tbody>
-            </Table>
-          </Box>
-          <Flex pl="115px" py="15px" justifyContent="center">
+          {option1 ? (
+            <Box pl="115px" pt="15px">
+              <Text>{option1}</Text>
+              <Table minWidth="100%" border="1px solid" textAlign="center">
+                <Thead>
+                  <Tr>
+                    <Td border="1px solid">{option1}</Td>
+                    <Td border="1px solid">ราคา</Td>
+                    <Td border="1px solid">สต็อกสินค้า</Td>
+                    <Td border="1px solid">รหัสสินค้า</Td>
+                    <Td border="1px solid">ใช้งาน</Td>
+                    <Td border="1px solid">ดำเนินการ</Td>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {dataTableOption1?.map((item, index) => (
+                    <React.Fragment key={item.label}>
+                      <Tr>
+                        <Td border="1px solid">{item.label}</Td>
+                        <Td border="1px solid">
+                          <Input placeholder="ระบุราคา" />
+                        </Td>
+                        <Td border="1px solid">
+                          <Input placeholder="ระบุจำนวน" />
+                        </Td>
+                        <Td border="1px solid">
+                          <Input placeholder="ระบุจำนวนสินค้า" />
+                        </Td>
+                        <Td border="1px solid">
+                          <Switch colorScheme="brand" />
+                        </Td>
+                        <Td border="1px solid">
+                          <Image src="/images/trash-bin.png" h="25px" />
+                        </Td>
+                      </Tr>
+                    </React.Fragment>
+                  ))}
+                </Tbody>
+              </Table>
+            </Box>
+          ) : null}
+          {option2 ? (
+            <Box pl="115px" pt="15px">
+              <Text>{option2}</Text>
+              <Table minWidth="100%" border="1px solid" textAlign="center">
+                <Thead>
+                  <Tr>
+                    <Td border="1px solid">{option2}</Td>
+                    <Td border="1px solid">ราคา</Td>
+                    <Td border="1px solid">สต็อกสินค้า</Td>
+                    <Td border="1px solid">รหัสสินค้า</Td>
+                    <Td border="1px solid">ใช้งาน</Td>
+                    <Td border="1px solid">ดำเนินการ</Td>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {dataTableOption2?.map((item, index) => (
+                    <React.Fragment key={item.label}>
+                      <Tr>
+                        <Td border="1px solid">{item.label}</Td>
+                        <Td border="1px solid">
+                          <Input placeholder="ระบุราคา" />
+                        </Td>
+                        <Td border="1px solid">
+                          <Input placeholder="ระบุจำนวน" />
+                        </Td>
+                        <Td border="1px solid">
+                          <Input placeholder="ระบุจำนวนสินค้า" />
+                        </Td>
+                        <Td border="1px solid">
+                          <Switch colorScheme="brand" />
+                        </Td>
+                        <Td border="1px solid">
+                          <Image src="/images/trash-bin.png" h="25px" />
+                        </Td>
+                      </Tr>
+                    </React.Fragment>
+                  ))}
+                </Tbody>
+              </Table>
+            </Box>
+          ) : null}
+          <Flex pl="100px" py="15px" justifyContent="center">
             <Button>ยกเลิก</Button>
             <Button
               ml="10px"
@@ -298,7 +255,6 @@ function option() {
               color="white"
               leftIcon={<Image src="/images/save.png" alt="" h="25px" />}
               _hover={{}}
-              onClick={() => comfirmSave()}
             >
               บันทึก
             </Button>
@@ -306,6 +262,32 @@ function option() {
         </Box>
       </form>
       <Modal onClose={onCloseForm1} size="md" isOpen={isOpenForm1} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader pr="10px" pt="10px">
+            <Flex justifyContent="center">
+              <Text>เพิ่มตัวเลือก {option1}</Text>
+              <Spacer/>
+              <Box>
+                <Image
+                  src="/images/close.png"
+                  alt=""
+                  h="25px"
+                  w="25px"
+                  onClick={() => closeModal()}
+                />
+              </Box>
+            </Flex>
+          </ModalHeader>
+          <ModalBody>
+            <Box>
+              <Input />
+            </Box>
+          </ModalBody>
+          <ModalFooter justifyContent="center"></ModalFooter>
+        </ModalContent>
+      </Modal>
+      {/* <Modal onClose={onCloseForm1} size="md" isOpen={isOpenForm1} isCentered>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader alignSelf="flex-end" pr="10px" pt="10px">
@@ -368,7 +350,7 @@ function option() {
             </Link>
           </ModalFooter>
         </ModalContent>
-      </Modal>
+      </Modal> */}
     </Box>
   );
 }
