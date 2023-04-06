@@ -29,7 +29,6 @@ import {
 import Link from "next/link";
 import { BsArrowLeftCircle } from "react-icons/bs";
 import axios from "axios";
-/* import "bootstrap/dist/css/bootstrap.min.css"; */
 import { Upload } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 /* import "antd/dist/antd.css"; */

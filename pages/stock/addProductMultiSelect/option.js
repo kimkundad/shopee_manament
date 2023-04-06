@@ -128,7 +128,6 @@ function option() {
     }));
     setDataTable(newArr);
   }
-
   function clearSize() {}
   return (
     <Box>
