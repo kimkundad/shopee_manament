@@ -201,17 +201,38 @@ function addProductMultiSelect() {
     setDiv([...div, true]);
   };
 
-  const [dataTableOption1, setDataTableOption1] = useState([]);
-  const [dataTableOption2, setDataTableOption2] = useState([]);
+  const [dataTableOption, setDataTableOption] = useState([]);
+  const [dataTableSubOption, setDataTableSubOption] = useState([]);
   const [dataTable, setDataTable] = useState([]);
   const [option1, setOption1] = useState("ตัวเลือกที่ 1");
   const [option2, setOption2] = useState("ตัวเลือกที่ 2");
 
-  const [nameOption1, setNameOption1] = useState(null);
-  const [priceOption1, setPriceOption1] = useState(null);
-  const [stockOption1, setStockOption1] = useState(null);
-  const [skuOption1, setSkuOption1] = useState(null);
-  const addOption1 = (event) => {
+  const [nameOption, setNameOption] = useState(null);
+  const [priceOption, setPriceOption] = useState(null);
+  const [stockOption, setStockOption] = useState(null);
+  const [skuOption, setSkuOption] = useState(null);
+  const addOption = (event) => {
+    event.preventDefault();
+    const arrOption = {
+      nameOption: nameOption,
+      priceOption: priceOption,
+      stockOption: stockOption,
+      skuOption1: skuOption,
+      indexImageOption: valueSelect,
+    };
+
+    const newArr = [...dataTableOption, arrOption];
+
+    const newArr34 = newArr.map((item) => ({
+      ...item,
+      dataTableSubOption,
+    }));
+    setDataTableOption(newArr);
+    setDataTable(newArr34);
+    onCloseForm3();
+  };
+
+  /* const addOption2 = (event) => {
     event.preventDefault();
     const arrOption1 = {
       nameOption1: nameOption1,
@@ -221,7 +242,7 @@ function addProductMultiSelect() {
       indexImageOption1: valueSelect,
     };
 
-    const newArr = [...dataTableOption1, arrOption1];
+    const newArr = [...dataTableOption2, arrOption1];
 
     const newArr34 = newArr.map((item) => ({
       ...item,
@@ -230,7 +251,7 @@ function addProductMultiSelect() {
     setDataTableOption1(newArr);
     setDataTable(newArr34);
     onCloseForm3();
-  };
+  }; */
   return (
     <>
       <Box>
@@ -680,24 +701,24 @@ function addProductMultiSelect() {
                           <Td
                             border="1px solid"
                             rowSpan={
-                              item.dataTableOption2?.length > 0
-                                ? item.dataTableOption2?.length
+                              item.dataTableSubOption?.length > 0
+                                ? item.dataTableSubOption?.length
                                 : 1
                             }
                           >
-                            {item.nameOption1}
+                            {item.nameOption}
                             <Image
-                              src={fileImage[item.indexImageOption1]?.thumbUrl}
+                              src={fileImage[item.indexImageOption]?.thumbUrl}
                             />
                           </Td>
                           <Td border="1px solid">
-                            {item.dataTableOption2?.length > 0
-                              ? item.dataTableOption2[0]?.nameOption1
+                            {item.dataTableSubOption?.length > 0
+                              ? item.dataTableSubOption[0]?.nameOption1
                               : null}
                           </Td>
-                          <Td border="1px solid">{item.priceOption1}</Td>
-                          <Td border="1px solid">{item.stockOption1}</Td>
-                          <Td border="1px solid">{item.skuOption1}</Td>
+                          <Td border="1px solid">{item.priceOption}</Td>
+                          <Td border="1px solid">{item.stockOption}</Td>
+                          <Td border="1px solid">{item.skuOption}</Td>
                           <Td border="1px solid">
                             <Switch colorScheme="brand" />
                           </Td>
@@ -705,10 +726,10 @@ function addProductMultiSelect() {
                             <Image src="/images/trash-bin.png" h="25px" />
                           </Td>
                         </Tr>
-                        {item?.dataTableOption2?.map((subItem, subIndex) => {
+                        {item?.dataTableSubOption?.map((subItem, subIndex) => {
                           return subIndex !== 0 ? (
-                            <Tr key={`${item.nameOption1}-${subIndex}`}>
-                              <Td border="1px solid">{subItem.nameOption1}</Td>
+                            <Tr key={`${item.nameOption}-${subIndex}`}>
+                              <Td border="1px solid">{subItem.nameOption}</Td>
                               <Td border="1px solid">
                                 <Input placeholder="ระบุราคา" />
                               </Td>
@@ -772,7 +793,7 @@ function addProductMultiSelect() {
                 </Flex>
               </ModalHeader>
               <ModalBody>
-                <form onSubmit={addOption1}>
+                <form onSubmit={addOption}>
                   <Text>เลือกรูปสำหรับ tag ตัวเลือก</Text>
                   <RadioGroup py="15px" value={valueSelect}>
                     <Stack direction="row">
@@ -799,25 +820,25 @@ function addProductMultiSelect() {
                   <Text>ชื่อ:</Text>
                   <Input
                     id="option"
-                    onChange={(e) => setNameOption1(e.target.value)}
+                    onChange={(e) => setNameOption(e.target.value)}
                     required
                   />
                   <Text>ราคาสินค้า:</Text>
                   <Input
                     id="price_option"
-                    onChange={(e) => setPriceOption1(e.target.value)}
+                    onChange={(e) => setPriceOption(e.target.value)}
                     required
                   />
                   <Text>จำนวนสินค้า:</Text>
                   <Input
                     id="stock"
-                    onChange={(e) => setStockOption1(e.target.value)}
+                    onChange={(e) => setStockOption(e.target.value)}
                     required
                   />
                   <Text>รหัสสินค้า:</Text>
                   <Input
                     id="sku"
-                    onChange={(e) => setSkuOption1(e.target.value)}
+                    onChange={(e) => setSkuOption(e.target.value)}
                     required
                   />
                   <Button mt="10px" type="submit">
