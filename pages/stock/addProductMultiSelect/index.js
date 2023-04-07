@@ -113,9 +113,6 @@ function addProductMultiSelect() {
   const [fileImage, setFileImage] = useState([]);
   const [fileImageOption, setFileImageOption] = useState([]);
   const [valueSelect, setValueSelect] = useState(null);
-  const handleOption1 = (event) => {
-    setValueSelect(event.target.value);
-  };
   const handleSetFileImage = (fileList) => {
     setFileImage(fileList);
   };
@@ -147,6 +144,12 @@ function addProductMultiSelect() {
     onOpen: onOpenForm3,
     onClose: onCloseForm3,
   } = useDisclosure();
+
+  const {
+    isOpen: isOpenForm4,
+    onOpen: onOpenForm4,
+    onClose: onCloseForm4,
+  } = useDisclosure();
   const comfirmSave = (event) => {
     event.preventDefault();
     onOpenForm1();
@@ -155,11 +158,16 @@ function addProductMultiSelect() {
     onCloseForm1();
     onCloseForm2();
     onCloseForm3();
+    onCloseForm4();
   };
-  const modalAddOptiion1 = (event) => {
+  const modalAddOptiion = (event) => {
     event.preventDefault();
     setValueSelect(null);
     onOpenForm3();
+  };
+  const modalAddSubOptiion = (event) => {
+    event.preventDefault();
+    onOpenForm4();
   };
   const saveSuccess = async () => {
     const formData = new FormData();
@@ -204,8 +212,8 @@ function addProductMultiSelect() {
   const [dataTableOption, setDataTableOption] = useState([]);
   const [dataTableSubOption, setDataTableSubOption] = useState([]);
   const [dataTable, setDataTable] = useState([]);
-  const [option1, setOption1] = useState("ตัวเลือกที่ 1");
-  const [option2, setOption2] = useState("ตัวเลือกที่ 2");
+  const [option, setOption] = useState("ตัวเลือกที่ 1");
+  const [subOption, setSubOption] = useState("ตัวเลือกที่ 2");
 
   const [nameOption, setNameOption] = useState(null);
   const [priceOption, setPriceOption] = useState(null);
@@ -222,36 +230,40 @@ function addProductMultiSelect() {
     };
 
     const newArr = [...dataTableOption, arrOption];
-
+    const subOption = [...dataTableSubOption]
     const newArr34 = newArr.map((item) => ({
       ...item,
-      dataTableSubOption,
+      subOption,
     }));
     setDataTableOption(newArr);
     setDataTable(newArr34);
     onCloseForm3();
   };
 
-  /* const addOption2 = (event) => {
+  const [nameSubOption, setNameSubOption] = useState(null);
+  const [priceSubOption, setPriceSubOption] = useState(null);
+  const [stockSubOption, setStockSubOption] = useState(null);
+  const [skuSubOption, setSkuSubOption] = useState(null);
+  const addSubOption = (event) => {
     event.preventDefault();
-    const arrOption1 = {
-      nameOption1: nameOption1,
-      priceOption1: priceOption1,
-      stockOption1: stockOption1,
-      skuOption1: skuOption1,
-      indexImageOption1: valueSelect,
+    const arrSubOption = {
+      nameSubOption: nameSubOption,
+      priceSubOption: priceSubOption,
+      stockSubOption: stockSubOption,
+      skuSubOption: skuSubOption,
     };
 
-    const newArr = [...dataTableOption2, arrOption1];
+    const subOption = [...dataTableSubOption, arrSubOption];
 
-    const newArr34 = newArr.map((item) => ({
+    const newArr34 = dataTableOption.map((item) => ({
       ...item,
-      dataTableOption2,
+      subOption,
     }));
-    setDataTableOption1(newArr);
+    setDataTableSubOption(subOption);
     setDataTable(newArr34);
-    onCloseForm3();
-  }; */
+    onCloseForm4();
+  };
+  console.log(dataTable);
   return (
     <>
       <Box>
@@ -643,8 +655,8 @@ function addProductMultiSelect() {
                       <Input
                         onChange={
                           index == 0
-                            ? (e) => setOption1(e.target.value)
-                            : (e) => setOption2(e.target.value)
+                            ? (e) => setOption(e.target.value)
+                            : (e) => setSubOption(e.target.value)
                         }
                         placeholder="เช่น สี ขนาด ไซด์"
                         required
@@ -652,10 +664,12 @@ function addProductMultiSelect() {
                       <Button
                         mt="15px"
                         type="submit"
-                        onClick={
-                          option1 !== "ตัวเลือกที่ 1" && option1 !== ""
-                            ? modalAddOptiion1
-                            : null
+                        onClick={index == 0?
+                          (option !== "ตัวเลือกที่ 1" && option !== ""
+                            ? modalAddOptiion
+                            : null):(subOption !== "ตัวเลือกที่ 2" && subOption !== ""
+                            ? modalAddSubOptiion
+                            : null)
                         }
                       >
                         เพิ่มตัวเลือก
@@ -685,8 +699,8 @@ function addProductMultiSelect() {
                 <Table minWidth="100%" border="1px solid" textAlign="center">
                   <Thead>
                     <Tr>
-                      <Td border="1px solid">{option1}</Td>
-                      <Td border="1px solid">{option2}</Td>
+                      <Td border="1px solid">{option}</Td>
+                      <Td border="1px solid">{subOption}</Td>
                       <Td border="1px solid">ราคา</Td>
                       <Td border="1px solid">สต็อกสินค้า</Td>
                       <Td border="1px solid">รหัสสินค้า</Td>
@@ -701,8 +715,8 @@ function addProductMultiSelect() {
                           <Td
                             border="1px solid"
                             rowSpan={
-                              item.dataTableSubOption?.length > 0
-                                ? item.dataTableSubOption?.length
+                              item?.subOption?.length > 0
+                                ? item?.subOption?.length
                                 : 1
                             }
                           >
@@ -712,13 +726,13 @@ function addProductMultiSelect() {
                             />
                           </Td>
                           <Td border="1px solid">
-                            {item.dataTableSubOption?.length > 0
-                              ? item.dataTableSubOption[0]?.nameOption1
+                            {item?.subOption?.length > 0
+                              ? item?.subOption[0]?.nameSubOption
                               : null}
                           </Td>
-                          <Td border="1px solid">{item.priceOption}</Td>
-                          <Td border="1px solid">{item.stockOption}</Td>
-                          <Td border="1px solid">{item.skuOption}</Td>
+                          {item?.subOption?.length > 0?  <Td border="1px solid">{item?.subOption[0].priceSubOption}</Td>:<Td border="1px solid">{item?.priceOption}</Td>}
+                          {item?.subOption?.length > 0? <Td border="1px solid">{item?.subOption[0].stockSubOption}</Td>:<Td border="1px solid">{item?.stockOption}</Td>}
+                          {item?.subOption?.length > 0? <Td border="1px solid">{item?.subOption[0].skuSubOption}</Td>:<Td border="1px solid">{item?.skuOption}</Td>}
                           <Td border="1px solid">
                             <Switch colorScheme="brand" />
                           </Td>
@@ -726,18 +740,18 @@ function addProductMultiSelect() {
                             <Image src="/images/trash-bin.png" h="25px" />
                           </Td>
                         </Tr>
-                        {item?.dataTableSubOption?.map((subItem, subIndex) => {
+                        {item?.subOption?.map((subItem, subIndex) => {
                           return subIndex !== 0 ? (
                             <Tr key={`${item.nameOption}-${subIndex}`}>
-                              <Td border="1px solid">{subItem.nameOption}</Td>
+                              <Td border="1px solid">{subItem.nameSubOption}</Td>
                               <Td border="1px solid">
-                                <Input placeholder="ระบุราคา" />
+                              {subItem.priceSubOption}
                               </Td>
                               <Td border="1px solid">
-                                <Input placeholder="ระบุจำนวน" />
+                              {subItem.skuSubOption}
                               </Td>
                               <Td border="1px solid">
-                                <Input placeholder="ระบุจำนวนสินค้า" />
+                              {subItem.stockSubOption}
                               </Td>
                               <Td border="1px solid">
                                 <Switch colorScheme="brand" />
@@ -779,7 +793,7 @@ function addProductMultiSelect() {
             <ModalContent>
               <ModalHeader pr="10px" pt="10px">
                 <Flex justifyContent="center">
-                  <Text>เพิ่มตัวเลือก {option1}</Text>
+                  <Text>เพิ่มตัวเลือก {option}</Text>
                   <Spacer />
                   <Box>
                     <Image
@@ -839,6 +853,63 @@ function addProductMultiSelect() {
                   <Input
                     id="sku"
                     onChange={(e) => setSkuOption(e.target.value)}
+                    required
+                  />
+                  <Button mt="10px" type="submit">
+                    save
+                  </Button>
+                </form>
+              </ModalBody>
+              <ModalFooter justifyContent="center"></ModalFooter>
+            </ModalContent>
+          </Modal>
+          <Modal
+            onClose={onCloseForm4}
+            size="md"
+            isOpen={isOpenForm4}
+            isCentered
+          >
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader pr="10px" pt="10px">
+                <Flex justifyContent="center">
+                  <Text>เพิ่มตัวเลือก {subOption}</Text>
+                  <Spacer />
+                  <Box>
+                    <Image
+                      src="/images/close.png"
+                      alt=""
+                      h="25px"
+                      w="25px"
+                      onClick={() => closeModal()}
+                    />
+                  </Box>
+                </Flex>
+              </ModalHeader>
+              <ModalBody>
+                <form onSubmit={addSubOption}>
+                  <Text>ชื่อ:</Text>
+                  <Input
+                    id="option"
+                    onChange={(e) => setNameSubOption(e.target.value)}
+                    required
+                  />
+                  <Text>ราคาสินค้า:</Text>
+                  <Input
+                    id="price_option"
+                    onChange={(e) => setPriceSubOption(e.target.value)}
+                    required
+                  />
+                  <Text>จำนวนสินค้า:</Text>
+                  <Input
+                    id="stock"
+                    onChange={(e) => setStockSubOption(e.target.value)}
+                    required
+                  />
+                  <Text>รหัสสินค้า:</Text>
+                  <Input
+                    id="sku"
+                    onChange={(e) => setSkuSubOption(e.target.value)}
                     required
                   />
                   <Button mt="10px" type="submit">
