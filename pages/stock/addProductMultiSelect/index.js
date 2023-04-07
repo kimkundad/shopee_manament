@@ -111,6 +111,11 @@ function addProductMultiSelect() {
   const [weight, setWeight] = useState("");
   const [sku, setSku] = useState("");
   const [fileImage, setFileImage] = useState([]);
+  const [fileImageOption, setFileImageOption] = useState([]);
+  const [valueSelect, setValueSelect] = useState(null);
+  const handleOption1 = (event) => {
+    setValueSelect(event.target.value);
+  };
   const handleSetFileImage = (fileList) => {
     setFileImage(fileList);
   };
@@ -119,16 +124,6 @@ function addProductMultiSelect() {
     setFileVideo(fileList);
   };
 
-  const data = {
-    name_product,
-    detail_product,
-    price,
-    price_sales,
-    cost,
-    stock,
-    weight,
-    fileImage,
-  };
   const [buttonActive, setButtonActive] = useState([false, true]);
 
   const handelButton = (event) => {
@@ -147,15 +142,26 @@ function addProductMultiSelect() {
     onOpen: onOpenForm2,
     onClose: onCloseForm2,
   } = useDisclosure();
-
-  const comfirmSave = () => {
+  const {
+    isOpen: isOpenForm3,
+    onOpen: onOpenForm3,
+    onClose: onCloseForm3,
+  } = useDisclosure();
+  const comfirmSave = (event) => {
+    event.preventDefault();
     onOpenForm1();
   };
   const closeModal = () => {
     onCloseForm1();
     onCloseForm2();
+    onCloseForm3();
   };
-  /* const saveSuccess = async () => {
+  const modalAddOptiion1 = (event) => {
+    event.preventDefault();
+    setValueSelect(null);
+    onOpenForm3();
+  };
+  const saveSuccess = async () => {
     const formData = new FormData();
     formData.append("name_product", name_product);
     formData.append("detail_product", detail_product);
@@ -168,28 +174,17 @@ function addProductMultiSelect() {
     fileImage.forEach((file, index) => {
       formData.append(`file[${index}]`, file.originFileObj);
     });
+    formData.append("dataOption",dataTable);
     const response = await axios.post(
-      "https://shopee-api.deksilp.com/api/addProduct",
+      "https://shopee-api.deksilp.com/api/addProductMultiOption",
       formData,
       { headers: { "Content-Type": "multipart/form-data" } }
     );
     onCloseForm1();
     onOpenForm2();
-  }; */
-
-  const [div, setDiv] = useState([true]);
-  const handleSelectChange = () => {
-    setDiv([...div, true]);
   };
 
-  const [dataTableOption1, setDataTableOption1] = useState([]);
-  const [dataTableOption2, setDataTableOption2] = useState([]);
-  const [option1, setOption1] = useState(null);
-  const [option2, setOption2] = useState(null);
-
   const [category, setCategory] = useState([]);
-
-  const [valueSelect, setValueSelect] = useState(null);
   useEffect(() => {
     async function fetchData() {
       const res = await axios.get(
@@ -201,10 +196,41 @@ function addProductMultiSelect() {
     fetchData();
   }, []);
 
-  function handleOption1() {
-    const newArr = [...dataTableOption1];
-    setValueSelect(null);
-  }
+  const [div, setDiv] = useState([]);
+  const handleSelectChange = () => {
+    setDiv([...div, true]);
+  };
+
+  const [dataTableOption1, setDataTableOption1] = useState([]);
+  const [dataTableOption2, setDataTableOption2] = useState([]);
+  const [dataTable, setDataTable] = useState([]);
+  const [option1, setOption1] = useState("ตัวเลือกที่ 1");
+  const [option2, setOption2] = useState("ตัวเลือกที่ 2");
+
+  const [nameOption1, setNameOption1] = useState(null);
+  const [priceOption1, setPriceOption1] = useState(null);
+  const [stockOption1, setStockOption1] = useState(null);
+  const [skuOption1, setSkuOption1] = useState(null);
+  const addOption1 = (event) => {
+    event.preventDefault();
+    const arrOption1 = {
+      nameOption1: nameOption1,
+      priceOption1: priceOption1,
+      stockOption1: stockOption1,
+      skuOption1: skuOption1,
+      indexImageOption1: valueSelect,
+    };
+
+    const newArr = [...dataTableOption1, arrOption1];
+
+    const newArr34 = newArr.map((item) => ({
+      ...item,
+      dataTableOption2,
+    }));
+    setDataTableOption1(newArr);
+    setDataTable(newArr34);
+    onCloseForm3();
+  };
   return (
     <>
       <Box>
@@ -350,7 +376,7 @@ function addProductMultiSelect() {
                         w="150px"
                         borderColor="gray.400"
                       >
-                        {category.map((item, index) => {
+                        {category?.map((item, index) => {
                           return (
                             <option value={item.cat_name} key={index}>
                               {item.cat_name}
@@ -529,11 +555,11 @@ function addProductMultiSelect() {
                     </InputGroup>
                   </GridItem>
                 </Grid>
-                {/* <Flex justifyContent="center" pt="10px">
+                <Flex justifyContent="center" pt="10px">
                   <Link
                     href={{
                       pathname: "/stock/addProductMultiSelect/option",
-                      query: {fileImage}, // the data
+                      query: { fileImage }, // the data
                     }}
                   >
                     <Button
@@ -551,103 +577,94 @@ function addProductMultiSelect() {
                       เพิ่มตัวเลือกสินค้า
                     </Button>
                   </Link>
-                </Flex> */}
+                </Flex>
               </GridItem>
             </Grid>
           </Box>
+        </form>
+        <Box>
           <Box>
             <Flex justifyContent="center" p="15px">
+              <Link href="/stock/addProductMultiSelect">
+                <Button
+                  bg="red"
+                  h="25px"
+                  borderRadius="3xl"
+                  color="white"
+                  px="7px"
+                  leftIcon={<Icon as={BsArrowLeftCircle} color="white" />}
+                >
+                  ย้อนกลับ
+                </Button>
+              </Link>
+              <Spacer />
               <Flex alignItems="center">
+                <Image src="/images/addProduct.png" alt="" h="40px" w="40px" />
                 <Text pl="10px" fontSize="40px" fontWeight="bold" color="black">
                   เพิ่มตัวเลือกสินค้า
                 </Text>
               </Flex>
+              <Spacer />
+              <Link href="/stock">
+                <Image src="/images/close.png" alt="" h="20px" w="20px" />
+              </Link>
             </Flex>
           </Box>
-          <Box px="10%">
-            {div?.map((item, index) => {
-              return (
-                <Flex pt="10px" justifyContent="center" key={index}>
-                  <Text fontSize="24px" px="15px" whiteSpace="nowrap">
-                    รูปแบบที่ {index + 1} :
-                  </Text>
-                  <Box width="-webkit-fill-available">
-                    <Input
-                      onChange={
-                        index == 0
-                          ? (e) => setOption1(e.target.value)
-                          : (e) => setOption2(e.target.value)
-                      }
-                    />
-                    <Button mt="15px" onClick={() => comfirmSave()}>
-                      เพิ่มตัวเลือก
-                    </Button>
-                    <Button ml="15px" mt="15px">
-                      ลบรูปแบบ
-                    </Button>
-                  </Box>
-                </Flex>
-              );
-            })}
-            <Box pl="116px" pt="15px">
-              <Button
-                border="2px solid black"
-                bg="white"
-                leftIcon={<Image src="/images/plusblack.png" alt="" h="15px" />}
-                _hover={{}}
-                onClick={handleSelectChange}
-                isDisabled={div.length > 1}
-              >
-                เพิ่มรูปแบบ ({div.length}/2)
-              </Button>
-            </Box>
-            {option1 ? (
+          <form>
+            <Box px="10%">
+              {div?.map((item, index) => {
+                return (
+                  <Flex pt="10px" justifyContent="center" key={index}>
+                    <Text fontSize="24px" px="15px" whiteSpace="nowrap">
+                      รูปแบบที่ {index + 1} :
+                    </Text>
+                    <Box width="-webkit-fill-available">
+                      <Input
+                        onChange={
+                          index == 0
+                            ? (e) => setOption1(e.target.value)
+                            : (e) => setOption2(e.target.value)
+                        }
+                        placeholder="เช่น สี ขนาด ไซด์"
+                        required
+                      />
+                      <Button
+                        mt="15px"
+                        type="submit"
+                        onClick={
+                          option1 !== "ตัวเลือกที่ 1" && option1 !== ""
+                            ? modalAddOptiion1
+                            : null
+                        }
+                      >
+                        เพิ่มตัวเลือก
+                      </Button>
+                      <Button ml="15px" mt="15px">
+                        ลบรูปแบบ
+                      </Button>
+                    </Box>
+                  </Flex>
+                );
+              })}
+              <Box pl="116px" pt="15px">
+                <Button
+                  border="2px solid black"
+                  bg="white"
+                  leftIcon={
+                    <Image src="/images/plusblack.png" alt="" h="15px" />
+                  }
+                  _hover={{}}
+                  onClick={handleSelectChange}
+                  isDisabled={div.length > 1}
+                >
+                  เพิ่มรูปแบบ ({div.length}/2)
+                </Button>
+              </Box>
               <Box pl="115px" pt="15px">
-                <Text>{option1}</Text>
                 <Table minWidth="100%" border="1px solid" textAlign="center">
                   <Thead>
                     <Tr>
                       <Td border="1px solid">{option1}</Td>
-                      <Td border="1px solid">ราคา</Td>
-                      <Td border="1px solid">สต็อกสินค้า</Td>
-                      <Td border="1px solid">รหัสสินค้า</Td>
-                      <Td border="1px solid">ใช้งาน</Td>
-                      <Td border="1px solid">ดำเนินการ</Td>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {dataTableOption1?.map((item, index) => (
-                      <React.Fragment key={index}>
-                        <Tr>
-                          <Td border="1px solid">{item.label}</Td>
-                          <Td border="1px solid">
-                            <Input placeholder="ระบุราคา" />
-                          </Td>
-                          <Td border="1px solid">
-                            <Input placeholder="ระบุจำนวน" />
-                          </Td>
-                          <Td border="1px solid">
-                            <Input placeholder="ระบุจำนวนสินค้า" />
-                          </Td>
-                          <Td border="1px solid">
-                            <Switch colorScheme="brand" />
-                          </Td>
-                          <Td border="1px solid">
-                            <Image src="/images/trash-bin.png" h="25px" />
-                          </Td>
-                        </Tr>
-                      </React.Fragment>
-                    ))}
-                  </Tbody>
-                </Table>
-              </Box>
-            ) : null}
-            {option2 ? (
-              <Box pl="115px" pt="15px">
-                <Text>{option2}</Text>
-                <Table minWidth="100%" border="1px solid" textAlign="center">
-                  <Thead>
-                    <Tr>
                       <Td border="1px solid">{option2}</Td>
                       <Td border="1px solid">ราคา</Td>
                       <Td border="1px solid">สต็อกสินค้า</Td>
@@ -657,19 +674,28 @@ function addProductMultiSelect() {
                     </Tr>
                   </Thead>
                   <Tbody>
-                    {dataTableOption2?.map((item, index) => (
-                      <React.Fragment key={item.label}>
+                    {dataTable?.map((item, index) => (
+                      <React.Fragment key={index}>
                         <Tr>
-                          <Td border="1px solid">{item.label}</Td>
-                          <Td border="1px solid">
-                            <Input placeholder="ระบุราคา" />
+                          <Td
+                            border="1px solid"
+                            rowSpan={
+                              item.dataTableOption2?.length > 0
+                                ? item.dataTableOption2?.length
+                                : 1
+                            }
+                          >
+                            {item.nameOption1}
+                            <Image src={fileImage[item.indexImageOption1]?.thumbUrl}/>
                           </Td>
                           <Td border="1px solid">
-                            <Input placeholder="ระบุจำนวน" />
+                            {item.dataTableOption2?.length > 0
+                              ? item.dataTableOption2[0]?.nameOption1
+                              : null}
                           </Td>
-                          <Td border="1px solid">
-                            <Input placeholder="ระบุจำนวนสินค้า" />
-                          </Td>
+                          <Td border="1px solid">{item.priceOption1}</Td>
+                          <Td border="1px solid">{item.stockOption1}</Td>
+                          <Td border="1px solid">{item.skuOption1}</Td>
                           <Td border="1px solid">
                             <Switch colorScheme="brand" />
                           </Td>
@@ -677,30 +703,53 @@ function addProductMultiSelect() {
                             <Image src="/images/trash-bin.png" h="25px" />
                           </Td>
                         </Tr>
+                        {item?.dataTableOption2?.map((subItem, subIndex) => {
+                          return subIndex !== 0 ? (
+                            <Tr key={`${item.nameOption1}-${subIndex}`}>
+                              <Td border="1px solid">{subItem.nameOption1}</Td>
+                              <Td border="1px solid">
+                                <Input placeholder="ระบุราคา" />
+                              </Td>
+                              <Td border="1px solid">
+                                <Input placeholder="ระบุจำนวน" />
+                              </Td>
+                              <Td border="1px solid">
+                                <Input placeholder="ระบุจำนวนสินค้า" />
+                              </Td>
+                              <Td border="1px solid">
+                                <Switch colorScheme="brand" />
+                              </Td>
+                              <Td border="1px solid">
+                                <Image src="/images/trash-bin.png" h="25px" />
+                              </Td>
+                            </Tr>
+                          ) : null;
+                        })}
                       </React.Fragment>
                     ))}
                   </Tbody>
                 </Table>
               </Box>
-            ) : null}
-            <Flex pl="100px" py="15px" justifyContent="center">
-              <Button>ยกเลิก</Button>
-              <Button
-                ml="10px"
-                type="submit"
-                bg="red"
-                color="white"
-                leftIcon={<Image src="/images/save.png" alt="" h="25px" />}
-                _hover={{}}
-              >
-                บันทึก
-              </Button>
-            </Flex>
-          </Box>
+              <Flex pl="100px" py="15px" justifyContent="center">
+                <Button>ยกเลิก</Button>
+                <Button
+                  ml="10px"
+                  type="submit"
+                  bg="red"
+                  color="white"
+                  leftIcon={<Image src="/images/save.png" alt="" h="25px" />}
+                  _hover={{}}
+                  onClick={comfirmSave}
+                >
+                  บันทึก
+                </Button>
+              </Flex>
+            </Box>
+          </form>
           <Modal
-            onClose={onCloseForm1}
+            onClose={onCloseForm3}
             size="md"
-            isOpen={isOpenForm1}
+            isOpen={isOpenForm3}
             isCentered
           >
             <ModalOverlay />
@@ -721,45 +770,129 @@ function addProductMultiSelect() {
                 </Flex>
               </ModalHeader>
               <ModalBody>
-                <Box>
+                <form onSubmit={addOption1}>
                   <Text>เลือกรูปสำหรับ tag ตัวเลือก</Text>
                   <RadioGroup py="15px" value={valueSelect}>
                     <Stack direction="row">
                       {fileImage?.map((item, index) => {
-                        return (
+                        return index !== 0?(
                           <Radio
                             value={index}
                             display="flex"
                             flexDirection="column-reverse"
+                            onClick={(event) => setValueSelect(index)}
                           >
                             <Image
-                              onClick={() => setValueSelect(index)}
+                              onClick={(event) => setValueSelect(index)}
                               mb="10px"
                               src={item.thumbUrl}
                               w="50px"
                               h="50px"
                             />
                           </Radio>
-                        );
+                        ):null;
                       })}
                     </Stack>
                   </RadioGroup>
                   <Text>ชื่อ:</Text>
-                  <Input id="option"/>
+                  <Input
+                    id="option"
+                    onChange={(e) => setNameOption1(e.target.value)}
+                    required
+                  />
                   <Text>ราคาสินค้า:</Text>
-                  <Input  id="price_option"/>
+                  <Input
+                    id="price_option"
+                    onChange={(e) => setPriceOption1(e.target.value)}
+                    required
+                  />
                   <Text>จำนวนสินค้า:</Text>
-                  <Input id="stock"/>
+                  <Input
+                    id="stock"
+                    onChange={(e) => setStockOption1(e.target.value)}
+                    required
+                  />
                   <Text>รหัสสินค้า:</Text>
-                  <Input id="sku"/>
-                  <Button mt="10px" onClick={() => handleOption1()}>save</Button>
-                </Box>
+                  <Input
+                    id="sku"
+                    onChange={(e) => setSkuOption1(e.target.value)}
+                    required
+                  />
+                  <Button mt="10px" type="submit">
+                    save
+                  </Button>
+                </form>
               </ModalBody>
               <ModalFooter justifyContent="center"></ModalFooter>
             </ModalContent>
           </Modal>
-        </form>
+          
+        </Box>
       </Box>
+      <Modal onClose={onCloseForm1} size="md" isOpen={isOpenForm1} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader alignSelf="flex-end" pr="10px" pt="10px">
+            <Image
+              src="/images/close.png"
+              alt=""
+              h="25px"
+              w="25px"
+              onClick={() => closeModal()}
+            />
+          </ModalHeader>
+          <ModalBody>
+            <Box textAlign="-webkit-center">
+              <Image src="/images/addproduct.png" alt="" h="120px" w="120px" />
+              <Text fontSize="40px" fontWeight="bold">
+                ยืนยันการเพิ่มสินค้า
+              </Text>
+            </Box>
+          </ModalBody>
+          <ModalFooter justifyContent="center">
+            <Flex>
+              <Button bg="white">ยกเลิก</Button>
+              <Button
+                bg="red"
+                type="submit"
+                color="white"
+                onClick={() => saveSuccess()}
+              >
+                ยืนยัน
+              </Button>
+            </Flex>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      <Modal onClose={onCloseForm2} size="xs" isOpen={isOpenForm2} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader alignSelf="flex-end" pr="10px" pt="10px">
+            <Image
+              src="/images/close.png"
+              alt=""
+              h="25px"
+              w="25px"
+              onClick={() => closeModal()}
+            />
+          </ModalHeader>
+          <ModalBody>
+            <Box textAlign="-webkit-center">
+              <Image src="/images/check.png" alt="" h="120px" w="120px" />
+              <Text fontSize="40px" fontWeight="bold">
+                เพิ่มสินค้าสำเร็จ
+              </Text>
+            </Box>
+          </ModalBody>
+          <ModalFooter justifyContent="center">
+            <Link href="/stock">
+              <Button bg="red" color="white" _hover={{}}>
+                ไปที่หน้าคลังสินค้า
+              </Button>
+            </Link>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   );
 }
