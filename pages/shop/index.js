@@ -64,6 +64,12 @@ import CardShop from "@/components/cardShop";
 import Axios from "axios";
 import { PlusOutlined } from "@ant-design/icons";
 import { Upload } from "antd";
+import * as yup from "yup";
+
+const schema = yup.object().shape({
+  inputField: yup.string().required("This field is required"),
+  textAreaField: yup.string().required("This field is required"),
+});
 
 // component upload image shop
 class PicturesShop extends React.Component {
@@ -209,10 +215,30 @@ export default function shop() {
   const modalConfirm = useDisclosure();
   const modalConfirmSuccess = useDisclosure();
   const [statusDelete, setStatusDelete] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [inputFieldError, setInputFieldError] = useState("");
+  const [textAreaFieldError, setTextAreaFieldError] = useState("");
 
-  const handleClickNextStopAdd = () => {
-    modalAdd.onClose();
-    modalAdd2.onOpen();
+  const handleClickNextStopAdd = async (event) => {
+    event.preventDefault();
+    setIsLoading(true);
+    try {
+      await schema.validate({ inputField: nameShop, textAreaField: detailShop }, { abortEarly: false });
+      // ส่งค่าไปยัง API หรือทำอื่นๆ ที่ต้องการ
+      modalAdd.onClose();
+      modalAdd2.onOpen();
+      setInputFieldError('');
+      setTextAreaFieldError('');
+      // ไปยังหน้าต่อไป
+    } catch (error) {
+      if (error.inner.some((err) => err.path === "inputField")) {
+        setInputFieldError(error.inner.find((err) => err.path === "inputField").message);
+      }
+      if (error.inner.some((err) => err.path === "textAreaField")) {
+        setTextAreaFieldError(error.inner.find((err) => err.path === "textAreaField").message);
+      }
+    }
+    setIsLoading(false);
   };
 
   const handleConfirm = () => {
@@ -370,6 +396,7 @@ export default function shop() {
     const NameShop = e.target.value;
     setLengthNameShop(NameShop.length);
     setNameShop(NameShop);
+    setInputFieldError('');
   };
 
   //   count detail shop /3000
@@ -379,7 +406,10 @@ export default function shop() {
     const DetailShop = e.target.value;
     setLengthDetailShop(DetailShop.length);
     setDetailShop(DetailShop);
+    setTextAreaFieldError('');
   };
+
+  // console.log('Product : ',getProducts);
 
   return (
     <>
@@ -595,13 +625,14 @@ export default function shop() {
                             pr="100px"
                             type="text"
                             placeholder="ระบุชื่อร้านค้า"
-                            borderColor="gray.400"
+                            borderColor={inputFieldError ? "red" : "gray.400"}
                             onChange={handleChangeNameShop}
                           />
                           <InputRightElement pr="45px">
                             <Text>{lengthNameShop}/100</Text>
                           </InputRightElement>
                         </InputGroup>
+                        {inputFieldError && <Text fontSize={'sm'} color={'red'}>*{inputFieldError}</Text>}
                       </GridItem>
                       <GridItem colSpan={1} justifySelf="end">
                         <Box pr="5px">
@@ -618,7 +649,7 @@ export default function shop() {
                               isRequired
                               resize="none"
                               maxLength={3000}
-                              borderColor="gray.400"
+                              borderColor={textAreaFieldError ? "red" : "gray.400"}
                               placeholder="ระบุรายละเอียดสินค้า"
                               pr="60px"
                               onChange={handleChangeDetailShop}
@@ -631,6 +662,7 @@ export default function shop() {
                               <Text pr="45px">{lengthDetailShop}/3000</Text>
                             </InputRightElement>
                           </InputGroup>
+                          {textAreaFieldError && <Text fontSize={'sm'} color={'red'}>*{textAreaFieldError}</Text>}
                         </Box>
                       </GridItem>
                       <GridItem colSpan={1} justifySelf="end">
@@ -641,6 +673,7 @@ export default function shop() {
                       <GridItem colSpan={2}>
                         <Box>
                           <PicturesShop setFileImgShop={handleSetFileImgShop} />
+                          <Text fontSize={'sm'}>ขนาดแนะนำ 250px X 250px ชนิดรูป: png, jpg, jpeg.</Text>
                         </Box>
                       </GridItem>
                       <GridItem colSpan={1} justifySelf="end">
@@ -653,6 +686,7 @@ export default function shop() {
                           <PicturesCoverShop
                             setFileImgCoverShop={handleSetFileImgCoverShop}
                           />
+                          <Text fontSize={'sm'}>ขนาดแนะนำแนวนอน 450px X 200px ชนิดรูป: png, jpg, jpeg.</Text>
                         </Box>
                       </GridItem>
                       <GridItem colSpan={1} justifySelf="end">
@@ -711,6 +745,7 @@ export default function shop() {
               color={"white"}
               px={"2rem"}
               height={"35px"}
+              disabled={isLoading}
             >
               ถัดไป
             </Button>
@@ -759,7 +794,6 @@ export default function shop() {
                         isIndeterminate={isIndeterminate}
                         onChange={handleSelectAllChange}
                       />
-                      เลือกทั้งหมด
                     </Th>
                     <Th color={"white"}>รหัสสินค้า</Th>
                     <Th color={"white"}>รูปสินค้า</Th>
@@ -769,28 +803,27 @@ export default function shop() {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {getProduct.map((getPro, index) => (
+                  {getProducts.map((getPro, index) => (
                     <Tr key={getPro.id}>
                       <Td>
-                        <Checkbox
+                        {/* <Checkbox
                           isChecked={getPro.checked}
                           onChange={handleProductChange(getPro.id)}
-                        />
+                        /> */}
                       </Td>
-                      <Td>{getPro.codeProduct}</Td>
+                      <Td>{getPro.sku}</Td>
                       <Td isNumeric>
                         <Image
-                          src={getPro.productImage}
-                          width={"30px"}
-                          height={"25px"}
+                          src={'https://shopee-api.deksilp.com/images/shopee/products/'+getPro.img_product}
+                          height={"50px"}
                         />
                       </Td>
-                      <Td>{getPro.nameProduct}</Td>
-                      <Td>{getPro.priceProduct}</Td>
+                      <Td>{getPro.name_product}</Td>
+                      <Td>{getPro.price}</Td>
                       <Td>
                         <Flex alignItems={"center"}>
                           <NumberInput
-                            defaultValue={getPro.stockProduct}
+                            defaultValue={getPro.stock}
                             min={0}
                             bgColor={"white"}
                             borderRadius="10px"

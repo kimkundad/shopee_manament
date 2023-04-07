@@ -53,14 +53,20 @@ import {
 } from "@chakra-ui/react";
 import { PlusOutlined } from "@ant-design/icons";
 import { Upload } from "antd";
+import Axios from "axios";
+import * as yup from "yup";
 
+const schema = yup.object().shape({
+  inputField: yup.string().required("This field is required"),
+  textAreaField: yup.string().required("This field is required"),
+});
 class PicturesShop extends React.Component {
   state = {
     fileList: [
       {
-        uid: '-1',
+        uid: "-1",
         name: this.props.nameImgShop,
-        status: 'done',
+        status: "done",
         url: `https://shopee-api.deksilp.com/images/shopee/shop/${this.props.nameImgShop}`,
       },
     ],
@@ -97,9 +103,9 @@ class PicturesCoverShop extends React.Component {
   state = {
     fileList: [
       {
-        uid: '-1',
+        uid: "-1",
         name: this.props.nameImgCoverShop,
-        status: 'done',
+        status: "done",
         url: `https://shopee-api.deksilp.com/images/shopee/cover_img_shop/${this.props.nameImgCoverShop}`,
       },
     ],
@@ -132,26 +138,36 @@ class PicturesCoverShop extends React.Component {
 }
 
 function modalEditStep1(props) {
-  const { isOpen, onClose, Shops } = props;
+  const { isOpen, onClose, Shops, statusEdit } = props;
   const modalEditNextStep = useDisclosure();
   const modalConfirmEdit = useDisclosure();
   const modalConfirmEditSuccess = useDisclosure();
   const [editNameShop, setEditNameShop] = useState(Shops.name_shop);
   const [editDetailShop, setEditDetailShop] = useState(Shops.detail_shop);
-  const [editNameShopLength, setEditNameShopLength] = useState(Shops.name_shop.length);
-  const [editDetailShopLength, setEditDetailShopLength] = useState(Shops.detail_shop.length);
+  const [editNameShopLength, setEditNameShopLength] = useState(
+    Shops.name_shop.length
+  );
+  const [editDetailShopLength, setEditDetailShopLength] = useState(
+    Shops.detail_shop.length
+  );
+  const [shopID, setShopID] = useState(Shops.id);
+  const [isLoading, setIsLoading] = useState(false);
+  const [inputFieldError, setInputFieldError] = useState("");
+  const [textAreaFieldError, setTextAreaFieldError] = useState("");
 
   const onChangeNameShop = (e) => {
     const nameShop = e.target.value;
     setEditNameShop(nameShop);
     setEditNameShopLength(nameShop.length);
-  }
+    setInputFieldError('');
+  };
 
   const onChangeDetailShop = (e) => {
     const detailShop = e.target.value;
     setEditDetailShop(detailShop);
     setEditDetailShopLength(detailShop.length);
-  }
+    setTextAreaFieldError('');
+  };
 
   const [getProduct, setGetProduct] = useState([
     {
@@ -209,9 +225,34 @@ function modalEditStep1(props) {
     },
   ]);
 
-  const handleEditNextStep = () => {
-    onClose();
-    modalEditNextStep.onOpen();
+  const handleEditNextStep = async (event) => {
+    event.preventDefault();
+    setIsLoading(true);
+    try {
+      await schema.validate(
+        { inputField: editNameShop, textAreaField: editDetailShop },
+        { abortEarly: false }
+      );
+      // ส่งค่าไปยัง API หรือทำอื่นๆ ที่ต้องการ
+      console.log("Data submitted successfully.");
+      onClose();
+      modalEditNextStep.onOpen();
+      setInputFieldError('');
+      setTextAreaFieldError('');
+      // ไปยังหน้าต่อไป
+    } catch (error) {
+      if (error.inner.some((err) => err.path === "inputField")) {
+        setInputFieldError(
+          error.inner.find((err) => err.path === "inputField").message
+        );
+      }
+      if (error.inner.some((err) => err.path === "textAreaField")) {
+        setTextAreaFieldError(
+          error.inner.find((err) => err.path === "textAreaField").message
+        );
+      }
+    }
+    setIsLoading(false);
   };
 
   const handleSelectAllChange = (e) => {
@@ -241,8 +282,26 @@ function modalEditStep1(props) {
   };
 
   const handleConfirmEditSuccess = () => {
-    modalConfirmEdit.onClose();
-    modalConfirmEditSuccess.onOpen();
+    const formData = new FormData();
+    formData.append("shopID", shopID);
+    formData.append("editNameShop", editNameShop);
+    formData.append("editDetailShop", editDetailShop);
+    editFileImgShop.forEach((file, index) => {
+      formData.append(`file[${index}]`, file.originFileObj);
+    });
+    editFileImgCoverShop.forEach((file, index) => {
+      formData.append(`file2[${index}]`, file.originFileObj);
+    });
+
+    Axios.post("https://shopee-api.deksilp.com/api/editShop", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    }).then(function (response) {
+      if (response.data.success) {
+        modalConfirmEdit.onClose();
+        modalConfirmEditSuccess.onOpen();
+        statusEdit(true);
+      }
+    });
   };
 
   const [editFileImgShop, setEditFileImgShop] = useState([]);
@@ -254,7 +313,7 @@ function modalEditStep1(props) {
   const handleSetEditFileImgCoverShop = (fileList) => {
     setEditFileImgCoverShop(fileList);
   };
-  
+
   return (
     <>
       {/* Modal แก้ไขร้านค้า */}
@@ -308,7 +367,7 @@ function modalEditStep1(props) {
                             pr="100px"
                             type="text"
                             placeholder="ระบุชื่อสินค้า"
-                            borderColor="gray.400"
+                            borderColor={inputFieldError ? "red" : "gray.400"}
                             value={editNameShop}
                             onChange={onChangeNameShop}
                           />
@@ -316,6 +375,7 @@ function modalEditStep1(props) {
                             <Text>{editNameShopLength}/100</Text>
                           </InputRightElement>
                         </InputGroup>
+                        {inputFieldError && <Text fontSize={'sm'} color={'red'}>*{inputFieldError}</Text>}
                       </GridItem>
                       <GridItem colSpan={1} justifySelf="end">
                         <Box pr="5px">
@@ -332,7 +392,7 @@ function modalEditStep1(props) {
                               isRequired
                               resize="none"
                               maxLength={3000}
-                              borderColor="gray.400"
+                              borderColor={textAreaFieldError ? "red" : "gray.400"}
                               placeholder="ระบุรายละเอียดสินค้า"
                               pr="60px"
                               value={editDetailShop}
@@ -343,11 +403,10 @@ function modalEditStep1(props) {
                               alignItems="end"
                               p="10px"
                             >
-                              <Text pr="45px">
-                                {editDetailShopLength}/3000
-                              </Text>
+                              <Text pr="45px">{editDetailShopLength}/3000</Text>
                             </InputRightElement>
                           </InputGroup>
+                          {textAreaFieldError && <Text fontSize={'sm'} color={'red'}>*{textAreaFieldError}</Text>}
                         </Box>
                       </GridItem>
                       <GridItem colSpan={1} justifySelf="end">
@@ -361,6 +420,9 @@ function modalEditStep1(props) {
                             setEditFileImgShop={handleSetEditFileImgShop}
                             nameImgShop={Shops.img_shop}
                           />
+                          <Text fontSize={"sm"}>
+                            ขนาดแนะนำ 250px X 250px ชนิดรูป: png, jpg, jpeg.
+                          </Text>
                         </Box>
                       </GridItem>
                       <GridItem colSpan={1} justifySelf="end">
@@ -376,6 +438,10 @@ function modalEditStep1(props) {
                             }
                             nameImgCoverShop={Shops.cover_img_shop}
                           />
+                          <Text fontSize={"sm"}>
+                            ขนาดแนะนำแนวนอน 450px X 200px ชนิดรูป: png, jpg,
+                            jpeg.
+                          </Text>
                         </Box>
                       </GridItem>
                       <GridItem colSpan={1} justifySelf="end">
@@ -434,6 +500,7 @@ function modalEditStep1(props) {
               color={"white"}
               px={"2rem"}
               height={"35px"}
+              disabled={isLoading}
             >
               ถัดไป
             </Button>
