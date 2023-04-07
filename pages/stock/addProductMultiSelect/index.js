@@ -217,7 +217,7 @@ function addProductMultiSelect() {
       nameOption: nameOption,
       priceOption: priceOption,
       stockOption: stockOption,
-      skuOption1: skuOption,
+      skuOption: skuOption,
       indexImageOption: valueSelect,
     };
 
