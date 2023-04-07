@@ -174,7 +174,7 @@ function addProductMultiSelect() {
     fileImage.forEach((file, index) => {
       formData.append(`file[${index}]`, file.originFileObj);
     });
-    formData.append("dataOption",dataTable);
+    formData.append("dataOption", JSON.stringify(dataTable));
     const response = await axios.post(
       "https://shopee-api.deksilp.com/api/addProductMultiOption",
       formData,
@@ -686,7 +686,9 @@ function addProductMultiSelect() {
                             }
                           >
                             {item.nameOption1}
-                            <Image src={fileImage[item.indexImageOption1]?.thumbUrl}/>
+                            <Image
+                              src={fileImage[item.indexImageOption1]?.thumbUrl}
+                            />
                           </Td>
                           <Td border="1px solid">
                             {item.dataTableOption2?.length > 0
@@ -775,7 +777,7 @@ function addProductMultiSelect() {
                   <RadioGroup py="15px" value={valueSelect}>
                     <Stack direction="row">
                       {fileImage?.map((item, index) => {
-                        return index !== 0?(
+                        return index !== 0 ? (
                           <Radio
                             value={index}
                             display="flex"
@@ -790,7 +792,7 @@ function addProductMultiSelect() {
                               h="50px"
                             />
                           </Radio>
-                        ):null;
+                        ) : null;
                       })}
                     </Stack>
                   </RadioGroup>
@@ -826,7 +828,6 @@ function addProductMultiSelect() {
               <ModalFooter justifyContent="center"></ModalFooter>
             </ModalContent>
           </Modal>
-          
         </Box>
       </Box>
       <Modal onClose={onCloseForm1} size="md" isOpen={isOpenForm1} isCentered>
