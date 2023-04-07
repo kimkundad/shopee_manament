@@ -64,23 +64,9 @@ function index(product) {
   const [bookmarks, setBookmarks] = useState({});
   const [deleteShopID, setDeleteShopID] = useState("");
   const [deleteNameShop, setDeleteNameShop] = useState("");
+  const [switchStatus, setSwitchStatus] = useState({});
 
-  const handleConfirmDelete = () => {
-    const data = {
-      shopID: deleteShopID,
-    }
-
-    Axios.post("https://shopee-api.deksilp.com/api/DeleteShop", data).then(function (
-      response
-    ) {
-      if (response.data.success) {
-        modalDelete.onClose();
-        modalConfirmDelete.onOpen();
-        product.statusDelete(true);
-      }
-    });
-  };
-
+  // function bookmark ของแต่ละ shopID
   const toggleBookmark = (productId) => {
     setBookmarks((prevBookmarks) => {
       return {
@@ -89,9 +75,11 @@ function index(product) {
       };
     });
   };
+  // end function bookmark ของแต่ละ shopID
 
+
+  // function เปิด modal แก้ไขข้อมูลร้านค้าของแต่ละ shopID
   const [modalStates, setModalStates] = useState({});
-
   const toggleModal = (shopId) => {
     setModalStates((prevState) => ({
       ...prevState,
@@ -99,40 +87,112 @@ function index(product) {
     }));
     console.log(modalStates);
   };
+  // end function เปิด modal แก้ไขข้อมูลร้านค้าของแต่ละ shopID
 
+
+  // function copy url ของร้านค้า
   const [copiedShopUrl, setCopiedShopUrl] = useState(null);
 
   const handleCopyClick = (shopUrl) => () => {
     navigator.clipboard.writeText(shopUrl);
     setCopiedShopUrl(shopUrl);
   };
+  // end function copy url ของร้านค้า
 
-  const handleDeleteShop = (nameShop,shopID) => {
+
+  // function ลบข้อมูลร้านค้า
+  const handleConfirmDelete = () => {
+    const data = {
+      shopID: deleteShopID,
+    };
+
+    Axios.post("https://shopee-api.deksilp.com/api/DeleteShop", data).then(
+      function (response) {
+        if (response.data.success) {
+          modalDelete.onClose();
+          modalConfirmDelete.onOpen();
+          product.statusDelete(true);
+        }
+      }
+    );
+  };
+
+  // เป็น function set ค่า ก่อนนำไปทำการลบข้อมูลของร้านค้า
+  const handleDeleteShop = (nameShop, shopID) => {
     setDeleteShopID(shopID);
     setDeleteNameShop(nameShop);
     modalDelete.onOpen();
   };
+  // end function ลบข้อมูลร้านค้า 
+
+
+
+  // function เปลี่ยนสถานะ เปิด/ปิด ของ ร้านค้า
+  const handleSwitchChangeStatus = (shopID, newStatus) => {
+    setSwitchStatus((prevSwitchStatus) => {
+      return {
+        ...prevSwitchStatus,
+        [shopID]: newStatus === 1,
+      };
+    });
+
+    const data = {
+      shopID: shopID,
+      newStatus: newStatus,
+    };
+
+    Axios.post(
+      "https://shopee-api.deksilp.com/api/changeStatusShop",
+      data
+    ).then(function (response) {
+      if (response.data.success) {
+        console.log("shopID and newStatus : ", shopID, newStatus);
+      }
+    });
+  };
+
+  useEffect(() => {
+    const initialSwitchStatus = {};
+    product.Shops.forEach((shop) => {
+      initialSwitchStatus[shop.id] = shop.status === 1;
+    });
+    setSwitchStatus(initialSwitchStatus);
+  }, [product.Shops]);
+  // end function เปลี่ยนสถานะ เปิด/ปิด ของ ร้านค้า
 
   return (
     <>
       {product.Shops.map((shops) => {
-        const isBookmarked = bookmarks[shops.id] || false;
-        const dateCreate = new Date(shops.created_at);
-        const formattedDateCreate = dateCreate.toLocaleDateString();
-        const dateUpdate = new Date(shops.updated_at);
-        const formattedDateUpdate = dateUpdate.toLocaleDateString();
-        let shopName = shops.name_shop.slice(0, 30);
+        const isBookmarked = bookmarks[shops.id] || false; // ตัวแปรไว้ใช้ bookmark แต่ละ ShopID
+        const dateCreate = new Date(shops.created_at); // format วันที่ที่ส้ราง เอาแค่ วัน เดือน ปั
+        const formattedDateCreate = dateCreate.toLocaleDateString(); // format วันที่ที่ส้ราง เอาแค่ วัน เดือน ปั
+        const dateUpdate = new Date(shops.updated_at); // format วันที่ที่อัพเดท เอาแค่ วัน เดือน ปั
+        const formattedDateUpdate = dateUpdate.toLocaleDateString(); // format วันที่ที่อัพเดท เอาแค่ วัน เดือน ปั
+        let shopName = shops.name_shop.slice(0, 30); // format ชื่อของร้านค้าห้ามยาวเกิน 30 ตัวอักษร ถ้าเกินตัดคำและใส่่ ...
         if (shops.name_shop.length > 30) {
-          shopName += "..."; // add ellipsis if product name contains more than maxLength words
-        } // set maximum length of product name
-        const modalState = modalStates[shops.id] || false;
+          shopName += "..."; 
+        } // format ชื่อของร้านค้าห้ามยาวเกิน 30 ตัวอักษร ถ้าเกินตัดคำและใส่่ ...
+        const modalState = modalStates[shops.id] || false; // ตัวแปรไว้ใช้เปิด modal edit ร้านค้า แต่ละ ShopID
+        const isSwitchOn = switchStatus[shops.id] || false; // ตัวแปรไว้ใช้แก้ไขสถานะ เปิด/ปิด ของแต่ละ ShopID
+
         return (
           <React.Fragment key={shops.id}>
             <Card maxW="sm" mb={"10px"} boxShadow="base" width={"23rem"}>
               <CardBody>
                 <Box>
                   <Flex alignItems="center">
-                    <Switch colorScheme="brand" size="sm" mr={"5px"} />
+                    <Switch
+                      colorScheme="brand"
+                      size="sm"
+                      mr={"5px"}
+                      isChecked={isSwitchOn}
+                      onChange={(e) =>
+                        handleSwitchChangeStatus(
+                          shops.id,
+                          e.target.checked ? 1 : 0
+                        )
+                      }
+                    />
                     เปิด/ปิดเพื่อแสดง
                     <Spacer />
                     <Image
@@ -209,7 +269,7 @@ function index(product) {
                       border={"2px solid black"}
                       height={"30px"}
                       onClick={() => {
-                        handleDeleteShop(shopName,shops.id);
+                        handleDeleteShop(shopName, shops.id);
                       }}
                     >
                       <Image
@@ -248,6 +308,7 @@ function index(product) {
                 toggleModal(shops.id);
               }}
               Shops={shops}
+              statusEdit={product.statusDelete}
             />
           </React.Fragment>
         );
