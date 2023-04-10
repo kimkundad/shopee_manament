@@ -219,7 +219,7 @@ function addProductMultiSelect() {
   const [priceOption, setPriceOption] = useState(null);
   const [stockOption, setStockOption] = useState(null);
   const [skuOption, setSkuOption] = useState(null);
-  const addOption = (event) => {
+  function addOption(event) {
     event.preventDefault();
     const arrOption = {
       nameOption: nameOption,
@@ -227,24 +227,21 @@ function addProductMultiSelect() {
       stockOption: stockOption,
       skuOption: skuOption,
       indexImageOption: valueSelect,
+      subOption: [],
     };
 
-    const newArr = [...dataTableOption, arrOption];
-    const subOption = [...dataTableSubOption]
-    const newArr34 = newArr.map((item) => ({
-      ...item,
-      subOption,
-    }));
-    setDataTableOption(newArr);
-    setDataTable(newArr34);
+    dataTable.push(arrOption);
+    console.log(dataTable);
+    setDataTableOption(dataTable);
+    setDataTable(dataTable);
     onCloseForm3();
-  };
+  }
 
   const [nameSubOption, setNameSubOption] = useState(null);
   const [priceSubOption, setPriceSubOption] = useState(null);
   const [stockSubOption, setStockSubOption] = useState(null);
   const [skuSubOption, setSkuSubOption] = useState(null);
-  const addSubOption = (event) => {
+  function addSubOption(event) {
     event.preventDefault();
     const arrSubOption = {
       nameSubOption: nameSubOption,
@@ -252,18 +249,42 @@ function addProductMultiSelect() {
       stockSubOption: stockSubOption,
       skuSubOption: skuSubOption,
     };
-
-    const subOption = [...dataTableSubOption, arrSubOption];
-
-    const newArr34 = dataTableOption.map((item) => ({
-      ...item,
-      subOption,
-    }));
-    setDataTableSubOption(subOption);
-    setDataTable(newArr34);
+    dataTable[valueSelect].subOption.push(arrSubOption);
+    setDataTableOption(dataTable);
+    setDataTable(dataTable);
     onCloseForm4();
-  };
-  console.log(dataTable);
+  }
+  function deleteOption(index = null, subIndex = null) {
+    console.log(index);
+    console.log(subIndex);
+    console.log(dataTable);
+    const newArr = [...dataTable];
+    if (subIndex == null) {
+      newArr.splice(index, 1);
+      setDataTable(newArr);
+      setDataTableOption(newArr);
+    } else {
+      newArr[index].subOption.splice(subIndex, 1);
+      console.log(dataTableSubOption);
+      setDataTable(newArr);
+    }
+  }
+
+  function deleteAllOption() {
+    setOption("ตัวเลือกที่ 1")
+    setSubOption("ตัวเลือกที่ 2")
+    setDataTable([]);
+    setDiv([]);
+  }
+  function deleteAllSubOption() {
+    setSubOption("ตัวเลือกที่ 2")
+    dataTable.forEach((e) => {
+      if (e.subOption?.length > 0) {
+        e.subOption = [];
+      }
+    });
+    setDiv([true]);
+  }
   return (
     <>
       <Box>
@@ -339,7 +360,7 @@ function addProductMultiSelect() {
           </Wrap>
         </Box>
 
-        <form>
+        <from>
           <Box>
             <Grid
               templateColumns="repeat(2, 1fr)"
@@ -614,7 +635,7 @@ function addProductMultiSelect() {
               </GridItem>
             </Grid>
           </Box>
-        </form>
+        </from>
         <Box>
           <Box>
             <Flex justifyContent="center" p="15px">
@@ -643,146 +664,172 @@ function addProductMultiSelect() {
               </Link>
             </Flex>
           </Box>
-          <form>
-            <Box px="10%">
-              {div?.map((item, index) => {
-                return (
-                  <Flex pt="10px" justifyContent="center" key={index}>
-                    <Text fontSize="24px" px="15px" whiteSpace="nowrap">
-                      รูปแบบที่ {index + 1} :
-                    </Text>
-                    <Box width="-webkit-fill-available">
-                      <Input
-                        onChange={
-                          index == 0
-                            ? (e) => setOption(e.target.value)
-                            : (e) => setSubOption(e.target.value)
-                        }
-                        placeholder="เช่น สี ขนาด ไซด์"
-                        required
-                      />
-                      <Button
-                        mt="15px"
-                        type="submit"
-                        onClick={index == 0?
-                          (option !== "ตัวเลือกที่ 1" && option !== ""
+          <Box px="10%">
+            {div?.map((item, index) => {
+              return (
+                <Flex pt="10px" justifyContent="center" key={index}>
+                  <Text fontSize="24px" px="15px" whiteSpace="nowrap">
+                    รูปแบบที่ {index + 1} :
+                  </Text>
+                  <Box width="-webkit-fill-available">
+                    <Input
+                      onChange={
+                        index == 0
+                          ? (e) => setOption(e.target.value)
+                          : (e) => setSubOption(e.target.value)
+                      }
+                      placeholder="เช่น สี ขนาด ไซด์"
+                      required
+                    />
+                    <Button
+                      mt="15px"
+                      type="submit"
+                      onClick={
+                        index == 0
+                          ? option !== "ตัวเลือกที่ 1" && option !== ""
                             ? modalAddOptiion
-                            : null):(subOption !== "ตัวเลือกที่ 2" && subOption !== ""
-                            ? modalAddSubOptiion
-                            : null)
-                        }
-                      >
-                        เพิ่มตัวเลือก
-                      </Button>
-                      <Button ml="15px" mt="15px">
-                        ลบรูปแบบ
-                      </Button>
-                    </Box>
-                  </Flex>
-                );
-              })}
-              <Box pl="116px" pt="15px">
-                <Button
-                  border="2px solid black"
-                  bg="white"
-                  leftIcon={
-                    <Image src="/images/plusblack.png" alt="" h="15px" />
-                  }
-                  _hover={{}}
-                  onClick={handleSelectChange}
-                  isDisabled={div.length > 1}
-                >
-                  เพิ่มรูปแบบ ({div.length}/2)
-                </Button>
-              </Box>
-              <Box pl="115px" pt="15px">
-                <Table minWidth="100%" border="1px solid" textAlign="center">
-                  <Thead>
-                    <Tr>
-                      <Td border="1px solid">{option}</Td>
-                      <Td border="1px solid">{subOption}</Td>
-                      <Td border="1px solid">ราคา</Td>
-                      <Td border="1px solid">สต็อกสินค้า</Td>
-                      <Td border="1px solid">รหัสสินค้า</Td>
-                      <Td border="1px solid">ใช้งาน</Td>
-                      <Td border="1px solid">ดำเนินการ</Td>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {dataTable?.map((item, index) => (
-                      <React.Fragment key={index}>
-                        <Tr>
-                          <Td
-                            border="1px solid"
-                            rowSpan={
-                              item?.subOption?.length > 0
-                                ? item?.subOption?.length
-                                : 1
-                            }
-                          >
-                            {item.nameOption}
-                            <Image
-                              src={fileImage[item.indexImageOption]?.thumbUrl}
-                            />
-                          </Td>
-                          <Td border="1px solid">
-                            {item?.subOption?.length > 0
-                              ? item?.subOption[0]?.nameSubOption
-                              : null}
-                          </Td>
-                          {item?.subOption?.length > 0?  <Td border="1px solid">{item?.subOption[0].priceSubOption}</Td>:<Td border="1px solid">{item?.priceOption}</Td>}
-                          {item?.subOption?.length > 0? <Td border="1px solid">{item?.subOption[0].stockSubOption}</Td>:<Td border="1px solid">{item?.stockOption}</Td>}
-                          {item?.subOption?.length > 0? <Td border="1px solid">{item?.subOption[0].skuSubOption}</Td>:<Td border="1px solid">{item?.skuOption}</Td>}
-                          <Td border="1px solid">
-                            <Switch colorScheme="brand" />
-                          </Td>
-                          <Td border="1px solid">
-                            <Image src="/images/trash-bin.png" h="25px" />
-                          </Td>
-                        </Tr>
-                        {item?.subOption?.map((subItem, subIndex) => {
-                          return subIndex !== 0 ? (
-                            <Tr key={`${item.nameOption}-${subIndex}`}>
-                              <Td border="1px solid">{subItem.nameSubOption}</Td>
-                              <Td border="1px solid">
-                              {subItem.priceSubOption}
-                              </Td>
-                              <Td border="1px solid">
-                              {subItem.skuSubOption}
-                              </Td>
-                              <Td border="1px solid">
-                              {subItem.stockSubOption}
-                              </Td>
-                              <Td border="1px solid">
-                                <Switch colorScheme="brand" />
-                              </Td>
-                              <Td border="1px solid">
-                                <Image src="/images/trash-bin.png" h="25px" />
-                              </Td>
-                            </Tr>
-                          ) : null;
-                        })}
-                      </React.Fragment>
-                    ))}
-                  </Tbody>
-                </Table>
-              </Box>
-              <Flex pl="100px" py="15px" justifyContent="center">
-                <Button>ยกเลิก</Button>
-                <Button
-                  ml="10px"
-                  type="submit"
-                  bg="red"
-                  color="white"
-                  leftIcon={<Image src="/images/save.png" alt="" h="25px" />}
-                  _hover={{}}
-                  onClick={comfirmSave}
-                >
-                  บันทึก
-                </Button>
-              </Flex>
+                            : null
+                          : subOption !== "ตัวเลือกที่ 2" && subOption !== ""
+                          ? modalAddSubOptiion
+                          : null
+                      }
+                    >
+                      เพิ่มตัวเลือก
+                    </Button>
+                    <Button ml="15px" mt="15px" onClick={index == 0 ? deleteAllOption:deleteAllSubOption}>
+                      ลบรูปแบบ
+                    </Button>
+                  </Box>
+                </Flex>
+              );
+            })}
+            <Box pl="116px" pt="15px">
+              <Button
+                border="2px solid black"
+                bg="white"
+                leftIcon={<Image src="/images/plusblack.png" alt="" h="15px" />}
+                _hover={{}}
+                onClick={handleSelectChange}
+                isDisabled={div.length > 1}
+              >
+                เพิ่มรูปแบบ ({div.length}/2)
+              </Button>
             </Box>
-          </form>
+            <Box pl="115px" pt="15px">
+              <Table minWidth="100%" border="1px solid" textAlign="center">
+                <Thead>
+                  <Tr>
+                    <Td border="1px solid">{option}</Td>
+                    <Td border="1px solid">{subOption}</Td>
+                    <Td border="1px solid">ราคา</Td>
+                    <Td border="1px solid">สต็อกสินค้า</Td>
+                    <Td border="1px solid">รหัสสินค้า</Td>
+                    <Td border="1px solid">ใช้งาน</Td>
+                    <Td border="1px solid">ดำเนินการ</Td>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {dataTable?.map((item, index) => (
+                    <React.Fragment key={index}>
+                      <Tr>
+                        <Td
+                          border="1px solid"
+                          rowSpan={
+                            item?.subOption?.length > 0
+                              ? item?.subOption?.length
+                              : 1
+                          }
+                        >
+                          {item.nameOption}
+                          <Image
+                            src={fileImage[item.indexImageOption]?.thumbUrl}
+                          />
+                        </Td>
+                        <Td border="1px solid">
+                          {item?.subOption?.length > 0
+                            ? item?.subOption[0]?.nameSubOption
+                            : null}
+                        </Td>
+                        {item?.subOption?.length > 0 ? (
+                          <Td border="1px solid">
+                            {item?.subOption[0].priceSubOption}
+                          </Td>
+                        ) : (
+                          <Td border="1px solid">{item?.priceOption}</Td>
+                        )}
+                        {item?.subOption?.length > 0 ? (
+                          <Td border="1px solid">
+                            {item?.subOption[0].stockSubOption}
+                          </Td>
+                        ) : (
+                          <Td border="1px solid">{item?.stockOption}</Td>
+                        )}
+                        {item?.subOption?.length > 0 ? (
+                          <Td border="1px solid">
+                            {item?.subOption[0].skuSubOption}
+                          </Td>
+                        ) : (
+                          <Td border="1px solid">{item?.skuOption}</Td>
+                        )}
+                        <Td border="1px solid">
+                          <Switch colorScheme="brand" />
+                        </Td>
+                        {item?.subOption?.length == 0 ? (
+                          <Td border="1px solid">
+                            <Button onClick={() => deleteOption(index)}>
+                              <Image src="/images/trash-bin.png" h="25px" />
+                            </Button>
+                          </Td>
+                        ) : (
+                          <Td border="1px solid">
+                            <Button onClick={() => deleteOption(index, 0)}>
+                              aaa
+                              <Image src="/images/trash-bin.png" h="25px" />
+                            </Button>
+                          </Td>
+                        )}
+                      </Tr>
+                      {item?.subOption?.map((subItem, subIndex) => {
+                        return subIndex !== 0 ? (
+                          <Tr key={`${item.nameOption}-${subIndex}`}>
+                            <Td border="1px solid">{subItem.nameSubOption}</Td>
+                            <Td border="1px solid">{subItem.priceSubOption}</Td>
+                            <Td border="1px solid">{subItem.skuSubOption}</Td>
+                            <Td border="1px solid">{subItem.stockSubOption}</Td>
+                            <Td border="1px solid">
+                              <Switch colorScheme="brand" />
+                            </Td>
+                            <Td border="1px solid">
+                              <Button
+                                onClick={() => deleteOption(index, subIndex)}
+                              >
+                                ลบลบลบล
+                                <Image src="/images/trash-bin.png" h="25px" />
+                              </Button>
+                            </Td>
+                          </Tr>
+                        ) : null;
+                      })}
+                    </React.Fragment>
+                  ))}
+                </Tbody>
+              </Table>
+            </Box>
+            <Flex pl="100px" py="15px" justifyContent="center">
+              <Button>ยกเลิก</Button>
+              <Button
+                ml="10px"
+                type="submit"
+                bg="red"
+                color="white"
+                leftIcon={<Image src="/images/save.png" alt="" h="25px" />}
+                _hover={{}}
+                onClick={comfirmSave}
+              >
+                บันทึก
+              </Button>
+            </Flex>
+          </Box>
           <Modal
             onClose={onCloseForm3}
             size="md"
@@ -888,6 +935,26 @@ function addProductMultiSelect() {
               </ModalHeader>
               <ModalBody>
                 <form onSubmit={addSubOption}>
+                  <Text>
+                    เลือก {option} สำหรับเพิ่ม {subOption}
+                  </Text>
+                  <RadioGroup py="15px" value={valueSelect}>
+                    <Stack direction="row">
+                      {dataTable?.map((item, index) => {
+                        return (
+                          <Radio
+                            key={index}
+                            value={index}
+                            display="flex"
+                            flexDirection="column-reverse"
+                            onClick={(event) => setValueSelect(index)}
+                          >
+                            {item.nameOption}
+                          </Radio>
+                        );
+                      })}
+                    </Stack>
+                  </RadioGroup>
                   <Text>ชื่อ:</Text>
                   <Input
                     id="option"
