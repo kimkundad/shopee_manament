@@ -260,13 +260,22 @@ function index() {
 									{item.productId}
 								</Table.Cell>
 								<Table.Cell css={{ textAlign: "center" }}>
-									{item.linkshop}
+									<Flex justifyContent="center">
+										<Text>
+										{item.linkshop}
+										</Text>
+										<Image src="/images/copy.png" h="20px"/>
+									</Flex>
+
 								</Table.Cell>
 								<Table.Cell css={{ textAlign: "center" }}>
 									{item.numberInvoice}
 								</Table.Cell>
 								<Table.Cell css={{ textAlign: "center" }}>
-									{item.customername}
+									<Link href="/report/detailCustomer">
+										{item.customername}
+									</Link>
+									
 								</Table.Cell>
 								<Table.Cell css={{ textAlign: "center" }}>
 									{item.address}
