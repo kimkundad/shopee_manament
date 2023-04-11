@@ -55,6 +55,7 @@ import ModalEditStep1 from "@/components/modalEditShop/modalEditStep1";
 import Axios from "axios";
 
 function index(product) {
+  // console.log('product:',product);
   const modalEdit = useDisclosure();
   // const modalEditNextStep = useDisclosure();
   const modalDelete = useDisclosure();
@@ -309,6 +310,7 @@ function index(product) {
               }}
               Shops={shops}
               statusEdit={product.statusDelete}
+              Products={product.Products}
             />
           </React.Fragment>
         );

@@ -138,12 +138,13 @@ class PicturesCoverShop extends React.Component {
 }
 
 function modalEditStep1(props) {
-  const { isOpen, onClose, Shops, statusEdit } = props;
+  const { isOpen, onClose, Shops, statusEdit, Products } = props;
   const modalEditNextStep = useDisclosure();
   const modalConfirmEdit = useDisclosure();
   const modalConfirmEditSuccess = useDisclosure();
   const [editNameShop, setEditNameShop] = useState(Shops.name_shop);
   const [editDetailShop, setEditDetailShop] = useState(Shops.detail_shop);
+  const [selectedProducts, setSelectedProducts] = useState([]);
   const [editNameShopLength, setEditNameShopLength] = useState(
     Shops.name_shop.length
   );
@@ -154,76 +155,31 @@ function modalEditStep1(props) {
   const [isLoading, setIsLoading] = useState(false);
   const [inputFieldError, setInputFieldError] = useState("");
   const [textAreaFieldError, setTextAreaFieldError] = useState("");
+  const [listProduct, setListProduct] = useState([]);
+
+  useEffect(() => {
+    Axios.get(
+      "https://shopee-api.deksilp.com/api/getListProduct/" + shopID
+    ).then(function (response) {
+      if (response.data.success) {
+        setListProduct(response.data.list_products);
+      }
+    });
+  }, []);
 
   const onChangeNameShop = (e) => {
     const nameShop = e.target.value;
     setEditNameShop(nameShop);
     setEditNameShopLength(nameShop.length);
-    setInputFieldError('');
+    setInputFieldError("");
   };
 
   const onChangeDetailShop = (e) => {
     const detailShop = e.target.value;
     setEditDetailShop(detailShop);
     setEditDetailShopLength(detailShop.length);
-    setTextAreaFieldError('');
+    setTextAreaFieldError("");
   };
-
-  const [getProduct, setGetProduct] = useState([
-    {
-      id: 1,
-      codeProduct: "001",
-      productImage: "images/addProduct.png",
-      nameProduct: "pangpang",
-      priceProduct: 149,
-      stockProduct: 15,
-      checked: false,
-    },
-    {
-      id: 2,
-      codeProduct: "002",
-      productImage: "images/addProduct.png",
-      nameProduct: "pangpang",
-      priceProduct: 159,
-      stockProduct: 16,
-      checked: false,
-    },
-    {
-      id: 3,
-      codeProduct: "003",
-      productImage: "images/addProduct.png",
-      nameProduct: "pangpang",
-      priceProduct: 169,
-      stockProduct: 17,
-      checked: false,
-    },
-    {
-      id: 4,
-      codeProduct: "004",
-      productImage: "images/addProduct.png",
-      nameProduct: "pangpang",
-      priceProduct: 179,
-      stockProduct: 18,
-    },
-    {
-      id: 5,
-      codeProduct: "005",
-      productImage: "images/addProduct.png",
-      nameProduct: "pangpang",
-      priceProduct: 189,
-      stockProduct: 19,
-      checked: false,
-    },
-    {
-      id: 6,
-      codeProduct: "006",
-      productImage: "images/addProduct.png",
-      nameProduct: "pangpang",
-      priceProduct: 199,
-      stockProduct: 20,
-      checked: false,
-    },
-  ]);
 
   const handleEditNextStep = async (event) => {
     event.preventDefault();
@@ -237,8 +193,9 @@ function modalEditStep1(props) {
       console.log("Data submitted successfully.");
       onClose();
       modalEditNextStep.onOpen();
-      setInputFieldError('');
-      setTextAreaFieldError('');
+      setInputFieldError("");
+      setTextAreaFieldError("");
+      setSelectedProducts(listProduct.map(listPro => listPro.product_id));
       // ไปยังหน้าต่อไป
     } catch (error) {
       if (error.inner.some((err) => err.path === "inputField")) {
@@ -255,28 +212,8 @@ function modalEditStep1(props) {
     setIsLoading(false);
   };
 
-  const handleSelectAllChange = (e) => {
-    const isChecked = e.target.checked;
-    const updatedProducts = getProduct.map((product) => ({
-      ...product,
-      checked: isChecked,
-    }));
-    setGetProduct(updatedProducts);
-  };
-
-  const handleProductChange = (id) => (e) => {
-    const isChecked = e.target.checked;
-    const updatedProducts = getProduct.map((product) =>
-      product.id === id ? { ...product, checked: isChecked } : product
-    );
-    setGetProduct(updatedProducts);
-  };
-
-  const allChecked = getProduct.every((product) => product.checked);
-  const isIndeterminate =
-    getProduct.some((product) => product.checked) && !allChecked;
-
   const handleConfirmEdit = () => {
+    console.log('select: ',selectedProducts)
     modalEditNextStep.onClose();
     modalConfirmEdit.onOpen();
   };
@@ -312,6 +249,22 @@ function modalEditStep1(props) {
   const [editFileImgCoverShop, setEditFileImgCoverShop] = useState([]);
   const handleSetEditFileImgCoverShop = (fileList) => {
     setEditFileImgCoverShop(fileList);
+  };
+
+  const handleAllCheckboxChange = (e) => {
+    if (e.target.checked) {
+      setSelectedProducts(Products.map((product) => product.id));
+    } else {
+      setSelectedProducts([]);
+    }
+  };
+
+  const handleCheckboxChange = (productId) => {
+    if (selectedProducts.includes(productId)) {
+      setSelectedProducts(selectedProducts.filter((id) => id !== productId));
+    } else {
+      setSelectedProducts([...selectedProducts, productId]);
+    }
   };
 
   return (
@@ -375,7 +328,11 @@ function modalEditStep1(props) {
                             <Text>{editNameShopLength}/100</Text>
                           </InputRightElement>
                         </InputGroup>
-                        {inputFieldError && <Text fontSize={'sm'} color={'red'}>*{inputFieldError}</Text>}
+                        {inputFieldError && (
+                          <Text fontSize={"sm"} color={"red"}>
+                            *{inputFieldError}
+                          </Text>
+                        )}
                       </GridItem>
                       <GridItem colSpan={1} justifySelf="end">
                         <Box pr="5px">
@@ -392,7 +349,9 @@ function modalEditStep1(props) {
                               isRequired
                               resize="none"
                               maxLength={3000}
-                              borderColor={textAreaFieldError ? "red" : "gray.400"}
+                              borderColor={
+                                textAreaFieldError ? "red" : "gray.400"
+                              }
                               placeholder="ระบุรายละเอียดสินค้า"
                               pr="60px"
                               value={editDetailShop}
@@ -406,7 +365,11 @@ function modalEditStep1(props) {
                               <Text pr="45px">{editDetailShopLength}/3000</Text>
                             </InputRightElement>
                           </InputGroup>
-                          {textAreaFieldError && <Text fontSize={'sm'} color={'red'}>*{textAreaFieldError}</Text>}
+                          {textAreaFieldError && (
+                            <Text fontSize={"sm"} color={"red"}>
+                              *{textAreaFieldError}
+                            </Text>
+                          )}
                         </Box>
                       </GridItem>
                       <GridItem colSpan={1} justifySelf="end">
@@ -544,12 +507,16 @@ function modalEditStep1(props) {
                 <Thead bgColor={"#ff0000"}>
                   <Tr>
                     <Th color={"white"}>
-                      <Checkbox
+                      {/* <Checkbox
                         isChecked={allChecked}
                         isIndeterminate={isIndeterminate}
                         onChange={handleSelectAllChange}
                       />
-                      เลือกทั้งหมด
+                      เลือกทั้งหมด */}
+                      <Checkbox
+                        isChecked={selectedProducts.length === Products.length}
+                        onChange={handleAllCheckboxChange}
+                      ></Checkbox>
                     </Th>
                     <Th color={"white"}>รหัสสินค้า</Th>
                     <Th color={"white"}>รูปสินค้า</Th>
@@ -559,45 +526,55 @@ function modalEditStep1(props) {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {getProduct.map((getPro, index) => (
-                    <Tr key={getPro.id}>
-                      <Td>
-                        <Checkbox
+                  {Products.map((getPro, index) => {
+                    const isChecked = selectedProducts.includes(getPro.id);
+                    return (
+                      <Tr key={index}>
+                        <Td>
+                          {/* <Checkbox
                           isChecked={getPro.checked}
                           onChange={handleProductChange(getPro.id)}
-                        />
-                      </Td>
-                      <Td>{getPro.codeProduct}</Td>
-                      <Td isNumeric>
-                        <Image
-                          src={getPro.productImage}
-                          width={"30px"}
-                          height={"25px"}
-                        />
-                      </Td>
-                      <Td>{getPro.nameProduct}</Td>
-                      <Td>{getPro.priceProduct}</Td>
-                      <Td>
-                        <Flex alignItems={"center"}>
-                          <NumberInput
-                            defaultValue={getPro.stockProduct}
-                            min={0}
-                            bgColor={"white"}
-                            borderRadius="10px"
-                            backgroundColor="white"
-                            width="90px"
-                          >
-                            <NumberInputField />
-                            <NumberInputStepper>
-                              <NumberIncrementStepper />
-                              <NumberDecrementStepper />
-                            </NumberInputStepper>
-                          </NumberInput>
-                          / 1,500
-                        </Flex>
-                      </Td>
-                    </Tr>
-                  ))}
+                        /> */}
+                          <Checkbox
+                            isChecked={isChecked}
+                            onChange={() => handleCheckboxChange(getPro.id)}
+                          />
+                        </Td>
+                        <Td>{getPro.sku}</Td>
+                        <Td isNumeric>
+                          <Image
+                            src={
+                              "https://shopee-api.deksilp.com/images/shopee/products/" +
+                              getPro.img_product
+                            }
+                            width={"30px"}
+                            height={"25px"}
+                          />
+                        </Td>
+                        <Td>{getPro.name_product}</Td>
+                        <Td>{getPro.price}</Td>
+                        <Td>
+                          <Flex alignItems={"center"}>
+                            <NumberInput
+                              defaultValue={getPro.stock}
+                              min={0}
+                              bgColor={"white"}
+                              borderRadius="10px"
+                              backgroundColor="white"
+                              width="90px"
+                            >
+                              <NumberInputField />
+                              <NumberInputStepper>
+                                <NumberIncrementStepper />
+                                <NumberDecrementStepper />
+                              </NumberInputStepper>
+                            </NumberInput>
+                            / 1,500
+                          </Flex>
+                        </Td>
+                      </Tr>
+                    );
+                  })}
                 </Tbody>
               </Table>
             </TableContainer>
