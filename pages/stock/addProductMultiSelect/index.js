@@ -179,6 +179,7 @@ function addProductMultiSelect() {
     formData.append("stock", stock);
     formData.append("weight", weight);
     formData.append("sku", sku);
+    formData.append("sub_option", subOption);
     fileImage.forEach((file, index) => {
       formData.append(`file[${index}]`, file.originFileObj);
     });
@@ -209,8 +210,6 @@ function addProductMultiSelect() {
     setDiv([...div, true]);
   };
 
-  const [dataTableOption, setDataTableOption] = useState([]);
-  const [dataTableSubOption, setDataTableSubOption] = useState([]);
   const [dataTable, setDataTable] = useState([]);
   const [option, setOption] = useState("ตัวเลือกที่ 1");
   const [subOption, setSubOption] = useState("ตัวเลือกที่ 2");
@@ -231,8 +230,6 @@ function addProductMultiSelect() {
     };
 
     dataTable.push(arrOption);
-    console.log(dataTable);
-    setDataTableOption(dataTable);
     setDataTable(dataTable);
     onCloseForm3();
   }
@@ -250,34 +247,28 @@ function addProductMultiSelect() {
       skuSubOption: skuSubOption,
     };
     dataTable[valueSelect].subOption.push(arrSubOption);
-    setDataTableOption(dataTable);
     setDataTable(dataTable);
     onCloseForm4();
   }
   function deleteOption(index = null, subIndex = null) {
-    console.log(index);
-    console.log(subIndex);
-    console.log(dataTable);
     const newArr = [...dataTable];
     if (subIndex == null) {
       newArr.splice(index, 1);
       setDataTable(newArr);
-      setDataTableOption(newArr);
     } else {
       newArr[index].subOption.splice(subIndex, 1);
-      console.log(dataTableSubOption);
       setDataTable(newArr);
     }
   }
 
   function deleteAllOption() {
-    setOption("ตัวเลือกที่ 1")
-    setSubOption("ตัวเลือกที่ 2")
+    setOption("ตัวเลือกที่ 1");
+    setSubOption("ตัวเลือกที่ 2");
     setDataTable([]);
     setDiv([]);
   }
   function deleteAllSubOption() {
-    setSubOption("ตัวเลือกที่ 2")
+    setSubOption("ตัวเลือกที่ 2");
     dataTable.forEach((e) => {
       if (e.subOption?.length > 0) {
         e.subOption = [];
@@ -285,361 +276,25 @@ function addProductMultiSelect() {
     });
     setDiv([true]);
   }
+
+  const [displayAdditionOption, setDisplayAdditionOption] = useState(false);
+  const [displayAddProduct, setDisplayAddProduct] = useState(true);
+  function additionOption() {
+    setDisplayAdditionOption(true);
+    setDisplayAddProduct(false);
+  }
+
+  function hideAdditionOption() {
+    setDisplayAdditionOption(false);
+    setDisplayAddProduct(true);
+  }
   return (
     <>
       <Box>
-        <Box>
-          <Flex justifyContent="center" p="15px">
-            <Link href="/stock">
-              <Button
-                bg="red"
-                h="25px"
-                borderRadius="3xl"
-                color="white"
-                px="7px"
-                leftIcon={<Icon as={BsArrowLeftCircle} color="white" />}
-              >
-                ย้อนกลับ
-              </Button>
-            </Link>
-            <Spacer />
-            <Flex alignItems="center">
-              <Image src="/images/addProduct.png" alt="" h="40px" w="40px" />
-              <Text pl="10px" fontSize="40px" fontWeight="bold" color="black">
-                เพิ่มสินค้า
-              </Text>
-            </Flex>
-            <Spacer />
-            <Link href="/stock">
-              <Image src="/images/close.png" alt="" h="20px" w="20px" />
-            </Link>
-          </Flex>
-          <Wrap spacing="100px" justify="center">
-            <WrapItem>
-              <Center>
-                <Box>
-                  <Link href="/stock/addProduct">
-                    <Button
-                      id="0"
-                      bg={buttonActive[0] ? "red" : "white"}
-                      color={buttonActive[0] ? "white" : "red"}
-                      border="2px solid red"
-                      fontSize="24px"
-                      borderRadius="3xl"
-                      w="150px"
-                      _hover={{}}
-                      onClick={handelButton}
-                    >
-                      สินค้าชิ้นเดียว
-                    </Button>
-                  </Link>
-                </Box>
-              </Center>
-            </WrapItem>
-            <WrapItem>
-              <Center>
-                <Box>
-                  <Link href="/stock/addProductMultiSelect">
-                    <Button
-                      id="1"
-                      bg={buttonActive[1] ? "red" : "white"}
-                      color={buttonActive[1] ? "white" : "red"}
-                      border="2px solid red"
-                      fontSize="24px"
-                      borderRadius="3xl"
-                      w="150px"
-                      _hover={{}}
-                      onClick={handelButton}
-                    >
-                      สินค้ามีตัวเลือก
-                    </Button>
-                  </Link>
-                </Box>
-              </Center>
-            </WrapItem>
-          </Wrap>
-        </Box>
-
-        <from>
-          <Box>
-            <Grid
-              templateColumns="repeat(2, 1fr)"
-              gap={6}
-              justifyItems="end"
-              pt="15px"
-              px="35px"
-            >
-              <GridItem fontSize="25px" width="100%">
-                <Grid templateColumns="repeat(3, 1fr)" gap={2}>
-                  <GridItem colSpan={1} justifySelf="end">
-                    <Box pr="5px">
-                      <Text>* ชื่อสินค้า : </Text>
-                    </Box>
-                  </GridItem>
-                  <GridItem colSpan={2}>
-                    <InputGroup>
-                      <Input
-                        pr="100px"
-                        type="text"
-                        value={name_product}
-                        placeholder="ระบุชื่อสินค้า"
-                        borderColor="gray.400"
-                        onChange={(e) => setName_product(e.target.value)}
-                        isRequired
-                        maxLength={100}
-                      />
-                      <InputRightElement pr="45px">
-                        <Text>{name_product.length}/100</Text>
-                      </InputRightElement>
-                    </InputGroup>
-                  </GridItem>
-                  <GridItem colSpan={1} justifySelf="end">
-                    <Box pr="5px">
-                      <Text>* รายละเอียดสินค้า : </Text>
-                    </Box>
-                  </GridItem>
-                  <GridItem colSpan={2}>
-                    <Box>
-                      <InputGroup flexDirection="column-reverse">
-                        <Textarea
-                          h="170px"
-                          isRequired
-                          resize="none"
-                          maxLength={3000}
-                          borderColor="gray.400"
-                          placeholder="ระบุรายละเอียดสินค้า"
-                          pr="60px"
-                          value={detail_product}
-                          onChange={(e) => setDetail_product(e.target.value)}
-                        />
-                        <InputRightElement h="100%" alignItems="end" p="10px">
-                          <Text pr="45px">{detail_product.length}/3000</Text>
-                        </InputRightElement>
-                      </InputGroup>
-                    </Box>
-                  </GridItem>
-                  <GridItem colSpan={1} justifySelf="end">
-                    <Box pr="5px">
-                      <Text>* หมวดหมู่สินค้า : </Text>
-                    </Box>
-                  </GridItem>
-                  <GridItem colSpan={2}>
-                    <Box>
-                      <Select
-                        placeholder="โปรดเลือก"
-                        w="150px"
-                        borderColor="gray.400"
-                      >
-                        {category?.map((item, index) => {
-                          return (
-                            <option value={item.cat_name} key={index}>
-                              {item.cat_name}
-                            </option>
-                          );
-                        })}
-                      </Select>
-                    </Box>
-                  </GridItem>
-                  <GridItem colSpan={1} justifySelf="end">
-                    <Box pr="5px">
-                      <Text>รูปภาพสินค้า : </Text>
-                    </Box>
-                  </GridItem>
-                  <GridItem colSpan={2}>
-                    <Box>
-                      <PicturesWall setFileImage={handleSetFileImage} />
-                    </Box>
-                  </GridItem>
-                  <GridItem colSpan={1} justifySelf="end">
-                    <Box pr="5px">
-                      <Text>วิดีโอสินค้า : </Text>
-                    </Box>
-                  </GridItem>
-                  <GridItem colSpan={2}>
-                    <VideoWall setFileVideo={handleSetFileVideo} />
-                  </GridItem>
-                </Grid>
-              </GridItem>
-              <GridItem fontSize="25px" width="100%">
-                <Grid templateColumns="repeat(3, 1fr)" gap={2}>
-                  <GridItem colSpan={1} justifySelf="end">
-                    <Box pr="5px">
-                      <Text>รหัสสินค้า : </Text>
-                    </Box>
-                  </GridItem>
-                  <GridItem colSpan={2}>
-                    <InputGroup>
-                      <Input
-                        pr="40px"
-                        type="number"
-                        placeholder="ระบุรหัสสินค้า"
-                        value={sku}
-                        onChange={(e) => setSku(parseInt(e.target.value))}
-                      />
-                    </InputGroup>
-                  </GridItem>
-                  <GridItem colSpan={1} justifySelf="end">
-                    <Box pr="5px">
-                      <Text>ต้นทุน : </Text>
-                    </Box>
-                  </GridItem>
-                  <GridItem colSpan={2}>
-                    <InputGroup>
-                      <Input
-                        pr="40px"
-                        type="number"
-                        placeholder="ระบุต้นทุนสินค้า"
-                        value={cost}
-                        onChange={(e) => setCost(parseInt(e.target.value))}
-                      />
-                      <InputRightElement>
-                        <Text>฿</Text>
-                      </InputRightElement>
-                    </InputGroup>
-                  </GridItem>
-                  <GridItem colSpan={1} justifySelf="end">
-                    <Box pr="5px">
-                      <Text>* ราคา : </Text>
-                    </Box>
-                  </GridItem>
-                  <GridItem colSpan={2}>
-                    <InputGroup>
-                      <Input
-                        pr="40px"
-                        type="number"
-                        placeholder="ระบุราคาสินค้า"
-                        value={price}
-                        onChange={(e) => setPrice(parseInt(e.target.value))}
-                        isRequired
-                      />
-                      <InputRightElement>
-                        <Text>฿</Text>
-                      </InputRightElement>
-                    </InputGroup>
-                  </GridItem>
-                  <GridItem colSpan={1} justifySelf="end">
-                    <Box pr="5px">
-                      <Text>ลดราคา : </Text>
-                    </Box>
-                  </GridItem>
-                  <GridItem colSpan={2}>
-                    <InputGroup>
-                      <Input
-                        pr="40px"
-                        type="number"
-                        placeholder="ระบุลดราคา"
-                        value={price_sales}
-                        onChange={(e) =>
-                          setPrice_sales(parseInt(e.target.value))
-                        }
-                      />
-                      <InputRightElement>
-                        <Text>฿</Text>
-                      </InputRightElement>
-                    </InputGroup>
-                  </GridItem>
-                  <GridItem colSpan={1} justifySelf="end">
-                    <Box pr="5px">
-                      <Text>สต๊อกสินค้า : </Text>
-                    </Box>
-                  </GridItem>
-                  <GridItem colSpan={2}>
-                    <Input
-                      pr="50px"
-                      type="number"
-                      placeholder="ระบุจำนวนสินค้า"
-                      value={stock}
-                      onChange={(e) => setStock(parseInt(e.target.value))}
-                    />
-                  </GridItem>
-                  <GridItem colSpan={1} justifySelf="end">
-                    <Box pr="5px">
-                      <Text>น้ำหนัก : </Text>
-                    </Box>
-                  </GridItem>
-                  <GridItem colSpan={2}>
-                    <InputGroup>
-                      <Input
-                        pr="40px"
-                        type="text"
-                        placeholder="ระบุน้ำหนักสินค้า"
-                        value={weight}
-                        onChange={(e) => setWeight(e.target.value)}
-                      />
-                      <InputRightElement>
-                        <Text>Kg</Text>
-                      </InputRightElement>
-                    </InputGroup>
-                  </GridItem>
-                  <GridItem colSpan={1} justifySelf="end">
-                    <Box pr="5px">
-                      <Text>ขนาด : </Text>
-                    </Box>
-                  </GridItem>
-                  <GridItem colSpan={2}>
-                    <InputGroup>
-                      <Input
-                        pr="40px"
-                        type="text"
-                        placeholder="ระบุความกว้างสินค้า"
-                      />
-                      <InputRightElement>
-                        <Text>Cm</Text>
-                      </InputRightElement>
-                    </InputGroup>
-                    <InputGroup mt="10px">
-                      <Input
-                        pr="40px"
-                        type="text"
-                        placeholder="ระบุความยาวสินค้า"
-                      />
-                      <InputRightElement>
-                        <Text>Cm</Text>
-                      </InputRightElement>
-                    </InputGroup>
-                    <InputGroup mt="10px">
-                      <Input
-                        pr="40px"
-                        type="text"
-                        placeholder="ระบุความสูงสินค้า"
-                      />
-                      <InputRightElement>
-                        <Text>Cm</Text>
-                      </InputRightElement>
-                    </InputGroup>
-                  </GridItem>
-                </Grid>
-                <Flex justifyContent="center" pt="10px">
-                  <Link
-                    href={{
-                      pathname: "/stock/addProductMultiSelect/option",
-                      query: { fileImage }, // the data
-                    }}
-                  >
-                    <Button
-                      ml="200px"
-                      type="submit"
-                      bg="red"
-                      leftIcon={
-                        <Image src="/images/pluswhite.png" alt="" h="15px" />
-                      }
-                      _hover={{}}
-                      color="white"
-                      h="35px"
-                      fontSize="21px"
-                    >
-                      เพิ่มตัวเลือกสินค้า
-                    </Button>
-                  </Link>
-                </Flex>
-              </GridItem>
-            </Grid>
-          </Box>
-        </from>
-        <Box>
+        <Box display={displayAddProduct ? "block" : "none"}>
           <Box>
             <Flex justifyContent="center" p="15px">
-              <Link href="/stock/addProductMultiSelect">
+              <Link href="/stock">
                 <Button
                   bg="red"
                   h="25px"
@@ -651,6 +306,349 @@ function addProductMultiSelect() {
                   ย้อนกลับ
                 </Button>
               </Link>
+              <Spacer />
+              <Flex alignItems="center">
+                <Image src="/images/addProduct.png" alt="" h="40px" w="40px" />
+                <Text pl="10px" fontSize="40px" fontWeight="bold" color="black">
+                  เพิ่มสินค้า
+                </Text>
+              </Flex>
+              <Spacer />
+              <Link href="/stock">
+                <Image src="/images/close.png" alt="" h="20px" w="20px" />
+              </Link>
+            </Flex>
+            <Wrap spacing="100px" justify="center">
+              <WrapItem>
+                <Center>
+                  <Box>
+                    <Link href="/stock/addProduct">
+                      <Button
+                        id="0"
+                        bg={buttonActive[0] ? "red" : "white"}
+                        color={buttonActive[0] ? "white" : "red"}
+                        border="2px solid red"
+                        fontSize="24px"
+                        borderRadius="3xl"
+                        w="150px"
+                        _hover={{}}
+                        onClick={handelButton}
+                      >
+                        สินค้าชิ้นเดียว
+                      </Button>
+                    </Link>
+                  </Box>
+                </Center>
+              </WrapItem>
+              <WrapItem>
+                <Center>
+                  <Box>
+                    <Link href="/stock/addProductMultiSelect">
+                      <Button
+                        id="1"
+                        bg={buttonActive[1] ? "red" : "white"}
+                        color={buttonActive[1] ? "white" : "red"}
+                        border="2px solid red"
+                        fontSize="24px"
+                        borderRadius="3xl"
+                        w="150px"
+                        _hover={{}}
+                        onClick={handelButton}
+                      >
+                        สินค้ามีตัวเลือก
+                      </Button>
+                    </Link>
+                  </Box>
+                </Center>
+              </WrapItem>
+            </Wrap>
+          </Box>
+
+          <from>
+            <Box>
+              <Grid
+                templateColumns="repeat(2, 1fr)"
+                gap={6}
+                justifyItems="end"
+                pt="15px"
+                px="35px"
+              >
+                <GridItem fontSize="25px" width="100%">
+                  <Grid templateColumns="repeat(3, 1fr)" gap={2}>
+                    <GridItem colSpan={1} justifySelf="end">
+                      <Box pr="5px">
+                        <Text>* ชื่อสินค้า : </Text>
+                      </Box>
+                    </GridItem>
+                    <GridItem colSpan={2}>
+                      <InputGroup>
+                        <Input
+                          pr="100px"
+                          type="text"
+                          value={name_product}
+                          placeholder="ระบุชื่อสินค้า"
+                          borderColor="gray.400"
+                          onChange={(e) => setName_product(e.target.value)}
+                          isRequired
+                          maxLength={100}
+                        />
+                        <InputRightElement pr="45px">
+                          <Text>{name_product.length}/100</Text>
+                        </InputRightElement>
+                      </InputGroup>
+                    </GridItem>
+                    <GridItem colSpan={1} justifySelf="end">
+                      <Box pr="5px">
+                        <Text>* รายละเอียดสินค้า : </Text>
+                      </Box>
+                    </GridItem>
+                    <GridItem colSpan={2}>
+                      <Box>
+                        <InputGroup flexDirection="column-reverse">
+                          <Textarea
+                            h="170px"
+                            isRequired
+                            resize="none"
+                            maxLength={3000}
+                            borderColor="gray.400"
+                            placeholder="ระบุรายละเอียดสินค้า"
+                            pr="60px"
+                            value={detail_product}
+                            onChange={(e) => setDetail_product(e.target.value)}
+                          />
+                          <InputRightElement h="100%" alignItems="end" p="10px">
+                            <Text pr="45px">{detail_product.length}/3000</Text>
+                          </InputRightElement>
+                        </InputGroup>
+                      </Box>
+                    </GridItem>
+                    <GridItem colSpan={1} justifySelf="end">
+                      <Box pr="5px">
+                        <Text>* หมวดหมู่สินค้า : </Text>
+                      </Box>
+                    </GridItem>
+                    <GridItem colSpan={2}>
+                      <Box>
+                        <Select
+                          placeholder="โปรดเลือก"
+                          w="150px"
+                          borderColor="gray.400"
+                        >
+                          {category?.map((item, index) => {
+                            return (
+                              <option value={item.cat_name} key={index}>
+                                {item.cat_name}
+                              </option>
+                            );
+                          })}
+                        </Select>
+                      </Box>
+                    </GridItem>
+                    <GridItem colSpan={1} justifySelf="end">
+                      <Box pr="5px">
+                        <Text>รูปภาพสินค้า : </Text>
+                      </Box>
+                    </GridItem>
+                    <GridItem colSpan={2}>
+                      <Box>
+                        <PicturesWall setFileImage={handleSetFileImage} />
+                      </Box>
+                    </GridItem>
+                    <GridItem colSpan={1} justifySelf="end">
+                      <Box pr="5px">
+                        <Text>วิดีโอสินค้า : </Text>
+                      </Box>
+                    </GridItem>
+                    <GridItem colSpan={2}>
+                      <VideoWall setFileVideo={handleSetFileVideo} />
+                    </GridItem>
+                  </Grid>
+                </GridItem>
+                <GridItem fontSize="25px" width="100%">
+                  <Grid templateColumns="repeat(3, 1fr)" gap={2}>
+                    <GridItem colSpan={1} justifySelf="end">
+                      <Box pr="5px">
+                        <Text>รหัสสินค้า : </Text>
+                      </Box>
+                    </GridItem>
+                    <GridItem colSpan={2}>
+                      <InputGroup>
+                        <Input
+                          pr="40px"
+                          type="number"
+                          placeholder="ระบุรหัสสินค้า"
+                          value={sku}
+                          onChange={(e) => setSku(parseInt(e.target.value))}
+                        />
+                      </InputGroup>
+                    </GridItem>
+                    <GridItem colSpan={1} justifySelf="end">
+                      <Box pr="5px">
+                        <Text>ต้นทุน : </Text>
+                      </Box>
+                    </GridItem>
+                    <GridItem colSpan={2}>
+                      <InputGroup>
+                        <Input
+                          pr="40px"
+                          type="number"
+                          placeholder="ระบุต้นทุนสินค้า"
+                          value={cost}
+                          onChange={(e) => setCost(parseInt(e.target.value))}
+                        />
+                        <InputRightElement>
+                          <Text>฿</Text>
+                        </InputRightElement>
+                      </InputGroup>
+                    </GridItem>
+                    <GridItem colSpan={1} justifySelf="end">
+                      <Box pr="5px">
+                        <Text>* ราคา : </Text>
+                      </Box>
+                    </GridItem>
+                    <GridItem colSpan={2}>
+                      <InputGroup>
+                        <Input
+                          pr="40px"
+                          type="number"
+                          placeholder="ระบุราคาสินค้า"
+                          value={price}
+                          onChange={(e) => setPrice(parseInt(e.target.value))}
+                          isRequired
+                        />
+                        <InputRightElement>
+                          <Text>฿</Text>
+                        </InputRightElement>
+                      </InputGroup>
+                    </GridItem>
+                    <GridItem colSpan={1} justifySelf="end">
+                      <Box pr="5px">
+                        <Text>ลดราคา : </Text>
+                      </Box>
+                    </GridItem>
+                    <GridItem colSpan={2}>
+                      <InputGroup>
+                        <Input
+                          pr="40px"
+                          type="number"
+                          placeholder="ระบุลดราคา"
+                          value={price_sales}
+                          onChange={(e) =>
+                            setPrice_sales(parseInt(e.target.value))
+                          }
+                        />
+                        <InputRightElement>
+                          <Text>฿</Text>
+                        </InputRightElement>
+                      </InputGroup>
+                    </GridItem>
+                    <GridItem colSpan={1} justifySelf="end">
+                      <Box pr="5px">
+                        <Text>สต๊อกสินค้า : </Text>
+                      </Box>
+                    </GridItem>
+                    <GridItem colSpan={2}>
+                      <Input
+                        pr="50px"
+                        type="number"
+                        placeholder="ระบุจำนวนสินค้า"
+                        value={stock}
+                        onChange={(e) => setStock(parseInt(e.target.value))}
+                      />
+                    </GridItem>
+                    <GridItem colSpan={1} justifySelf="end">
+                      <Box pr="5px">
+                        <Text>น้ำหนัก : </Text>
+                      </Box>
+                    </GridItem>
+                    <GridItem colSpan={2}>
+                      <InputGroup>
+                        <Input
+                          pr="40px"
+                          type="text"
+                          placeholder="ระบุน้ำหนักสินค้า"
+                          value={weight}
+                          onChange={(e) => setWeight(e.target.value)}
+                        />
+                        <InputRightElement>
+                          <Text>Kg</Text>
+                        </InputRightElement>
+                      </InputGroup>
+                    </GridItem>
+                    <GridItem colSpan={1} justifySelf="end">
+                      <Box pr="5px">
+                        <Text>ขนาด : </Text>
+                      </Box>
+                    </GridItem>
+                    <GridItem colSpan={2}>
+                      <InputGroup>
+                        <Input
+                          pr="40px"
+                          type="text"
+                          placeholder="ระบุความกว้างสินค้า"
+                        />
+                        <InputRightElement>
+                          <Text>Cm</Text>
+                        </InputRightElement>
+                      </InputGroup>
+                      <InputGroup mt="10px">
+                        <Input
+                          pr="40px"
+                          type="text"
+                          placeholder="ระบุความยาวสินค้า"
+                        />
+                        <InputRightElement>
+                          <Text>Cm</Text>
+                        </InputRightElement>
+                      </InputGroup>
+                      <InputGroup mt="10px">
+                        <Input
+                          pr="40px"
+                          type="text"
+                          placeholder="ระบุความสูงสินค้า"
+                        />
+                        <InputRightElement>
+                          <Text>Cm</Text>
+                        </InputRightElement>
+                      </InputGroup>
+                    </GridItem>
+                  </Grid>
+                  <Flex justifyContent="center" pt="10px">
+                    <Button
+                      ml="200px"
+                      type="submit"
+                      bg="red"
+                      leftIcon={
+                        <Image src="/images/pluswhite.png" alt="" h="15px" />
+                      }
+                      _hover={{}}
+                      color="white"
+                      h="35px"
+                      fontSize="21px"
+                      onClick={additionOption}
+                    >
+                      เพิ่มตัวเลือกสินค้า
+                    </Button>
+                  </Flex>
+                </GridItem>
+              </Grid>
+            </Box>
+          </from>
+        </Box>
+        <Box display={displayAdditionOption ? "block" : "none"}>
+          <Box>
+            <Flex justifyContent="center" p="15px">
+              <Button
+                bg="red"
+                h="25px"
+                borderRadius="3xl"
+                color="white"
+                px="7px"
+                leftIcon={<Icon as={BsArrowLeftCircle} color="white" />}
+                onClick={hideAdditionOption}
+              >
+                ย้อนกลับ
+              </Button>
               <Spacer />
               <Flex alignItems="center">
                 <Image src="/images/addProduct.png" alt="" h="40px" w="40px" />
@@ -696,7 +694,13 @@ function addProductMultiSelect() {
                     >
                       เพิ่มตัวเลือก
                     </Button>
-                    <Button ml="15px" mt="15px" onClick={index == 0 ? deleteAllOption:deleteAllSubOption}>
+                    <Button
+                      ml="15px"
+                      mt="15px"
+                      onClick={
+                        index == 0 ? deleteAllOption : deleteAllSubOption
+                      }
+                    >
                       ลบรูปแบบ
                     </Button>
                   </Box>
@@ -752,24 +756,30 @@ function addProductMultiSelect() {
                         </Td>
                         {item?.subOption?.length > 0 ? (
                           <Td border="1px solid">
-                            {item?.subOption[0].priceSubOption}
+                            <Input value={item?.subOption[0].priceSubOption} />
                           </Td>
                         ) : (
-                          <Td border="1px solid">{item?.priceOption}</Td>
+                          <Td border="1px solid">
+                            <Input value={item?.priceOption} />
+                          </Td>
                         )}
                         {item?.subOption?.length > 0 ? (
                           <Td border="1px solid">
-                            {item?.subOption[0].stockSubOption}
+                            <Input value={item?.subOption[0].stockSubOption} />
                           </Td>
                         ) : (
-                          <Td border="1px solid">{item?.stockOption}</Td>
+                          <Td border="1px solid">
+                            <Input value={item?.stockOption} />
+                          </Td>
                         )}
                         {item?.subOption?.length > 0 ? (
                           <Td border="1px solid">
-                            {item?.subOption[0].skuSubOption}
+                            <Input value={item?.subOption[0].skuSubOption} />
                           </Td>
                         ) : (
-                          <Td border="1px solid">{item?.skuOption}</Td>
+                          <Td border="1px solid">
+                            <Input value={item?.skuOption} />
+                          </Td>
                         )}
                         <Td border="1px solid">
                           <Switch colorScheme="brand" />
@@ -783,7 +793,6 @@ function addProductMultiSelect() {
                         ) : (
                           <Td border="1px solid">
                             <Button onClick={() => deleteOption(index, 0)}>
-                              aaa
                               <Image src="/images/trash-bin.png" h="25px" />
                             </Button>
                           </Td>
@@ -855,7 +864,7 @@ function addProductMultiSelect() {
               </ModalHeader>
               <ModalBody>
                 <form onSubmit={addOption}>
-                  <Text>เลือกรูปสำหรับ tag ตัวเลือก</Text>
+                  <Text>เลือกรูปสำหรับ tag {option}</Text>
                   <RadioGroup py="15px" value={valueSelect}>
                     <Stack direction="row">
                       {fileImage?.map((item, index) => {
