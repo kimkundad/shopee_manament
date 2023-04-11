@@ -67,8 +67,10 @@ import { Upload } from "antd";
 import * as yup from "yup";
 
 const schema = yup.object().shape({
-  inputField: yup.string().required("This field is required"),
-  textAreaField: yup.string().required("This field is required"),
+  inputField: yup.string().required("กรุณากรอกขื่อร้านค้า"),
+  textAreaField: yup.string().required("กรุณากรอกรายละเอียดร้านค้า"),
+  fileField: yup.mixed().required("กรุณาเพิ่มรูปโปรไฟล์ร้านค้า"),
+  fileCoverField: yup.mixed().required("กรุณาเพิ่มรูปภาพพื้นหลังร้านค้า"),
 });
 
 // component upload image shop
@@ -138,61 +140,6 @@ class PicturesCoverShop extends React.Component {
 export default function shop() {
   const [getProducts, setProducts] = useState([]);
   const [getShops, setShops] = useState([]);
-  const [getProduct, setGetProduct] = useState([
-    {
-      id: 1,
-      codeProduct: "001",
-      productImage: "images/addProduct.png",
-      nameProduct: "pangpang",
-      priceProduct: 149,
-      stockProduct: 15,
-      checked: false,
-    },
-    {
-      id: 2,
-      codeProduct: "002",
-      productImage: "images/addProduct.png",
-      nameProduct: "pangpang",
-      priceProduct: 159,
-      stockProduct: 16,
-      checked: false,
-    },
-    {
-      id: 3,
-      codeProduct: "003",
-      productImage: "images/addProduct.png",
-      nameProduct: "pangpang",
-      priceProduct: 169,
-      stockProduct: 17,
-      checked: false,
-    },
-    {
-      id: 4,
-      codeProduct: "004",
-      productImage: "images/addProduct.png",
-      nameProduct: "pangpang",
-      priceProduct: 179,
-      stockProduct: 18,
-    },
-    {
-      id: 5,
-      codeProduct: "005",
-      productImage: "images/addProduct.png",
-      nameProduct: "pangpang",
-      priceProduct: 189,
-      stockProduct: 19,
-      checked: false,
-    },
-    {
-      id: 6,
-      codeProduct: "006",
-      productImage: "images/addProduct.png",
-      nameProduct: "pangpang",
-      priceProduct: 199,
-      stockProduct: 20,
-      checked: false,
-    },
-  ]);
 
   const [buttonActive, setButtonActive] = useState([false, true]);
   const colunm = [
@@ -218,14 +165,31 @@ export default function shop() {
   const [isLoading, setIsLoading] = useState(false);
   const [inputFieldError, setInputFieldError] = useState("");
   const [textAreaFieldError, setTextAreaFieldError] = useState("");
+  const [textImageShopError, setTextImageShopError] = useState("");
+  const [textImageCoverShopError, setTextImageCoverShopError] = useState("");
   const [selectedProducts, setSelectedProducts] = useState([]);
+
+  const [fileImgShop, setFileImgShop] = useState([]);
+  const handleSetFileImgShop = (fileList) => {
+    setFileImgShop(fileList);
+  };
+
+  const [fileImgCoverShop, setFileImgCoverShop] = useState([]);
+  const handleSetFileImgCoverShop = (fileList) => {
+    setFileImgCoverShop(fileList);
+  };
 
   const handleClickNextStopAdd = async (event) => {
     event.preventDefault();
     setIsLoading(true);
     try {
       await schema.validate(
-        { inputField: nameShop, textAreaField: detailShop },
+        {
+          inputField: nameShop,
+          textAreaField: detailShop,
+          fileField: fileImgShop[0],
+          fileCoverField: fileImgCoverShop[0],
+        },
         { abortEarly: false }
       );
       // ส่งค่าไปยัง API หรือทำอื่นๆ ที่ต้องการ
@@ -233,6 +197,9 @@ export default function shop() {
       modalAdd2.onOpen();
       setInputFieldError("");
       setTextAreaFieldError("");
+      setTextImageShopError("");
+      setTextImageCoverShopError("");
+
       // ไปยังหน้าต่อไป
     } catch (error) {
       if (error.inner.some((err) => err.path === "inputField")) {
@@ -245,6 +212,16 @@ export default function shop() {
           error.inner.find((err) => err.path === "textAreaField").message
         );
       }
+      if (error.inner.some((err) => err.path === "fileField")) {
+        setTextImageShopError(
+          error.inner.find((err) => err.path === "fileField").message
+        );
+      }
+      if (error.inner.some((err) => err.path === "fileCoverField")) {
+        setTextImageCoverShopError(
+          error.inner.find((err) => err.path === "fileCoverField").message
+        );
+      }
     }
     setIsLoading(false);
   };
@@ -255,7 +232,6 @@ export default function shop() {
   };
 
   const handleConfirmSuccess = () => {
-
     // get selected products
     const selected = getProducts.filter((product) =>
       selectedProducts.includes(product.id)
@@ -284,27 +260,6 @@ export default function shop() {
       }
     });
   };
-
-  // const handleSelectAllChange = (e) => {
-  //   const isChecked = e.target.checked;
-  //   const updatedProducts = getProduct.map((product) => ({
-  //     ...product,
-  //     checked: isChecked,
-  //   }));
-  //   setGetProduct(updatedProducts);
-  // };
-
-  // const handleProductChange = (id) => (e) => {
-  //   const isChecked = e.target.checked;
-  //   const updatedProducts = getProduct.map((product) =>
-  //     product.id === id ? { ...product, checked: isChecked } : product
-  //   );
-  //   setGetProduct(updatedProducts);
-  // };
-
-  // const allChecked = getProduct.every((product) => product.checked);
-  // const isIndeterminate =
-  //   getProduct.some((product) => product.checked) && !allChecked;
 
   const fetchAllShops = async () => {
     Axios.get("https://shopee-api.deksilp.com/api/getAllShops").then(function (
@@ -396,16 +351,6 @@ export default function shop() {
       fetchData();
     }
   }, [filterShops]);
-
-  const [fileImgShop, setFileImgShop] = useState([]);
-  const handleSetFileImgShop = (fileList) => {
-    setFileImgShop(fileList);
-  };
-
-  const [fileImgCoverShop, setFileImgCoverShop] = useState([]);
-  const handleSetFileImgCoverShop = (fileList) => {
-    setFileImgCoverShop(fileList);
-  };
 
   //   count name shop /100
   const [lengthNameShop, setLengthNameShop] = useState(0);
@@ -721,6 +666,11 @@ export default function shop() {
                       <GridItem colSpan={2}>
                         <Box>
                           <PicturesShop setFileImgShop={handleSetFileImgShop} />
+                          {textImageShopError && (
+                            <Text fontSize={"sm"} color={"red"}>
+                              *{textImageShopError}
+                            </Text>
+                          )}
                           <Text fontSize={"sm"}>
                             ขนาดแนะนำ 250px X 250px ชนิดรูป: png, jpg, jpeg.
                           </Text>
@@ -736,6 +686,11 @@ export default function shop() {
                           <PicturesCoverShop
                             setFileImgCoverShop={handleSetFileImgCoverShop}
                           />
+                          {textImageCoverShopError && (
+                            <Text fontSize={"sm"} color={"red"}>
+                              *{textImageCoverShopError}
+                            </Text>
+                          )}
                           <Text fontSize={"sm"}>
                             ขนาดแนะนำแนวนอน 450px X 200px ชนิดรูป: png, jpg,
                             jpeg.
