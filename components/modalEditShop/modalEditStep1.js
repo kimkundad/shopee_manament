@@ -57,8 +57,10 @@ import Axios from "axios";
 import * as yup from "yup";
 
 const schema = yup.object().shape({
-  inputField: yup.string().required("This field is required"),
-  textAreaField: yup.string().required("This field is required"),
+  inputField: yup.string().required("กรุณากรอกขื่อร้านค้า"),
+  textAreaField: yup.string().required("กรุณากรอกรายละเอียดร้านค้า"),
+  fileField: yup.mixed().required("กรุณาเพิ่มรูปโปรไฟล์ร้านค้า"),
+  fileCoverField: yup.mixed().required("กรุณาเพิ่มรูปภาพพื้นหลังร้านค้า"),
 });
 class PicturesShop extends React.Component {
   state = {
@@ -155,9 +157,39 @@ function modalEditStep1(props) {
   const [isLoading, setIsLoading] = useState(false);
   const [inputFieldError, setInputFieldError] = useState("");
   const [textAreaFieldError, setTextAreaFieldError] = useState("");
+  const [textImageShopError, setTextImageShopError] = useState("");
+  const [textImageCoverShopError, setTextImageCoverShopError] = useState("");
   const [listProduct, setListProduct] = useState([]);
 
-  useEffect(() => {
+  const imageShopCheck = [
+    {
+      uid: "-1",
+      name: Shops.img_shop,
+      status: "done",
+      url: `https://shopee-api.deksilp.com/images/shopee/shop/${Shops.img_shop}`,
+    }
+  ]
+
+  const imageCoverShopCheck = [
+    {
+      uid: "-1",
+      name: Shops.cover_img_shop,
+      status: "done",
+      url: `https://shopee-api.deksilp.com/images/shopee/cover_img_shop/${Shops.cover_img_shop}`,
+    }
+  ]
+
+  const [editFileImgShop, setEditFileImgShop] = useState(imageShopCheck);
+  const handleSetEditFileImgShop = (fileList) => {
+    setEditFileImgShop(fileList);
+  };
+
+  const [editFileImgCoverShop, setEditFileImgCoverShop] = useState(imageCoverShopCheck);
+  const handleSetEditFileImgCoverShop = (fileList) => {
+    setEditFileImgCoverShop(fileList);
+  };
+
+  const fetchListProduct = async () => {
     Axios.get(
       "https://shopee-api.deksilp.com/api/getListProduct/" + shopID
     ).then(function (response) {
@@ -165,6 +197,10 @@ function modalEditStep1(props) {
         setListProduct(response.data.list_products);
       }
     });
+  };
+
+  useEffect(() => {
+    fetchListProduct()
   }, []);
 
   const onChangeNameShop = (e) => {
@@ -186,7 +222,7 @@ function modalEditStep1(props) {
     setIsLoading(true);
     try {
       await schema.validate(
-        { inputField: editNameShop, textAreaField: editDetailShop },
+        { inputField: editNameShop, textAreaField: editDetailShop, fileField:  editFileImgShop[0], fileCoverField: editFileImgCoverShop[0]},
         { abortEarly: false }
       );
       // ส่งค่าไปยัง API หรือทำอื่นๆ ที่ต้องการ
@@ -195,7 +231,9 @@ function modalEditStep1(props) {
       modalEditNextStep.onOpen();
       setInputFieldError("");
       setTextAreaFieldError("");
-      setSelectedProducts(listProduct.map(listPro => listPro.product_id));
+      setTextImageShopError("");
+      setTextImageCoverShopError("");
+      setSelectedProducts(listProduct.map((listPro) => listPro.product_id));
       // ไปยังหน้าต่อไป
     } catch (error) {
       if (error.inner.some((err) => err.path === "inputField")) {
@@ -208,17 +246,29 @@ function modalEditStep1(props) {
           error.inner.find((err) => err.path === "textAreaField").message
         );
       }
+      if (error.inner.some((err) => err.path === "fileField")) {
+        setTextImageShopError(
+          error.inner.find((err) => err.path === "fileField").message
+        );
+      }
+      if (error.inner.some((err) => err.path === "fileCoverField")) {
+        setTextImageCoverShopError(
+          error.inner.find((err) => err.path === "fileCoverField").message
+        );
+      }
     }
     setIsLoading(false);
   };
 
   const handleConfirmEdit = () => {
-    console.log('select: ',selectedProducts)
     modalEditNextStep.onClose();
     modalConfirmEdit.onOpen();
   };
 
   const handleConfirmEditSuccess = () => {
+    const selected = Products.filter((product) =>
+      selectedProducts.includes(product.id)
+    );
     const formData = new FormData();
     formData.append("shopID", shopID);
     formData.append("editNameShop", editNameShop);
@@ -229,6 +279,9 @@ function modalEditStep1(props) {
     editFileImgCoverShop.forEach((file, index) => {
       formData.append(`file2[${index}]`, file.originFileObj);
     });
+    selected.forEach((select, index) => {
+      formData.append(`selectID[${index}]`, select.id);
+    });
 
     Axios.post("https://shopee-api.deksilp.com/api/editShop", formData, {
       headers: { "Content-Type": "multipart/form-data" },
@@ -237,18 +290,9 @@ function modalEditStep1(props) {
         modalConfirmEdit.onClose();
         modalConfirmEditSuccess.onOpen();
         statusEdit(true);
+        fetchListProduct();
       }
     });
-  };
-
-  const [editFileImgShop, setEditFileImgShop] = useState([]);
-  const handleSetEditFileImgShop = (fileList) => {
-    setEditFileImgShop(fileList);
-  };
-
-  const [editFileImgCoverShop, setEditFileImgCoverShop] = useState([]);
-  const handleSetEditFileImgCoverShop = (fileList) => {
-    setEditFileImgCoverShop(fileList);
   };
 
   const handleAllCheckboxChange = (e) => {
@@ -383,6 +427,11 @@ function modalEditStep1(props) {
                             setEditFileImgShop={handleSetEditFileImgShop}
                             nameImgShop={Shops.img_shop}
                           />
+                          {textImageShopError && (
+                            <Text fontSize={"sm"} color={"red"}>
+                              *{textImageShopError}
+                            </Text>
+                          )}
                           <Text fontSize={"sm"}>
                             ขนาดแนะนำ 250px X 250px ชนิดรูป: png, jpg, jpeg.
                           </Text>
@@ -401,6 +450,11 @@ function modalEditStep1(props) {
                             }
                             nameImgCoverShop={Shops.cover_img_shop}
                           />
+                          {textImageCoverShopError &&  (
+                            <Text fontSize={'sm'} color={'red'}>
+                              *{textImageCoverShopError}
+                            </Text>
+                          )}
                           <Text fontSize={"sm"}>
                             ขนาดแนะนำแนวนอน 450px X 200px ชนิดรูป: png, jpg,
                             jpeg.
