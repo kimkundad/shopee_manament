@@ -812,7 +812,6 @@ function addProductMultiSelect() {
                               <Button
                                 onClick={() => deleteOption(index, subIndex)}
                               >
-                                ลบลบลบล
                                 <Image src="/images/trash-bin.png" h="25px" />
                               </Button>
                             </Td>
