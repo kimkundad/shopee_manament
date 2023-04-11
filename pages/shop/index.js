@@ -218,24 +218,32 @@ export default function shop() {
   const [isLoading, setIsLoading] = useState(false);
   const [inputFieldError, setInputFieldError] = useState("");
   const [textAreaFieldError, setTextAreaFieldError] = useState("");
+  const [selectedProducts, setSelectedProducts] = useState([]);
 
   const handleClickNextStopAdd = async (event) => {
     event.preventDefault();
     setIsLoading(true);
     try {
-      await schema.validate({ inputField: nameShop, textAreaField: detailShop }, { abortEarly: false });
+      await schema.validate(
+        { inputField: nameShop, textAreaField: detailShop },
+        { abortEarly: false }
+      );
       // ส่งค่าไปยัง API หรือทำอื่นๆ ที่ต้องการ
       modalAdd.onClose();
       modalAdd2.onOpen();
-      setInputFieldError('');
-      setTextAreaFieldError('');
+      setInputFieldError("");
+      setTextAreaFieldError("");
       // ไปยังหน้าต่อไป
     } catch (error) {
       if (error.inner.some((err) => err.path === "inputField")) {
-        setInputFieldError(error.inner.find((err) => err.path === "inputField").message);
+        setInputFieldError(
+          error.inner.find((err) => err.path === "inputField").message
+        );
       }
       if (error.inner.some((err) => err.path === "textAreaField")) {
-        setTextAreaFieldError(error.inner.find((err) => err.path === "textAreaField").message);
+        setTextAreaFieldError(
+          error.inner.find((err) => err.path === "textAreaField").message
+        );
       }
     }
     setIsLoading(false);
@@ -247,6 +255,12 @@ export default function shop() {
   };
 
   const handleConfirmSuccess = () => {
+
+    // get selected products
+    const selected = getProducts.filter((product) =>
+      selectedProducts.includes(product.id)
+    );
+
     const formData = new FormData();
     formData.append("nameShop", nameShop);
     formData.append("detailShop", detailShop);
@@ -255,6 +269,9 @@ export default function shop() {
     });
     fileImgCoverShop.forEach((file, index) => {
       formData.append(`file2[${index}]`, file.originFileObj);
+    });
+    selected.forEach((select, index) => {
+      formData.append(`selectID[${index}]`, select.id);
     });
 
     Axios.post("https://shopee-api.deksilp.com/api/createShop", formData, {
@@ -268,26 +285,26 @@ export default function shop() {
     });
   };
 
-  const handleSelectAllChange = (e) => {
-    const isChecked = e.target.checked;
-    const updatedProducts = getProduct.map((product) => ({
-      ...product,
-      checked: isChecked,
-    }));
-    setGetProduct(updatedProducts);
-  };
+  // const handleSelectAllChange = (e) => {
+  //   const isChecked = e.target.checked;
+  //   const updatedProducts = getProduct.map((product) => ({
+  //     ...product,
+  //     checked: isChecked,
+  //   }));
+  //   setGetProduct(updatedProducts);
+  // };
 
-  const handleProductChange = (id) => (e) => {
-    const isChecked = e.target.checked;
-    const updatedProducts = getProduct.map((product) =>
-      product.id === id ? { ...product, checked: isChecked } : product
-    );
-    setGetProduct(updatedProducts);
-  };
+  // const handleProductChange = (id) => (e) => {
+  //   const isChecked = e.target.checked;
+  //   const updatedProducts = getProduct.map((product) =>
+  //     product.id === id ? { ...product, checked: isChecked } : product
+  //   );
+  //   setGetProduct(updatedProducts);
+  // };
 
-  const allChecked = getProduct.every((product) => product.checked);
-  const isIndeterminate =
-    getProduct.some((product) => product.checked) && !allChecked;
+  // const allChecked = getProduct.every((product) => product.checked);
+  // const isIndeterminate =
+  //   getProduct.some((product) => product.checked) && !allChecked;
 
   const fetchAllShops = async () => {
     Axios.get("https://shopee-api.deksilp.com/api/getAllShops").then(function (
@@ -307,6 +324,7 @@ export default function shop() {
 
   useEffect(() => {
     fetchAllShops();
+    setStatusDelete(false);
   }, [statusDelete]);
 
   const [query, setQuery] = useState("");
@@ -396,7 +414,7 @@ export default function shop() {
     const NameShop = e.target.value;
     setLengthNameShop(NameShop.length);
     setNameShop(NameShop);
-    setInputFieldError('');
+    setInputFieldError("");
   };
 
   //   count detail shop /3000
@@ -406,7 +424,23 @@ export default function shop() {
     const DetailShop = e.target.value;
     setLengthDetailShop(DetailShop.length);
     setDetailShop(DetailShop);
-    setTextAreaFieldError('');
+    setTextAreaFieldError("");
+  };
+
+  const handleAllCheckboxChange = (e) => {
+    if (e.target.checked) {
+      setSelectedProducts(getProducts.map((product) => product.id));
+    } else {
+      setSelectedProducts([]);
+    }
+  };
+
+  const handleCheckboxChange = (productId) => {
+    if (selectedProducts.includes(productId)) {
+      setSelectedProducts(selectedProducts.filter((id) => id !== productId));
+    } else {
+      setSelectedProducts([...selectedProducts, productId]);
+    }
   };
 
   // console.log('Product : ',getProducts);
@@ -570,7 +604,11 @@ export default function shop() {
       </Box>
       <Box pt="5px" pb={"5px"}>
         <Flex flexWrap={"wrap"} justifyContent={"space-around"}>
-          <CardShop Products={getProducts} Shops={getShops} statusDelete={setStatusDelete} />
+          <CardShop
+            Products={getProducts}
+            Shops={getShops}
+            statusDelete={setStatusDelete}
+          />
         </Flex>
       </Box>
 
@@ -632,7 +670,11 @@ export default function shop() {
                             <Text>{lengthNameShop}/100</Text>
                           </InputRightElement>
                         </InputGroup>
-                        {inputFieldError && <Text fontSize={'sm'} color={'red'}>*{inputFieldError}</Text>}
+                        {inputFieldError && (
+                          <Text fontSize={"sm"} color={"red"}>
+                            *{inputFieldError}
+                          </Text>
+                        )}
                       </GridItem>
                       <GridItem colSpan={1} justifySelf="end">
                         <Box pr="5px">
@@ -649,7 +691,9 @@ export default function shop() {
                               isRequired
                               resize="none"
                               maxLength={3000}
-                              borderColor={textAreaFieldError ? "red" : "gray.400"}
+                              borderColor={
+                                textAreaFieldError ? "red" : "gray.400"
+                              }
                               placeholder="ระบุรายละเอียดสินค้า"
                               pr="60px"
                               onChange={handleChangeDetailShop}
@@ -662,7 +706,11 @@ export default function shop() {
                               <Text pr="45px">{lengthDetailShop}/3000</Text>
                             </InputRightElement>
                           </InputGroup>
-                          {textAreaFieldError && <Text fontSize={'sm'} color={'red'}>*{textAreaFieldError}</Text>}
+                          {textAreaFieldError && (
+                            <Text fontSize={"sm"} color={"red"}>
+                              *{textAreaFieldError}
+                            </Text>
+                          )}
                         </Box>
                       </GridItem>
                       <GridItem colSpan={1} justifySelf="end">
@@ -673,7 +721,9 @@ export default function shop() {
                       <GridItem colSpan={2}>
                         <Box>
                           <PicturesShop setFileImgShop={handleSetFileImgShop} />
-                          <Text fontSize={'sm'}>ขนาดแนะนำ 250px X 250px ชนิดรูป: png, jpg, jpeg.</Text>
+                          <Text fontSize={"sm"}>
+                            ขนาดแนะนำ 250px X 250px ชนิดรูป: png, jpg, jpeg.
+                          </Text>
                         </Box>
                       </GridItem>
                       <GridItem colSpan={1} justifySelf="end">
@@ -686,7 +736,10 @@ export default function shop() {
                           <PicturesCoverShop
                             setFileImgCoverShop={handleSetFileImgCoverShop}
                           />
-                          <Text fontSize={'sm'}>ขนาดแนะนำแนวนอน 450px X 200px ชนิดรูป: png, jpg, jpeg.</Text>
+                          <Text fontSize={"sm"}>
+                            ขนาดแนะนำแนวนอน 450px X 200px ชนิดรูป: png, jpg,
+                            jpeg.
+                          </Text>
                         </Box>
                       </GridItem>
                       <GridItem colSpan={1} justifySelf="end">
@@ -790,10 +843,11 @@ export default function shop() {
                   <Tr>
                     <Th color={"white"}>
                       <Checkbox
-                        isChecked={allChecked}
-                        isIndeterminate={isIndeterminate}
-                        onChange={handleSelectAllChange}
-                      />
+                        isChecked={
+                          selectedProducts.length === getProducts.length
+                        }
+                        onChange={handleAllCheckboxChange}
+                      ></Checkbox>
                     </Th>
                     <Th color={"white"}>รหัสสินค้า</Th>
                     <Th color={"white"}>รูปสินค้า</Th>
@@ -804,17 +858,20 @@ export default function shop() {
                 </Thead>
                 <Tbody>
                   {getProducts.map((getPro, index) => (
-                    <Tr key={getPro.id}>
+                    <Tr key={index}>
                       <Td>
-                        {/* <Checkbox
-                          isChecked={getPro.checked}
-                          onChange={handleProductChange(getPro.id)}
-                        /> */}
+                        <Checkbox
+                          isChecked={selectedProducts.includes(getPro.id)}
+                          onChange={() => handleCheckboxChange(getPro.id)}
+                        />
                       </Td>
                       <Td>{getPro.sku}</Td>
                       <Td isNumeric>
                         <Image
-                          src={'https://shopee-api.deksilp.com/images/shopee/products/'+getPro.img_product}
+                          src={
+                            "https://shopee-api.deksilp.com/images/shopee/products/" +
+                            getPro.img_product
+                          }
                           height={"50px"}
                         />
                       </Td>
