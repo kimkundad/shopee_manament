@@ -53,7 +53,7 @@ const Sidebar = ({ open, navItems = defaultNavItems, setOpen }: Props) => {
         <ul className="py-7 flex flex-col gap-2 px-5">
           {navItems.map((item, index) => {
             const imageName = isHovering === index ? item.iconcurrentpage : item.icon;
-            return currentPath === item.href ? (
+            return currentPath.match(item.href) ? (
               <Link key={index} href={item.href}>
                 <li
                   className={classNames({

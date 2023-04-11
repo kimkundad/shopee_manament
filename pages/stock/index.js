@@ -292,7 +292,7 @@ export default function stock() {
                   </Table.Cell>
                   <Table.Cell>
                     <Center>
-                      <Image src={item.img_product} h="30px" w="30px" />
+                      <Image src={`https://shopee-api.deksilp.com/images/shopee/products/${item.img_product}`} h="30px" w="30px" />
                     </Center>
                   </Table.Cell>
                   <Table.Cell css={{ textAlign: "center" }}>

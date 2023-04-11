@@ -288,6 +288,24 @@ function addProductMultiSelect() {
     setDisplayAdditionOption(false);
     setDisplayAddProduct(true);
   }
+
+  const editDataTable = (event,index = null,subIndex = null,id) => {
+    const newArr = [...dataTable]
+
+    if(subIndex == null){
+      newArr[index] = {
+        ...newArr[index],[id]: event.target.value
+      }
+    }else {
+      console.log('1');
+      newArr[index].subOption[subIndex] = {
+        ...newArr[index].subOption[subIndex], [id]: event.target.value
+      }
+    }
+
+    setDataTable(newArr)
+    console.log(newArr);
+  }
   return (
     <>
       <Box>
@@ -751,34 +769,34 @@ function addProductMultiSelect() {
                         </Td>
                         <Td border="1px solid">
                           {item?.subOption?.length > 0
-                            ? item?.subOption[0]?.nameSubOption
+                            ? <Input value={item?.subOption[0]?.nameSubOption} onChange={(e) => editDataTable(e,index,0,'nameSubOption')}/>
                             : null}
                         </Td>
                         {item?.subOption?.length > 0 ? (
                           <Td border="1px solid">
-                            <Input value={item?.subOption[0].priceSubOption} />
+                            <Input value={item?.subOption[0].priceSubOption} onChange={(e) => editDataTable(e,index,0,'priceSubOption')}/>
                           </Td>
                         ) : (
                           <Td border="1px solid">
-                            <Input value={item?.priceOption} />
+                            <Input value={item?.priceOption} onChange={(e) => editDataTable(e,index,null,'priceOption')}/>
                           </Td>
                         )}
                         {item?.subOption?.length > 0 ? (
                           <Td border="1px solid">
-                            <Input value={item?.subOption[0].stockSubOption} />
+                            <Input value={item?.subOption[0].stockSubOption} onChange={(e) => editDataTable(e,index,0,'stockSubOption')}/>
                           </Td>
                         ) : (
                           <Td border="1px solid">
-                            <Input value={item?.stockOption} />
+                            <Input value={item?.stockOption} onChange={(e) => editDataTable(e,index,null,'stockOption')}/>
                           </Td>
                         )}
                         {item?.subOption?.length > 0 ? (
                           <Td border="1px solid">
-                            <Input value={item?.subOption[0].skuSubOption} />
+                            <Input value={item?.subOption[0].skuSubOption} onChange={(e) => editDataTable(e,index,0,'skuSubOption')}/>
                           </Td>
                         ) : (
                           <Td border="1px solid">
-                            <Input value={item?.skuOption} />
+                            <Input value={item?.skuOption} onChange={(e) => editDataTable(e,index,null,'skuOption')}/>
                           </Td>
                         )}
                         <Td border="1px solid">
@@ -801,10 +819,10 @@ function addProductMultiSelect() {
                       {item?.subOption?.map((subItem, subIndex) => {
                         return subIndex !== 0 ? (
                           <Tr key={`${item.nameOption}-${subIndex}`}>
-                            <Td border="1px solid">{subItem.nameSubOption}</Td>
-                            <Td border="1px solid">{subItem.priceSubOption}</Td>
-                            <Td border="1px solid">{subItem.skuSubOption}</Td>
-                            <Td border="1px solid">{subItem.stockSubOption}</Td>
+                            <Td border="1px solid"><Input value={subItem.nameSubOption} onChange={(e) => editDataTable(e,index,subIndex,'nameSubOption')}/></Td>
+                            <Td border="1px solid"><Input value={subItem.priceSubOption} onChange={(e) => editDataTable(e,index,subIndex,'priceSubOption')}/></Td>
+                            <Td border="1px solid"><Input value={subItem.skuSubOption} onChange={(e) => editDataTable(e,index,subIndex,'skuSubOption')}/></Td>
+                            <Td border="1px solid"><Input value={subItem.stockSubOption} onChange={(e) => editDataTable(e,index,subIndex,'stockSubOption')}/></Td>
                             <Td border="1px solid">
                               <Switch colorScheme="brand" />
                             </Td>
