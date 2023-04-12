@@ -604,7 +604,6 @@ function addProduct() {
                       <InputGroup>
                         <Input
                           pr="40px"
-                          type="text"
                           placeholder="ระบุน้ำหนักสินค้า"
                           value={weight}
                           onChange={(e) => setWeight(e.target.value)}
@@ -623,8 +622,8 @@ function addProduct() {
                       <InputGroup>
                         <Input
                           pr="40px"
-                          type="text"
                           placeholder="ระบุความกว้างสินค้า"
+                          onChange={(e) => setWidth(e.target.value)}
                         />
                         <InputRightElement>
                           <Text>Cm</Text>
@@ -633,8 +632,8 @@ function addProduct() {
                       <InputGroup mt="10px">
                         <Input
                           pr="40px"
-                          type="text"
                           placeholder="ระบุความยาวสินค้า"
+                          onChange={(e) => setLength(e.target.value)}
                         />
                         <InputRightElement>
                           <Text>Cm</Text>
@@ -643,8 +642,8 @@ function addProduct() {
                       <InputGroup mt="10px">
                         <Input
                           pr="40px"
-                          type="text"
                           placeholder="ระบุความสูงสินค้า"
+                          onChange={(e) => setHeight(e.target.value)}
                         />
                         <InputRightElement>
                           <Text>Cm</Text>

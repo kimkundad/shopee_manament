@@ -49,6 +49,18 @@ class PicturesWall extends React.Component {
     this.setState({ fileList });
   };
 
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.imageData !== prevState.imageData) {
+      const fileList = nextProps.imageData.map(image => ({
+        uid: image.id,
+        name: image.name,
+        status: 'done',
+        url: `https://shopee-api.deksilp.com/images/shopee/products/${image.image}`
+      }));
+      return { fileList, imageData: nextProps.imageData };
+    }
+    return null;
+  }
   render() {
     const { fileList } = this.state;
     const uploadButton = (
@@ -118,15 +130,74 @@ function UseEditProduct() {
   const router = useRouter();
   const productId = router.query.id;
 
+  const [dataTable, setDataTable] = useState([]);
+  const [category, setCategory] = useState([]);
   const [product, setProduct] = useState();
-  const [name_product, setName_product] = useState("");
-  const [detail_product, setDetail_product] = useState("");
-  const [price, setPrice] = useState("");
-  const [price_sales, setPrice_sales] = useState("");
-  const [cost, setCost] = useState("");
-  const [stock, setStock] = useState("");
-  const [weight, setWeight] = useState("");
-  const [sku, setSku] = useState("");
+  const [div, setDiv] = useState([]);
+  const [option, setOption] = useState("ตัวเลือกที่ 1");
+  const [subOption, setSubOption] = useState("ตัวเลือกที่ 2");
+  useEffect(() => {
+    async function fetchData() {
+      const category = await axios.get(
+        "https://shopee-api.deksilp.com/api/get_category_all"
+      );
+      setCategory(category.data.category);
+      if (productId) {
+        const product = await axios.get(
+          `https://shopee-api.deksilp.com/api/getProduct/?product_id=${productId}`
+        );
+        setProduct(product.data.product[0]);
+        setName_product(product.data.product[0].name_product);
+        setDetail_product(product.data.product[0].detail_product);
+        setPrice(product.data.product[0].price);
+        setPrice_sales(product.data.product[0].price_sales);
+        setCost(product.data.product[0].cost);
+        setStock(product.data.product[0].stock);
+        setWeight(product.data.product[0].weight);
+        setWidth(product.data.product[0].width_product);
+        setLength(product.data.product[0].length_product);
+        setHeight(product.data.product[0].height_product);
+        setSku(product.data.product[0].sku);
+        setCategoryId(product.data.product[0].category);
+        if (product.data.product[0].type == 1) {
+          setButtonActive([true, false]);
+        } else {
+          setButtonActive([false, true]);
+        }
+        let div = [];
+        if (product.data.product[0].option1 != null) {
+          let option = product.data.product[0].option1
+          setOption(option);
+          div.push([true])
+        }
+        if (product.data.product[0].option2 != null) {
+          let subOption = product.data.product[0].option2
+          setSubOption(subOption);
+          div.push([true])
+        }
+        setDiv(div);
+        setDataTable(product.data.product[0].allOption1);
+        setImageData(product.data.product[0].allImage)
+      }
+    }
+
+    fetchData();
+  }, [productId]);
+  console.log(dataTable);
+  console.log(product);
+  const [imageData,setImageData] = useState([])
+  const [name_product, setName_product] = useState(" ");
+  const [detail_product, setDetail_product] = useState(" ");
+  const [price, setPrice] = useState(" ");
+  const [price_sales, setPrice_sales] = useState(" ");
+  const [cost, setCost] = useState(" ");
+  const [stock, setStock] = useState(" ");
+  const [weight, setWeight] = useState(" ");
+  const [width, setWidth] = useState(" ");
+  const [length, setLength] = useState(" ");
+  const [height, setHeight] = useState(" ");
+  const [sku, setSku] = useState(" ");
+  const [categoryId, setCategoryId] = useState(" ");
   const [fileImage, setFileImage] = useState([]);
   const [fileImageOption, setFileImageOption] = useState([]);
   const [valueSelect, setValueSelect] = useState(null);
@@ -210,40 +281,11 @@ function UseEditProduct() {
     onOpenForm2();
   };
 
-  const [dataTable, setDataTable] = useState([]);
-  const [category, setCategory] = useState([]);
-  useEffect(() => {
-    async function fetchData() {
-      const category = await axios.get(
-        "https://shopee-api.deksilp.com/api/get_category_all"
-      );
-      setCategory(category.data.category);
-      if (productId) {
-        const product = await axios.get(
-          `https://shopee-api.deksilp.com/api/getProduct/?product_id=${productId}`
-        );
-        setProduct(product.data.product[0]);
-        if(product.data.product[0].type == 1){
-          setButtonActive([true,false])
-        }else{
-          setButtonActive([false,true])
-        }
-        setDataTable(product.data.product[0].allOption1)
-      }
-    }
-
-    fetchData();
-  }, [productId]);
-  console.log(dataTable);
-  console.log(product);
-  const [div, setDiv] = useState([]);
+  
   const handleSelectChange = () => {
     setDiv([...div, true]);
   };
-
   
-  const [option, setOption] = useState("ตัวเลือกที่ 1");
-  const [subOption, setSubOption] = useState("ตัวเลือกที่ 2");
 
   const [nameOption, setNameOption] = useState(null);
   const [priceOption, setPriceOption] = useState(null);
@@ -252,12 +294,12 @@ function UseEditProduct() {
   function addOption(event) {
     event.preventDefault();
     const arrOption = {
-      nameOption: nameOption,
-      priceOption: priceOption,
-      stockOption: stockOption,
-      skuOption: skuOption,
+      op_name: nameOption,
+      price: priceOption,
+      stock: stockOption,
+      sku: skuOption,
       indexImageOption: valueSelect,
-      subOption: [],
+      allOption2: [],
     };
 
     dataTable.push(arrOption);
@@ -277,7 +319,7 @@ function UseEditProduct() {
       stockSubOption: stockSubOption,
       skuSubOption: skuSubOption,
     };
-    dataTable[valueSelect].subOption.push(arrSubOption);
+    dataTable[valueSelect].allOption2.push(arrSubOption);
     setDataTable(dataTable);
     onCloseForm4();
   }
@@ -287,7 +329,7 @@ function UseEditProduct() {
       newArr.splice(index, 1);
       setDataTable(newArr);
     } else {
-      newArr[index].subOption.splice(subIndex, 1);
+      newArr[index].allOption2.splice(subIndex, 1);
       setDataTable(newArr);
     }
   }
@@ -301,8 +343,8 @@ function UseEditProduct() {
   function deleteAllSubOption() {
     setSubOption("ตัวเลือกที่ 2");
     dataTable.forEach((e) => {
-      if (e.subOption?.length > 0) {
-        e.subOption = [];
+      if (e.allOption2?.length > 0) {
+        e.allOption2 = [];
       }
     });
     setDiv([true]);
@@ -329,8 +371,8 @@ function UseEditProduct() {
         [id]: event.target.value,
       };
     } else {
-      newArr[index].subOption[subIndex] = {
-        ...newArr[index].subOption[subIndex],
+      newArr[index].allOption2[subIndex] = {
+        ...newArr[index].allOption2[subIndex],
         [id]: event.target.value,
       };
     }
@@ -430,7 +472,7 @@ function UseEditProduct() {
                           <Input
                             pr="100px"
                             type="text"
-                            value={product?.name_product}
+                            value={name_product}
                             placeholder="ระบุชื่อสินค้า"
                             borderColor="gray.400"
                             onChange={(e) => setName_product(e.target.value)}
@@ -438,7 +480,9 @@ function UseEditProduct() {
                             maxLength={100}
                           />
                           <InputRightElement pr="45px">
-                            <Text>{product?.name_product.length}/100</Text>
+                            <Text>
+                              {name_product ? name_product.length : 0}/100
+                            </Text>
                           </InputRightElement>
                         </InputGroup>
                       </GridItem>
@@ -458,7 +502,7 @@ function UseEditProduct() {
                               borderColor="gray.400"
                               placeholder="ระบุรายละเอียดสินค้า"
                               pr="60px"
-                              value={product?.detail_product}
+                              value={detail_product}
                               onChange={(e) =>
                                 setDetail_product(e.target.value)
                               }
@@ -469,7 +513,8 @@ function UseEditProduct() {
                               p="10px"
                             >
                               <Text pr="45px">
-                                {product?.detail_product.length}/3000
+                                {detail_product ? detail_product.length : 0}
+                                /3000
                               </Text>
                             </InputRightElement>
                           </InputGroup>
@@ -486,11 +531,12 @@ function UseEditProduct() {
                             placeholder="โปรดเลือก"
                             w="150px"
                             borderColor="gray.400"
-                            value={product?.category}
+                            value={categoryId}
+                            onChange={(e) => setCategoryId(e.target.value)}
                           >
                             {category?.map((item, index) => {
                               return (
-                                <option value={product?.category} key={index}>
+                                <option value={item.id} key={index}>
                                   {item.cat_name}
                                 </option>
                               );
@@ -505,7 +551,7 @@ function UseEditProduct() {
                       </GridItem>
                       <GridItem colSpan={2}>
                         <Box>
-                          <PicturesWall setFileImage={handleSetFileImage} />
+                          <PicturesWall setFileImage={handleSetFileImage} imageData={imageData} />
                         </Box>
                       </GridItem>
                       <GridItem colSpan={1} justifySelf="end">
@@ -530,7 +576,7 @@ function UseEditProduct() {
                           <Input
                             pr="40px"
                             placeholder="ระบุรหัสสินค้า"
-                            value={product?.sku}
+                            value={sku}
                             onChange={(e) => setSku(parseInt(e.target.value))}
                           />
                         </InputGroup>
@@ -546,7 +592,7 @@ function UseEditProduct() {
                             pr="40px"
                             type="number"
                             placeholder="ระบุต้นทุนสินค้า"
-                            value={product?.cost}
+                            value={cost}
                             onChange={(e) => setCost(parseInt(e.target.value))}
                           />
                           <InputRightElement>
@@ -565,7 +611,7 @@ function UseEditProduct() {
                             pr="40px"
                             type="number"
                             placeholder="ระบุราคาสินค้า"
-                            value={product?.price}
+                            value={price}
                             onChange={(e) => setPrice(parseInt(e.target.value))}
                             isRequired
                           />
@@ -585,7 +631,7 @@ function UseEditProduct() {
                             pr="40px"
                             type="number"
                             placeholder="ระบุลดราคา"
-                            value={product?.price_sales}
+                            value={price_sales}
                             onChange={(e) =>
                               setPrice_sales(parseInt(e.target.value))
                             }
@@ -605,7 +651,7 @@ function UseEditProduct() {
                           pr="50px"
                           type="number"
                           placeholder="ระบุจำนวนสินค้า"
-                          value={product?.stock}
+                          value={stock}
                           onChange={(e) => setStock(parseInt(e.target.value))}
                         />
                       </GridItem>
@@ -618,9 +664,8 @@ function UseEditProduct() {
                         <InputGroup>
                           <Input
                             pr="40px"
-                            type="text"
                             placeholder="ระบุน้ำหนักสินค้า"
-                            value={product?.weight}
+                            value={weight}
                             onChange={(e) => setWeight(e.target.value)}
                           />
                           <InputRightElement>
@@ -637,8 +682,9 @@ function UseEditProduct() {
                         <InputGroup>
                           <Input
                             pr="40px"
-                            type="text"
                             placeholder="ระบุความกว้างสินค้า"
+                            value={width}
+                            onChange={(e) => setWidth(e.target.value)}
                           />
                           <InputRightElement>
                             <Text>Cm</Text>
@@ -647,8 +693,9 @@ function UseEditProduct() {
                         <InputGroup mt="10px">
                           <Input
                             pr="40px"
-                            type="text"
                             placeholder="ระบุความยาวสินค้า"
+                            value={length}
+                            onChange={(e) => setLength(e.target.value)}
                           />
                           <InputRightElement>
                             <Text>Cm</Text>
@@ -657,8 +704,9 @@ function UseEditProduct() {
                         <InputGroup mt="10px">
                           <Input
                             pr="40px"
-                            type="text"
                             placeholder="ระบุความสูงสินค้า"
+                            value={height}
+                            onChange={(e) => setHeight(e.target.value)}
                           />
                           <InputRightElement>
                             <Text>Cm</Text>
@@ -747,6 +795,7 @@ function UseEditProduct() {
                   </Text>
                   <Box width="-webkit-fill-available">
                     <Input
+                      value={index == 0 ? option  : subOption}
                       onChange={
                         index == 0
                           ? (e) => setOption(e.target.value)
@@ -815,79 +864,83 @@ function UseEditProduct() {
                         <Td
                           border="1px solid"
                           rowSpan={
-                            item?.subOption?.length > 0
-                              ? item?.subOption?.length
+                            item?.allOption2?.length > 0
+                              ? item?.allOption2?.length
                               : 1
                           }
                         >
-                          {item.nameOption}
+                          {item.op_name}
                           <Image
-                            src={fileImage[item.indexImageOption]?.thumbUrl}
+                            src={`https://shopee-api.deksilp.com/images/shopee/products/${item.img_name}`}
                           />
                         </Td>
                         <Td border="1px solid">
-                          {item?.subOption?.length > 0 ? (
+                          {item?.allOption2?.length > 0 ? (
                             <Input
-                              value={item?.subOption[0]?.nameSubOption}
+                              value={
+                                item?.allOption2[0]?.sub_op_name !== "undefined"
+                                  ? item?.allOption2[0]?.sub_op_name
+                                  : ""
+                              }
                               onChange={(e) =>
-                                editDataTable(e, index, 0, "nameSubOption")
+                                editDataTable(e, index, 0, "sub_op_name")
                               }
                             />
                           ) : null}
                         </Td>
-                        {item?.subOption?.length > 0 ? (
+                        {item?.allOption2?.length > 0 ? (
                           <Td border="1px solid">
                             <Input
-                              value={item?.subOption[0].priceSubOption}
+                              value={item?.allOption2[0].price}
                               onChange={(e) =>
-                                editDataTable(e, index, 0, "priceSubOption")
+                                editDataTable(e, index, 0, "price")
                               }
                             />
                           </Td>
                         ) : (
                           <Td border="1px solid">
                             <Input
-                              value={item?.priceOption}
+                              value={item?.price}
                               onChange={(e) =>
-                                editDataTable(e, index, null, "priceOption")
+                                editDataTable(e, index, null, "price")
                               }
                             />
                           </Td>
                         )}
-                        {item?.subOption?.length > 0 ? (
+                        {item?.allOption2?.length > 0 ? (
                           <Td border="1px solid">
                             <Input
-                              value={item?.subOption[0].stockSubOption}
+                              value={item?.allOption2[0].stock}
                               onChange={(e) =>
-                                editDataTable(e, index, 0, "stockSubOption")
+                                editDataTable(e, index, 0, "stock")
                               }
                             />
                           </Td>
                         ) : (
                           <Td border="1px solid">
                             <Input
-                              value={item?.stockOption}
+                              value={item?.stock}
                               onChange={(e) =>
-                                editDataTable(e, index, null, "stockOption")
+                                editDataTable(e, index, null, "stock")
                               }
                             />
                           </Td>
                         )}
-                        {item?.subOption?.length > 0 ? (
+                        {item?.allOption2?.length > 0 ? (
                           <Td border="1px solid">
                             <Input
-                              value={item?.subOption[0].skuSubOption}
+                              value={item?.allOption2[0].sku}
                               onChange={(e) =>
-                                editDataTable(e, index, 0, "skuSubOption")
+                                editDataTable(e, index, 0, "sku")
                               }
                             />
                           </Td>
                         ) : (
                           <Td border="1px solid">
                             <Input
-                              value={item?.skuOption}
+                              value={item?.sku}
                               onChange={(e) =>
-                                editDataTable(e, index, null, "skuOption")
+                                editDataTable(e, index, null, "sku")
                               }
                             />
                           </Td>
@@ -895,7 +948,7 @@ function UseEditProduct() {
                         <Td border="1px solid">
                           <Switch colorScheme="brand" />
                         </Td>
-                        {item?.subOption?.length == 0 ? (
+                        {item?.allOption2?.length == 0 ? (
                           <Td border="1px solid">
                             <Button onClick={() => deleteOption(index)}>
                               <Image src="/images/trash-bin.png" h="25px" />
@@ -909,58 +962,43 @@ function UseEditProduct() {
                           </Td>
                         )}
                       </Tr>
-                      {item?.subOption?.map((subItem, subIndex) => {
+                      {item?.allOption2?.map((subItem, subIndex) => {
                         return subIndex !== 0 ? (
-                          <Tr key={`${item.nameOption}-${subIndex}`}>
+                          <Tr key={`${item.sub_op_name}-${subIndex}`}>
                             <Td border="1px solid">
                               <Input
-                                value={subItem.nameSubOption}
+                                value={subItem.sub_op_name}
                                 onChange={(e) =>
                                   editDataTable(
                                     e,
                                     index,
                                     subIndex,
-                                    "nameSubOption"
+                                    "sub_op_name"
                                   )
                                 }
                               />
                             </Td>
                             <Td border="1px solid">
                               <Input
-                                value={subItem.priceSubOption}
+                                value={subItem.price}
                                 onChange={(e) =>
-                                  editDataTable(
-                                    e,
-                                    index,
-                                    subIndex,
-                                    "priceSubOption"
-                                  )
+                                  editDataTable(e, index, subIndex, "price")
                                 }
                               />
                             </Td>
                             <Td border="1px solid">
                               <Input
-                                value={subItem.skuSubOption}
+                                value={subItem.sku}
                                 onChange={(e) =>
-                                  editDataTable(
-                                    e,
-                                    index,
-                                    subIndex,
-                                    "skuSubOption"
-                                  )
+                                  editDataTable(e, index, subIndex, "sku")
                                 }
                               />
                             </Td>
                             <Td border="1px solid">
                               <Input
-                                value={subItem.stockSubOption}
+                                value={subItem.stock}
                                 onChange={(e) =>
-                                  editDataTable(
-                                    e,
-                                    index,
-                                    subIndex,
-                                    "stockSubOption"
-                                  )
+                                  editDataTable(e, index, subIndex, "stock")
                                 }
                               />
                             </Td>
@@ -1116,7 +1154,7 @@ function UseEditProduct() {
                             flexDirection="column-reverse"
                             onClick={(event) => setValueSelect(index)}
                           >
-                            {item.nameOption}
+                            {item.op_name}
                           </Radio>
                         );
                       })}
