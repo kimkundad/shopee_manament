@@ -388,8 +388,6 @@ export default function shop() {
     }
   };
 
-  // console.log('Product : ',getProducts);
-
   return (
     <>
       <Box m="10px" pt="10px" pb={"10px"}>
@@ -896,7 +894,7 @@ export default function shop() {
       </Modal>
       {/* End Modal Next step สร้างร้านค้า */}
 
-      {/* Modal สร้างร้านค้า */}
+      {/* Modal Preview สร้างร้านค้า */}
       <Modal
         closeOnOverlayClick={false}
         onClose={modalPreview.onClose}
@@ -914,7 +912,9 @@ export default function shop() {
             height={"20px"}
             fontSize={"9px"}
           />
-          <ModalBody></ModalBody>
+          <ModalBody>
+            
+          </ModalBody>
           <ModalFooter justifyContent={"center"}>
             <Button
               onClick={modalPreview.onClose}

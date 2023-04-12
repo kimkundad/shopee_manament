@@ -167,8 +167,8 @@ function modalEditStep1(props) {
       name: Shops.img_shop,
       status: "done",
       url: `https://shopee-api.deksilp.com/images/shopee/shop/${Shops.img_shop}`,
-    }
-  ]
+    },
+  ];
 
   const imageCoverShopCheck = [
     {
@@ -176,15 +176,16 @@ function modalEditStep1(props) {
       name: Shops.cover_img_shop,
       status: "done",
       url: `https://shopee-api.deksilp.com/images/shopee/cover_img_shop/${Shops.cover_img_shop}`,
-    }
-  ]
+    },
+  ];
 
   const [editFileImgShop, setEditFileImgShop] = useState(imageShopCheck);
   const handleSetEditFileImgShop = (fileList) => {
     setEditFileImgShop(fileList);
   };
 
-  const [editFileImgCoverShop, setEditFileImgCoverShop] = useState(imageCoverShopCheck);
+  const [editFileImgCoverShop, setEditFileImgCoverShop] =
+    useState(imageCoverShopCheck);
   const handleSetEditFileImgCoverShop = (fileList) => {
     setEditFileImgCoverShop(fileList);
   };
@@ -200,7 +201,7 @@ function modalEditStep1(props) {
   };
 
   useEffect(() => {
-    fetchListProduct()
+    fetchListProduct();
   }, []);
 
   const onChangeNameShop = (e) => {
@@ -222,7 +223,12 @@ function modalEditStep1(props) {
     setIsLoading(true);
     try {
       await schema.validate(
-        { inputField: editNameShop, textAreaField: editDetailShop, fileField:  editFileImgShop[0], fileCoverField: editFileImgCoverShop[0]},
+        {
+          inputField: editNameShop,
+          textAreaField: editDetailShop,
+          fileField: editFileImgShop[0],
+          fileCoverField: editFileImgCoverShop[0],
+        },
         { abortEarly: false }
       );
       // ส่งค่าไปยัง API หรือทำอื่นๆ ที่ต้องการ
@@ -450,8 +456,8 @@ function modalEditStep1(props) {
                             }
                             nameImgCoverShop={Shops.cover_img_shop}
                           />
-                          {textImageCoverShopError &&  (
-                            <Text fontSize={'sm'} color={'red'}>
+                          {textImageCoverShopError && (
+                            <Text fontSize={"sm"} color={"red"}>
                               *{textImageCoverShopError}
                             </Text>
                           )}
