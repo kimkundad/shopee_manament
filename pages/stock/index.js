@@ -32,7 +32,9 @@ export default function stock() {
   useEffect(() => {
     async function fetchData() {
       let checkAll = true;
-      const res = await axios.get("https://shopee-api.deksilp.com/api/getAllProduct");
+      const res = await axios.get(
+        "https://shopee-api.deksilp.com/api/getAllProduct"
+      );
       setProducts(res.data);
       if (res.data.product.length > 0) {
         res.data.product.map((products) => {
@@ -103,8 +105,8 @@ export default function stock() {
       );
     }
     fetchData();
-  }
- 
+  };
+
   //pagination
   const [itemsPerPage, setItemPerpages] = useState(5);
   const handleSelectChange = async (event) => {
@@ -282,7 +284,9 @@ export default function stock() {
                   <Table.Cell css={{ textAlign: "center" }}>
                     <Switch
                       colorScheme="brand"
-                      isChecked={isCheckedAll ? true : item.active === 0 ? false : true}
+                      isChecked={
+                        isCheckedAll ? true : item.active === 0 ? false : true
+                      }
                       onChange={handleActivateProduct}
                       id={item.id}
                     />
@@ -292,32 +296,71 @@ export default function stock() {
                   </Table.Cell>
                   <Table.Cell>
                     <Center>
-                      <Image src={`https://shopee-api.deksilp.com/images/shopee/products/${item.img_product}`} h="30px" w="30px" />
+                      <Image
+                        src={`https://shopee-api.deksilp.com/images/shopee/products/${item.img_product}`}
+                        h="30px"
+                        w="30px"
+                      />
                     </Center>
                   </Table.Cell>
-                  <Table.Cell css={{ textAlign: "center" }}>
-                  {item.name_product.length > 10
-                            ? item.name_product.substr(0, 10) + "..."
-                            : item.name_product}
+                  <Table.Cell
+                    css={{
+                      textAlign: "center",
+                      paddingRight: "0px !important",
+                    }}
+                  >
+                    {item.name_product.length > 10
+                      ? item.name_product.substr(0, 10) + "..."
+                      : item.name_product}
                   </Table.Cell>
-                  <Table.Cell css={{ textAlign: "center" }}>
+                  <Table.Cell
+                    css={{
+                      textAlign: "center",
+                      paddingRight: "0px !important",
+                    }}
+                  >
                     {item.stock}
                   </Table.Cell>
-                  <Table.Cell css={{ textAlign: "center" }}>
+                  <Table.Cell
+                    css={{
+                      textAlign: "center",
+                      paddingRight: "0px !important",
+                    }}
+                  >
                     {item.cost}
                   </Table.Cell>
-                  <Table.Cell css={{ textAlign: "center" }}>
+                  <Table.Cell
+                    css={{
+                      textAlign: "center",
+                      paddingRight: "0px !important",
+                    }}
+                  >
                     {item.price}
                   </Table.Cell>
-                  <Table.Cell css={{ textAlign: "center" }}>
+                  <Table.Cell
+                    css={{
+                      textAlign: "center",
+                      paddingRight: "0px !important",
+                    }}
+                  >
                     {item.created_at}
                   </Table.Cell>
-                  <Table.Cell css={{ textAlign: "center" }}>
+                  <Table.Cell
+                    css={{
+                      textAlign: "center",
+                      paddingRight: "0px !important",
+                    }}
+                  >
                     {item.maker}
                   </Table.Cell>
-                  <Table.Cell css={{ textAlign: "center" }}>
-                    <Flex justifyContent="center" w="70px">
-                      <Link href="/">
+                  <Table.Cell
+                    css={{
+                      textAlign: "center",
+                      paddingRight: "0px !important",
+                    }}
+                  >
+                    <Flex justifyContent="center" w="100%">
+                      <Link href={`/stock/editProduct/${item.id}`}>
                         <Image src="/images/edit.png" h="25px" />
                       </Link>
                       <Image

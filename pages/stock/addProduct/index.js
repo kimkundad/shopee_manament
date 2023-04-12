@@ -71,10 +71,21 @@ class PicturesWall extends React.Component {
     );
   }
 }
+class VideoPlayer extends React.Component {
+  render() {
+    return (
+      <video controls>
+        <source src={this.props.videoSrc} type="video/mp4" />
+      </video>
+    );
+  }
+}
+
 class VideoWall extends React.Component {
   state = {
     fileList: [],
   };
+
   handleChange = ({ fileList }) => {
     this.props.setFileVideo(fileList);
     this.setState({ fileList });
@@ -97,11 +108,14 @@ class VideoWall extends React.Component {
         >
           {fileList.length >= 2 ? null : uploadButton}
         </Upload>
+        {fileList.map((file) => (
+          <VideoPlayer key={file.uid} videoSrc={file.url} />
+        ))}
       </>
     );
   }
 }
-function addProductMultiSelect() {
+function addProduct() {
   const [name_product, setName_product] = useState("");
   const [detail_product, setDetail_product] = useState("");
   const [price, setPrice] = useState("");
@@ -109,10 +123,14 @@ function addProductMultiSelect() {
   const [cost, setCost] = useState("");
   const [stock, setStock] = useState("");
   const [weight, setWeight] = useState("");
+  const [width, setWidth] = useState("");
+  const [length, setLength] = useState("");
+  const [height, setHeight] = useState("");
   const [sku, setSku] = useState("");
   const [fileImage, setFileImage] = useState([]);
   const [fileImageOption, setFileImageOption] = useState([]);
   const [valueSelect, setValueSelect] = useState(null);
+  const [categoryId,setCategoryId] = useState(null);
   const handleSetFileImage = (fileList) => {
     setFileImage(fileList);
   };
@@ -121,7 +139,7 @@ function addProductMultiSelect() {
     setFileVideo(fileList);
   };
 
-  const [buttonActive, setButtonActive] = useState([false, true]);
+  const [buttonActive, setButtonActive] = useState([true, false]);
 
   const handelButton = (event) => {
     event.target.id === "0"
@@ -178,14 +196,19 @@ function addProductMultiSelect() {
     formData.append("cost", cost);
     formData.append("stock", stock);
     formData.append("weight", weight);
+    formData.append("width_product", width);
+    formData.append("length_product", length);
+    formData.append("height_product", height);
     formData.append("sku", sku);
-    formData.append("sub_option", subOption);
+    formData.append("category", categoryId);
+    formData.append("option1", option);
+    formData.append("option2", subOption);
     fileImage.forEach((file, index) => {
       formData.append(`file[${index}]`, file.originFileObj);
     });
     formData.append("dataOption", JSON.stringify(dataTable));
     const response = await axios.post(
-      "https://shopee-api.deksilp.com/api/addProductMultiOption",
+      "https://shopee-api.deksilp.com/api/addProduct",
       formData,
       { headers: { "Content-Type": "multipart/form-data" } }
     );
@@ -289,23 +312,24 @@ function addProductMultiSelect() {
     setDisplayAddProduct(true);
   }
 
-  const editDataTable = (event,index = null,subIndex = null,id) => {
-    const newArr = [...dataTable]
+  const editDataTable = (event, index = null, subIndex = null, id) => {
+    const newArr = [...dataTable];
 
-    if(subIndex == null){
+    if (subIndex == null) {
       newArr[index] = {
-        ...newArr[index],[id]: event.target.value
-      }
-    }else {
-      console.log('1');
+        ...newArr[index],
+        [id]: event.target.value,
+      };
+    } else {
       newArr[index].subOption[subIndex] = {
-        ...newArr[index].subOption[subIndex], [id]: event.target.value
-      }
+        ...newArr[index].subOption[subIndex],
+        [id]: event.target.value,
+      };
     }
 
-    setDataTable(newArr)
-    console.log(newArr);
-  }
+    setDataTable(newArr);
+  };
+  console.log(categoryId);
   return (
     <>
       <Box>
@@ -340,42 +364,38 @@ function addProductMultiSelect() {
               <WrapItem>
                 <Center>
                   <Box>
-                    <Link href="/stock/addProduct">
-                      <Button
-                        id="0"
-                        bg={buttonActive[0] ? "red" : "white"}
-                        color={buttonActive[0] ? "white" : "red"}
-                        border="2px solid red"
-                        fontSize="24px"
-                        borderRadius="3xl"
-                        w="150px"
-                        _hover={{}}
-                        onClick={handelButton}
-                      >
-                        สินค้าชิ้นเดียว
-                      </Button>
-                    </Link>
+                    <Button
+                      id="0"
+                      bg={buttonActive[0] ? "red" : "white"}
+                      color={buttonActive[0] ? "white" : "red"}
+                      border="2px solid red"
+                      fontSize="24px"
+                      borderRadius="3xl"
+                      w="150px"
+                      _hover={{}}
+                      onClick={handelButton}
+                    >
+                      สินค้าชิ้นเดียว
+                    </Button>
                   </Box>
                 </Center>
               </WrapItem>
               <WrapItem>
                 <Center>
                   <Box>
-                    <Link href="/stock/addProductMultiSelect">
-                      <Button
-                        id="1"
-                        bg={buttonActive[1] ? "red" : "white"}
-                        color={buttonActive[1] ? "white" : "red"}
-                        border="2px solid red"
-                        fontSize="24px"
-                        borderRadius="3xl"
-                        w="150px"
-                        _hover={{}}
-                        onClick={handelButton}
-                      >
-                        สินค้ามีตัวเลือก
-                      </Button>
-                    </Link>
+                    <Button
+                      id="1"
+                      bg={buttonActive[1] ? "red" : "white"}
+                      color={buttonActive[1] ? "white" : "red"}
+                      border="2px solid red"
+                      fontSize="24px"
+                      borderRadius="3xl"
+                      w="150px"
+                      _hover={{}}
+                      onClick={handelButton}
+                    >
+                      สินค้ามีตัวเลือก
+                    </Button>
                   </Box>
                 </Center>
               </WrapItem>
@@ -451,10 +471,11 @@ function addProductMultiSelect() {
                           placeholder="โปรดเลือก"
                           w="150px"
                           borderColor="gray.400"
+                          onChange={(e) => setCategoryId(e.target.value)}
                         >
                           {category?.map((item, index) => {
                             return (
-                              <option value={item.cat_name} key={index}>
+                              <option value={item.id} key={index}>
                                 {item.cat_name}
                               </option>
                             );
@@ -629,25 +650,47 @@ function addProductMultiSelect() {
                           <Text>Cm</Text>
                         </InputRightElement>
                       </InputGroup>
+                      {buttonActive[0] ? (
+                        <Flex justifyContent="center" pt="10px">
+                          <Button>ยกเลิก</Button>
+                          <Button
+                            ml="10px"
+                            type="submit"
+                            bg="red"
+                            color="white"
+                            leftIcon={
+                              <Image src="/images/save.png" alt="" h="25px" />
+                            }
+                            _hover={{}}
+                            onClick={comfirmSave}
+                          >
+                            บันทึก
+                          </Button>
+                        </Flex>
+                      ) : (
+                        <Flex justifyContent="center" pt="10px">
+                          <Button
+                            type="submit"
+                            bg="red"
+                            leftIcon={
+                              <Image
+                                src="/images/pluswhite.png"
+                                alt=""
+                                h="15px"
+                              />
+                            }
+                            _hover={{}}
+                            color="white"
+                            h="35px"
+                            fontSize="21px"
+                            onClick={additionOption}
+                          >
+                            เพิ่มตัวเลือกสินค้า
+                          </Button>
+                        </Flex>
+                      )}
                     </GridItem>
                   </Grid>
-                  <Flex justifyContent="center" pt="10px">
-                    <Button
-                      ml="200px"
-                      type="submit"
-                      bg="red"
-                      leftIcon={
-                        <Image src="/images/pluswhite.png" alt="" h="15px" />
-                      }
-                      _hover={{}}
-                      color="white"
-                      h="35px"
-                      fontSize="21px"
-                      onClick={additionOption}
-                    >
-                      เพิ่มตัวเลือกสินค้า
-                    </Button>
-                  </Flex>
                 </GridItem>
               </Grid>
             </Box>
@@ -675,9 +718,9 @@ function addProductMultiSelect() {
                 </Text>
               </Flex>
               <Spacer />
-              <Link href="/stock">
+              <Box onClick={hideAdditionOption}>
                 <Image src="/images/close.png" alt="" h="20px" w="20px" />
-              </Link>
+              </Box>
             </Flex>
           </Box>
           <Box px="10%">
@@ -768,35 +811,70 @@ function addProductMultiSelect() {
                           />
                         </Td>
                         <Td border="1px solid">
-                          {item?.subOption?.length > 0
-                            ? <Input value={item?.subOption[0]?.nameSubOption} onChange={(e) => editDataTable(e,index,0,'nameSubOption')}/>
-                            : null}
+                          {item?.subOption?.length > 0 ? (
+                            <Input
+                              value={item?.subOption[0]?.nameSubOption}
+                              onChange={(e) =>
+                                editDataTable(e, index, 0, "nameSubOption")
+                              }
+                            />
+                          ) : null}
                         </Td>
                         {item?.subOption?.length > 0 ? (
                           <Td border="1px solid">
-                            <Input value={item?.subOption[0].priceSubOption} onChange={(e) => editDataTable(e,index,0,'priceSubOption')}/>
+                            <Input
+                              value={item?.subOption[0].priceSubOption}
+                              onChange={(e) =>
+                                editDataTable(e, index, 0, "priceSubOption")
+                              }
+                            />
                           </Td>
                         ) : (
                           <Td border="1px solid">
-                            <Input value={item?.priceOption} onChange={(e) => editDataTable(e,index,null,'priceOption')}/>
+                            <Input
+                              value={item?.priceOption}
+                              onChange={(e) =>
+                                editDataTable(e, index, null, "priceOption")
+                              }
+                            />
                           </Td>
                         )}
                         {item?.subOption?.length > 0 ? (
                           <Td border="1px solid">
-                            <Input value={item?.subOption[0].stockSubOption} onChange={(e) => editDataTable(e,index,0,'stockSubOption')}/>
+                            <Input
+                              value={item?.subOption[0].stockSubOption}
+                              onChange={(e) =>
+                                editDataTable(e, index, 0, "stockSubOption")
+                              }
+                            />
                           </Td>
                         ) : (
                           <Td border="1px solid">
-                            <Input value={item?.stockOption} onChange={(e) => editDataTable(e,index,null,'stockOption')}/>
+                            <Input
+                              value={item?.stockOption}
+                              onChange={(e) =>
+                                editDataTable(e, index, null, "stockOption")
+                              }
+                            />
                           </Td>
                         )}
                         {item?.subOption?.length > 0 ? (
                           <Td border="1px solid">
-                            <Input value={item?.subOption[0].skuSubOption} onChange={(e) => editDataTable(e,index,0,'skuSubOption')}/>
+                            <Input
+                              value={item?.subOption[0].skuSubOption}
+                              onChange={(e) =>
+                                editDataTable(e, index, 0, "skuSubOption")
+                              }
+                            />
                           </Td>
                         ) : (
                           <Td border="1px solid">
-                            <Input value={item?.skuOption} onChange={(e) => editDataTable(e,index,null,'skuOption')}/>
+                            <Input
+                              value={item?.skuOption}
+                              onChange={(e) =>
+                                editDataTable(e, index, null, "skuOption")
+                              }
+                            />
                           </Td>
                         )}
                         <Td border="1px solid">
@@ -819,10 +897,58 @@ function addProductMultiSelect() {
                       {item?.subOption?.map((subItem, subIndex) => {
                         return subIndex !== 0 ? (
                           <Tr key={`${item.nameOption}-${subIndex}`}>
-                            <Td border="1px solid"><Input value={subItem.nameSubOption} onChange={(e) => editDataTable(e,index,subIndex,'nameSubOption')}/></Td>
-                            <Td border="1px solid"><Input value={subItem.priceSubOption} onChange={(e) => editDataTable(e,index,subIndex,'priceSubOption')}/></Td>
-                            <Td border="1px solid"><Input value={subItem.skuSubOption} onChange={(e) => editDataTable(e,index,subIndex,'skuSubOption')}/></Td>
-                            <Td border="1px solid"><Input value={subItem.stockSubOption} onChange={(e) => editDataTable(e,index,subIndex,'stockSubOption')}/></Td>
+                            <Td border="1px solid">
+                              <Input
+                                value={subItem.nameSubOption}
+                                onChange={(e) =>
+                                  editDataTable(
+                                    e,
+                                    index,
+                                    subIndex,
+                                    "nameSubOption"
+                                  )
+                                }
+                              />
+                            </Td>
+                            <Td border="1px solid">
+                              <Input
+                                value={subItem.priceSubOption}
+                                onChange={(e) =>
+                                  editDataTable(
+                                    e,
+                                    index,
+                                    subIndex,
+                                    "priceSubOption"
+                                  )
+                                }
+                              />
+                            </Td>
+                            <Td border="1px solid">
+                              <Input
+                                value={subItem.skuSubOption}
+                                onChange={(e) =>
+                                  editDataTable(
+                                    e,
+                                    index,
+                                    subIndex,
+                                    "skuSubOption"
+                                  )
+                                }
+                              />
+                            </Td>
+                            <Td border="1px solid">
+                              <Input
+                                value={subItem.stockSubOption}
+                                onChange={(e) =>
+                                  editDataTable(
+                                    e,
+                                    index,
+                                    subIndex,
+                                    "stockSubOption"
+                                  )
+                                }
+                              />
+                            </Td>
                             <Td border="1px solid">
                               <Switch colorScheme="brand" />
                             </Td>
@@ -1083,4 +1209,4 @@ function addProductMultiSelect() {
   );
 }
 
-export default addProductMultiSelect;
+export default addProduct;
