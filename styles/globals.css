@@ -36,6 +36,7 @@ td {
     border-width: 0 !important;
     box-shadow: none !important;
 }
+
 .dropzone {
     flex: 1;
     display: flex;
@@ -55,6 +56,13 @@ td {
     border-color: #2196f3;
 }
 
-.anticon-eye{
+.anticon-eye {
     display: none !important;
+}
+
+.swiper-horizontal>.swiper-pagination-bullets,
+.swiper-pagination-bullets.swiper-pagination-horizontal,
+.swiper-pagination-custom,
+.swiper-pagination-fraction {
+    bottom: 55px !important;
 }

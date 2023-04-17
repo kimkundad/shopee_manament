@@ -58,6 +58,7 @@ import {
   MenuItem,
   RadioGroup,
   Radio,
+  IconButton,
 } from "@chakra-ui/react";
 import ListCheck from "@/components/MenuList";
 import CardShop from "@/components/cardShop";
@@ -65,6 +66,16 @@ import Axios from "axios";
 import { PlusOutlined } from "@ant-design/icons";
 import { Upload } from "antd";
 import * as yup from "yup";
+import SwiperCore, { Navigation, Pagination } from "swiper";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
+
+// Import Swiper styles
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+
+SwiperCore.use([Navigation, Pagination]);
 
 const schema = yup.object().shape({
   inputField: yup.string().required("กรุณากรอกขื่อร้านค้า"),
@@ -161,6 +172,7 @@ export default function shop() {
   const modalPreview = useDisclosure();
   const modalConfirm = useDisclosure();
   const modalConfirmSuccess = useDisclosure();
+  const modalSelectTheme = useDisclosure();
   const [statusDelete, setStatusDelete] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [inputFieldError, setInputFieldError] = useState("");
@@ -168,6 +180,7 @@ export default function shop() {
   const [textImageShopError, setTextImageShopError] = useState("");
   const [textImageCoverShopError, setTextImageCoverShopError] = useState("");
   const [selectedProducts, setSelectedProducts] = useState([]);
+  const [Theme, setTheme] = useState("");
 
   const [fileImgShop, setFileImgShop] = useState([]);
   const handleSetFileImgShop = (fileList) => {
@@ -194,7 +207,7 @@ export default function shop() {
       );
       // ส่งค่าไปยัง API หรือทำอื่นๆ ที่ต้องการ
       modalAdd.onClose();
-      modalAdd2.onOpen();
+      modalSelectTheme.onOpen();
       setInputFieldError("");
       setTextAreaFieldError("");
       setTextImageShopError("");
@@ -224,6 +237,12 @@ export default function shop() {
       }
     }
     setIsLoading(false);
+  };
+
+  const handleNextModalSelectProduct = () => {
+    console.log('Theme:',Theme)
+    modalSelectTheme.onClose();
+    modalAdd2.onOpen();
   };
 
   const handleConfirm = () => {
@@ -385,6 +404,20 @@ export default function shop() {
       setSelectedProducts(selectedProducts.filter((id) => id !== productId));
     } else {
       setSelectedProducts([...selectedProducts, productId]);
+    }
+  };
+
+  const [swiper, setSwiper] = useState(null);
+
+  const goPrev = () => {
+    if (swiper) {
+      swiper.slidePrev();
+    }
+  };
+
+  const goNext = () => {
+    if (swiper) {
+      swiper.slideNext();
     }
   };
 
@@ -760,6 +793,104 @@ export default function shop() {
       </Modal>
       {/* End Modal สร้างร้านค้า */}
 
+      {/* Modal เลือกธีม */}
+      <Modal
+        closeOnOverlayClick={false}
+        onClose={modalSelectTheme.onClose}
+        size={"xl"}
+        isOpen={modalSelectTheme.isOpen}
+        scrollBehavior={"inside"}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            <Flex justifyContent={"center"}>
+              <Image
+                src="/images/addshop.png"
+                width={"40px"}
+                height={"35px"}
+                mr={"10px"}
+              />
+              <Text fontSize={"4xl"}>เลือกธีมร้านค้า</Text>
+            </Flex>
+          </ModalHeader>
+          <ModalCloseButton
+            color={"white"}
+            bgColor={"#ff0000"}
+            borderRadius={"50px"}
+            width={"20px"}
+            height={"20px"}
+            fontSize={"9px"}
+          />
+          <ModalBody>
+            <RadioGroup defaultValue="0" onChange={setTheme}>
+              <Grid templateColumns="repeat(2, 1fr)" gap={8}>
+                <GridItem
+                  border={"2px solid blue"}
+                  padding={"0.5rem"}
+                  borderRadius={"15px"}
+                >
+                  <Box textAlign={"center"}>
+                    <Heading>สีขาว</Heading>
+                    {/* <Image
+                      borderRadius={"15px"}
+                      src={
+                        "https://shopee-api.deksilp.com/images/shopee/cover_img_shop/zC0vOKXtODAu7qb5YTeS4rYq9NTcJ3mmDpTm6Pxe.jpg"
+                      }
+                    /> */}
+                    <Radio colorScheme="blue" value="0">
+                      ธีมขาว
+                    </Radio>
+                  </Box>
+                </GridItem>
+                <GridItem
+                  border={"2px solid gray"}
+                  padding={"0.5rem"}
+                  borderRadius={"15px"}
+                >
+                  <Box textAlign={"center"}>
+                    <Heading>สีดำ</Heading>
+                    {/* <Image
+                      borderRadius={"15px"}
+                      src={
+                        "https://shopee-api.deksilp.com/images/shopee/cover_img_shop/zqCs2uwIQGr76ijJetmn44cofVs3vWhsmbXqtYTW.jpg"
+                      }
+                    /> */}
+                    <Radio colorScheme="gray" value="1">
+                      ธีมดำ
+                    </Radio>
+                  </Box>
+                </GridItem>
+              </Grid>
+            </RadioGroup>
+          </ModalBody>
+          <ModalFooter justifyContent={"center"}>
+            <Button
+              onClick={modalSelectTheme.onClose}
+              bgColor={"white"}
+              color={"gray"}
+              border={"2px solid gray"}
+              px={"2rem"}
+              height={"35px"}
+              mr={"10px"}
+            >
+              ยกเลิก
+            </Button>
+            <Button
+              onClick={handleNextModalSelectProduct}
+              bgColor={"#ff0000"}
+              color={"white"}
+              px={"2rem"}
+              height={"35px"}
+              // disabled={isLoading}
+            >
+              ถัดไป
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      {/* End Modal เลือกธีม */}
+
       {/* Modal Next step สร้างร้านค้า */}
       <Modal
         closeOnOverlayClick={false}
@@ -898,7 +1029,7 @@ export default function shop() {
       <Modal
         closeOnOverlayClick={false}
         onClose={modalPreview.onClose}
-        size={"xl"}
+        size={"md"}
         isOpen={modalPreview.isOpen}
       >
         <ModalOverlay />
@@ -912,8 +1043,93 @@ export default function shop() {
             height={"20px"}
             fontSize={"9px"}
           />
-          <ModalBody>
-            
+          <ModalBody paddingStart={"4rem"} paddingEnd={"4rem"}>
+            <div className="swiper-container">
+              <Swiper
+                onSwiper={setSwiper}
+                navigation={{
+                  prevEl: ".swiper-button-prev",
+                  nextEl: ".swiper-button-next",
+                }}
+                pagination={{
+                  el: ".swiper-pagination",
+                  clickable: true,
+                }}
+              >
+                <SwiperSlide>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <Image src={"/images/previewShop.jpg"} height={"33rem"} />
+                  </Box>
+                </SwiperSlide>
+                <SwiperSlide>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <Image src={"/images/previewShop.jpg"} height={"33rem"} />
+                  </Box>
+                </SwiperSlide>
+                <SwiperSlide>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <Image src={"/images/previewShop.jpg"} height={"33rem"} />
+                  </Box>
+                </SwiperSlide>
+                <SwiperSlide>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <Image src={"/images/previewShop.jpg"} height={"33rem"} />
+                  </Box>
+                </SwiperSlide>
+                <SwiperSlide>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <Image src={"/images/previewShop.jpg"} height={"33rem"} />
+                  </Box>
+                </SwiperSlide>
+              </Swiper>
+              <IconButton
+                position="absolute"
+                top="50%"
+                left="10px"
+                transform="translateY(-50%)"
+                aria-label="Previous"
+                background={"#edf2f700"}
+                borderRadius={"50px"}
+                fontSize={"30px"}
+                border={"2px solid"}
+                icon={<ChevronLeftIcon />}
+                onClick={goPrev}
+              />
+              <IconButton
+                position="absolute"
+                top="50%"
+                right="10px"
+                transform="translateY(-50%)"
+                aria-label="Next"
+                background={"#edf2f700"}
+                borderRadius={"50px"}
+                fontSize={"30px"}
+                border={"2px solid"}
+                icon={<ChevronRightIcon />}
+                onClick={goNext}
+              />
+              <div className="swiper-pagination"></div>
+            </div>
           </ModalBody>
           <ModalFooter justifyContent={"center"}>
             <Button

@@ -50,11 +50,28 @@ import {
   NumberIncrementStepper,
   NumberDecrementStepper,
   Checkbox,
+  IconButton,
+  Stack,
+  Divider,
+  CardFooter,
+  ButtonGroup,
 } from "@chakra-ui/react";
 import { PlusOutlined } from "@ant-design/icons";
 import { Upload } from "antd";
 import Axios from "axios";
 import * as yup from "yup";
+import SwiperCore, { Navigation, Pagination } from "swiper";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
+
+// Import Swiper styles
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import { ArchiveBoxIcon } from "@heroicons/react/24/outline";
+import { Scrollbars } from "react-scrollbars-custom";
+
+SwiperCore.use([Navigation, Pagination]);
 
 const schema = yup.object().shape({
   inputField: yup.string().required("กรุณากรอกขื่อร้านค้า"),
@@ -144,6 +161,7 @@ function modalEditStep1(props) {
   const modalEditNextStep = useDisclosure();
   const modalConfirmEdit = useDisclosure();
   const modalConfirmEditSuccess = useDisclosure();
+  const modalPreview = useDisclosure();
   const [editNameShop, setEditNameShop] = useState(Shops.name_shop);
   const [editDetailShop, setEditDetailShop] = useState(Shops.detail_shop);
   const [selectedProducts, setSelectedProducts] = useState([]);
@@ -314,6 +332,20 @@ function modalEditStep1(props) {
       setSelectedProducts(selectedProducts.filter((id) => id !== productId));
     } else {
       setSelectedProducts([...selectedProducts, productId]);
+    }
+  };
+
+  const [swiper, setSwiper] = useState(null);
+
+  const goPrev = () => {
+    if (swiper) {
+      swiper.slidePrev();
+    }
+  };
+
+  const goNext = () => {
+    if (swiper) {
+      swiper.slideNext();
     }
   };
 
@@ -494,7 +526,7 @@ function modalEditStep1(props) {
           </ModalBody>
           <ModalFooter justifyContent={"center"}>
             <Button
-              onClick={onClose}
+              onClick={modalPreview.onOpen}
               bgColor={"white"}
               color={"#ff0000"}
               border={"2px solid #ff0000"}
@@ -641,7 +673,7 @@ function modalEditStep1(props) {
           </ModalBody>
           <ModalFooter justifyContent={"center"}>
             <Button
-              onClick={modalEditNextStep.onClose}
+              onClick={modalPreview.onOpen}
               bgColor={"white"}
               color={"#ff0000"}
               border={"2px solid #ff0000"}
@@ -781,6 +813,707 @@ function modalEditStep1(props) {
         </ModalContent>
       </Modal>
       {/* End Modal confirm success สร้างร้านค้า */}
+
+      {/* Modal Preview สร้างร้านค้า */}
+      <Modal
+        closeOnOverlayClick={false}
+        onClose={modalPreview.onClose}
+        size={"md"}
+        isOpen={modalPreview.isOpen}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader></ModalHeader>
+          <ModalCloseButton
+            color={"white"}
+            bgColor={"#ff0000"}
+            borderRadius={"50px"}
+            width={"20px"}
+            height={"20px"}
+            fontSize={"9px"}
+          />
+          <ModalBody paddingStart={"4rem"} paddingEnd={"4rem"}>
+            <div className="swiper-container">
+              <Swiper
+                onSwiper={setSwiper}
+                navigation={{
+                  prevEl: ".swiper-button-prev",
+                  nextEl: ".swiper-button-next",
+                }}
+                pagination={{
+                  el: ".swiper-pagination",
+                  clickable: true,
+                }}
+              >
+                <SwiperSlide>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    position={"relative"}
+                    zIndex={"1"}
+                  >
+                    <Image src={"/images/13promax.png"} height={"32rem"} />
+                  </Box>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    position={"absolute"}
+                    zIndex={"-1"}
+                    top={"13px"}
+                    left={"47px"}
+                  >
+                    <Box height={"119px"} width={"225px"}>
+                      <Image
+                        src="https://shopee-api.deksilp.com/images/shopee/cover_img_shop/ow9eC03MUxqOWwVBWEPGv3eLIAHKyx5my8A2yP6O.jpg"
+                        objectFit="cover"
+                        width="100%"
+                        height="100%"
+                      />
+                    </Box>
+                  </Box>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    position={"absolute"}
+                    zIndex={"-1"}
+                    top={"73px"}
+                    left={"60px"}
+                  >
+                    <Image
+                      src="https://shopee-api.deksilp.com/images/shopee/shop/rDM383VIMS22QpH2QJkexfrmUOMLiMiBmZEKYMQb.jpg"
+                      width={"50px"}
+                      height={"50px"}
+                      borderRadius={"50px"}
+                      border={"2px solid white"}
+                    />
+                  </Box>
+                  <Box
+                    position={"absolute"}
+                    zIndex={"-1"}
+                    top={"42px"}
+                    left={"60px"}
+                  >
+                    <InputGroup>
+                      <InputLeftElement
+                        pointerEvents="none"
+                        ml={"5px"}
+                        left={"-12px"}
+                        top={"-12px"}
+                      >
+                        <Image src="/images/search.png" h="10px" w="10px" />
+                      </InputLeftElement>
+                      <Input
+                        borderRadius="3xl"
+                        type="text"
+                        fontSize="10px"
+                        borderColor="gray.500"
+                        bgColor="#FFFFFF"
+                        height="16px"
+                        width="155px"
+                        paddingLeft="27px"
+                        paddingTop="3px"
+                        placeholder="ค้นหา"
+                      />
+                    </InputGroup>
+                  </Box>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    position={"absolute"}
+                    zIndex={"-1"}
+                    top={"43px"}
+                    right={"60px"}
+                  >
+                    <Image
+                      src="/images/cart.png"
+                      width={"15px"}
+                      marginRight={"7px"}
+                      backgroundColor={"white"}
+                      padding={"2px"}
+                      borderRadius={"50px"}
+                    />
+                    <Image src="/images/user.png" width={"15px"} />
+                  </Box>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    position={"absolute"}
+                    zIndex={"-1"}
+                    top={"80px"}
+                    right={"80px"}
+                    fontSize={"13px"}
+                  >
+                    <Text color={"white"} mr={"5px"}>
+                      MotorBike Shop
+                    </Text>
+                    <Button
+                      bgColor={"white"}
+                      padding={"0.15rem"}
+                      height={"11px"}
+                      fontSize={"8px"}
+                      leftIcon={<Image src="/images/chat.png" width={"10px"} />}
+                    >
+                      แชทร้านค้า
+                    </Button>
+                  </Box>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    position={"absolute"}
+                    zIndex={"-1"}
+                    fontSize={"14px"}
+                    top={"105px"}
+                    left={"120px"}
+                  >
+                    <Button
+                      bgColor={"#00000085"}
+                      color={"white"}
+                      padding={"0.15rem"}
+                      height={"10px"}
+                      fontSize={"8px"}
+                      leftIcon={<Image src="/images/star2.png" width={"8px"} />}
+                      mr={"5px"}
+                    >
+                      4.8/5.0
+                    </Button>
+                    <Button
+                      bgColor={"#ff0000"}
+                      color={"white"}
+                      padding={"0.15rem"}
+                      height={"10px"}
+                      fontSize={"8px"}
+                    >
+                      ร้านแนะนำ
+                    </Button>
+                  </Box>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    position={"absolute"}
+                    zIndex={"-1"}
+                    top={"137px"}
+                    left={"42px"}
+                  >
+                    <Box
+                      alignSelf="end"
+                      px="15px"
+                      flex="1"
+                      textAlign="center"
+                      whiteSpace="nowrap"
+                      borderBottom="2px"
+                      borderColor="red"
+                    >
+                      <Text fontWeight="bold" fontSize={"12px"}>
+                        สินค้าทั้งหมด
+                      </Text>
+                    </Box>
+                    <Box
+                      alignSelf="end"
+                      px="15px"
+                      flex="1"
+                      textAlign="center"
+                      whiteSpace="nowrap"
+                      borderBottom="1px"
+                      borderColor="gray.300"
+                    >
+                      <Text fontWeight="bold" fontSize={"12px"}>
+                        ของใช้ภายในบ้าน
+                      </Text>
+                    </Box>
+                    <Box
+                      alignSelf="end"
+                      px="15px"
+                      flex="1"
+                      textAlign="center"
+                      whiteSpace="nowrap"
+                      borderBottom="1px"
+                      borderColor="gray.300"
+                    >
+                      <Text fontWeight="bold" fontSize={"12px"}>
+                        เสื้อผ้าแฟชั่น
+                      </Text>
+                    </Box>
+                  </Box>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    position={"absolute"}
+                    zIndex={"1"}
+                    top={"170px"}
+                    left={"55px"}
+                  >
+                    <Grid templateColumns="repeat(2, 1fr)" gap={2}>
+                      <GridItem>
+                        <Card
+                          maxW="sm"
+                          width={"101px"}
+                          height={"134px"}
+                          boxShadow="md"
+                        >
+                          <CardBody padding={"5px"} position={"relative"}>
+                            <Image
+                              height={"62px"}
+                              width={"100%"}
+                              src="https://shopee-api.deksilp.com/images/shopee/products/7k2ldlmlvyZ17a3oMOPlwggkU74SQCmXj39G3DIR.jpg"
+                              alt="Green double couch with wooden legs"
+                              borderRadius="lg"
+                            />
+                            <Stack mt={"5px"} spacing="1">
+                              <Heading fontSize={"8px"} textAlign={"center"}>
+                                นาฬิกา ROLEX
+                              </Heading>
+                              <Text fontSize={"8px"}>
+                                This sofa is perfect for modern tropical spaces
+                                {/* This sofa is perfect for modern tropical spaces,
+                            baroque inspired spaces, earthy toned spaces and for
+                            people who love a chic design with a sprinkle of
+                            vintage design. */}
+                              </Text>
+                            </Stack>
+                            <Box>
+                              <Flex justifyContent={"space-between"}>
+                                <Box mt={"8px"}>
+                                  {/* <Text fontSize={"8px"}>ดาว</Text> */}
+                                  <Flex>
+                                    <Image
+                                      src="/images/star2.png"
+                                      width={"5px"}
+                                    />
+                                    <Image
+                                      src="/images/star2.png"
+                                      width={"5px"}
+                                    />
+                                    <Image
+                                      src="/images/star2.png"
+                                      width={"5px"}
+                                    />
+                                    <Image
+                                      src="/images/star2.png"
+                                      width={"5px"}
+                                    />
+                                    <Image
+                                      src="/images/star2.png"
+                                      width={"5px"}
+                                    />
+                                  </Flex>
+                                  <Text fontSize={"5px"}>
+                                    ขายไปล้ว 369 ชิ้น
+                                  </Text>
+                                </Box>
+                                <Box>
+                                  <Button
+                                    bgColor={"#ff0000"}
+                                    color={"white"}
+                                    padding={"0"}
+                                    height={"10px"}
+                                    fontSize={"13px"}
+                                    position={"relative"}
+                                  >
+                                    290.-
+                                  </Button>
+                                  <Text
+                                    fontSize={"7px"}
+                                    textDecoration={"line-through"}
+                                    position={"absolute"}
+                                    right={"7px"}
+                                    bottom={"21px"}
+                                  >
+                                    ราคาปกติ 490.-
+                                  </Text>
+                                </Box>
+                              </Flex>
+                            </Box>
+                          </CardBody>
+                          <Button
+                            position={"absolute"}
+                            width={"30px"}
+                            height={"10px"}
+                            fontSize={"8px"}
+                            bgColor={"#ff0000"}
+                            color={"white"}
+                            top={"-5px"}
+                            right={"-5px"}
+                          >
+                            ลด 27%
+                          </Button>
+                        </Card>
+                      </GridItem>
+                      <GridItem>
+                        <Card
+                          maxW="sm"
+                          width={"101px"}
+                          height={"134px"}
+                          boxShadow="md"
+                        >
+                          <CardBody padding={"5px"} position={"relative"}>
+                            <Image
+                              height={"62px"}
+                              width={"100%"}
+                              src="https://shopee-api.deksilp.com/images/shopee/products/rTz62XhqqVPe9KVBjkDjqo1M1M7xAgPK7jbpAjGP.jpg"
+                              alt="Green double couch with wooden legs"
+                              borderRadius="lg"
+                            />
+                            <Stack mt={"5px"} spacing="1">
+                              <Heading fontSize={"8px"} textAlign={"center"}>
+                                เสื้อคลุม Korea
+                              </Heading>
+                              <Text fontSize={"8px"}>
+                                This sofa is perfect for modern tropical spaces
+                                {/* This sofa is perfect for modern tropical spaces,
+                            baroque inspired spaces, earthy toned spaces and for
+                            people who love a chic design with a sprinkle of
+                            vintage design. */}
+                              </Text>
+                            </Stack>
+                            <Box>
+                              <Flex justifyContent={"space-between"}>
+                                <Box mt={"8px"}>
+                                  {/* <Text fontSize={"8px"}>ดาว</Text> */}
+                                  <Flex>
+                                    <Image
+                                      src="/images/star2.png"
+                                      width={"5px"}
+                                    />
+                                    <Image
+                                      src="/images/star2.png"
+                                      width={"5px"}
+                                    />
+                                    <Image
+                                      src="/images/star2.png"
+                                      width={"5px"}
+                                    />
+                                    <Image
+                                      src="/images/star2.png"
+                                      width={"5px"}
+                                    />
+                                    <Image
+                                      src="/images/star2.png"
+                                      width={"5px"}
+                                    />
+                                  </Flex>
+                                  <Text fontSize={"5px"}>
+                                    ขายไปล้ว 369 ชิ้น
+                                  </Text>
+                                </Box>
+                                <Box>
+                                  <Button
+                                    bgColor={"#ff0000"}
+                                    color={"white"}
+                                    padding={"0"}
+                                    height={"10px"}
+                                    fontSize={"13px"}
+                                    position={"relative"}
+                                  >
+                                    290.-
+                                  </Button>
+                                  <Text
+                                    fontSize={"7px"}
+                                    textDecoration={"line-through"}
+                                    position={"absolute"}
+                                    right={"7px"}
+                                    bottom={"21px"}
+                                  >
+                                    ราคาปกติ 490.-
+                                  </Text>
+                                </Box>
+                              </Flex>
+                            </Box>
+                          </CardBody>
+                          <Button
+                            position={"absolute"}
+                            width={"30px"}
+                            height={"10px"}
+                            fontSize={"8px"}
+                            bgColor={"#ff0000"}
+                            color={"white"}
+                            top={"-5px"}
+                            right={"-5px"}
+                          >
+                            ลด 27%
+                          </Button>
+                        </Card>
+                      </GridItem>
+                      <GridItem>
+                        <Card
+                          maxW="sm"
+                          width={"101px"}
+                          height={"134px"}
+                          boxShadow="md"
+                        >
+                          <CardBody padding={"5px"} position={"relative"}>
+                            <Image
+                              height={"62px"}
+                              width={"100%"}
+                              src="https://shopee-api.deksilp.com/images/shopee/products/FbkeB0WtBsLQUJtlIvAoGCmaf4bFP9REvY4IA7hw.jpg"
+                              alt="Green double couch with wooden legs"
+                              borderRadius="lg"
+                            />
+                            <Stack mt={"5px"} spacing="1">
+                              <Heading fontSize={"8px"} textAlign={"center"}>
+                                เสื้อคลุม Korea
+                              </Heading>
+                              <Text fontSize={"8px"}>
+                                This sofa is perfect for modern tropical spaces
+                                {/* This sofa is perfect for modern tropical spaces,
+                            baroque inspired spaces, earthy toned spaces and for
+                            people who love a chic design with a sprinkle of
+                            vintage design. */}
+                              </Text>
+                            </Stack>
+                            <Box>
+                              <Flex justifyContent={"space-between"}>
+                                <Box mt={"7px"}>
+                                  {/* <Text fontSize={"8px"}>ดาว</Text> */}
+                                  <Flex>
+                                    <Image
+                                      src="/images/star2.png"
+                                      width={"5px"}
+                                    />
+                                    <Image
+                                      src="/images/star2.png"
+                                      width={"5px"}
+                                    />
+                                    <Image
+                                      src="/images/star2.png"
+                                      width={"5px"}
+                                    />
+                                    <Image
+                                      src="/images/star2.png"
+                                      width={"5px"}
+                                    />
+                                    <Image
+                                      src="/images/star2.png"
+                                      width={"5px"}
+                                    />
+                                  </Flex>
+                                  <Text fontSize={"5px"}>
+                                    ขายไปล้ว 369 ชิ้น
+                                  </Text>
+                                </Box>
+                                <Box>
+                                  <Button
+                                    bgColor={"#ff0000"}
+                                    color={"white"}
+                                    padding={"0"}
+                                    height={"10px"}
+                                    fontSize={"13px"}
+                                    position={"relative"}
+                                  >
+                                    290.-
+                                  </Button>
+                                  <Text
+                                    fontSize={"7px"}
+                                    textDecoration={"line-through"}
+                                    position={"absolute"}
+                                    right={"7px"}
+                                    bottom={"21px"}
+                                  >
+                                    ราคาปกติ 490.-
+                                  </Text>
+                                </Box>
+                              </Flex>
+                            </Box>
+                          </CardBody>
+                          <Button
+                            position={"absolute"}
+                            width={"30px"}
+                            height={"10px"}
+                            fontSize={"8px"}
+                            bgColor={"#ff0000"}
+                            color={"white"}
+                            top={"-5px"}
+                            right={"-5px"}
+                          >
+                            ลด 27%
+                          </Button>
+                        </Card>
+                      </GridItem>
+                      <GridItem>
+                        <Card
+                          maxW="sm"
+                          width={"101px"}
+                          height={"134px"}
+                          boxShadow="md"
+                        >
+                          <CardBody padding={"5px"} position={"relative"}>
+                            <Image
+                              height={"62px"}
+                              width={"100%"}
+                              src="https://shopee-api.deksilp.com/images/shopee/products/MjDW7GIFILiO6yNSdmtaYHjMHRMHKTnXxBXgt8ez.jpg"
+                              alt="Green double couch with wooden legs"
+                              borderRadius="lg"
+                            />
+                            <Stack mt={"5px"} spacing="1">
+                              <Heading fontSize={"8px"} textAlign={"center"}>
+                                สายเดี่ยวลูกไม้
+                              </Heading>
+                              <Text fontSize={"8px"}>
+                                This sofa is perfect for modern tropical spaces
+                                {/* This sofa is perfect for modern tropical spaces,
+                            baroque inspired spaces, earthy toned spaces and for
+                            people who love a chic design with a sprinkle of
+                            vintage design. */}
+                              </Text>
+                            </Stack>
+                            <Box>
+                              <Flex justifyContent={"space-between"}>
+                                <Box mt={"8px"}>
+                                  {/* <Text fontSize={"8px"}>ดาว</Text> */}
+                                  <Flex>
+                                    <Image
+                                      src="/images/star2.png"
+                                      width={"5px"}
+                                    />
+                                    <Image
+                                      src="/images/star2.png"
+                                      width={"5px"}
+                                    />
+                                    <Image
+                                      src="/images/star2.png"
+                                      width={"5px"}
+                                    />
+                                    <Image
+                                      src="/images/star2.png"
+                                      width={"5px"}
+                                    />
+                                    <Image
+                                      src="/images/star2.png"
+                                      width={"5px"}
+                                    />
+                                  </Flex>
+                                  <Text fontSize={"5px"}>
+                                    ขายไปล้ว 369 ชิ้น
+                                  </Text>
+                                </Box>
+                                <Box>
+                                  <Button
+                                    bgColor={"#ff0000"}
+                                    color={"white"}
+                                    padding={"0"}
+                                    height={"10px"}
+                                    fontSize={"13px"}
+                                    position={"relative"}
+                                  >
+                                    290.-
+                                  </Button>
+                                  <Text
+                                    fontSize={"7px"}
+                                    textDecoration={"line-through"}
+                                    position={"absolute"}
+                                    right={"7px"}
+                                    bottom={"21px"}
+                                  >
+                                    ราคาปกติ 490.-
+                                  </Text>
+                                </Box>
+                              </Flex>
+                            </Box>
+                          </CardBody>
+                          <Button
+                            position={"absolute"}
+                            width={"30px"}
+                            height={"10px"}
+                            fontSize={"8px"}
+                            bgColor={"#ff0000"}
+                            color={"white"}
+                            top={"-5px"}
+                            right={"-5px"}
+                          >
+                            ลด 27%
+                          </Button>
+                        </Card>
+                      </GridItem>
+                    </Grid>
+                  </Box>
+                </SwiperSlide>
+                <SwiperSlide>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <Image src={"/images/previewShop.jpg"} height={"33rem"} />
+                  </Box>
+                </SwiperSlide>
+                <SwiperSlide>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <Image src={"/images/previewShop.jpg"} height={"33rem"} />
+                  </Box>
+                </SwiperSlide>
+                <SwiperSlide>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <Image src={"/images/previewShop.jpg"} height={"33rem"} />
+                  </Box>
+                </SwiperSlide>
+                <SwiperSlide>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <Image src={"/images/previewShop.jpg"} height={"33rem"} />
+                  </Box>
+                </SwiperSlide>
+              </Swiper>
+              <IconButton
+                position="absolute"
+                top="50%"
+                left="10px"
+                transform="translateY(-50%)"
+                aria-label="Previous"
+                background={"#edf2f700"}
+                borderRadius={"50px"}
+                fontSize={"30px"}
+                border={"2px solid"}
+                icon={<ChevronLeftIcon />}
+                onClick={goPrev}
+              />
+              <IconButton
+                position="absolute"
+                top="50%"
+                right="10px"
+                transform="translateY(-50%)"
+                aria-label="Next"
+                background={"#edf2f700"}
+                borderRadius={"50px"}
+                fontSize={"30px"}
+                border={"2px solid"}
+                icon={<ChevronRightIcon />}
+                onClick={goNext}
+              />
+              <div className="swiper-pagination"></div>
+            </div>
+          </ModalBody>
+          <ModalFooter justifyContent={"center"}>
+            <Button
+              onClick={modalPreview.onClose}
+              bgColor={"#ff0000"}
+              color={"white"}
+              px={"2rem"}
+              height={"35px"}
+            >
+              ปิด
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      {/* End Modal Preview สร้างร้านค้า */}
     </>
   );
 }
