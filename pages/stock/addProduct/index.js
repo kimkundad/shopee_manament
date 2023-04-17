@@ -130,7 +130,7 @@ function addProduct() {
   const [fileImage, setFileImage] = useState([]);
   const [fileImageOption, setFileImageOption] = useState([]);
   const [valueSelect, setValueSelect] = useState(null);
-  const [categoryId,setCategoryId] = useState(null);
+  const [categoryId, setCategoryId] = useState(null);
   const handleSetFileImage = (fileList) => {
     setFileImage(fileList);
   };
@@ -881,15 +881,19 @@ function addProduct() {
                         </Td>
                         {item?.subOption?.length == 0 ? (
                           <Td border="1px solid">
-                            <Button onClick={() => deleteOption(index)}>
-                              <Image src="/images/trash-bin.png" h="25px" />
-                            </Button>
+                            <Image
+                              src="/images/trash-bin.png"
+                              h="25px"
+                              onClick={() => deleteOption(index)}
+                            />
                           </Td>
                         ) : (
                           <Td border="1px solid">
-                            <Button onClick={() => deleteOption(index, 0)}>
-                              <Image src="/images/trash-bin.png" h="25px" />
-                            </Button>
+                            <Image
+                              src="/images/trash-bin.png"
+                              h="25px"
+                              onClick={() => deleteOption(index, 0)}
+                            />
                           </Td>
                         )}
                       </Tr>
@@ -952,11 +956,11 @@ function addProduct() {
                               <Switch colorScheme="brand" />
                             </Td>
                             <Td border="1px solid">
-                              <Button
+                              <Image
+                                src="/images/trash-bin.png"
+                                h="25px"
                                 onClick={() => deleteOption(index, subIndex)}
-                              >
-                                <Image src="/images/trash-bin.png" h="25px" />
-                              </Button>
+                              />
                             </Td>
                           </Tr>
                         ) : null;

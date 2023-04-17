@@ -51,11 +51,11 @@ class PicturesWall extends React.Component {
 
   static getDerivedStateFromProps(nextProps, prevState) {
     if (nextProps.imageData !== prevState.imageData) {
-      const fileList = nextProps.imageData.map(image => ({
+      const fileList = nextProps.imageData.map((image) => ({
         uid: image.id,
         name: image.name,
-        status: 'done',
-        url: `https://shopee-api.deksilp.com/images/shopee/products/${image.image}`
+        status: "done",
+        url: `https://shopee-api.deksilp.com/images/shopee/products/${image.image}`,
       }));
       return { fileList, imageData: nextProps.imageData };
     }
@@ -166,26 +166,24 @@ function UseEditProduct() {
         }
         let div = [];
         if (product.data.product[0].option1 != null) {
-          let option = product.data.product[0].option1
+          let option = product.data.product[0].option1;
           setOption(option);
-          div.push([true])
+          div.push([true]);
         }
         if (product.data.product[0].option2 != null) {
-          let subOption = product.data.product[0].option2
+          let subOption = product.data.product[0].option2;
           setSubOption(subOption);
-          div.push([true])
+          div.push([true]);
         }
         setDiv(div);
         setDataTable(product.data.product[0].allOption1);
-        setImageData(product.data.product[0].allImage)
+        setImageData(product.data.product[0].allImage);
       }
     }
 
     fetchData();
   }, [productId]);
-  console.log(dataTable);
-  console.log(product);
-  const [imageData,setImageData] = useState([])
+  const [imageData, setImageData] = useState([]);
   const [name_product, setName_product] = useState(" ");
   const [detail_product, setDetail_product] = useState(" ");
   const [price, setPrice] = useState(" ");
@@ -204,6 +202,8 @@ function UseEditProduct() {
   const handleSetFileImage = (fileList) => {
     setFileImage(fileList);
   };
+  console.log(imageData);
+  console.log(fileImage);
   const [fileVideo, setFileVideo] = useState([]);
   const handleSetFileVideo = (fileList) => {
     setFileVideo(fileList);
@@ -281,11 +281,9 @@ function UseEditProduct() {
     onOpenForm2();
   };
 
-  
   const handleSelectChange = () => {
     setDiv([...div, true]);
   };
-  
 
   const [nameOption, setNameOption] = useState(null);
   const [priceOption, setPriceOption] = useState(null);
@@ -551,7 +549,10 @@ function UseEditProduct() {
                       </GridItem>
                       <GridItem colSpan={2}>
                         <Box>
-                          <PicturesWall setFileImage={handleSetFileImage} imageData={imageData} />
+                          <PicturesWall
+                            setFileImage={handleSetFileImage}
+                            imageData={imageData}
+                          />
                         </Box>
                       </GridItem>
                       <GridItem colSpan={1} justifySelf="end">
@@ -777,7 +778,7 @@ function UseEditProduct() {
               <Flex alignItems="center">
                 <Image src="/images/addProduct.png" alt="" h="40px" w="40px" />
                 <Text pl="10px" fontSize="40px" fontWeight="bold" color="black">
-                  เพิ่มตัวเลือกสินค้า
+                  แก้ไขตัวเลือกสินค้า
                 </Text>
               </Flex>
               <Spacer />
@@ -786,7 +787,7 @@ function UseEditProduct() {
               </Box>
             </Flex>
           </Box>
-          <Box px="10%">
+          <Box px="5%">
             {div?.map((item, index) => {
               return (
                 <Flex pt="10px" justifyContent="center" key={index}>
@@ -795,7 +796,7 @@ function UseEditProduct() {
                   </Text>
                   <Box width="-webkit-fill-available">
                     <Input
-                      value={index == 0 ? option  : subOption}
+                      value={index == 0 ? option : subOption}
                       onChange={
                         index == 0
                           ? (e) => setOption(e.target.value)
@@ -845,16 +846,16 @@ function UseEditProduct() {
               </Button>
             </Box>
             <Box pl="115px" pt="15px">
-              <Table minWidth="100%" border="1px solid" textAlign="center">
+              <Table minWidth="100%" border="1px solid">
                 <Thead>
                   <Tr>
-                    <Td border="1px solid">{option}</Td>
-                    <Td border="1px solid">{subOption}</Td>
-                    <Td border="1px solid">ราคา</Td>
-                    <Td border="1px solid">สต็อกสินค้า</Td>
-                    <Td border="1px solid">รหัสสินค้า</Td>
-                    <Td border="1px solid">ใช้งาน</Td>
-                    <Td border="1px solid">ดำเนินการ</Td>
+                    <Td border="1px solid" textAlign="center">{option}</Td>
+                    <Td border="1px solid" textAlign="center">{subOption}</Td>
+                    <Td border="1px solid" textAlign="center">ราคา</Td>
+                    <Td border="1px solid" textAlign="center">สต็อกสินค้า</Td>
+                    <Td border="1px solid" textAlign="center">รหัสสินค้า</Td>
+                    <Td border="1px solid" textAlign="center">ใช้งาน</Td>
+                    <Td border="1px solid" textAlign="center">ดำเนินการ</Td>
                   </Tr>
                 </Thead>
                 <Tbody>
@@ -863,6 +864,7 @@ function UseEditProduct() {
                       <Tr>
                         <Td
                           border="1px solid"
+                          textAlign="center"
                           rowSpan={
                             item?.allOption2?.length > 0
                               ? item?.allOption2?.length
@@ -872,6 +874,8 @@ function UseEditProduct() {
                           {item.op_name}
                           <Image
                             src={`https://shopee-api.deksilp.com/images/shopee/products/${item.img_name}`}
+                            h="70px"
+                            maxWidth="none"
                           />
                         </Td>
                         <Td border="1px solid">
@@ -950,15 +954,19 @@ function UseEditProduct() {
                         </Td>
                         {item?.allOption2?.length == 0 ? (
                           <Td border="1px solid">
-                            <Button onClick={() => deleteOption(index)}>
-                              <Image src="/images/trash-bin.png" h="25px" />
-                            </Button>
+                            <Image
+                              src="/images/trash-bin.png"
+                              h="25px"
+                              onClick={() => deleteOption(index)}
+                            />
                           </Td>
                         ) : (
                           <Td border="1px solid">
-                            <Button onClick={() => deleteOption(index, 0)}>
-                              <Image src="/images/trash-bin.png" h="25px" />
-                            </Button>
+                            <Image
+                              src="/images/trash-bin.png"
+                              h="25px"
+                              onClick={() => deleteOption(index, 0)}
+                            />
                           </Td>
                         )}
                       </Tr>
@@ -1006,11 +1014,11 @@ function UseEditProduct() {
                               <Switch colorScheme="brand" />
                             </Td>
                             <Td border="1px solid">
-                              <Button
+                              <Image
+                                src="/images/trash-bin.png"
+                                h="25px"
                                 onClick={() => deleteOption(index, subIndex)}
-                              >
-                                <Image src="/images/trash-bin.png" h="25px" />
-                              </Button>
+                              />
                             </Td>
                           </Tr>
                         ) : null;

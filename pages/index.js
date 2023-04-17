@@ -15,8 +15,8 @@ import {
 import { getUserAuthen } from "@/store/slices/authen";
 import { connect, useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
-import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
-import NextLink from 'next/link'
+import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+import NextLink from "next/link";
 
 export default function index(props) {
   const authen = useSelector((App) => App.authen);
@@ -55,29 +55,31 @@ export default function index(props) {
     props.onClose();
   };
   return (
-    <Box bg="gray.100">
-      <Box px="5px">
-        <FormControl>
-          <Text fontSize="24px" fontWeight="bold">
-            ชื่อผู้ใช้งาน
+    <Flex justifyContent="center" h="100vh" alignItems="center">
+      <Box
+        width="400px"
+        border="1px solid black"
+        borderRadius="xl"
+        px="25px"
+        height="300px"
+      >
+        <form>
+          <Text fontSize="70px" fontWeight="bold" textAlign="center">
+            เข้าสู่ระบบ
           </Text>
           <Input
-            bg="gray.100"
             type="number"
             name="phone"
             onChange={onChangePhone}
+            placeholder="ชื่อผู้ใช้งาน"
           />
-          <Flex mt="15px">
-            <Text fontSize="24px" fontWeight="bold">
-              รหัสผ่าน
-            </Text>
-          </Flex>
 
-          <InputGroup>
+          <InputGroup mt="15px">
             <Input
               type={showPassword ? "text" : "password"}
               name="password"
               onChange={onChangePassword}
+              placeholder="รหัสผ่าน"
             />
             <InputRightElement h={"full"}>
               <Button
@@ -88,13 +90,13 @@ export default function index(props) {
               </Button>
             </InputRightElement>
           </InputGroup>
-        </FormControl>
+          <Box textAlign="center" pt="15px">
+            <Button mt="15px" bg="red" color="white" onClick={handleSubmit}>
+              เข้าสู่ระบบ
+            </Button>
+          </Box>
+        </form>
 
-        <Box textAlign="center">
-          <Button mt="15px" bg="red" color="white" onClick={handleSubmit}>
-            เข้าสู่ระบบ
-          </Button>
-        </Box>
         {/* <Stack pt={6}>
           <Text align={"center"} fontSize="20px">
             หากคุณยังไม่มีบัญชี?
@@ -110,6 +112,6 @@ export default function index(props) {
           </Text>
         </Stack> */}
       </Box>
-    </Box>
+    </Flex>
   );
 }

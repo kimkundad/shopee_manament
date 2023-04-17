@@ -62,18 +62,20 @@ export const getUserAuthen = (user, router) => async dispatch => {
           'Content-Type': 'application/json',
         },
      })
-     .then(function (response) {
+     .then(async function (response) {
         console.log(response)
         if (response.status == 200) { 
             setCookie('access_token', response.data.authorisation.token, { maxAge: 60 * 6 * 24 });
             // window.location = '/profile';  
             dispatch(slice.actions.authenSuccess(response.data.authorisation.token))
             dispatch(getUserInfo(router))
-            Swal.fire({
-                title: 'เข้าสุ่ระบบสำเร็จ',
+            await Swal.fire({
+                title: 'เข้าสู่ระบบสำเร็จ',
                 icon: 'success',
                 timer: 2000
               })
+            Router.push("/dashborad")
+            
             //   dispatch(getUserTadd(router))
          
         }
