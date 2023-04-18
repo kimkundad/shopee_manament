@@ -1,13 +1,22 @@
 import React from 'react'
-import { Wrap, WrapItem, Center, Badge, Text, Icon, Box, HStack } from "@chakra-ui/react"
-import { BsAlarm, BsBoxSeam, BsArrowReturnLeft, BsPatchCheckFill, BsTruck, BsFillClipboardCheckFill, BsXOctagonFill } from "react-icons/bs";
+import {
+    Wrap, WrapItem, Center, Badge, Text, Icon, Box, HStack,
+    Tabs, TabList, Tab, TabPanels, TabPanel
+} from "@chakra-ui/react"
+import {
+    BsAlarm, BsBoxSeam, BsArrowReturnLeft,
+    BsPatchCheckFill, BsTruck, BsFillClipboardCheckFill,
+    BsXOctagonFill
+} from "react-icons/bs";
 import Image from 'next/image';
 
 export default function OrderNavbar() {
 
+
+
     return (
         <>
-            <Box pt={10}>
+            {/* <Box pt={10}>
                 <Box>
                     <Center>
                         <HStack>
@@ -27,6 +36,7 @@ export default function OrderNavbar() {
                         borderColor={'transparent'}
                         borderBottomColor={'red'}
                         borderWidth={4}
+                        _hover={{ bg: "gray.200" }}
                     >
                         <Icon as={BsAlarm} boxSize={5} />
                         <Text as='b' fontSize={17}>ออเดอร์</Text>
@@ -47,6 +57,7 @@ export default function OrderNavbar() {
                         w='140px'
                         alignItems={'center'}
                         justifyContent={'space-between'}
+                        _hover={{ bg: "gray.200" }}
                     >
                         <Icon as={BsBoxSeam} boxSize={5} />
                         <Text as='b' fontSize={17}>กำลังแพ็ค</Text>
@@ -67,6 +78,7 @@ export default function OrderNavbar() {
                         w='140px'
                         alignItems={'center'}
                         justifyContent={'space-between'}
+                        _hover={{ bg: "gray.200" }}
                     >
                         <Icon as={BsTruck} boxSize={5} />
                         <Text as='b' fontSize={17}>พร้อมส่ง</Text>
@@ -87,6 +99,7 @@ export default function OrderNavbar() {
                         w='140px'
                         alignItems={'center'}
                         justifyContent={'space-between'}
+                        _hover={{ bg: "gray.200" }}
                     >
                         <Icon as={BsFillClipboardCheckFill} boxSize={5} />
                         <Text as='b' fontSize={17}>ส่งแล้ว</Text>
@@ -102,11 +115,13 @@ export default function OrderNavbar() {
                         </Badge>
                     </WrapItem>
 
+
                     <WrapItem
                         p={3}
                         w='140px'
                         alignItems={'center'}
                         justifyContent={'space-between'}
+                        _hover={{ bg: "gray.200" }}
                     >
                         <Icon as={BsPatchCheckFill} boxSize={5} />
                         <Text as='b' fontSize={17}>ส่งสำเร็จ</Text>
@@ -127,6 +142,7 @@ export default function OrderNavbar() {
                         w='140px'
                         alignItems={'center'}
                         justifyContent={'space-between'}
+                        _hover={{ bg: "gray.200" }}
                     >
                         <Icon as={BsArrowReturnLeft} boxSize={5} />
                         <Text as='b' fontSize={17}>ตีกลับ</Text>
@@ -147,6 +163,7 @@ export default function OrderNavbar() {
                         w='140px'
                         alignItems={'center'}
                         justifyContent={'space-between'}
+                        _hover={{ bg: "gray.200" }}
                     >
                         <Icon as={BsXOctagonFill} boxSize={5} />
                         <Text as='b' fontSize={17}>ยกเลิก</Text>
@@ -161,8 +178,135 @@ export default function OrderNavbar() {
                             4
                         </Badge>
                     </WrapItem>
+
                 </Wrap>
                 <Box bg='gray.200' h='1'></Box>
+            </Box> */}
+
+
+            <Box pt={10}>
+                <Box>
+                    <Center>
+                        <HStack>
+                            <Image width={36} height={36} src={'/images/menu/คำสั่งซื้อ.png'} alt={'รูปคำสั่งซื้อ'} />
+                            <Text as='b' fontSize='4xl' color={'#fe4900'} p={3}>คำสั่งซื้อ</Text>
+                        </HStack>
+                    </Center>
+                </Box>
+                <Tabs>
+                    <TabList>
+                        <Tab _selected={{ borderBottomColor: 'red', borderBottomWidth: '3px' }} w='160px'>
+                            <Icon as={BsAlarm} boxSize={5} />
+                            <Text as='b' fontSize={17} px={4}>ออเดอร์</Text>
+                            <Badge
+                                boxSize={5}
+                                fontSize={15}
+                                color={'white'}
+                                bg='red.400'
+                                textAlign={'center'}
+                                borderRadius={'50%'}
+                            >
+                                10
+                            </Badge>
+                        </Tab>
+                        <Tab _selected={{ borderBottomColor: 'red', borderBottomWidth: '3px' }} w='160px'>
+                            <Icon as={BsBoxSeam} boxSize={5} />
+                            <Text as='b' fontSize={17} px={4}>กำลังแพ็ค</Text>
+                            <Badge
+                                boxSize={5}
+                                fontSize={15}
+                                color={'white'}
+                                bg='blue.400'
+                                textAlign={'center'}
+                                borderRadius={'50%'}
+                            >
+                                3
+                            </Badge>
+                        </Tab>
+                        <Tab _selected={{ borderBottomColor: 'red', borderBottomWidth: '3px' }} w='160px'>
+                            <Icon as={BsTruck} boxSize={5} />
+                            <Text as='b' fontSize={17} px={4}>พร้อมส่ง</Text>
+                            <Badge
+                                boxSize={5}
+                                fontSize={15}
+                                color={'white'}
+                                bg='yellow.400'
+                                textAlign={'center'}
+                                borderRadius={'50%'}
+                            >
+                                5
+                            </Badge>
+                        </Tab>
+                        <Tab _selected={{ borderBottomColor: 'red', borderBottomWidth: '3px' }} w='160px'>
+                            <Icon as={BsFillClipboardCheckFill} boxSize={5} />
+                            <Text as='b' fontSize={17} px={4}>ส่งแล้ว</Text>
+                            <Badge
+                                boxSize={5}
+                                fontSize={15}
+                                color={'white'}
+                                bg='green.400'
+                                textAlign={'center'}
+                                borderRadius={'50%'}
+                            >
+                                7
+                            </Badge>
+                        </Tab>
+                        <Tab _selected={{ borderBottomColor: 'red', borderBottomWidth: '3px' }} w='160px'>
+                            <Icon as={BsPatchCheckFill} boxSize={5} />
+                            <Text as='b' fontSize={17} px={4}>ส่งสำเร็จ</Text>
+                            <Badge
+                                boxSize={5}
+                                fontSize={15}
+                                color={'white'}
+                                bg='purple.400'
+                                textAlign={'center'}
+                                borderRadius={'50%'}
+                            >
+                                3
+                            </Badge>
+                        </Tab>
+                        <Tab _selected={{ borderBottomColor: 'red', borderBottomWidth: '3px' }} w='160px'>
+                            <Icon as={BsArrowReturnLeft} boxSize={5} />
+                            <Text as='b' fontSize={17} px={4}>ตีกลับ</Text>
+                            <Badge
+                                boxSize={5}
+                                fontSize={15}
+                                color={'white'}
+                                bg='orange.400'
+                                textAlign={'center'}
+                                borderRadius={'50%'}
+                            >
+                                2
+                            </Badge>
+                        </Tab>
+                        <Tab _selected={{ borderBottomColor: 'red', borderBottomWidth: '3px' }} w='160px'>
+                            <Icon as={BsXOctagonFill} boxSize={5} />
+                            <Text as='b' fontSize={17} px={4}>ยกเลิก</Text>
+                            <Badge
+                                boxSize={5}
+                                fontSize={15}
+                                color={'white'}
+                                bg='pink.400'
+                                textAlign={'center'}
+                                borderRadius={'50%'}
+                            >
+                                4
+                            </Badge>
+                        </Tab>
+                    </TabList>
+
+                    <TabPanels>
+                        <TabPanel>
+                            <p>one!</p>
+                        </TabPanel>
+                        <TabPanel>
+                            <p>two!</p>
+                        </TabPanel>
+                        <TabPanel>
+                            <p>three!</p>
+                        </TabPanel>
+                    </TabPanels>
+                </Tabs>
             </Box>
 
         </>
