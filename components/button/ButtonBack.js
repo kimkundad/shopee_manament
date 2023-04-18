@@ -16,6 +16,7 @@ export default function ButtonBack() {
         background='#f84c01'
         color='white'
         fontWeight='none'
+        fontSize='20px'
       >
         ย้อนกลับ
       </Button>
