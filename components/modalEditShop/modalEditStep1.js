@@ -778,7 +778,7 @@ function modalEditStep1(props) {
             </TableContainer>
           </ModalBody>
           <ModalFooter justifyContent={"center"}>
-            {/* <Button
+            <Button
               onClick={modalPreview.onOpen}
               bgColor={"white"}
               color={"#ff0000"}
@@ -790,7 +790,7 @@ function modalEditStep1(props) {
               mr={"10px"}
             >
               ดูตัวอย่าง
-            </Button> */}
+            </Button>
             <Button
               onClick={modalEditNextStep.onClose}
               bgColor={"white"}
