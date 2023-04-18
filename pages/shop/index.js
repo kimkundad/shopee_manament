@@ -180,7 +180,7 @@ export default function shop() {
   const [textImageShopError, setTextImageShopError] = useState("");
   const [textImageCoverShopError, setTextImageCoverShopError] = useState("");
   const [selectedProducts, setSelectedProducts] = useState([]);
-  const [Theme, setTheme] = useState("");
+  const [Theme, setTheme] = useState(0);
 
   const [fileImgShop, setFileImgShop] = useState([]);
   const handleSetFileImgShop = (fileList) => {
@@ -240,7 +240,7 @@ export default function shop() {
   };
 
   const handleNextModalSelectProduct = () => {
-    console.log('Theme:',Theme)
+    console.log("Theme:", Theme);
     modalSelectTheme.onClose();
     modalAdd2.onOpen();
   };
@@ -268,6 +268,7 @@ export default function shop() {
     selected.forEach((select, index) => {
       formData.append(`selectID[${index}]`, select.id);
     });
+    formData.append("themeShop", Theme);
 
     Axios.post("https://shopee-api.deksilp.com/api/createShop", formData, {
       headers: { "Content-Type": "multipart/form-data" },
@@ -578,14 +579,14 @@ export default function shop() {
           </Box>
         </Flex>
       </Box>
-      <Box pt="5px" pb={"5px"}>
-        <Flex flexWrap={"wrap"} justifyContent={"space-around"}>
-          <CardShop
-            Products={getProducts}
-            Shops={getShops}
-            statusDelete={setStatusDelete}
-          />
-        </Flex>
+      <Box pt="5px" pb={"5px"} pl={"60px"}>
+        {/* <Flex flexWrap={"wrap"} justifyContent={"space-around"}> */}
+        <CardShop
+          Products={getProducts}
+          Shops={getShops}
+          statusDelete={setStatusDelete}
+        />
+        {/* </Flex> */}
       </Box>
 
       {/* Modal สร้างร้านค้า */}
@@ -594,6 +595,7 @@ export default function shop() {
         onClose={modalAdd.onClose}
         size={"xl"}
         isOpen={modalAdd.isOpen}
+        // scrollBehavior={'inside'}
       >
         <ModalOverlay />
         <ModalContent>
@@ -728,7 +730,7 @@ export default function shop() {
                           </Text>
                         </Box>
                       </GridItem>
-                      <GridItem colSpan={1} justifySelf="end">
+                      {/* <GridItem colSpan={1} justifySelf="end">
                         <Box pr="5px">
                           <Text>* รูปแบบร้านค้า : </Text>
                         </Box>
@@ -746,7 +748,7 @@ export default function shop() {
                             <option value="item4">4</option>
                           </Select>
                         </Box>
-                      </GridItem>
+                      </GridItem> */}
                     </Grid>
                   </GridItem>
                 </Grid>
@@ -754,7 +756,7 @@ export default function shop() {
             </FormControl>
           </ModalBody>
           <ModalFooter justifyContent={"center"}>
-            <Button
+            {/* <Button
               onClick={modalPreview.onOpen}
               bgColor={"white"}
               color={"#ff0000"}
@@ -766,7 +768,7 @@ export default function shop() {
               mr={"10px"}
             >
               ดูตัวอย่าง
-            </Button>
+            </Button> */}
             <Button
               onClick={modalAdd.onClose}
               bgColor={"white"}
@@ -825,41 +827,35 @@ export default function shop() {
           <ModalBody>
             <RadioGroup defaultValue="0" onChange={setTheme}>
               <Grid templateColumns="repeat(2, 1fr)" gap={8}>
-                <GridItem
-                  border={"2px solid blue"}
-                  padding={"0.5rem"}
-                  borderRadius={"15px"}
-                >
-                  <Box textAlign={"center"}>
-                    <Heading>สีขาว</Heading>
-                    {/* <Image
+                <GridItem textAlign={"center"}>
+                  <Box
+                    border={Theme == 0 ? "2px solid blue" : ""}
+                    borderRadius={Theme == 0 ? "20px" : ""}
+                    padding={Theme == 0 ? "0.75rem" : ""}
+                  >
+                    <Image
                       borderRadius={"15px"}
-                      src={
-                        "https://shopee-api.deksilp.com/images/shopee/cover_img_shop/zC0vOKXtODAu7qb5YTeS4rYq9NTcJ3mmDpTm6Pxe.jpg"
-                      }
-                    /> */}
-                    <Radio colorScheme="blue" value="0">
-                      ธีมขาว
-                    </Radio>
+                      src={"/images/themeshoppeewhite.jpg"}
+                    />
                   </Box>
+                  <Radio colorScheme="blue" value="0">
+                    ธีมขาว
+                  </Radio>
                 </GridItem>
-                <GridItem
-                  border={"2px solid gray"}
-                  padding={"0.5rem"}
-                  borderRadius={"15px"}
-                >
-                  <Box textAlign={"center"}>
-                    <Heading>สีดำ</Heading>
-                    {/* <Image
+                <GridItem textAlign={"center"}>
+                  <Box
+                    border={Theme == 1 ? "2px solid gray" : ""}
+                    borderRadius={Theme == 1 ? "20px" : ""}
+                    padding={Theme == 1 ? "0.75rem" : ""}
+                  >
+                    <Image
                       borderRadius={"15px"}
-                      src={
-                        "https://shopee-api.deksilp.com/images/shopee/cover_img_shop/zqCs2uwIQGr76ijJetmn44cofVs3vWhsmbXqtYTW.jpg"
-                      }
-                    /> */}
-                    <Radio colorScheme="gray" value="1">
-                      ธีมดำ
-                    </Radio>
+                      src={"/images/themeshoppeewhite.jpg"}
+                    />
                   </Box>
+                  <Radio colorScheme="gray" value="1">
+                    ธีมดำ
+                  </Radio>
                 </GridItem>
               </Grid>
             </RadioGroup>
@@ -987,7 +983,7 @@ export default function shop() {
             </TableContainer>
           </ModalBody>
           <ModalFooter justifyContent={"center"}>
-            <Button
+            {/* <Button
               onClick={modalPreview.onOpen}
               bgColor={"white"}
               color={"#ff0000"}
@@ -999,7 +995,7 @@ export default function shop() {
               mr={"10px"}
             >
               ดูตัวอย่าง
-            </Button>
+            </Button> */}
             <Button
               onClick={modalAdd2.onClose}
               bgColor={"white"}

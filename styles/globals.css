@@ -66,3 +66,18 @@ td {
 .swiper-pagination-fraction {
     bottom: 55px !important;
 }
+
+:where(.css-dev-only-do-not-override-mxhywb).ant-upload-wrapper.ant-upload-picture-card-wrapper .ant-upload.ant-upload-select,
+:where(.css-dev-only-do-not-override-mxhywb).ant-upload-wrapper.ant-upload-picture-circle-wrapper .ant-upload.ant-upload-select {
+    width: 200px !important;
+    height: 150px !important;
+}
+
+.ant-upload-list-item-container {
+    width: 200px !important;
+    height: 150px !important;
+}
+
+.chakra-radio__label{
+    font-size: 25px !important;
+}

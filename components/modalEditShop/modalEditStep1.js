@@ -55,6 +55,8 @@ import {
   Divider,
   CardFooter,
   ButtonGroup,
+  RadioGroup,
+  Radio,
 } from "@chakra-ui/react";
 import { PlusOutlined } from "@ant-design/icons";
 import { Upload } from "antd";
@@ -162,8 +164,10 @@ function modalEditStep1(props) {
   const modalConfirmEdit = useDisclosure();
   const modalConfirmEditSuccess = useDisclosure();
   const modalPreview = useDisclosure();
+  const modalEditTheme = useDisclosure();
   const [editNameShop, setEditNameShop] = useState(Shops.name_shop);
   const [editDetailShop, setEditDetailShop] = useState(Shops.detail_shop);
+  const [Theme, setTheme] = useState(Shops.theme);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [editNameShopLength, setEditNameShopLength] = useState(
     Shops.name_shop.length
@@ -251,8 +255,9 @@ function modalEditStep1(props) {
       );
       // ส่งค่าไปยัง API หรือทำอื่นๆ ที่ต้องการ
       console.log("Data submitted successfully.");
+      console.log("Theme:", Theme);
       onClose();
-      modalEditNextStep.onOpen();
+      modalEditTheme.onOpen();
       setInputFieldError("");
       setTextAreaFieldError("");
       setTextImageShopError("");
@@ -284,6 +289,11 @@ function modalEditStep1(props) {
     setIsLoading(false);
   };
 
+  const handleNextModalEditProduct = () => {
+    modalEditTheme.onClose();
+    modalEditNextStep.onOpen();
+  };
+
   const handleConfirmEdit = () => {
     modalEditNextStep.onClose();
     modalConfirmEdit.onOpen();
@@ -306,6 +316,7 @@ function modalEditStep1(props) {
     selected.forEach((select, index) => {
       formData.append(`selectID[${index}]`, select.id);
     });
+    formData.append("editThemeShop", Theme);
 
     Axios.post("https://shopee-api.deksilp.com/api/editShop", formData, {
       headers: { "Content-Type": "multipart/form-data" },
@@ -357,6 +368,7 @@ function modalEditStep1(props) {
         onClose={onClose}
         isOpen={isOpen}
         size={"xl"}
+        // scrollBehavior={'inside'}
       >
         <ModalOverlay />
         <ModalContent>
@@ -499,7 +511,7 @@ function modalEditStep1(props) {
                           </Text>
                         </Box>
                       </GridItem>
-                      <GridItem colSpan={1} justifySelf="end">
+                      {/* <GridItem colSpan={1} justifySelf="end">
                         <Box pr="5px">
                           <Text>* รูปแบบร้านค้า : </Text>
                         </Box>
@@ -517,7 +529,7 @@ function modalEditStep1(props) {
                             <option value="item4">4</option>
                           </Select>
                         </Box>
-                      </GridItem>
+                      </GridItem> */}
                     </Grid>
                   </GridItem>
                 </Grid>
@@ -525,7 +537,7 @@ function modalEditStep1(props) {
             </FormControl>
           </ModalBody>
           <ModalFooter justifyContent={"center"}>
-            <Button
+            {/* <Button
               onClick={modalPreview.onOpen}
               bgColor={"white"}
               color={"#ff0000"}
@@ -537,7 +549,7 @@ function modalEditStep1(props) {
               mr={"10px"}
             >
               ดูตัวอย่าง
-            </Button>
+            </Button> */}
             <Button
               onClick={onClose}
               bgColor={"white"}
@@ -563,6 +575,100 @@ function modalEditStep1(props) {
         </ModalContent>
       </Modal>
       {/* End Modal แก้ไขร้านค้า */}
+
+      {/* Modal แก้ไขเลือกธีม */}
+      <Modal
+        closeOnOverlayClick={false}
+        onClose={modalEditTheme.onClose}
+        size={"xl"}
+        isOpen={modalEditTheme.isOpen}
+        scrollBehavior={"inside"}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            <Flex justifyContent={"center"}>
+              <Image
+                src="/images/addshop.png"
+                width={"40px"}
+                height={"35px"}
+                mr={"10px"}
+              />
+              <Text fontSize={"4xl"}>เลือกธีมร้านค้า</Text>
+            </Flex>
+          </ModalHeader>
+          <ModalCloseButton
+            color={"white"}
+            bgColor={"#ff0000"}
+            borderRadius={"50px"}
+            width={"20px"}
+            height={"20px"}
+            fontSize={"9px"}
+          />
+          <ModalBody>
+            <RadioGroup defaultValue={Theme.toString()} onChange={setTheme}>
+              <Stack>
+                <Grid templateColumns="repeat(2, 1fr)" gap={8}>
+                  <GridItem textAlign={"center"}>
+                    <Box
+                      border={Theme == 0 ? "2px solid blue" : ""}
+                      borderRadius={Theme == 0 ? "20px" : ""}
+                      padding={Theme == 0 ? "0.75rem" : ""}
+                    >
+                      <Image
+                        borderRadius={"15px"}
+                        src={"/images/themeshoppeewhite.jpg"}
+                      />
+                    </Box>
+                    <Radio colorScheme="blue" value="0" size="lg">
+                      ธีมขาว
+                    </Radio>
+                  </GridItem>
+                  <GridItem textAlign={"center"}>
+                    <Box
+                      border={Theme == 1 ? "2px solid gray" : ""}
+                      borderRadius={Theme == 1 ? "20px" : ""}
+                      padding={Theme == 1 ? "0.75rem" : ""}
+                    >
+                      <Image
+                        borderRadius={"15px"}
+                        src={"/images/themeshoppeewhite.jpg"}
+                      />
+                    </Box>
+                    <Radio colorScheme="gray" value="1" size="lg">
+                      ธีมดำ
+                    </Radio>
+                  </GridItem>
+                </Grid>
+              </Stack>
+            </RadioGroup>
+          </ModalBody>
+          <ModalFooter justifyContent={"center"}>
+            <Button
+              onClick={modalEditTheme.onClose}
+              bgColor={"white"}
+              color={"gray"}
+              border={"2px solid gray"}
+              px={"2rem"}
+              height={"35px"}
+              mr={"10px"}
+            >
+              ยกเลิก
+            </Button>
+            <Button
+              onClick={handleNextModalEditProduct}
+              bgColor={"#ff0000"}
+              color={"white"}
+              px={"2rem"}
+              height={"35px"}
+              // disabled={isLoading}
+            >
+              ถัดไป
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      {/* End Modal แก้ไขเลือกธีม */}
 
       {/* Modal Edit Next step สร้างร้านค้า */}
       <Modal
@@ -672,7 +778,7 @@ function modalEditStep1(props) {
             </TableContainer>
           </ModalBody>
           <ModalFooter justifyContent={"center"}>
-            <Button
+            {/* <Button
               onClick={modalPreview.onOpen}
               bgColor={"white"}
               color={"#ff0000"}
@@ -684,7 +790,7 @@ function modalEditStep1(props) {
               mr={"10px"}
             >
               ดูตัวอย่าง
-            </Button>
+            </Button> */}
             <Button
               onClick={modalEditNextStep.onClose}
               bgColor={"white"}

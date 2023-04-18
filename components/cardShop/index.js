@@ -78,7 +78,6 @@ function index(product) {
   };
   // end function bookmark ของแต่ละ shopID
 
-
   // function เปิด modal แก้ไขข้อมูลร้านค้าของแต่ละ shopID
   const [modalStates, setModalStates] = useState({});
   const toggleModal = (shopId) => {
@@ -90,7 +89,6 @@ function index(product) {
   };
   // end function เปิด modal แก้ไขข้อมูลร้านค้าของแต่ละ shopID
 
-
   // function copy url ของร้านค้า
   const [copiedShopUrl, setCopiedShopUrl] = useState(null);
 
@@ -99,7 +97,6 @@ function index(product) {
     setCopiedShopUrl(shopUrl);
   };
   // end function copy url ของร้านค้า
-
 
   // function ลบข้อมูลร้านค้า
   const handleConfirmDelete = () => {
@@ -124,9 +121,7 @@ function index(product) {
     setDeleteNameShop(nameShop);
     modalDelete.onOpen();
   };
-  // end function ลบข้อมูลร้านค้า 
-
-
+  // end function ลบข้อมูลร้านค้า
 
   // function เปลี่ยนสถานะ เปิด/ปิด ของ ร้านค้า
   const handleSwitchChangeStatus = (shopID, newStatus) => {
@@ -163,158 +158,168 @@ function index(product) {
 
   return (
     <>
-      {product.Shops.map((shops) => {
-        const isBookmarked = bookmarks[shops.id] || false; // ตัวแปรไว้ใช้ bookmark แต่ละ ShopID
-        const dateCreate = new Date(shops.created_at); // format วันที่ที่ส้ราง เอาแค่ วัน เดือน ปั
-        const formattedDateCreate = dateCreate.toLocaleDateString(); // format วันที่ที่ส้ราง เอาแค่ วัน เดือน ปั
-        const dateUpdate = new Date(shops.updated_at); // format วันที่ที่อัพเดท เอาแค่ วัน เดือน ปั
-        const formattedDateUpdate = dateUpdate.toLocaleDateString(); // format วันที่ที่อัพเดท เอาแค่ วัน เดือน ปั
-        let shopName = shops.name_shop.slice(0, 30); // format ชื่อของร้านค้าห้ามยาวเกิน 30 ตัวอักษร ถ้าเกินตัดคำและใส่่ ...
-        if (shops.name_shop.length > 30) {
-          shopName += "..."; 
-        } // format ชื่อของร้านค้าห้ามยาวเกิน 30 ตัวอักษร ถ้าเกินตัดคำและใส่่ ...
-        const modalState = modalStates[shops.id] || false; // ตัวแปรไว้ใช้เปิด modal edit ร้านค้า แต่ละ ShopID
-        const isSwitchOn = switchStatus[shops.id] || false; // ตัวแปรไว้ใช้แก้ไขสถานะ เปิด/ปิด ของแต่ละ ShopID
+      <Grid templateColumns="repeat(3, 1fr)" gap={2}>
+        {product.Shops.map((shops) => {
+          const isBookmarked = bookmarks[shops.id] || false; // ตัวแปรไว้ใช้ bookmark แต่ละ ShopID
+          const dateCreate = new Date(shops.created_at); // format วันที่ที่ส้ราง เอาแค่ วัน เดือน ปั
+          const formattedDateCreate = dateCreate.toLocaleDateString(); // format วันที่ที่ส้ราง เอาแค่ วัน เดือน ปั
+          const dateUpdate = new Date(shops.updated_at); // format วันที่ที่อัพเดท เอาแค่ วัน เดือน ปั
+          const formattedDateUpdate = dateUpdate.toLocaleDateString(); // format วันที่ที่อัพเดท เอาแค่ วัน เดือน ปั
+          let shopName = shops.name_shop.slice(0, 30); // format ชื่อของร้านค้าห้ามยาวเกิน 30 ตัวอักษร ถ้าเกินตัดคำและใส่่ ...
+          if (shops.name_shop.length > 30) {
+            shopName += "...";
+          } // format ชื่อของร้านค้าห้ามยาวเกิน 30 ตัวอักษร ถ้าเกินตัดคำและใส่่ ...
+          const modalState = modalStates[shops.id] || false; // ตัวแปรไว้ใช้เปิด modal edit ร้านค้า แต่ละ ShopID
+          const isSwitchOn = switchStatus[shops.id] || false; // ตัวแปรไว้ใช้แก้ไขสถานะ เปิด/ปิด ของแต่ละ ShopID
 
-        return (
-          <React.Fragment key={shops.id}>
-            <Card maxW="sm" mb={"10px"} boxShadow="base" width={"23rem"}>
-              <CardBody>
-                <Box>
-                  <Flex alignItems="center">
-                    <Switch
-                      colorScheme="brand"
-                      size="sm"
-                      mr={"5px"}
-                      isChecked={isSwitchOn}
-                      onChange={(e) =>
-                        handleSwitchChangeStatus(
-                          shops.id,
-                          e.target.checked ? 1 : 0
-                        )
-                      }
-                    />
-                    เปิด/ปิดเพื่อแสดง
-                    <Spacer />
-                    <Image
-                      src={
-                        isBookmarked ? "/images/star2.png" : "/images/star1.png"
-                      }
-                      h="20px"
-                      w="20px"
-                      onClick={() => toggleBookmark(shops.id)}
-                    />
-                  </Flex>
-                </Box>
-                <Box>
-                  <Image
-                    src={
-                      "https://shopee-api.deksilp.com/images/shopee/cover_img_shop/" +
-                      shops.cover_img_shop
-                    }
-                    pos="relative"
-                    mt={"5px"}
-                    borderRadius="lg"
-                    boxShadow="md"
-                    height={"185px"}
-                  />
-                  <Image
-                    src={
-                      "https://shopee-api.deksilp.com/images/shopee/shop/" +
-                      shops.img_shop
-                    }
-                    pos="absolute"
-                    top={"22%"}
-                    left={"33%"}
-                    borderRadius={"100%"}
-                    width={"125px"}
-                    height={"125px"}
-                    border={"5px solid white"}
-                  />
-                </Box>
-                <Box mt={"5px"}>
-                  <Text fontSize="3xl" fontWeight={"bold"} textAlign="center">
-                    {shopName}
-                  </Text>
-                  <Flex justifyContent={"space-around"}>
-                    <Text fontSize="sm">จำนวนผู้เข้าชม : 5,980</Text>
-                    <Text fontSize="sm">
-                      วันที่สร้าง : {formattedDateCreate}
-                    </Text>
-                    <Text fontSize="sm">
-                      แก้ไขล่าสุด : {formattedDateUpdate}
-                    </Text>
-                  </Flex>
-                </Box>
-                <Box mt={"0.75rem"}>
-                  <Flex justifyContent={"space-around"}>
-                    <Button
-                      bgColor={"white"}
-                      border={"2px solid red"}
-                      height={"30px"}
-                      onClick={handleCopyClick(shops.url_shop)}
-                    >
+          return (
+            <React.Fragment key={shops.id}>
+              <GridItem>
+                <Card maxW="sm" mb={"10px"} boxShadow="base" width={"23rem"}>
+                  <CardBody>
+                    <Box>
+                      <Flex alignItems="center">
+                        <Switch
+                          colorScheme="brand"
+                          size="sm"
+                          mr={"5px"}
+                          isChecked={isSwitchOn}
+                          onChange={(e) =>
+                            handleSwitchChangeStatus(
+                              shops.id,
+                              e.target.checked ? 1 : 0
+                            )
+                          }
+                        />
+                        เปิด/ปิดเพื่อแสดง
+                        <Spacer />
+                        <Image
+                          src={
+                            isBookmarked
+                              ? "/images/star2.png"
+                              : "/images/star1.png"
+                          }
+                          h="20px"
+                          w="20px"
+                          onClick={() => toggleBookmark(shops.id)}
+                        />
+                      </Flex>
+                    </Box>
+                    <Box>
                       <Image
-                        src="/images/copyshop.png"
-                        width={"20px"}
-                        height={"20px"}
+                        src={
+                          "https://shopee-api.deksilp.com/images/shopee/cover_img_shop/" +
+                          shops.cover_img_shop
+                        }
+                        pos="relative"
+                        mt={"5px"}
+                        borderRadius="lg"
+                        boxShadow="md"
+                        height={"185px"}
                       />
-                      <Text ml={"8px"} fontSize="xl" color={"#ff0000"}>
-                        {copiedShopUrl === shops.url_shop
-                          ? "คัดลอกสำเร็จ!"
-                          : "คัดลอกลิงค์"}
-                      </Text>
-                    </Button>
-                    <Button
-                      bgColor={"white"}
-                      border={"2px solid black"}
-                      height={"30px"}
-                      onClick={() => {
-                        handleDeleteShop(shopName, shops.id);
-                      }}
-                    >
                       <Image
-                        src="/images/binshop.png"
-                        width={"18px"}
-                        height={"18px"}
+                        src={
+                          "https://shopee-api.deksilp.com/images/shopee/shop/" +
+                          shops.img_shop
+                        }
+                        pos="absolute"
+                        top={"22%"}
+                        left={"33%"}
+                        borderRadius={"100%"}
+                        width={"125px"}
+                        height={"125px"}
+                        border={"5px solid white"}
                       />
-                      <Text ml={"8px"} fontSize="xl">
-                        ลบ
+                    </Box>
+                    <Box mt={"5px"}>
+                      <Text
+                        fontSize="3xl"
+                        fontWeight={"bold"}
+                        textAlign="center"
+                      >
+                        {shopName}
                       </Text>
-                    </Button>
-                    <Button
-                      bgColor={"#ff0000"}
-                      // border={"2px solid black"}
-                      height={"30px"}
-                      onClick={() => {
-                        toggleModal(shops.id);
-                      }}
-                    >
-                      <Image
-                        src="/images/editshop.png"
-                        width={"18px"}
-                        height={"18px"}
-                      />
-                      <Text ml={"8px"} fontSize="xl" color={"white"}>
-                        แก้ไข
-                      </Text>
-                    </Button>
-                  </Flex>
-                </Box>
-              </CardBody>
-            </Card>
-            <ModalEditStep1
-              isOpen={modalState}
-              onClose={() => {
-                toggleModal(shops.id);
-              }}
-              Shops={shops}
-              statusEdit={product.statusDelete}
-              Products={product.Products}
-            />
-          </React.Fragment>
-        );
-      })}
+                      <Flex justifyContent={"space-around"}>
+                        <Text fontSize="sm">จำนวนผู้เข้าชม : 5,980</Text>
+                        <Text fontSize="sm">
+                          วันที่สร้าง : {formattedDateCreate}
+                        </Text>
+                        <Text fontSize="sm">
+                          แก้ไขล่าสุด : {formattedDateUpdate}
+                        </Text>
+                      </Flex>
+                    </Box>
+                    <Box mt={"0.75rem"}>
+                      <Flex justifyContent={"space-around"}>
+                        <Button
+                          bgColor={"white"}
+                          border={"2px solid red"}
+                          height={"30px"}
+                          onClick={handleCopyClick(shops.url_shop)}
+                        >
+                          <Image
+                            src="/images/copyshop.png"
+                            width={"20px"}
+                            height={"20px"}
+                          />
+                          <Text ml={"8px"} fontSize="xl" color={"#ff0000"}>
+                            {copiedShopUrl === shops.url_shop
+                              ? "คัดลอกสำเร็จ!"
+                              : "คัดลอกลิงค์"}
+                          </Text>
+                        </Button>
+                        <Button
+                          bgColor={"white"}
+                          border={"2px solid black"}
+                          height={"30px"}
+                          onClick={() => {
+                            handleDeleteShop(shopName, shops.id);
+                          }}
+                        >
+                          <Image
+                            src="/images/binshop.png"
+                            width={"18px"}
+                            height={"18px"}
+                          />
+                          <Text ml={"8px"} fontSize="xl">
+                            ลบ
+                          </Text>
+                        </Button>
+                        <Button
+                          bgColor={"#ff0000"}
+                          // border={"2px solid black"}
+                          height={"30px"}
+                          onClick={() => {
+                            toggleModal(shops.id);
+                          }}
+                        >
+                          <Image
+                            src="/images/editshop.png"
+                            width={"18px"}
+                            height={"18px"}
+                          />
+                          <Text ml={"8px"} fontSize="xl" color={"white"}>
+                            แก้ไข
+                          </Text>
+                        </Button>
+                      </Flex>
+                    </Box>
+                  </CardBody>
+                </Card>
+              </GridItem>
+              <ModalEditStep1
+                isOpen={modalState}
+                onClose={() => {
+                  toggleModal(shops.id);
+                }}
+                Shops={shops}
+                statusEdit={product.statusDelete}
+                Products={product.Products}
+              />
+            </React.Fragment>
+          );
+        })}
+      </Grid>
       {/* {product.Products.map((product) => (
         
       ))} */}
