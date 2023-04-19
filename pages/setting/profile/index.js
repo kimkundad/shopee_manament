@@ -158,10 +158,17 @@ export default function Profile() {
                 alignItems={"center"}
               >
                 <GridItem colSpan={2} display={"flex"} justifyContent={"right"}>
-                  <FormLabel m={0}>ชื่อ-นามสกุล : </FormLabel>
+                  <FormLabel m={0}>ชื่อจริง : </FormLabel>
                 </GridItem>
                 <GridItem colSpan={6}>
-                  <Input placeholder="Christian Nwamba" />
+                  <Input placeholder="ชื่อจริง" />
+                </GridItem>
+                
+                <GridItem colSpan={2} display={"flex"} justifyContent={"right"}>
+                  <FormLabel m={0}>นามสกุล : </FormLabel>
+                </GridItem>
+                <GridItem colSpan={6}>
+                  <Input placeholder="นามสกุล" />
                 </GridItem>
 
                 <GridItem
@@ -173,7 +180,7 @@ export default function Profile() {
                   <FormLabel mt={2}>เพศ : </FormLabel>
                 </GridItem>
                 <GridItem colSpan={6}>
-                  <RadioGroup defaultValue="2">
+                  <RadioGroup defaultValue="1">
                     <Stack spacing={5} direction="row">
                       <Radio colorScheme="green" value="1">
                         ชาย
@@ -200,7 +207,7 @@ export default function Profile() {
                   <FormLabel mt={2}>ที่อยู่ : </FormLabel>
                 </GridItem>
                 <GridItem colSpan={6}>
-                  <Textarea placeholder="26985 Brighton Lane, Lake Forest, CA 92630" />
+                  <Textarea placeholder="เลขที่บ้าน ถนน ซอย" />
                 </GridItem>
 
                 <GridItem colSpan={2} display={"flex"} justifyContent={"right"}>
@@ -231,12 +238,12 @@ export default function Profile() {
                   <Input placeholder="ไปรษณีย์" />
                 </GridItem>
 
-                <GridItem colSpan={2} display={"flex"} justifyContent={"right"}>
+                {/* <GridItem colSpan={2} display={"flex"} justifyContent={"right"}>
                   <FormLabel m={0}>ประเทศ : </FormLabel>
                 </GridItem>
                 <GridItem colSpan={6}>
                   <Input placeholder="ประเทศ" />
-                </GridItem>
+                </GridItem> */}
               </Grid>
             </Box>
             <Box>
