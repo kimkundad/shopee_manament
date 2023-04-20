@@ -61,64 +61,57 @@ import { BsClockHistory, BsBoxFill, BsXCircleFill } from "react-icons/bs";
 import { FaRegSave } from "react-icons/fa";
 import { VscSave } from "react-icons/vsc";
 
-const countOrder = orders.filter(item => item.status === 'ordering').length
-const countPacking = orders.filter(item => item.status === 'packing').length
-const countReadyShip = orders.filter(item => item.status === 'ready').length
-const countDelivering = orders.filter(item => item.status === 'delivering').length
-const countDelivered = orders.filter(item => item.status === 'delivered').length
-const countRemand = orders.filter(item => item.status === 'remand').length
-const countCancel = orders.filter(item => item.status === 'cancel').length
 
-// const [navbarTab, setNavbarTab] = useState("");
-
-const handleNavbar = (tabName) => {
-	alert(tabName);
-}
-
-
-function InsertDataTable() {
+function InsertDataTable(props) {
+	let query = props.name;
+	let itemId = false
 	return (
 		<>
-			{orders.map((item) => {
+			{orders.filter(order => {
+				if (itemId === true) {
+					return order.status.includes(query) && order.orderId.toString().includes(5836669146)
+				} else {
+					return order.status.includes(query)
+				}
+			}).map(filteredOrder => {
 				return (
-
-					<Tr key={item.orderId}>
+					<Tr key={filteredOrder.orderId}>
 						<Td px={5} py={2} borderLeftRadius={"10"} textAlign={"center"}>
 							<Checkbox size="md" colorScheme="green" defaultChecked></Checkbox>
 						</Td>
 						<Td p={2} textAlign={"center"}>
-							{item.orderId}
+							{filteredOrder.orderId}
 						</Td>
 						<Td p={2}>
 							<Center>
-								<Image src={item.imageThumbnail} width={30} height={30} alt='bay' />
+								<Image src={filteredOrder.imageThumbnail} width={30} height={30} alt='bay' />
 							</Center>
 						</Td>
 						<Td p={2} textAlign={"center"}>
-							{item.receiverName}
+							{filteredOrder.receiverName}
 						</Td>
 						<Td p={2} textAlign={"center"}>
-							{item.address}
+							{filteredOrder.address}
 						</Td>
 						<Td p={2} textAlign={"center"}>
-							{item.phoneNumber}
+							{filteredOrder.phoneNumber}
 						</Td>
 						<Td p={2} textAlign={"center"}>
-							{item.quantity}
+							{filteredOrder.quantity}
 						</Td>
 						<Td p={2} textAlign={"center"}>
-							{item.amount}
+							{filteredOrder.amount}
 						</Td>
 						<Td p={2}>
 							<Center>
-								<Image src={item.bankThumbnail} width={30} height={30} alt='bay' />
+								<Image src={filteredOrder.bankThumbnail} width={30} height={30} alt='bay' />
 							</Center>
 						</Td>
 						<Td p={2} textAlign={"center"}>
-							{item.createAt}
+							{filteredOrder.createAt}
 						</Td>
 						<Td p={2} textAlign={"center"}>
-							{item.orderBy}
+							{filteredOrder.orderBy}
 						</Td>
 						<Td p={2} borderRightRadius={"10"} textAlign={"center"}>
 							<HStack>
@@ -151,7 +144,12 @@ function InsertDataTable() {
 					</Tr>
 
 				)
+
 			})}
+
+
+
+
 		</>
 	)
 }
@@ -171,6 +169,16 @@ export default function Order() {
 		{ label: "ผู้ทำรายการ" },
 		{ label: "ดำเนินการ" },
 	];
+
+	const countOrder = orders.filter(item => item.status === 'ordering').length
+	const countPacking = orders.filter(item => item.status === 'packing').length
+	const countReadyShip = orders.filter(item => item.status === 'ready').length
+	const countDelivering = orders.filter(item => item.status === 'delivering').length
+	const countDelivered = orders.filter(item => item.status === 'delivered').length
+	const countRemand = orders.filter(item => item.status === 'remand').length
+	const countCancel = orders.filter(item => item.status === 'cancel').length
+
+	const [navbarTab, setNavbarTab] = useState("order");
 
 	return (
 		<>
@@ -193,7 +201,7 @@ export default function Order() {
 						<Tab
 							_selected={{ borderBottomColor: 'red', borderBottomWidth: '3px' }}
 							w='160px'
-							onClick={() => handleNavbar('order')}
+							onClick={() => setNavbarTab('order')}
 						>
 							<Icon as={BsAlarm} boxSize={5} />
 							<Text as='b' fontSize={17} px={4}>ออเดอร์</Text>
@@ -208,7 +216,11 @@ export default function Order() {
 								{countOrder}
 							</Badge>
 						</Tab>
-						<Tab _selected={{ borderBottomColor: 'red', borderBottomWidth: '3px' }} w='160px'>
+						<Tab
+							_selected={{ borderBottomColor: 'red', borderBottomWidth: '3px' }}
+							w='160px'
+							onClick={() => setNavbarTab('packing')}
+						>
 							<Icon as={BsBoxSeam} boxSize={5} />
 							<Text as='b' fontSize={17} px={4}>กำลังแพ็ค</Text>
 							<Badge
@@ -222,7 +234,11 @@ export default function Order() {
 								{countPacking}
 							</Badge>
 						</Tab>
-						<Tab _selected={{ borderBottomColor: 'red', borderBottomWidth: '3px' }} w='160px'>
+						<Tab
+							_selected={{ borderBottomColor: 'red', borderBottomWidth: '3px' }}
+							w='160px'
+							onClick={() => setNavbarTab('ready')}
+						>
 							<Icon as={BsTruck} boxSize={5} />
 							<Text as='b' fontSize={17} px={4}>พร้อมส่ง</Text>
 							<Badge
@@ -236,7 +252,11 @@ export default function Order() {
 								{countReadyShip}
 							</Badge>
 						</Tab>
-						<Tab _selected={{ borderBottomColor: 'red', borderBottomWidth: '3px' }} w='160px'>
+						<Tab
+							_selected={{ borderBottomColor: 'red', borderBottomWidth: '3px' }}
+							w='160px'
+							onClick={() => setNavbarTab('delivering')}
+						>
 							<Icon as={BsFillClipboardCheckFill} boxSize={5} />
 							<Text as='b' fontSize={17} px={4}>ส่งแล้ว</Text>
 							<Badge
@@ -250,7 +270,11 @@ export default function Order() {
 								{countDelivering}
 							</Badge>
 						</Tab>
-						<Tab _selected={{ borderBottomColor: 'red', borderBottomWidth: '3px' }} w='160px'>
+						<Tab
+							_selected={{ borderBottomColor: 'red', borderBottomWidth: '3px' }}
+							w='160px'
+							onClick={() => setNavbarTab('delivered')}
+						>
 							<Icon as={BsPatchCheckFill} boxSize={5} />
 							<Text as='b' fontSize={17} px={4}>ส่งสำเร็จ</Text>
 							<Badge
@@ -264,7 +288,11 @@ export default function Order() {
 								{countDelivered}
 							</Badge>
 						</Tab>
-						<Tab _selected={{ borderBottomColor: 'red', borderBottomWidth: '3px' }} w='160px'>
+						<Tab
+							_selected={{ borderBottomColor: 'red', borderBottomWidth: '3px' }}
+							w='160px'
+							onClick={() => setNavbarTab('remand')}
+						>
 							<Icon as={BsArrowReturnLeft} boxSize={5} />
 							<Text as='b' fontSize={17} px={4}>ตีกลับ</Text>
 							<Badge
@@ -278,7 +306,11 @@ export default function Order() {
 								{countRemand}
 							</Badge>
 						</Tab>
-						<Tab _selected={{ borderBottomColor: 'red', borderBottomWidth: '3px' }} w='160px'>
+						<Tab
+							_selected={{ borderBottomColor: 'red', borderBottomWidth: '3px' }}
+							w='160px'
+							onClick={() => setNavbarTab('cancel')}
+						>
 							<Icon as={BsXOctagonFill} boxSize={5} />
 							<Text as='b' fontSize={17} px={4}>ยกเลิก</Text>
 							<Badge
@@ -312,7 +344,7 @@ export default function Order() {
 								type="text"
 								fontSize="21px"
 								borderColor="gray.500"
-								placeholder="ค้นหารายการ"
+								placeholder="ค้นหาเลขคำสั่งซื้อ"
 							/>
 						</InputGroup>
 					</Box>
@@ -431,7 +463,7 @@ export default function Order() {
 									<Td borderRightRadius={"10"}></Td>
 								</Tr>
 
-								<InsertDataTable />
+								<InsertDataTable name={navbarTab} />
 								{/* TODO */}
 
 							</Tbody>
