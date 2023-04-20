@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import ListCheck from "@/components/MenuList";
@@ -69,13 +69,11 @@ const countDelivered = orders.filter(item => item.status === 'delivered').length
 const countRemand = orders.filter(item => item.status === 'remand').length
 const countCancel = orders.filter(item => item.status === 'cancel').length
 
-console.log(countOrder)
-console.log(countPacking)
-console.log(countReadyShip)
-console.log(countDelivering)
-console.log(countDelivered)
-console.log(countRemand)
-console.log(countCancel)
+// const [navbarTab, setNavbarTab] = useState("");
+
+const handleNavbar = (tabName) => {
+	alert(tabName);
+}
 
 
 function InsertDataTable() {
@@ -160,6 +158,7 @@ function InsertDataTable() {
 
 export default function Order() {
 	const colunm = [
+		{ label: "ตัวเลือก" },
 		{ label: "เลขคำสั่งซื้อ" },
 		{ label: "รูปสินค้า" },
 		{ label: "ชื่อสินค้า" },
@@ -191,7 +190,11 @@ export default function Order() {
 			<Box pt={5}>
 				<Tabs>
 					<TabList>
-						<Tab _selected={{ borderBottomColor: 'red', borderBottomWidth: '3px' }} w='160px'>
+						<Tab
+							_selected={{ borderBottomColor: 'red', borderBottomWidth: '3px' }}
+							w='160px'
+							onClick={() => handleNavbar('order')}
+						>
 							<Icon as={BsAlarm} boxSize={5} />
 							<Text as='b' fontSize={17} px={4}>ออเดอร์</Text>
 							<Badge
@@ -437,6 +440,8 @@ export default function Order() {
 				</Flex>
 			</Box>
 			{/* End Table */}
+
+
 		</>
 	);
 }
