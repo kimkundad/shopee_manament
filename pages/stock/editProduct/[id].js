@@ -146,6 +146,16 @@ function UseEditProduct() {
         const product = await axios.get(
           `https://shopee-api.deksilp.com/api/getProduct/?product_id=${productId}`
         );
+        product.data.product[0].allImage.unshift({
+          image: product.data.product[0].img_product
+        })
+        const newArr = await product.data.product[0].allImage.map((item) => {
+          return {
+            ...item,
+            url: `https://shopee-api.deksilp.com/images/shopee/products/${item.image}`
+          }
+        })
+        
         setProduct(product.data.product[0]);
         setName_product(product.data.product[0].name_product);
         setDetail_product(product.data.product[0].detail_product);
@@ -177,7 +187,8 @@ function UseEditProduct() {
         }
         setDiv(div);
         setDataTable(product.data.product[0].allOption1);
-        setImageData(product.data.product[0].allImage);
+        setImageData(newArr);
+        setFileImage(newArr);
       }
     }
 
@@ -202,8 +213,6 @@ function UseEditProduct() {
   const handleSetFileImage = (fileList) => {
     setFileImage(fileList);
   };
-  console.log(imageData);
-  console.log(fileImage);
   const [fileVideo, setFileVideo] = useState([]);
   const handleSetFileVideo = (fileList) => {
     setFileVideo(fileList);
@@ -250,7 +259,6 @@ function UseEditProduct() {
   };
   const modalAddOptiion = (event) => {
     event.preventDefault();
-    setValueSelect(null);
     onOpenForm3();
   };
   const modalAddSubOptiion = (event) => {
@@ -302,6 +310,7 @@ function UseEditProduct() {
 
     dataTable.push(arrOption);
     setDataTable(dataTable);
+    setValueSelect(null);
     onCloseForm3();
   }
 
@@ -312,13 +321,14 @@ function UseEditProduct() {
   function addSubOption(event) {
     event.preventDefault();
     const arrSubOption = {
-      nameSubOption: nameSubOption,
-      priceSubOption: priceSubOption,
-      stockSubOption: stockSubOption,
-      skuSubOption: skuSubOption,
+      sub_op_name: nameSubOption,
+      price: priceSubOption,
+      stock: stockSubOption,
+      sku: skuSubOption,
     };
     dataTable[valueSelect].allOption2.push(arrSubOption);
     setDataTable(dataTable);
+    setValueSelect(null);
     onCloseForm4();
   }
   function deleteOption(index = null, subIndex = null) {
@@ -377,6 +387,7 @@ function UseEditProduct() {
 
     setDataTable(newArr);
   };
+  console.log(dataTable);
   return (
     <>
       <Box>
@@ -847,7 +858,7 @@ function UseEditProduct() {
             </Box>
             <Box pl="115px" pt="15px">
               <Table minWidth="100%" border="1px solid">
-                <Thead>
+                <Thead bg="gray.100">
                   <Tr>
                     <Td border="1px solid" textAlign="center">{option}</Td>
                     <Td border="1px solid" textAlign="center">{subOption}</Td>
@@ -873,7 +884,7 @@ function UseEditProduct() {
                         >
                           {item.op_name}
                           <Image
-                            src={`https://shopee-api.deksilp.com/images/shopee/products/${item.img_name}`}
+                            src={item.img_name? `https://shopee-api.deksilp.com/images/shopee/products/${item.img_name}`:(fileImage[item.indexImageOption]?.thumbUrl ? fileImage[item.indexImageOption]?.thumbUrl:fileImage[item.indexImageOption]?.url)}
                             h="70px"
                             maxWidth="none"
                           />
@@ -1082,7 +1093,7 @@ function UseEditProduct() {
                             <Image
                               onClick={(event) => setValueSelect(index)}
                               mb="10px"
-                              src={item.thumbUrl}
+                              src={item.url?  item.url: item.thumbUrl}
                               w="50px"
                               h="50px"
                             />

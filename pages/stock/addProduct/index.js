@@ -71,6 +71,37 @@ class PicturesWall extends React.Component {
     );
   }
 }
+
+class PicturesWallOption extends React.Component {
+  state = {
+    fileList: [],
+  };
+  handleChange = ({ fileList }) => {
+    this.props.setFileImageOption(fileList);
+    this.setState({ fileList });
+  };
+
+  render() {
+    const { fileList } = this.state;
+    const uploadButton = (
+      <div>
+        <PlusOutlined />
+        <div style={{ marginTop: 8 }}>เพิ่มรูปภาพ</div>
+      </div>
+    );
+    return (
+      <>
+        <Upload
+          listType="picture-card"
+          fileList={fileList}
+          onChange={this.handleChange}
+        >
+          {fileList.length >= 1 ? null : uploadButton}
+        </Upload>
+      </>
+    );
+  }
+}
 class VideoPlayer extends React.Component {
   render() {
     return (
@@ -133,6 +164,10 @@ function addProduct() {
   const [categoryId, setCategoryId] = useState(null);
   const handleSetFileImage = (fileList) => {
     setFileImage(fileList);
+  };
+  const handleSetFileImageOption = (fileList,index) => {
+    dataTable[index].fileImageOption = fileList[0]
+    setFileImageOption(fileList);
   };
   const [fileVideo, setFileVideo] = useState([]);
   const handleSetFileVideo = (fileList) => {
@@ -206,6 +241,9 @@ function addProduct() {
     fileImage.forEach((file, index) => {
       formData.append(`file[${index}]`, file.originFileObj);
     });
+    dataTable.forEach((file,index) => {
+      formData.append(`fileOption[${index}]`, file.fileImageOption.originFileObj);
+    })
     formData.append("dataOption", JSON.stringify(dataTable));
     const response = await axios.post(
       "https://shopee-api.deksilp.com/api/addProduct",
@@ -248,7 +286,6 @@ function addProduct() {
       priceOption: priceOption,
       stockOption: stockOption,
       skuOption: skuOption,
-      indexImageOption: valueSelect,
       subOption: [],
     };
 
@@ -329,7 +366,7 @@ function addProduct() {
 
     setDataTable(newArr);
   };
-  console.log(categoryId);
+  console.log(dataTable);
   return (
     <>
       <Box>
@@ -722,7 +759,7 @@ function addProduct() {
               </Box>
             </Flex>
           </Box>
-          <Box px="10%">
+          <Box>
             {div?.map((item, index) => {
               return (
                 <Flex pt="10px" justifyContent="center" key={index}>
@@ -805,9 +842,7 @@ function addProduct() {
                           }
                         >
                           {item.nameOption}
-                          <Image
-                            src={fileImage[item.indexImageOption]?.thumbUrl}
-                          />
+                          <PicturesWallOption setFileImageOption={(fileList) => handleSetFileImageOption(fileList, index)} />
                         </Td>
                         <Td border="1px solid">
                           {item?.subOption?.length > 0 ? (
