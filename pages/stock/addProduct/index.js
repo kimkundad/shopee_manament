@@ -26,6 +26,7 @@ import {
   ModalHeader,
   ModalFooter,
   ModalBody,
+  ModalCloseButton,
   useDisclosure,
   Spacer,
   Icon,
@@ -39,6 +40,13 @@ import { BsArrowLeftCircle } from "react-icons/bs";
 import axios from "axios";
 import { Upload } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
+import {
+  PhoneIcon,
+  AddIcon,
+  WarningIcon,
+  SmallAddIcon,
+  EditIcon,
+} from "@chakra-ui/icons";
 /* import "antd/dist/antd.css"; */
 
 class PicturesWall extends React.Component {
@@ -66,37 +74,6 @@ class PicturesWall extends React.Component {
           onChange={this.handleChange}
         >
           {fileList.length >= 10 ? null : uploadButton}
-        </Upload>
-      </>
-    );
-  }
-}
-
-class PicturesWallOption extends React.Component {
-  state = {
-    fileList: [],
-  };
-  handleChange = ({ fileList }) => {
-    this.props.setFileImageOption(fileList);
-    this.setState({ fileList });
-  };
-
-  render() {
-    const { fileList } = this.state;
-    const uploadButton = (
-      <div>
-        <PlusOutlined />
-        <div style={{ marginTop: 8 }}>เพิ่มรูปภาพ</div>
-      </div>
-    );
-    return (
-      <>
-        <Upload
-          listType="picture-card"
-          fileList={fileList}
-          onChange={this.handleChange}
-        >
-          {fileList.length >= 1 ? null : uploadButton}
         </Upload>
       </>
     );
@@ -162,12 +139,23 @@ function addProduct() {
   const [fileImageOption, setFileImageOption] = useState([]);
   const [valueSelect, setValueSelect] = useState(null);
   const [categoryId, setCategoryId] = useState(null);
+  const [tags2, setTags2] = useState([]);
+
+  // modal chakra.ui
+  const modalAddCategory = useDisclosure();
+  const modalConfirm = useDisclosure();
+  const modalConfirmSuccess = useDisclosure();
+
+  const modalEditCategory = useDisclosure();
+  const modalConfirmEdit = useDisclosure();
+  const modalConfirmEditSuccess = useDisclosure();
+  // end modal chakra.ui
+
+  const [checkInputCategory, setCheckInputCategory] = useState(true);
+  const [checkInputCategory2, setCheckInputCategory2] = useState(true);
+
   const handleSetFileImage = (fileList) => {
     setFileImage(fileList);
-  };
-  const handleSetFileImageOption = (fileList,index) => {
-    dataTable[index].fileImageOption = fileList[0]
-    setFileImageOption(fileList);
   };
   const [fileVideo, setFileVideo] = useState([]);
   const handleSetFileVideo = (fileList) => {
@@ -241,9 +229,6 @@ function addProduct() {
     fileImage.forEach((file, index) => {
       formData.append(`file[${index}]`, file.originFileObj);
     });
-    dataTable.forEach((file,index) => {
-      formData.append(`fileOption[${index}]`, file.fileImageOption.originFileObj);
-    })
     formData.append("dataOption", JSON.stringify(dataTable));
     const response = await axios.post(
       "https://shopee-api.deksilp.com/api/addProduct",
@@ -255,14 +240,21 @@ function addProduct() {
   };
 
   const [category, setCategory] = useState([]);
+  // function fetchData() {
+  //   const res = axios.get(
+  //     "https://shopee-api.deksilp.com/api/get_category_all"
+  //   );
+  //   setCategory(res.data.category);
+  // }
+  const fetchData = async () => {
+    axios
+      .get("https://shopee-api.deksilp.com/api/get_category_all")
+      .then(function (response) {
+        setCategory(response.data.category);
+        setTags2(response.data.category);
+      });
+  };
   useEffect(() => {
-    async function fetchData() {
-      const res = await axios.get(
-        "https://shopee-api.deksilp.com/api/get_category_all"
-      );
-      setCategory(res.data.category);
-    }
-
     fetchData();
   }, []);
 
@@ -286,6 +278,7 @@ function addProduct() {
       priceOption: priceOption,
       stockOption: stockOption,
       skuOption: skuOption,
+      indexImageOption: valueSelect,
       subOption: [],
     };
 
@@ -366,7 +359,132 @@ function addProduct() {
 
     setDataTable(newArr);
   };
-  console.log(dataTable);
+
+  //------------------- function เพิ่มหมวดหมู่ -----------------
+  // ตัวแปรเพิ่ม tag input กรอกข้อมูล หมวดหมู่
+  const [tags, setTags] = useState([]);
+
+  // ฟังก์ชันเพิ่ม tag input หมวดหมู่
+  const handleAddTag = (event) => {
+    event.preventDefault();
+    setTags([...tags, ""]);
+  };
+
+  // ฟังก์ชันลบ tag input หมวดหมู่
+  const handleDeleteTag = (index) => {
+    const newTags = [...tags];
+    newTags.splice(index, 1);
+    setTags(newTags);
+  };
+
+  // ฟังก์ชันเก็บค่าใส่ในตัวแปร input หมวดหมู่
+  const handleTagInputChange = (event, index) => {
+    const newTags = [...tags];
+    newTags[index] = event.target.value;
+    setTags(newTags);
+    setCheckInputCategory(true);
+  };
+  //-------------------------------------------------------------
+
+  // ฟังก์ชันเปิด modal ยืนยันการสร้างหมวดหมู่
+  const handleConfirmAddCategory = () => {
+    const isEmpty = tags.filter((tag) => tag === "");
+    console.log("isEmpty", isEmpty);
+    console.log("tags", tags);
+    if (tags.length == 0) {
+      setCheckInputCategory(false);
+    } else {
+      if (isEmpty.length > 0) {
+        setCheckInputCategory(false);
+      } else {
+        modalAddCategory.onClose();
+        modalConfirm.onOpen();
+      }
+    }
+  };
+
+  const handleConfirmSuccess = () => {
+    const formData = new FormData();
+    formData.append("userID", 34);
+    tags.forEach((category, index) => {
+      formData.append(`category[${index}]`, category);
+    });
+
+    axios
+      .post("https://shopee-api.deksilp.com/api/addCategory", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+      .then(function (response) {
+        if (response.data.success) {
+          modalConfirm.onClose();
+          modalConfirmSuccess.onOpen();
+          setTags([]);
+          fetchData();
+        }
+      });
+  };
+
+  const openModalEditCategory = () => {
+    console.log("tags2", category);
+  };
+  // ฟังก์ชันเพิ่ม tag input หมวดหมู่
+  // const handleAddTag2 = (event) => {
+  //   event.preventDefault();
+  //   setTags2([...tags2, ""]);
+  // };
+
+  // ฟังก์ชันลบ tag input หมวดหมู่
+  const handleDeleteTag2 = (index) => {
+    const newTags = [...tags2];
+    newTags.splice(index, 1);
+    setTags2(newTags);
+  };
+
+  // ฟังก์ชันเก็บค่าใส่ในตัวแปร input หมวดหมู่
+  const handleTagInputChange2 = (event, index, image, id) => {
+    const newTags = [...tags2];
+    newTags[index] = {
+      cat_name: event.target.value,
+      image: image,
+      id: id,
+    };
+
+    setTags2(newTags);
+    setCheckInputCategory2(true);
+  };
+
+  // ฟังก์ชันเปิด modal ยืนยันการแก้ไขหมวดหมู่
+  const handleConfirmEditCategory = () => {
+    const isEmpty = tags2.filter((tag) => tag.cat_name === "");
+    console.log("isEmpty", isEmpty);
+    if (isEmpty.length > 0) {
+      setCheckInputCategory2(false);
+    } else {
+      modalConfirmEdit.onOpen();
+    }
+  };
+
+  const handleConfirmEditSuccess = () => {
+    console.log("Tags2", tags2)
+    const data = {
+      category: tags2,
+    }
+    // const formData = new FormData();
+    // tags2.forEach((category, index) => {
+    //   formData.append(`category[${index}]`, category);
+    // });
+
+    axios
+      .post("https://shopee-api.deksilp.com/api/EditCategory", data)
+      .then(function (response) {
+        if (response.data.success) {
+          modalConfirmEdit.onClose();
+          modalConfirmEditSuccess.onOpen();
+          fetchData();
+          setTags2([]);
+        }
+      });
+  };
   return (
     <>
       <Box>
@@ -504,20 +622,40 @@ function addProduct() {
                     </GridItem>
                     <GridItem colSpan={2}>
                       <Box>
-                        <Select
-                          placeholder="โปรดเลือก"
-                          w="150px"
-                          borderColor="gray.400"
-                          onChange={(e) => setCategoryId(e.target.value)}
-                        >
-                          {category?.map((item, index) => {
-                            return (
-                              <option value={item.id} key={index}>
-                                {item.cat_name}
-                              </option>
-                            );
-                          })}
-                        </Select>
+                        <Flex>
+                          <Select
+                            placeholder="โปรดเลือก"
+                            w="150px"
+                            borderColor="gray.200"
+                            onChange={(e) => setCategoryId(e.target.value)}
+                          >
+                            {category?.map((item, index) => {
+                              return (
+                                <option value={item.id} key={index}>
+                                  {item.cat_name}
+                                </option>
+                              );
+                            })}
+                          </Select>
+                          <Button
+                            ml={"10px"}
+                            bgColor={"green.400"}
+                            color={"white"}
+                            padding={"0"}
+                            onClick={modalAddCategory.onOpen}
+                          >
+                            <SmallAddIcon boxSize={6} />
+                          </Button>
+                          <Button
+                            ml={"10px"}
+                            bgColor={"#fff682"}
+                            color={"black"}
+                            padding={"0"}
+                            onClick={modalEditCategory.onOpen}
+                          >
+                            <EditIcon boxSize={4} />
+                          </Button>
+                        </Flex>
                       </Box>
                     </GridItem>
                     <GridItem colSpan={1} justifySelf="end">
@@ -759,7 +897,7 @@ function addProduct() {
               </Box>
             </Flex>
           </Box>
-          <Box>
+          <Box px="10%">
             {div?.map((item, index) => {
               return (
                 <Flex pt="10px" justifyContent="center" key={index}>
@@ -842,7 +980,9 @@ function addProduct() {
                           }
                         >
                           {item.nameOption}
-                          <PicturesWallOption setFileImageOption={(fileList) => handleSetFileImageOption(fileList, index)} />
+                          <Image
+                            src={fileImage[item.indexImageOption]?.thumbUrl}
+                          />
                         </Td>
                         <Td border="1px solid">
                           {item?.subOption?.length > 0 ? (
@@ -1243,6 +1383,414 @@ function addProduct() {
           </ModalFooter>
         </ModalContent>
       </Modal>
+
+      {/* Modal สร้างหมวดหมู่ */}
+      <Modal
+        closeOnOverlayClick={false}
+        onClose={modalAddCategory.onClose}
+        size={"xl"}
+        isOpen={modalAddCategory.isOpen}
+        scrollBehavior={"inside"}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            <Flex justifyContent={"center"}>
+              <Image
+                src="/images/addshop.png"
+                width={"40px"}
+                height={"35px"}
+                mr={"10px"}
+              />
+              <Text fontSize={"4xl"}>สร้างหมวดหมู่</Text>
+            </Flex>
+          </ModalHeader>
+          <ModalCloseButton
+            color={"white"}
+            bgColor={"#ff0000"}
+            borderRadius={"50px"}
+            width={"20px"}
+            height={"20px"}
+            fontSize={"9px"}
+          />
+          <ModalBody>
+            <Flex>
+              <Text fontSize={"25px"}>* หมวดหมู่ร้านค้า</Text>
+              <Button
+                ml={"10px"}
+                bgColor={"green"}
+                color={"white"}
+                fontSize={"20px"}
+                leftIcon={
+                  <Image src="/images/pluswhite.png" h="13px" w="13px" />
+                }
+                onClick={handleAddTag}
+              >
+                เพิ่ม
+              </Button>
+            </Flex>
+            {checkInputCategory === false && (
+              <Text fontSize={"lg"} color={"red"}>
+                *กรุณากรอกข้อมูลหมวดหมู่
+              </Text>
+            )}
+            {tags.map((tag, index) => (
+              <Box mt={"15px"} key={index}>
+                <Flex>
+                  <Input
+                    border={
+                      checkInputCategory ? "1px solid gray" : "1px solid red"
+                    }
+                    type="text"
+                    value={tag}
+                    onChange={(event) => handleTagInputChange(event, index)}
+                  />
+                  <Button
+                    ml={"10px"}
+                    bgColor={"#ff0000"}
+                    color={"white"}
+                    onClick={() => handleDeleteTag(index)}
+                  >
+                    <Image
+                      src="/images/pluswhite.png"
+                      transform={"rotate(55deg)"}
+                      h="15px"
+                      w="15px"
+                    />
+                  </Button>
+                </Flex>
+              </Box>
+            ))}
+          </ModalBody>
+          <ModalFooter justifyContent={"center"}>
+            <Button
+              onClick={modalAddCategory.onClose}
+              bgColor={"white"}
+              color={"gray"}
+              border={"2px solid gray"}
+              px={"2rem"}
+              height={"35px"}
+              mr={"10px"}
+            >
+              ยกเลิก
+            </Button>
+            <Button
+              onClick={handleConfirmAddCategory}
+              bgColor={"#ff0000"}
+              color={"white"}
+              px={"2rem"}
+              height={"35px"}
+              disabled={checkInputCategory}
+            >
+              ถัดไป
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      {/* End Modal สร้างหมวดหมู่ */}
+
+      {/* Modal confirm สร้างหมวดหมู่ */}
+      <Modal
+        closeOnOverlayClick={false}
+        onClose={modalConfirm.onClose}
+        size={"lg"}
+        isOpen={modalConfirm.isOpen}
+      >
+        <ModalOverlay />
+        <ModalContent top={"20%"}>
+          <ModalHeader></ModalHeader>
+          <ModalCloseButton
+            color={"white"}
+            bgColor={"#ff0000"}
+            borderRadius={"50px"}
+            width={"20px"}
+            height={"20px"}
+            fontSize={"9px"}
+          />
+          <ModalBody>
+            <Flex flexDirection={"column"} alignItems={"center"}>
+              <Image
+                src="/images/addshop.png"
+                width={"150px"}
+                // height={"35px"}
+                mr={"10px"}
+              />
+              <Text fontSize={"5xl"} fontWeight={"bold"} mt={"20px"}>
+                ยืนยันการสร้างหมวดหมู่
+              </Text>
+            </Flex>
+          </ModalBody>
+          <ModalFooter justifyContent={"center"}>
+            <Button
+              onClick={modalConfirm.onClose}
+              bgColor={"white"}
+              color={"gray"}
+              border={"2px solid gray"}
+              px={"2rem"}
+              height={"35px"}
+              mr={"10px"}
+            >
+              ยกเลิก
+            </Button>
+            <Button
+              onClick={handleConfirmSuccess}
+              bgColor={"#ff0000"}
+              color={"white"}
+              px={"2rem"}
+              height={"35px"}
+            >
+              ยืนยัน
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      {/* End Modal confirm สร้างหมวดหมู่ */}
+
+      {/* Modal confirm success สร้างหมวดหมู่ */}
+      <Modal
+        closeOnOverlayClick={false}
+        onClose={modalConfirmSuccess.onClose}
+        size={"lg"}
+        isOpen={modalConfirmSuccess.isOpen}
+      >
+        <ModalOverlay />
+        <ModalContent top={"20%"}>
+          <ModalHeader></ModalHeader>
+          <ModalCloseButton
+            color={"white"}
+            bgColor={"#ff0000"}
+            borderRadius={"50px"}
+            width={"20px"}
+            height={"20px"}
+            fontSize={"9px"}
+          />
+          <ModalBody>
+            <Flex flexDirection={"column"} alignItems={"center"}>
+              <Image src="/images/checkshop.png" width={"130px"} mr={"10px"} />
+              <Text fontSize={"5xl"} fontWeight={"bold"} mt={"20px"}>
+                สร้างหมวดหมู่เสร็จสิ้น
+              </Text>
+            </Flex>
+          </ModalBody>
+          <ModalFooter justifyContent={"center"}>
+            <Button
+              onClick={modalConfirmSuccess.onClose}
+              bgColor={"#ff0000"}
+              color={"white"}
+              px={"2rem"}
+              height={"35px"}
+            >
+              ไปที่หน้าร้านค้า
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      {/* End Modal confirm success สร้างหมวดหมู่ */}
+
+      {/* Modal แก้ไขหมวดหมู่ */}
+      <Modal
+        closeOnOverlayClick={false}
+        onClose={modalEditCategory.onClose}
+        size={"xl"}
+        isOpen={modalEditCategory.isOpen}
+        scrollBehavior={"inside"}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            <Flex justifyContent={"center"}>
+              <Image
+                src="/images/addshop.png"
+                width={"40px"}
+                height={"35px"}
+                mr={"10px"}
+              />
+              <Text fontSize={"4xl"}>แก้ไขหมวดหมู่</Text>
+            </Flex>
+          </ModalHeader>
+          <ModalCloseButton
+            color={"white"}
+            bgColor={"#ff0000"}
+            borderRadius={"50px"}
+            width={"20px"}
+            height={"20px"}
+            fontSize={"9px"}
+          />
+          <ModalBody>
+            <Flex>
+              <Text fontSize={"25px"}>* รายการหมวดหมู่</Text>
+              {/* <Button
+                ml={"10px"}
+                bgColor={"green"}
+                color={"white"}
+                fontSize={"20px"}
+                leftIcon={
+                  <Image src="/images/pluswhite.png" h="13px" w="13px" />
+                }
+                onClick={handleAddTag2}
+              >
+                เพิ่ม
+              </Button> */}
+            </Flex>
+            {checkInputCategory2 === false && (
+              <Text fontSize={"lg"} color={"red"}>
+                *กรุณากรอกข้อมูลหมวดหมู่
+              </Text>
+            )}
+            {tags2.map((tag, index) => (
+              <Box mt={"15px"} key={index}>
+                <Flex>
+                  <Input
+                    border={
+                      checkInputCategory2 ? "1px solid gray" : "1px solid red"
+                    }
+                    type="text"
+                    value={tag.cat_name}
+                    onChange={(event) =>
+                      handleTagInputChange2(event, index, tag.image, tag.id)
+                    }
+                  />
+                  <Button
+                    ml={"10px"}
+                    bgColor={"#ff0000"}
+                    color={"white"}
+                    onClick={() => handleDeleteTag2(index)}
+                  >
+                    <Image
+                      src="/images/pluswhite.png"
+                      transform={"rotate(55deg)"}
+                      h="15px"
+                      w="15px"
+                    />
+                  </Button>
+                </Flex>
+              </Box>
+            ))}
+          </ModalBody>
+          <ModalFooter justifyContent={"center"}>
+            <Button
+              onClick={modalEditCategory.onClose}
+              bgColor={"white"}
+              color={"gray"}
+              border={"2px solid gray"}
+              px={"2rem"}
+              height={"35px"}
+              mr={"10px"}
+            >
+              ยกเลิก
+            </Button>
+            <Button
+              onClick={handleConfirmEditCategory}
+              bgColor={"#ff0000"}
+              color={"white"}
+              px={"2rem"}
+              height={"35px"}
+              disabled={checkInputCategory2}
+            >
+              ถัดไป
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      {/* End Modal แก้ไขหมวดหมู่ */}
+
+      {/* Modal confirm แก้ไขหมวดหมู่ */}
+      <Modal
+        closeOnOverlayClick={false}
+        onClose={modalConfirmEdit.onClose}
+        size={"lg"}
+        isOpen={modalConfirmEdit.isOpen}
+      >
+        <ModalOverlay />
+        <ModalContent top={"20%"}>
+          <ModalHeader></ModalHeader>
+          <ModalCloseButton
+            color={"white"}
+            bgColor={"#ff0000"}
+            borderRadius={"50px"}
+            width={"20px"}
+            height={"20px"}
+            fontSize={"9px"}
+          />
+          <ModalBody>
+            <Flex flexDirection={"column"} alignItems={"center"}>
+              <Image
+                src="/images/addshop.png"
+                width={"150px"}
+                // height={"35px"}
+                mr={"10px"}
+              />
+              <Text fontSize={"5xl"} fontWeight={"bold"} mt={"20px"}>
+                ยืนยันการแก้ไขหมวดหมู่
+              </Text>
+            </Flex>
+          </ModalBody>
+          <ModalFooter justifyContent={"center"}>
+            <Button
+              onClick={modalConfirmEdit.onClose}
+              bgColor={"white"}
+              color={"gray"}
+              border={"2px solid gray"}
+              px={"2rem"}
+              height={"35px"}
+              mr={"10px"}
+            >
+              ยกเลิก
+            </Button>
+            <Button
+              onClick={handleConfirmEditSuccess}
+              bgColor={"#ff0000"}
+              color={"white"}
+              px={"2rem"}
+              height={"35px"}
+            >
+              ยืนยัน
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      {/* End Modal confirm แก้ไขหมวดหมู่ */}
+
+      {/* Modal confirm success แก้ไขหมวดหมู่ */}
+      <Modal
+        closeOnOverlayClick={false}
+        onClose={modalConfirmEditSuccess.onClose}
+        size={"lg"}
+        isOpen={modalConfirmEditSuccess.isOpen}
+      >
+        <ModalOverlay />
+        <ModalContent top={"20%"}>
+          <ModalHeader></ModalHeader>
+          <ModalCloseButton
+            color={"white"}
+            bgColor={"#ff0000"}
+            borderRadius={"50px"}
+            width={"20px"}
+            height={"20px"}
+            fontSize={"9px"}
+          />
+          <ModalBody>
+            <Flex flexDirection={"column"} alignItems={"center"}>
+              <Image src="/images/checkshop.png" width={"130px"} mr={"10px"} />
+              <Text fontSize={"5xl"} fontWeight={"bold"} mt={"20px"}>
+                แก้ไขหมวดหมู่เสร็จสิ้น
+              </Text>
+            </Flex>
+          </ModalBody>
+          <ModalFooter justifyContent={"center"}>
+            <Button
+              onClick={modalConfirmEditSuccess.onClose}
+              bgColor={"#ff0000"}
+              color={"white"}
+              px={"2rem"}
+              height={"35px"}
+            >
+              ไปที่หน้าร้านค้า
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      {/* End Modal confirm success แก้ไขหมวดหมู่ */}
     </>
   );
 }
