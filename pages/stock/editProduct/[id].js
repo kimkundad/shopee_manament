@@ -143,8 +143,10 @@ function UseEditProduct() {
       );
       setCategory(category.data.category);
       if (productId) {
-        const product = await axios.get(
-          `https://shopee-api.deksilp.com/api/getProduct/?product_id=${productId}`
+        const formdata = new FormData();
+        formdata.append("product_id",productId)
+        const product = await axios.post(
+          `https://shopee-api.deksilp.com/api/getProduct`,formdata
         );
         product.data.product[0].allImage.unshift({
           image: product.data.product[0].img_product
@@ -387,7 +389,6 @@ function UseEditProduct() {
 
     setDataTable(newArr);
   };
-  console.log(dataTable);
   return (
     <>
       <Box>

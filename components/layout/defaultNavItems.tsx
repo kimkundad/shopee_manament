@@ -91,6 +91,26 @@ export const defaultNavItems: NavItem[] = [
 		),
 	},
 	{
+		label: "แชทร้านค้า",
+		href: "/chats",
+		icon: (
+			<Image
+				src="/images/menu/คลังสินค้า.png"
+				alt="My Image"
+				width={30}
+				height={30}
+			/>
+		),
+		iconcurrentpage: (
+			<Image
+				src="/images/menu/คลังสินค้า ขาว.png"
+				alt="My Image"
+				width={30}
+				height={30}
+			/>
+		),
+	},
+	{
 		label: "รายงาน",
 		href: "/report",
 		icon: (
