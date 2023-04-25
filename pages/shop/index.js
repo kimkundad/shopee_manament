@@ -58,6 +58,9 @@ import {
   Radio,
   IconButton,
   Stack,
+  MenuOptionGroup,
+  MenuItemOption,
+  MenuDivider,
 } from "@chakra-ui/react";
 import CardShop from "@/components/cardShop";
 import Axios from "axios";
@@ -66,7 +69,12 @@ import { Upload } from "antd";
 import * as yup from "yup";
 import SwiperCore, { Navigation, Pagination } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { ChevronLeftIcon, ChevronRightIcon, AddIcon } from "@chakra-ui/icons";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  AddIcon,
+  TriangleDownIcon,
+} from "@chakra-ui/icons";
 
 // Import Swiper styles
 import "swiper/css";
@@ -181,17 +189,23 @@ export default function shop() {
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [checkInputCategory, setCheckInputCategory] = useState(true);
   const [Theme, setTheme] = useState(0);
+  const [selectedCategories, setSelectedCategories] = useState([]);
 
+  // เป็นฟังก์ชันและตัวแปรในการเก็บค่ารูปร้านค้า โดยส่ง ฟังก์ชันเพื่อไปเก็บค่าใน component PicturesShop
   const [fileImgShop, setFileImgShop] = useState([]);
   const handleSetFileImgShop = (fileList) => {
     setFileImgShop(fileList);
   };
+  // สิ้นสุด ฟังก์ชันและตัวแปรในการเก็บค่ารูปร้านค้า โดยส่ง ฟังก์ชันเพื่อไปเก็บค่าใน component PicturesShop
 
+  // เป็นฟังก์ชันและตัวแปรในการเก็บค่ารูปปกร้านค้า โดยส่ง ฟังก์ชันเพื่อไปเก็บค่าใน component PicturesCoverShop
   const [fileImgCoverShop, setFileImgCoverShop] = useState([]);
   const handleSetFileImgCoverShop = (fileList) => {
     setFileImgCoverShop(fileList);
   };
+  // สิ้นสุด ฟังก์ชันและตัวแปรในการเก็บค่ารูปปกร้านค้า โดยส่ง ฟังก์ชันเพื่อไปเก็บค่าใน component PicturesCoverShop
 
+  // ฟังก์ชัน validate form กรอกข้อมูลร้านค้า ชื่อ รายละเอียด รูปร้านค้า รูปปกร้านค้า และเปิด modal ถัดไปและปิด modal
   const handleClickNextStopAdd = async (event) => {
     event.preventDefault();
     setIsLoading(true);
@@ -238,33 +252,45 @@ export default function shop() {
     }
     setIsLoading(false);
   };
+  // สิ้นสุด ฟังก์ชัน validate form กรอกข้อมูลร้านค้า ชื่อ รายละเอียด รูปร้านค้า รูปปกร้านค้า และเปิด modal ถัดไปและปิด modal
 
+  // ฟังก์ชัน กดถัดไปยัง modal เลือกธีม โดยก่อนจะถัดไป มีการตรวจสอบว่าได้กรอกข้อมูล หมวดหมู่แล้วหรือยัง ถ้ายังไม่ได้กรอก ไม่สามารถไป modal ถัดได้
   const handleNextModalSelectTheme = () => {
-    console.log('tags',tags)
-    if (tags.length > 0) {
-      modalCreateCategory.onClose();
-      modalSelectTheme.onOpen();
-    } else {
+    const isEmpty = tags.filter((tag) => tag === "");
+    console.log("isEmpty", isEmpty);
+    console.log("tags", tags);
+    if (tags.length == 0) {
       setCheckInputCategory(false);
+    } else {
+      if (isEmpty.length > 0) {
+        setCheckInputCategory(false);
+      } else {
+        modalCreateCategory.onClose();
+        modalSelectTheme.onOpen();
+      }
     }
   };
+  // สิ้นสุด ฟังก์ชัน กดถัดไปยัง modal เลือกธีม โดยก่อนจะถัดไป มีการตรวจสอบว่าได้กรอกข้อมูล หมวดหมู่แล้วหรือยัง ถ้ายังไม่ได้กรอก ไม่สามารถไป modal ถัดได้
 
+  // ฟังก์ชัน modal แสดงว่าจะยืนยันการสร้างร้านค้าใช่หือไม่
   const handleNextModalConfirm = () => {
     // console.log("Theme:", Theme);
     modalSelectTheme.onClose();
-    modalConfirm.onOpen();
+    modalAdd2.onOpen();
   };
+  // สิ้นสุด modal แสดงว่าจะยืนยันการสร้างร้านค้าใช่หือไม่
 
   const handleConfirm = () => {
     modalAdd2.onClose();
     modalConfirm.onOpen();
   };
 
+  // ฟังก์ชัน สร้างร้านค้าส่งค่าหรือยิง api ไปหลังบ้านเพื่อสร้างร้านค้า
   const handleConfirmSuccess = () => {
     // get selected products
-    // const selected = getProducts.filter((product) =>
-    //   selectedProducts.includes(product.id)
-    // );
+    const selected = getProducts.filter((product) =>
+      selectedProducts.includes(product.id)
+    );
 
     const formData = new FormData();
     formData.append("nameShop", nameShop);
@@ -278,9 +304,9 @@ export default function shop() {
     tags.forEach((tag, index) => {
       formData.append(`category[${index}]`, tag);
     });
-    // selected.forEach((select, index) => {
-    //   formData.append(`selectID[${index}]`, select.id);
-    // });
+    selected.forEach((select, index) => {
+      formData.append(`selectID[${index}]`, select.id);
+    });
     formData.append("themeShop", Theme);
 
     Axios.post("https://shopee-api.deksilp.com/api/createShop", formData, {
@@ -293,7 +319,9 @@ export default function shop() {
       }
     });
   };
+  // สิ้นสุด ฟังก์ชัน สร้างร้านค้าส่งค่าหรือยิง api ไปหลังบ้านเพื่อสร้างร้านค้า
 
+  // ฟังก์ชัน เรียกข้อมูลร้านค้าใหม่ทั้งหมดที่ส่งมาจากหลังบ้าน
   const fetchAllShops = async () => {
     Axios.get("https://shopee-api.deksilp.com/api/getAllShops").then(function (
       response
@@ -309,12 +337,14 @@ export default function shop() {
       }
     );
   }, []);
+  // สิ้นสุด ฟังก์ชัน เรียกข้อมูลร้านค้าใหม่ทั้งหมดที่ส่งมาจากหลังบ้าน
 
   useEffect(() => {
     fetchAllShops();
     setStatusDelete(false);
   }, [statusDelete]);
 
+  // ฟังก์ชัน ค้นหาข้อมูลร้านค้า filter ตามวันที่ และ filter ตามตัวอักษร
   const [query, setQuery] = useState("");
   const [searchDateShops, setSearchDateShops] = useState("");
   const [filterShops, setFilterShops] = useState("");
@@ -384,8 +414,9 @@ export default function shop() {
       fetchData();
     }
   }, [filterShops]);
+  // สิ้นสุด ฟังก์ชัน ค้นหาข้อมูลร้านค้า filter ตามวันที่ และ filter ตามตัวอักษร
 
-  //   count name shop /100
+  //------count name shop /100 ฿฿ เก็บค่าชื่อร้านค้า------------------
   const [lengthNameShop, setLengthNameShop] = useState(0);
   const [nameShop, setNameShop] = useState("");
   const handleChangeNameShop = (e) => {
@@ -394,8 +425,9 @@ export default function shop() {
     setNameShop(NameShop);
     setInputFieldError("");
   };
+  //------------------------------------------------------------
 
-  //   count detail shop /3000
+  //-------count detail shop /3000 && เก็บค่ารายละเอียดร้านค้า--------
   const [lengthDetailShop, setLengthDetailShop] = useState(0);
   const [detailShop, setDetailShop] = useState("");
   const handleChangeDetailShop = (e) => {
@@ -404,23 +436,24 @@ export default function shop() {
     setDetailShop(DetailShop);
     setTextAreaFieldError("");
   };
+  //------------------------------------------------------------
 
   // ฟังก์ชันนี้เป็นฟังก์ชันเลือกสินค้า ซึ่ง ณ ตอนนี้ไม่ได้ใช้
-  // const handleAllCheckboxChange = (e) => {
-  //   if (e.target.checked) {
-  //     setSelectedProducts(getProducts.map((product) => product.id));
-  //   } else {
-  //     setSelectedProducts([]);
-  //   }
-  // };
+  const handleAllCheckboxChange = (e) => {
+    if (e.target.checked) {
+      setSelectedProducts(getProducts.map((product) => product.id));
+    } else {
+      setSelectedProducts([]);
+    }
+  };
 
-  // const handleCheckboxChange = (productId) => {
-  //   if (selectedProducts.includes(productId)) {
-  //     setSelectedProducts(selectedProducts.filter((id) => id !== productId));
-  //   } else {
-  //     setSelectedProducts([...selectedProducts, productId]);
-  //   }
-  // };
+  const handleCheckboxChange = (productId) => {
+    if (selectedProducts.includes(productId)) {
+      setSelectedProducts(selectedProducts.filter((id) => id !== productId));
+    } else {
+      setSelectedProducts([...selectedProducts, productId]);
+    }
+  };
   // สิ้นสุด ฟังก์ชันนี้เป็นฟังก์ชันเลือกสินค้า ซึ่ง ณ ตอนนี้ไม่ได้ใช้
 
   // const [swiper, setSwiper] = useState(null);
@@ -436,24 +469,37 @@ export default function shop() {
   //     swiper.slideNext();
   //   }
   // };
+
+  //------------------- function เพิ่มหมวดหมู่ -----------------
+  // ตัวแปรเพิ่ม tag input กรอกข้อมูล หมวดหมู่
   const [tags, setTags] = useState([]);
 
+  // ฟังก์ชันเพิ่ม tag input หมวดหมู่
   const handleAddTag = (event) => {
     event.preventDefault();
     setTags([...tags, ""]);
   };
 
+  // ฟังก์ชันลบ tag input หมวดหมู่
   const handleDeleteTag = (index) => {
     const newTags = [...tags];
     newTags.splice(index, 1);
     setTags(newTags);
   };
 
+  // ฟังก์ชันเก็บค่าใส่ในตัวแปร input หมวดหมู่
   const handleTagInputChange = (event, index) => {
     const newTags = [...tags];
     newTags[index] = event.target.value;
     setTags(newTags);
     setCheckInputCategory(true);
+  };
+  //-------------------------------------------------------------
+
+  const handleCategorySelect = (selected) => {
+    const updatedSelectedCategories = [...selected];
+    setSelectedCategories(updatedSelectedCategories);
+    console.log("Selected categories:", updatedSelectedCategories);
   };
 
   return (
@@ -863,7 +909,9 @@ export default function shop() {
               <Box mt={"15px"} key={index}>
                 <Flex>
                   <Input
-                    border={checkInputCategory ? "" : "1px solid red"}
+                    border={
+                      checkInputCategory ? "1px solid gray" : "1px solid red"
+                    }
                     type="text"
                     value={tag}
                     onChange={(event) => handleTagInputChange(event, index)}
@@ -1005,7 +1053,7 @@ export default function shop() {
       {/* End Modal เลือกธีม */}
 
       {/* Modal Next step สร้างร้านค้า */}
-      {/* <Modal
+      <Modal
         closeOnOverlayClick={false}
         onClose={modalAdd2.onClose}
         size="custom"
@@ -1013,7 +1061,7 @@ export default function shop() {
         scrollBehavior={"inside"}
       >
         <ModalOverlay />
-        <ModalContent width="800px" height="600px">
+        <ModalContent width="1000px" height="600px">
           <ModalHeader>
             <Flex justifyContent={"center"}>
               <Image
@@ -1051,6 +1099,7 @@ export default function shop() {
                     <Th color={"white"}>ชื่อสินค้า</Th>
                     <Th color={"white"}>ราคา</Th>
                     <Th color={"white"}>สต๊อกสินค้า</Th>
+                    <Th color={"white"}>เลือกหมวดหมู่</Th>
                   </Tr>
                 </Thead>
                 <Tbody>
@@ -1092,6 +1141,41 @@ export default function shop() {
                           </NumberInput>
                           / 1,500
                         </Flex>
+                      </Td>
+                      <Td>
+                        <Menu closeOnSelect={false}>
+                          <MenuButton
+                            as={Button}
+                            bgColor={"white"}
+                            border={"1px solid gray"}
+                            rightIcon={<TriangleDownIcon />}
+                          >
+                            เลือกหมวดหมู่
+                          </MenuButton>
+                          <MenuList minWidth="240px">
+                            <MenuOptionGroup
+                              title="หมวดหมู่ร้านค้า"
+                              type="checkbox"
+                              value={selectedCategories}
+                              onChange={handleCategorySelect}
+                            >
+                              {tags?.map((category, index) => (
+                                <MenuItemOption value={category}>
+                                  {category}
+                                </MenuItemOption>
+                              ))}
+                              {/* <MenuItemOption value="email">
+                                Email
+                              </MenuItemOption>
+                              <MenuItemOption value="phone">
+                                Phone
+                              </MenuItemOption>
+                              <MenuItemOption value="country">
+                                Country
+                              </MenuItemOption> */}
+                            </MenuOptionGroup>
+                          </MenuList>
+                        </Menu>
                       </Td>
                     </Tr>
                   ))}
@@ -1135,7 +1219,7 @@ export default function shop() {
             </Button>
           </ModalFooter>
         </ModalContent>
-      </Modal> */}
+      </Modal>
       {/* End Modal Next step สร้างร้านค้า */}
 
       {/* Modal Preview สร้างร้านค้า */}
