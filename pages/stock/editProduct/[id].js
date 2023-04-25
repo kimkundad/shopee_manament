@@ -66,7 +66,7 @@ class PicturesWall extends React.Component {
     const uploadButton = (
       <div>
         <PlusOutlined />
-        <div style={{ marginTop: 8 }}>เพิ่มรูปภาพ ({fileList.length}/10)</div>
+        <div style={{ marginTop: 8 }}>เพิ่มรูปภาพ ({fileList.length}/1)</div>
       </div>
     );
     return (
@@ -76,7 +76,7 @@ class PicturesWall extends React.Component {
           fileList={fileList}
           onChange={this.handleChange}
         >
-          {fileList.length >= 10 ? null : uploadButton}
+          {fileList.length >= 1 ? null : uploadButton}
         </Upload>
       </>
     );
@@ -107,7 +107,7 @@ class VideoWall extends React.Component {
     const uploadButton = (
       <div>
         <PlusOutlined />
-        <div style={{ marginTop: 8 }}>เพิ่มวิดีโอ ({fileList.length}/2)</div>
+        <div style={{ marginTop: 8 }}>เพิ่มวิดีโอ/รูปภาพ ({fileList.length}/9)</div>
       </div>
     );
     return (
@@ -117,11 +117,11 @@ class VideoWall extends React.Component {
           fileList={fileList}
           onChange={this.handleChange}
         >
-          {fileList.length >= 2 ? null : uploadButton}
+          {fileList.length >= 9 ? null : uploadButton}
         </Upload>
-        {fileList.map((file) => (
-          <VideoPlayer key={file.uid} videoSrc={file.url} />
-        ))}
+        {fileList.map((file) => {
+          <VideoPlayer key={file.uid} videoSrc={file.url} />;
+        })}
       </>
     );
   }
@@ -252,6 +252,7 @@ function UseEditProduct() {
   } = useDisclosure();
   const comfirmSave = (event) => {
     console.log("fileImage", fileImage);
+    console.log("fileVideo", fileVideo);
     event.preventDefault();
     onOpenForm1();
   };
@@ -584,7 +585,7 @@ function UseEditProduct() {
                       </GridItem>
                       <GridItem colSpan={1} justifySelf="end">
                         <Box pr="5px">
-                          <Text>รูปภาพสินค้า : </Text>
+                          <Text>รูปภาพหลักสินค้า : </Text>
                         </Box>
                       </GridItem>
                       <GridItem colSpan={2}>
@@ -597,7 +598,7 @@ function UseEditProduct() {
                       </GridItem>
                       <GridItem colSpan={1} justifySelf="end">
                         <Box pr="5px">
-                          <Text>วิดีโอสินค้า : </Text>
+                          <Text>วิดีโอ/รูปภาพประกอบสินค้า : </Text>
                         </Box>
                       </GridItem>
                       <GridItem colSpan={2}>

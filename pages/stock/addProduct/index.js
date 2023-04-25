@@ -139,6 +139,7 @@ function addProduct() {
   const [fileImageOption, setFileImageOption] = useState([]);
   const [valueSelect, setValueSelect] = useState(null);
   const [categoryId, setCategoryId] = useState(null);
+  const [categoryIdDelete, setCategoryIdDelete] = useState(null);
   const [tags2, setTags2] = useState([]);
 
   // modal chakra.ui
@@ -149,6 +150,9 @@ function addProduct() {
   const modalEditCategory = useDisclosure();
   const modalConfirmEdit = useDisclosure();
   const modalConfirmEditSuccess = useDisclosure();
+
+  const modalConfirmDeleteCategory = useDisclosure();
+  const modalConfirmDeleteSuccessCategory = useDisclosure();
   // end modal chakra.ui
 
   const [checkInputCategory, setCheckInputCategory] = useState(true);
@@ -434,10 +438,26 @@ function addProduct() {
   // };
 
   // ฟังก์ชันลบ tag input หมวดหมู่
-  const handleDeleteTag2 = (index) => {
-    const newTags = [...tags2];
-    newTags.splice(index, 1);
-    setTags2(newTags);
+  const handleDeleteTag2 = (id) => {
+    modalConfirmDeleteCategory.onOpen();
+    console.log("ID:", id);
+    setCategoryIdDelete(id);
+    // const newTags = [...tags2];
+    // newTags.splice(index, 1);
+    // setTags2(newTags);
+  };
+
+  const handleConfirmDeleteSuccess = () => {
+    axios
+      .post("https://shopee-api.deksilp.com/api/deleteCategory/" + categoryIdDelete)
+      .then(function (response) {
+        if (response.data.success) {
+          modalConfirmDeleteCategory.onClose();
+          modalConfirmDeleteSuccessCategory.onOpen();
+          fetchData();
+          setTags2([]);
+        }
+      });
   };
 
   // ฟังก์ชันเก็บค่าใส่ในตัวแปร input หมวดหมู่
@@ -465,10 +485,10 @@ function addProduct() {
   };
 
   const handleConfirmEditSuccess = () => {
-    console.log("Tags2", tags2)
+    console.log("Tags2", tags2);
     const data = {
       category: tags2,
-    }
+    };
     // const formData = new FormData();
     // tags2.forEach((category, index) => {
     //   formData.append(`category[${index}]`, category);
@@ -1654,7 +1674,7 @@ function addProduct() {
                     ml={"10px"}
                     bgColor={"#ff0000"}
                     color={"white"}
-                    onClick={() => handleDeleteTag2(index)}
+                    onClick={() => handleDeleteTag2(tag.id)}
                   >
                     <Image
                       src="/images/pluswhite.png"
@@ -1780,6 +1800,107 @@ function addProduct() {
           <ModalFooter justifyContent={"center"}>
             <Button
               onClick={modalConfirmEditSuccess.onClose}
+              bgColor={"#ff0000"}
+              color={"white"}
+              px={"2rem"}
+              height={"35px"}
+            >
+              ไปที่หน้าร้านค้า
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      {/* End Modal confirm success แก้ไขหมวดหมู่ */}
+
+      {/* Modal confirm ลบหมวดหมู่ */}
+      <Modal
+        closeOnOverlayClick={false}
+        onClose={modalConfirmDeleteCategory.onClose}
+        size={"lg"}
+        isOpen={modalConfirmDeleteCategory.isOpen}
+      >
+        <ModalOverlay />
+        <ModalContent top={"20%"}>
+          <ModalHeader></ModalHeader>
+          <ModalCloseButton
+            color={"white"}
+            bgColor={"#ff0000"}
+            borderRadius={"50px"}
+            width={"20px"}
+            height={"20px"}
+            fontSize={"9px"}
+          />
+          <ModalBody>
+            <Flex flexDirection={"column"} alignItems={"center"}>
+              <Image
+                src="/images/addshop.png"
+                width={"150px"}
+                // height={"35px"}
+                mr={"10px"}
+              />
+              <Text fontSize={"5xl"} fontWeight={"bold"} mt={"20px"}>
+                ยืนยันการลบหมวดหมู่ ?
+              </Text>
+              <Text>
+                เมื่อทำการลบหมวดหมู่ สินค้าหมวดหมู่นี้ สถานะจะถูกปิดใช้งานจนกว่าจะทำการเปิดใช้งาน
+              </Text>
+            </Flex>
+          </ModalBody>
+          <ModalFooter justifyContent={"center"}>
+            <Button
+              onClick={modalConfirmDeleteCategory.onClose}
+              bgColor={"white"}
+              color={"gray"}
+              border={"2px solid gray"}
+              px={"2rem"}
+              height={"35px"}
+              mr={"10px"}
+            >
+              ยกเลิก
+            </Button>
+            <Button
+              onClick={handleConfirmDeleteSuccess}
+              bgColor={"#ff0000"}
+              color={"white"}
+              px={"2rem"}
+              height={"35px"}
+            >
+              ยืนยัน
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      {/* End Modal confirm ลบหมวดหมู่ */}
+
+      {/* Modal confirm success แก้ไขหมวดหมู่ */}
+      <Modal
+        closeOnOverlayClick={false}
+        onClose={modalConfirmDeleteSuccessCategory.onClose}
+        size={"lg"}
+        isOpen={modalConfirmDeleteSuccessCategory.isOpen}
+      >
+        <ModalOverlay />
+        <ModalContent top={"20%"}>
+          <ModalHeader></ModalHeader>
+          <ModalCloseButton
+            color={"white"}
+            bgColor={"#ff0000"}
+            borderRadius={"50px"}
+            width={"20px"}
+            height={"20px"}
+            fontSize={"9px"}
+          />
+          <ModalBody>
+            <Flex flexDirection={"column"} alignItems={"center"}>
+              <Image src="/images/checkshop.png" width={"130px"} mr={"10px"} />
+              <Text fontSize={"5xl"} fontWeight={"bold"} mt={"20px"}>
+                ลบหมวดหมู่เสร็จสิ้น
+              </Text>
+            </Flex>
+          </ModalBody>
+          <ModalFooter justifyContent={"center"}>
+            <Button
+              onClick={modalConfirmDeleteSuccessCategory.onClose}
               bgColor={"#ff0000"}
               color={"white"}
               px={"2rem"}
