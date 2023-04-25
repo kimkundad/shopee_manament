@@ -63,7 +63,7 @@ class PicturesWall extends React.Component {
     const uploadButton = (
       <div>
         <PlusOutlined />
-        <div style={{ marginTop: 8 }}>เพิ่มรูปภาพ ({fileList.length}/10)</div>
+        <div style={{ marginTop: 8 }}>เพิ่มรูปภาพ ({fileList.length}/1)</div>
       </div>
     );
     return (
@@ -73,7 +73,7 @@ class PicturesWall extends React.Component {
           fileList={fileList}
           onChange={this.handleChange}
         >
-          {fileList.length >= 10 ? null : uploadButton}
+          {fileList.length >= 1 ? null : uploadButton}
         </Upload>
       </>
     );
@@ -660,7 +660,7 @@ function addProduct() {
                     </GridItem>
                     <GridItem colSpan={1} justifySelf="end">
                       <Box pr="5px">
-                        <Text>รูปภาพสินค้า : </Text>
+                        <Text>รูปภาพหลักสินค้า : </Text>
                       </Box>
                     </GridItem>
                     <GridItem colSpan={2}>
@@ -1482,7 +1482,7 @@ function addProduct() {
               height={"35px"}
               disabled={checkInputCategory}
             >
-              ถัดไป
+              บันทึก
             </Button>
           </ModalFooter>
         </ModalContent>
@@ -1687,7 +1687,7 @@ function addProduct() {
               height={"35px"}
               disabled={checkInputCategory2}
             >
-              ถัดไป
+              บันทึก
             </Button>
           </ModalFooter>
         </ModalContent>

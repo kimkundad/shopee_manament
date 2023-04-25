@@ -144,20 +144,21 @@ function UseEditProduct() {
       setCategory(category.data.category);
       if (productId) {
         const formdata = new FormData();
-        formdata.append("product_id",productId)
+        formdata.append("product_id", productId);
         const product = await axios.post(
-          `https://shopee-api.deksilp.com/api/getProduct`,formdata
+          `https://shopee-api.deksilp.com/api/getProduct`,
+          formdata
         );
         product.data.product[0].allImage.unshift({
-          image: product.data.product[0].img_product
-        })
+          image: product.data.product[0].img_product,
+        });
         const newArr = await product.data.product[0].allImage.map((item) => {
           return {
             ...item,
-            url: `https://shopee-api.deksilp.com/images/shopee/products/${item.image}`
-          }
-        })
-        
+            url: `https://shopee-api.deksilp.com/images/shopee/products/${item.image}`,
+          };
+        });
+
         setProduct(product.data.product[0]);
         setName_product(product.data.product[0].name_product);
         setDetail_product(product.data.product[0].detail_product);
@@ -250,6 +251,7 @@ function UseEditProduct() {
     onClose: onCloseForm4,
   } = useDisclosure();
   const comfirmSave = (event) => {
+    console.log("fileImage", fileImage);
     event.preventDefault();
     onOpenForm1();
   };
@@ -268,6 +270,34 @@ function UseEditProduct() {
     onOpenForm4();
   };
   const saveSuccess = async () => {
+    const formData = new FormData();
+    formData.append("name_product", name_product);
+    formData.append("detail_product", detail_product);
+    formData.append("categoryId", categoryId);
+    fileImage.forEach((file, index) => {
+      formData.append(`file[${index}]`, file.originFileObj);
+    });
+    formData.append("sku", sku);
+    formData.append("cost", cost);
+    formData.append("price", price);
+    formData.append("price_sales", price_sales);
+    formData.append("stock", stock);
+    formData.append("weight", weight);
+    formData.append("width", width);
+    formData.append("length", length);
+    formData.append("height", height);
+
+    axios
+      .post(
+        `https://shopee-api.deksilp.com/api/editProduct/${productId}`,
+        formData
+      )
+      .then(function (response) {
+        if (response.data.success) {
+          onCloseForm1();
+          onOpenForm2();
+        }
+      });
     /* const formData = new FormData();
     formData.append("name_product", name_product);
     formData.append("detail_product", detail_product);
@@ -287,8 +317,6 @@ function UseEditProduct() {
       formData,
       { headers: { "Content-Type": "multipart/form-data" } }
     ); */
-    onCloseForm1();
-    onOpenForm2();
   };
 
   const handleSelectChange = () => {
@@ -861,13 +889,27 @@ function UseEditProduct() {
               <Table minWidth="100%" border="1px solid">
                 <Thead bg="gray.100">
                   <Tr>
-                    <Td border="1px solid" textAlign="center">{option}</Td>
-                    <Td border="1px solid" textAlign="center">{subOption}</Td>
-                    <Td border="1px solid" textAlign="center">ราคา</Td>
-                    <Td border="1px solid" textAlign="center">สต็อกสินค้า</Td>
-                    <Td border="1px solid" textAlign="center">รหัสสินค้า</Td>
-                    <Td border="1px solid" textAlign="center">ใช้งาน</Td>
-                    <Td border="1px solid" textAlign="center">ดำเนินการ</Td>
+                    <Td border="1px solid" textAlign="center">
+                      {option}
+                    </Td>
+                    <Td border="1px solid" textAlign="center">
+                      {subOption}
+                    </Td>
+                    <Td border="1px solid" textAlign="center">
+                      ราคา
+                    </Td>
+                    <Td border="1px solid" textAlign="center">
+                      สต็อกสินค้า
+                    </Td>
+                    <Td border="1px solid" textAlign="center">
+                      รหัสสินค้า
+                    </Td>
+                    <Td border="1px solid" textAlign="center">
+                      ใช้งาน
+                    </Td>
+                    <Td border="1px solid" textAlign="center">
+                      ดำเนินการ
+                    </Td>
                   </Tr>
                 </Thead>
                 <Tbody>
@@ -885,7 +927,13 @@ function UseEditProduct() {
                         >
                           {item.op_name}
                           <Image
-                            src={item.img_name? `https://shopee-api.deksilp.com/images/shopee/products/${item.img_name}`:(fileImage[item.indexImageOption]?.thumbUrl ? fileImage[item.indexImageOption]?.thumbUrl:fileImage[item.indexImageOption]?.url)}
+                            src={
+                              item.img_name
+                                ? `https://shopee-api.deksilp.com/images/shopee/products/${item.img_name}`
+                                : fileImage[item.indexImageOption]?.thumbUrl
+                                ? fileImage[item.indexImageOption]?.thumbUrl
+                                : fileImage[item.indexImageOption]?.url
+                            }
                             h="70px"
                             maxWidth="none"
                           />
@@ -1094,7 +1142,7 @@ function UseEditProduct() {
                             <Image
                               onClick={(event) => setValueSelect(index)}
                               mb="10px"
-                              src={item.url?  item.url: item.thumbUrl}
+                              src={item.url ? item.url : item.thumbUrl}
                               w="50px"
                               h="50px"
                             />
