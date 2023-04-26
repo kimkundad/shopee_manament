@@ -12,19 +12,19 @@ import {
 import axios from "axios";
 import { useEffect, useState } from "react";
 import moment from "moment";
-import { TiLocationArrow } from "react-icons/Ti";
+import { useRouter } from "next/router";
 
-export default function Layout({ children }) {
+
+export default function Layout(props) {
   let date = "";
 
-  const [text, setText] = useState("");
   const [messages, setMessage] = useState(null);
   useEffect(() => {
-    if (messages == null) {
+    if (props?.userId !== null) {
       async function fetchData() {
         const formdata = new FormData();
-        let user_id = 1;
-        let shop_id = 2;
+        let user_id = props?.userId;
+        let shop_id = props?.shop_id;
         formdata.append("user_id", user_id);
         formdata.append("shop_id", shop_id);
         const res = await axios.post(
@@ -36,43 +36,18 @@ export default function Layout({ children }) {
 
       fetchData();
     }
-    window.scrollTo({
-      top: document.body.scrollHeight,
-      behavior: "smooth",
-    });
-  }, [messages]);
+  }, [props?.userId]);
 
-  const handleTouch = () => {
-    window.scrollTo({
-      top: document.body.scrollHeight,
-    });
-  };
-
-  const sendMessage = () => {
-    event.preventDefault();
-    if (text !== "") {
-      async function newMessage() {
-        const formdata = new FormData();
-        let user_id = 1;
-        let shop_id = 2;
-        formdata.append("sender_id", user_id);
-        formdata.append("user_id", user_id);
-        formdata.append("shop_id", shop_id);
-        formdata.append("message", text);
-        const res = await axios.post(
-          `https://shopee-api.deksilp.com/api/sendMessage`,
-          formdata
-        );
-        setText("");
-        setMessage(res.data.message);
-      }
-      newMessage();
+  useEffect(() => {
+    if(props?.lastMessage?.length > 0 || props?.lastMessage !== null){
+      const newArr = [...messages,props?.lastMessage[0]];
+      setMessage(newArr)
     }
-  };
+  },[props?.lastMessage])
 
   return (
     <>
-      <Box px="5px" bg="white" pt="10px" pb="60px">
+      <Box px="5px" bg="white" pt="10px">
         {messages !== null ? (
           messages.map((item, index) => {
             const datatime = moment(item.created_at);
@@ -80,7 +55,7 @@ export default function Layout({ children }) {
             const timeString = datatime.format("HH:mm");
             if (dateString != date) {
               date = dateString;
-              if (item.recived_id == 1) {
+              if (item.recived_id == props?.userId) {
                 return (
                   <Box key={index}>
                     <Flex pt="15px" justifyContent="center">
@@ -179,7 +154,7 @@ export default function Layout({ children }) {
                 );
               }
             } else {
-              if (item.recived_id == 1) {
+              if (item.recived_id == props?.userId) {
                 return (
                   <Flex direction="row-reverse" pt="10px" key={index}>
                     <Box
@@ -271,41 +246,7 @@ export default function Layout({ children }) {
           </Box>
         )}
       </Box>
-      <form onSubmit={sendMessage}>
-        <Box className="test" bottom={0} >
-          <Box
-            className="test"
-            px="15px"
-            mt="10px"
-            py="8px"
-            bg="white"
-            pos="fixed"
-            bottom={0}
-            borderTop="1px solid #efefef"
-            w="-webkit-fill-available"
-          >
-            <Flex alignItems="center">
-              <Image src="/img/plus.png" h="25px" w="25px" />
-              <InputGroup mx="10px">
-                <Input
-                  type="text"
-                  value={text}
-                  placeholder="พิมข้อความ"
-                  borderRadius="3xl"
-                  onChange={(e) => setText(e.target.value)}
-                  onClick={handleTouch}
-                />
-                <InputRightElement>
-                  <Image src="/img/emoji.png" alt="" h="25px" />
-                </InputRightElement>
-              </InputGroup>
-              <Button type="submit" bg="white" padding="0px" w="35px" h="35px">
-                <TiLocationArrow style={{ height: "35px", width: "35px" }} />
-              </Button>
-            </Flex>
-          </Box>
-        </Box>
-      </form>
+      
     </>
   );
 }
