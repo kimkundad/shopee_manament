@@ -34,6 +34,10 @@ import {
   Radio,
   RadioGroup,
   Stack,
+  Container,
+  VStack,
+  IconButton,
+  HStack,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { BsArrowLeftCircle } from "react-icons/bs";
@@ -47,6 +51,7 @@ import {
   SmallAddIcon,
   EditIcon,
 } from "@chakra-ui/icons";
+import { DeleteIcon } from "@chakra-ui/icons";
 /* import "antd/dist/antd.css"; */
 
 class PicturesWall extends React.Component {
@@ -104,7 +109,7 @@ class VideoWall extends React.Component {
     const uploadButton = (
       <div>
         <PlusOutlined />
-        <div style={{ marginTop: 8 }}>เพิ่มวิดีโอ ({fileList.length}/2)</div>
+        <div style={{ marginTop: 8 }}>เพิ่มรูปภาพ ({fileList.length}/9)</div>
       </div>
     );
     return (
@@ -114,11 +119,11 @@ class VideoWall extends React.Component {
           fileList={fileList}
           onChange={this.handleChange}
         >
-          {fileList.length >= 2 ? null : uploadButton}
+          {fileList.length >= 9 ? null : uploadButton}
         </Upload>
-        {fileList.map((file) => (
+        {/* {fileList.map((file) => (
           <VideoPlayer key={file.uid} videoSrc={file.url} />
-        ))}
+        ))} */}
       </>
     );
   }
@@ -136,7 +141,7 @@ function addProduct() {
   const [height, setHeight] = useState("");
   const [sku, setSku] = useState("");
   const [fileImage, setFileImage] = useState([]);
-  const [fileImageOption, setFileImageOption] = useState([]);
+  // const [fileImageOption, setFileImageOption] = useState([]);
   const [valueSelect, setValueSelect] = useState(null);
   const [categoryId, setCategoryId] = useState(null);
   const [categoryIdDelete, setCategoryIdDelete] = useState(null);
@@ -158,13 +163,56 @@ function addProduct() {
   const [checkInputCategory, setCheckInputCategory] = useState(true);
   const [checkInputCategory2, setCheckInputCategory2] = useState(true);
 
-  const handleSetFileImage = (fileList) => {
-    setFileImage(fileList);
+  const [images, setImages] = useState([]);
+  const [imageCount, setImageCount] = useState(1);
+  const [files, setFiles] = useState([]);
+
+  const [imagesSub, setImagesSub] = useState([]);
+  const [imageSubCount, setImageSubCount] = useState(5);
+  const [filesSub, setFilesSub] = useState([]);
+  const [btnCheckSaveStep1, setBtnCheckSaveStep1] = useState(false);
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImages([...images, URL.createObjectURL(file)]);
+      setFiles([...files, file]);
+    }
   };
-  const [fileVideo, setFileVideo] = useState([]);
-  const handleSetFileVideo = (fileList) => {
-    setFileVideo(fileList);
+
+  const handleImageSubUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImagesSub([...imagesSub, URL.createObjectURL(file)]);
+      setFilesSub([...filesSub, file]);
+    }
   };
+
+  const handleDeleteImage = (index) => {
+    const newTags = [...images];
+    newTags.splice(index, 1);
+    const newTags2 = [...files];
+    newTags2.splice(index, 1);
+    setImages(newTags);
+    setFiles(newTags2);
+  };
+
+  const handleDeleteImageSub = (index) => {
+    const newTags = [...imagesSub];
+    newTags.splice(index, 1);
+    const newTags2 = [...filesSub];
+    newTags2.splice(index, 1);
+    setImagesSub(newTags);
+    setFilesSub(newTags2);
+  };
+
+  // const handleSetFileImage = (fileList) => {
+  //   setFileImage(fileList);
+  // };
+  // const [fileVideo, setFileVideo] = useState([]);
+  // const handleSetFileVideo = (fileList) => {
+  //   setFileVideo(fileList);
+  // };
 
   const [buttonActive, setButtonActive] = useState([true, false]);
 
@@ -196,6 +244,12 @@ function addProduct() {
     onClose: onCloseForm4,
   } = useDisclosure();
   const comfirmSave = (event) => {
+    console.log("images", images);
+    console.log("files", files);
+    console.log("imagesSub", imagesSub);
+    console.log("filesSub", filesSub);
+    console.log("option", option);
+    console.log("Suboption", subOption);
     event.preventDefault();
     onOpenForm1();
   };
@@ -230,8 +284,11 @@ function addProduct() {
     formData.append("category", categoryId);
     formData.append("option1", option);
     formData.append("option2", subOption);
-    fileImage.forEach((file, index) => {
-      formData.append(`file[${index}]`, file.originFileObj);
+    files.forEach((file, index) => {
+      formData.append(`file[${index}]`, file);
+    });
+    filesSub.forEach((file, index) => {
+      formData.append(`image[${index}]`, file);
     });
     formData.append("dataOption", JSON.stringify(dataTable));
     const response = await axios.post(
@@ -241,6 +298,7 @@ function addProduct() {
     );
     onCloseForm1();
     onOpenForm2();
+    setBtnCheckSaveStep1(true);
   };
 
   const [category, setCategory] = useState([]);
@@ -449,7 +507,9 @@ function addProduct() {
 
   const handleConfirmDeleteSuccess = () => {
     axios
-      .post("https://shopee-api.deksilp.com/api/deleteCategory/" + categoryIdDelete)
+      .post(
+        "https://shopee-api.deksilp.com/api/deleteCategory/" + categoryIdDelete
+      )
       .then(function (response) {
         if (response.data.success) {
           modalConfirmDeleteCategory.onClose();
@@ -541,8 +601,8 @@ function addProduct() {
                   <Box>
                     <Button
                       id="0"
-                      bg={buttonActive[0] ? "red" : "white"}
-                      color={buttonActive[0] ? "white" : "red"}
+                      bg={"red"}
+                      color={"white"}
                       border="2px solid red"
                       fontSize="24px"
                       borderRadius="3xl"
@@ -550,7 +610,7 @@ function addProduct() {
                       _hover={{}}
                       onClick={handelButton}
                     >
-                      สินค้าชิ้นเดียว
+                      สร้างสินค้า
                     </Button>
                   </Box>
                 </Center>
@@ -560,16 +620,17 @@ function addProduct() {
                   <Box>
                     <Button
                       id="1"
-                      bg={buttonActive[1] ? "red" : "white"}
-                      color={buttonActive[1] ? "white" : "red"}
+                      bg={"white"}
+                      color={"red"}
                       border="2px solid red"
                       fontSize="24px"
                       borderRadius="3xl"
-                      w="150px"
+                      w="175px"
                       _hover={{}}
                       onClick={handelButton}
+                      isDisabled={true}
                     >
-                      สินค้ามีตัวเลือก
+                      สร้างตัวเลือกสินค้า
                     </Button>
                   </Box>
                 </Center>
@@ -583,8 +644,7 @@ function addProduct() {
                 templateColumns="repeat(2, 1fr)"
                 gap={6}
                 justifyItems="end"
-                pt="15px"
-                px="35px"
+                p={"1rem"}
               >
                 <GridItem fontSize="25px" width="100%">
                   <Grid templateColumns="repeat(3, 1fr)" gap={2}>
@@ -685,17 +745,138 @@ function addProduct() {
                     </GridItem>
                     <GridItem colSpan={2}>
                       <Box>
-                        <PicturesWall setFileImage={handleSetFileImage} />
+                        <HStack alignItems="flex-start" spacing={4}>
+                          {images.map((img, idx) => (
+                            <Box
+                              key={idx}
+                              position="relative"
+                              w="200px"
+                              h="150px"
+                              border="1px dashed #d9d9d9"
+                              bgColor={"whitesmoke"}
+                              borderRadius="md"
+                              bgImage={`url(${img})`}
+                              bgSize="contain"
+                              bgPosition="center"
+                              bgRepeat="no-repeat"
+                            >
+                              <IconButton
+                                position="absolute"
+                                top="4px"
+                                right="4px"
+                                icon={<DeleteIcon />}
+                                colorScheme="red"
+                                onClick={() => handleDeleteImage(idx)}
+                              />
+                            </Box>
+                          ))}
+                          {images.length < imageCount && (
+                            <Box
+                              w="200px"
+                              h="150px"
+                              border="1px dashed #d9d9d9"
+                              borderRadius="md"
+                              bgColor={"whitesmoke"}
+                              _hover={{ border: "1px dashed blue" }}
+                            >
+                              <label htmlFor="upload">
+                                <Box
+                                  width="100%"
+                                  height="100%"
+                                  display="flex"
+                                  alignItems="center"
+                                  justifyContent="center"
+                                  cursor="pointer"
+                                >
+                                  <Text fontSize="lg" color="black">
+                                    เพิ่มรูปภาพ
+                                  </Text>
+                                  <Text ml={2} fontSize="lg">
+                                    ({`${images.length}/${imageCount}`})
+                                  </Text>
+                                  <Input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleImageUpload}
+                                    id="upload"
+                                    display="none"
+                                  />
+                                </Box>
+                              </label>
+                            </Box>
+                          )}
+                        </HStack>
+                        {/* <PicturesWall setFileImage={handleSetFileImage} /> */}
                       </Box>
                     </GridItem>
-                    <GridItem colSpan={1} justifySelf="end">
+                    {/* <GridItem colSpan={1} justifySelf="end">
                       <Box pr="5px">
-                        <Text>วิดีโอสินค้า : </Text>
+                        <Text>รูปภาพประกอบสินค้า : </Text>
                       </Box>
-                    </GridItem>
-                    <GridItem colSpan={2}>
-                      <VideoWall setFileVideo={handleSetFileVideo} />
-                    </GridItem>
+                    </GridItem> */}
+                    {/* <VideoWall setFileVideo={handleSetFileVideo} /> */}
+                    {/* <GridItem colSpan={2}>
+                      <HStack alignItems="flex-start" spacing={4}>
+                        {images.map((img, idx) => (
+                          <Box
+                            key={idx}
+                            position="relative"
+                            w="200px"
+                            h="150px"
+                            border="1px dashed #d9d9d9"
+                            bgColor={"whitesmoke"}
+                            borderRadius="md"
+                            bgImage={`url(${img})`}
+                            bgSize="contain"
+                            bgPosition="center"
+                            bgRepeat="no-repeat"
+                          >
+                            <IconButton
+                              position="absolute"
+                              top="4px"
+                              right="4px"
+                              icon={<DeleteIcon />}
+                              colorScheme="red"
+                              onClick={() => handleDeleteImage(idx)}
+                            />
+                          </Box>
+                        ))}
+                        {images.length < imageCount && (
+                          <Box
+                            w="200px"
+                            h="150px"
+                            border="1px dashed #d9d9d9"
+                            borderRadius="md"
+                            bgColor={"whitesmoke"}
+                          >
+                            <label htmlFor="upload">
+                              <Box
+                                width="100%"
+                                height="100%"
+                                display="flex"
+                                alignItems="center"
+                                justifyContent="center"
+                                cursor="pointer"
+                              >
+                                <Text fontSize="lg" color="black">
+                                  เพิ่มรูปภาพ
+                                </Text>
+                                <Text ml={2} fontSize="lg">
+                                  ({`${images.length}/${imageCount}`})
+                                </Text>
+                                <Input
+                                  type="file"
+                                  accept="image/*"
+                                  onChange={handleImageUpload}
+                                  id="upload"
+                                  display="none"
+                                />
+                              </Box>
+                            </label>
+                          </Box>
+                        )}
+                      </HStack>
+                    </GridItem> */}
                   </Grid>
                 </GridItem>
                 <GridItem fontSize="25px" width="100%">
@@ -844,7 +1025,7 @@ function addProduct() {
                           <Text>Cm</Text>
                         </InputRightElement>
                       </InputGroup>
-                      {buttonActive[0] ? (
+                      {/* {buttonActive[0] ? (
                         <Flex justifyContent="center" pt="10px">
                           <Button>ยกเลิก</Button>
                           <Button
@@ -882,11 +1063,122 @@ function addProduct() {
                             เพิ่มตัวเลือกสินค้า
                           </Button>
                         </Flex>
-                      )}
+                      )} */}
                     </GridItem>
                   </Grid>
                 </GridItem>
               </Grid>
+              <Box p={"0rem 1.5rem 1.5rem 1.5rem"}>
+                <Box pr={5}>
+                  <Text fontSize="25px">รูปภาพประกอบสินค้า :</Text>
+                </Box>
+                <Box
+                  border={"1px solid #dcd9d9"}
+                  borderRadius={"15px"}
+                  padding={"0.5rem"}
+                >
+                  <HStack alignItems="flex-start" spacing={4}>
+                    {imagesSub.map((img, idx) => (
+                      <Box
+                        key={idx}
+                        position="relative"
+                        w="200px"
+                        h="150px"
+                        border="1px dashed #d9d9d9"
+                        bgColor={"whitesmoke"}
+                        borderRadius="md"
+                        bgImage={`url(${img})`}
+                        bgSize="contain"
+                        bgPosition="center"
+                        bgRepeat="no-repeat"
+                      >
+                        <IconButton
+                          position="absolute"
+                          top="4px"
+                          right="4px"
+                          icon={<DeleteIcon />}
+                          colorScheme="red"
+                          onClick={() => handleDeleteImageSub(idx)}
+                        />
+                      </Box>
+                    ))}
+                    {imagesSub.length < imageSubCount && (
+                      <Box
+                        w="200px"
+                        h="150px"
+                        border="1px dashed #d9d9d9"
+                        borderRadius="md"
+                        bgColor={"whitesmoke"}
+                        _hover={{ border: "1px dashed blue" }}
+                      >
+                        <label htmlFor="upload">
+                          <Box
+                            width="100%"
+                            height="100%"
+                            display="flex"
+                            alignItems="center"
+                            justifyContent="center"
+                            cursor="pointer"
+                          >
+                            <Text fontSize="lg" color="black">
+                              เพิ่มรูปภาพ
+                            </Text>
+                            <Text ml={2} fontSize="lg">
+                              ({`${imagesSub.length}/${imageSubCount}`})
+                            </Text>
+                            <Input
+                              type="file"
+                              accept="image/*"
+                              onChange={handleImageSubUpload}
+                              id="upload"
+                              display="none"
+                            />
+                          </Box>
+                        </label>
+                      </Box>
+                    )}
+                  </HStack>
+                </Box>
+                <Box>
+                  <Flex justifyContent="center" pt="10px">
+                    <Text color={'red'}>*เงื่อนไข : แม่ค้าต้องทำการเพิ่มสินค้าให้เรียบร้อยก่อน จึงจะสามารถเพิ่มตัวเลือกให้กับสินค้าของท่านได้</Text>
+                  </Flex>
+                  <Flex justifyContent="center">
+                    {/* <Button>ยกเลิก</Button> */}
+                    <Button
+                      ml="10px"
+                      type="submit"
+                      bg="red"
+                      color="white"
+                      padding={"1rem 2rem"}
+                      fontSize={"20px"}
+                      leftIcon={
+                        <Image src="/images/save.png" alt="" h="20px" />
+                      }
+                      _hover={{}}
+                      onClick={comfirmSave}
+                      isDisabled={btnCheckSaveStep1}
+                    >
+                      บันทึก
+                    </Button>
+                    <Button
+                      ml="10px"
+                      type="submit"
+                      bg="white"
+                      color="red"
+                      border={'2px solid red'}
+                      padding={"1rem 2rem"}
+                      fontSize={"20px"}
+                      _hover={{}}
+                      onClick={additionOption}
+                      isDisabled={btnCheckSaveStep1 == true ? false : true}
+                      // onClick={comfirmSave}
+                    >
+                      เพิ่มตัวเลือก
+                    </Button>
+                  </Flex>
+                </Box>
+              </Box>
             </Box>
           </from>
         </Box>
@@ -916,8 +1208,49 @@ function addProduct() {
                 <Image src="/images/close.png" alt="" h="20px" w="20px" />
               </Box>
             </Flex>
+            <Wrap spacing="100px" justify="center">
+              <WrapItem>
+                <Center>
+                  <Box>
+                    <Button
+                      id="0"
+                      bg={"white"}
+                      color={"red"}
+                      border="2px solid red"
+                      fontSize="24px"
+                      borderRadius="3xl"
+                      w="150px"
+                      _hover={{}}
+                      onClick={handelButton}
+                      isDisabled={true}
+                    >
+                      สร้างสินค้า
+                    </Button>
+                  </Box>
+                </Center>
+              </WrapItem>
+              <WrapItem>
+                <Center>
+                  <Box>
+                    <Button
+                      id="1"
+                      bg={"red"}
+                      color={"white"}
+                      border="2px solid red"
+                      fontSize="24px"
+                      borderRadius="3xl"
+                      w="175px"
+                      _hover={{}}
+                      onClick={handelButton}
+                    >
+                      สร้างตัวเลือกสินค้า
+                    </Button>
+                  </Box>
+                </Center>
+              </WrapItem>
+            </Wrap>
           </Box>
-          <Box px="10%">
+          <Box px="10%" mt={10}>
             {div?.map((item, index) => {
               return (
                 <Flex pt="10px" justifyContent="center" key={index}>
@@ -1166,13 +1499,15 @@ function addProduct() {
               </Table>
             </Box>
             <Flex pl="100px" py="15px" justifyContent="center">
-              <Button>ยกเลิก</Button>
+              {/* <Button>ย้อนกลับ</Button> */}
               <Button
                 ml="10px"
                 type="submit"
                 bg="red"
                 color="white"
-                leftIcon={<Image src="/images/save.png" alt="" h="25px" />}
+                padding={"1rem 2rem"}
+                fontSize={"20px"}
+                leftIcon={<Image src="/images/save.png" alt="" h="20px" />}
                 _hover={{}}
                 onClick={comfirmSave}
               >
@@ -1339,6 +1674,7 @@ function addProduct() {
           </Modal>
         </Box>
       </Box>
+
       <Modal onClose={onCloseForm1} size="md" isOpen={isOpenForm1} isCentered>
         <ModalOverlay />
         <ModalContent>
@@ -1842,7 +2178,8 @@ function addProduct() {
                 ยืนยันการลบหมวดหมู่ ?
               </Text>
               <Text>
-                เมื่อทำการลบหมวดหมู่ สินค้าหมวดหมู่นี้ สถานะจะถูกปิดใช้งานจนกว่าจะทำการเปิดใช้งาน
+                เมื่อทำการลบหมวดหมู่ สินค้าหมวดหมู่นี้
+                สถานะจะถูกปิดใช้งานจนกว่าจะทำการเปิดใช้งาน
               </Text>
             </Flex>
           </ModalBody>
