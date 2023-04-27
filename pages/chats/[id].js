@@ -31,20 +31,21 @@ export default function useChats() {
 
   const [socket, setSocket] = useState(null);
   useEffect(() => {
-    const newSocket = new WebSocket("ws://http://192.168.0.86:3000/test");
+    const newSocket = new WebSocket("ws://192.168.0.86:3000/test");
     setSocket(newSocket);
     newSocket.addEventListener("open", () => {
       console.log("WebSocket connection established");
     });
     newSocket.addEventListener("message", (event) => {
       const message = JSON.parse(event.data);
-      setMessages((messages) => {
-        const messageIds = messages.map((m) => m.id);
-        if (!messageIds.includes(message.id)) {
-          return [...messages, message];
-        }
-        return messages;
-      });
+        setMessages((messages) => {
+          const messageIds = messages.map((m) => m.id);
+          if (!messageIds.includes(message.id)) {
+            return [...messages, message];
+          }
+          return messages;
+        });
+      
     });
     return () => {
       newSocket.close();
@@ -104,10 +105,22 @@ export default function useChats() {
   };
 
   useEffect(() => {
+    async function fecthdata() {
+      const formdataUserChat = new FormData();
+      formdataUserChat.append("shop_id", shopId);
+      const userChats = await axios.post(
+        "https://shopee-api.deksilp.com/api/getUserChats",
+        formdataUserChat
+      );
+      setUsers(userChats.data.users);
+    }
+    fecthdata()
     chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
   }, [messages]);
 
+  console.log(messages);
   useEffect(() => {
+    setMessages([])
     if (userId !== null) {
       // eslint-disable-next-line no-inner-declarations
       async function fetchData() {
@@ -166,17 +179,17 @@ export default function useChats() {
                     h="55px "
                     w="55px "
                   />
-                  <Box alignSelf="center" pl="10px">
-                    <Text fontSize="20px" fontWeight="bold">
-                      {item.name}
+                  <Box alignSelf="center" pl="10px" w="50%">
+                    <Text fontSize="20px" fontWeight="bold"  w="">
+                      {item.name?.length > 15 ? item.name?.slice(0, 15) + "..." : item.name}
                     </Text>
                     <Text fontSize="18px" color="gray">
-                      {item.message}
+                      {item.message?.length > 15 ? item.message?.slice(0, 15) + "..." : item.message}
                     </Text>
                   </Box>
                   <Spacer />
                   <Box>
-                    <Text>{dateString}</Text>
+                    <Text fontSize="10px">{dateString}</Text>
                   </Box>
                 </Flex>
               );
@@ -248,11 +261,11 @@ export default function useChats() {
                                   false
                                 )}
                               </Box>
-                              <Box fontSize="10px" alignSelf="flex-end">
+                              <Box fontSize="15px" alignSelf="flex-end">
                                 {item.status == 1 ? (
-                                  <Text>อ่านแล้ว</Text>
+                                  <Text fontSize="15px">อ่านแล้ว</Text>
                                 ) : null}
-                                <Text>{timeString} น.</Text>
+                                <Text fontSize="15px">{timeString} น.</Text>
                               </Box>
                             </Flex>
                           </Box>
@@ -308,7 +321,7 @@ export default function useChats() {
                                   false
                                 )}
                               </Box>
-                              <Text alignSelf="end" fontSize="10px">
+                              <Text alignSelf="end" fontSize="15px" >
                                 {timeString} น.
                               </Text>
                             </Flex>
@@ -344,8 +357,8 @@ export default function useChats() {
                               )}
                             </Box>
                             <Box fontSize="10px" alignSelf="flex-end">
-                              {item.status == 1 ? <Text>อ่านแล้ว</Text> : null}
-                              <Text>{timeString} น.</Text>
+                              {item.status == 1 ? <Text fontSize="15px">อ่านแล้ว</Text> : null}
+                              <Text fontSize="15px">{timeString} น.</Text>
                             </Box>
                           </Flex>
                         );
@@ -394,7 +407,7 @@ export default function useChats() {
                                 false
                               )}
                             </Box>
-                            <Text alignSelf="end" fontSize="10px">
+                            <Text alignSelf="end" fontSize="15px">
                               {timeString} น.
                             </Text>
                           </Flex>
