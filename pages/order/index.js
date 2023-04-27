@@ -502,7 +502,7 @@ export default function Order() {
 
 					<Spacer />
 					<Box borderWidth="1px" borderColor="red" borderRadius="md">
-						<Link href="/">
+						<Link href="/order/add">
 							<Button
 								fontSize="21px"
 								leftIcon={

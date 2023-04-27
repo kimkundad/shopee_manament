@@ -163,7 +163,7 @@ export default function Profile() {
                 <GridItem colSpan={6}>
                   <Input placeholder="ชื่อจริง" />
                 </GridItem>
-                
+
                 <GridItem colSpan={2} display={"flex"} justifyContent={"right"}>
                   <FormLabel m={0}>นามสกุล : </FormLabel>
                 </GridItem>
