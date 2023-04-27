@@ -31,7 +31,7 @@ export default function useChats() {
 
   const [socket, setSocket] = useState(null);
   useEffect(() => {
-    const newSocket = new WebSocket("ws://localhost:3000/test");
+    const newSocket = new WebSocket("ws://http://192.168.0.86:3000/test");
     setSocket(newSocket);
     newSocket.addEventListener("open", () => {
       console.log("WebSocket connection established");
