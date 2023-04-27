@@ -178,10 +178,10 @@ export default function stock() {
       const res = await axios.post(
         `https://shopee-api.deksilp.com/api/deleteProduct/${id}`
       );
-      if(res.data.success) {
+      if (res.data.success) {
         fetchAllProduct();
       }
-      
+
       // setProducts(res.data);
       // setIsCheckedAll(
       //   res.data.product.every((product) => product.active === 1)
@@ -194,6 +194,37 @@ export default function stock() {
     setId(null);
   }
 
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearchQuery = (event) => {
+    const search = event.target.value;
+    setSearchQuery(search);
+    if (search === "") {
+      setSearchQuery(null);
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      let checkAll = true;
+      const response = await axios.get(
+        `https://shopee-api.deksilp.com/api/getSearchProduct?search=${searchQuery}`
+      );
+      setProducts(response.data);
+      if (response.data.product.length > 0) {
+        response.data.product.map((products) => {
+          if (products.active === 0) {
+            return (checkAll = false);
+          }
+        });
+        setIsCheckedAll(checkAll);
+      }
+    };
+
+    if (searchQuery !== "") {
+      fetchData();
+    }
+  }, [searchQuery]);
   //sorting colunm
 
   return (
@@ -210,7 +241,9 @@ export default function stock() {
                 type="text"
                 fontSize="21px"
                 borderColor="gray.500"
-                placeholder="ค้นหารายการ"
+                placeholder="ค้นหาชื่อสินค้า"
+                value={searchQuery || ""}
+                onChange={handleSearchQuery}
               />
             </InputGroup>
           </Box>

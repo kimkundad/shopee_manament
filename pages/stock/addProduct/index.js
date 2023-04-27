@@ -38,6 +38,7 @@ import {
   VStack,
   IconButton,
   HStack,
+  Th,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { BsArrowLeftCircle } from "react-icons/bs";
@@ -244,12 +245,13 @@ function addProduct() {
     onClose: onCloseForm4,
   } = useDisclosure();
   const comfirmSave = (event) => {
-    console.log("images", images);
-    console.log("files", files);
-    console.log("imagesSub", imagesSub);
-    console.log("filesSub", filesSub);
+    // console.log("images", images);
+    // console.log("files", files);
+    // console.log("imagesSub", imagesSub);
+    // console.log("filesSub", filesSub);
     console.log("option", option);
     console.log("Suboption", subOption);
+    console.log("dataTable", dataTable)
     event.preventDefault();
     onOpenForm1();
   };
@@ -1157,7 +1159,7 @@ function addProduct() {
                       }
                       _hover={{}}
                       onClick={comfirmSave}
-                      isDisabled={btnCheckSaveStep1}
+                      // isDisabled={btnCheckSaveStep1}
                     >
                       บันทึก
                     </Button>
@@ -1171,7 +1173,7 @@ function addProduct() {
                       fontSize={"20px"}
                       _hover={{}}
                       onClick={additionOption}
-                      isDisabled={btnCheckSaveStep1 == true ? false : true}
+                      // isDisabled={btnCheckSaveStep1 == true ? false : true}
                       // onClick={comfirmSave}
                     >
                       เพิ่มตัวเลือก
@@ -1310,14 +1312,14 @@ function addProduct() {
             <Box pl="115px" pt="15px">
               <Table minWidth="100%" border="1px solid" textAlign="center">
                 <Thead>
-                  <Tr>
-                    <Td border="1px solid">{option}</Td>
-                    <Td border="1px solid">{subOption}</Td>
-                    <Td border="1px solid">ราคา</Td>
-                    <Td border="1px solid">สต็อกสินค้า</Td>
-                    <Td border="1px solid">รหัสสินค้า</Td>
-                    <Td border="1px solid">ใช้งาน</Td>
-                    <Td border="1px solid">ดำเนินการ</Td>
+                  <Tr bgColor={'whitesmoke'}>
+                    <Th border="1px solid" whiteSpace={'nowrap'}>{option}</Th>
+                    <Th border="1px solid" whiteSpace={'nowrap'}>{subOption}</Th>
+                    <Th border="1px solid" whiteSpace={'nowrap'}>ราคา</Th>
+                    <Th border="1px solid" whiteSpace={'nowrap'}>สต็อกสินค้า</Th>
+                    <Th border="1px solid" whiteSpace={'nowrap'}>รหัสสินค้า</Th>
+                    <Th border="1px solid" whiteSpace={'nowrap'}>ใช้งาน</Th>
+                    <Th border="1px solid" whiteSpace={'nowrap'}>ดำเนินการ</Th>
                   </Tr>
                 </Thead>
                 <Tbody>
