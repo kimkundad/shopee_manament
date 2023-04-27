@@ -1,70 +1,67 @@
 import React, { useState, useEffect } from "react";
 
-const Home = () => {
-  const [messages, setMessages] = useState([]);
+const Index = () => {
+  const [room, setRoom] = useState("");
   const [message, setMessage] = useState("");
-  const [socket, setSocket] = useState(null);
+  const [messages, setMessages] = useState([]);
+
+  const [ws, setWs] = useState(null);
 
   useEffect(() => {
-    const newSocket = new WebSocket("ws://localhost:3000/test");
-    setSocket(newSocket);
+    const newWs = new WebSocket("ws://localhost:3000");
+    setWs(newWs);
 
-    newSocket.addEventListener("open", () => {
-      console.log("WebSocket connection established");
+    newWs.addEventListener("open", () => {
+      console.log("Connected to WebSocket");
     });
 
-    newSocket.addEventListener("message", (event) => {
-      const data = event.data;
-
-      if (data instanceof Blob) {
-        // check if the data is a Blob object
-        const reader = new FileReader();
-
-        reader.addEventListener("loadend", () => {
-          const message = JSON.parse(reader.result); // parse the result as JSON
-          setMessages((messages) => [...messages, message]);
-        });
-
-        reader.readAsText(data);
-      } else {
-        const message = JSON.parse(data); // parse the data as JSON
-        setMessages((messages) => [...messages, message]);
-      }
+    newWs.addEventListener("message", (event) => {
+      const message = event.data;
+      console.log(message);
+      setMessages((messages) => [...messages, message]);
     });
 
     return () => {
-      newSocket.close();
+      newWs.close();
     };
   }, []);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (socket.readyState === WebSocket.OPEN) {
-      // check if the WebSocket is open
-      const newMessage = { text: message };
-      const jsonMessage = JSON.stringify(newMessage);
-      socket.send(jsonMessage);
-
-      const myMessage = { text: message}
-      setMessages((messages) => [...messages, myMessage]);
-      setMessage("");
-    } else {
-      console.log("WebSocket not open, message not sent");
+  const handleJoinRoom = () => {
+    if (room) {
+      const data = { type: "joinRoom", room };
+      ws.send(JSON.stringify(data));
     }
   };
-  console.log(messages);
+
+  const handleMessageSubmit = (e) => {
+    e.preventDefault();
+    if (message) {
+      const data = { type: "message", message, room };
+      ws.send(JSON.stringify(data));
+      setMessage("");
+    }
+  };
   return (
     <div>
+      <h1>WebSocket Example</h1>
+      <input
+        type="text"
+        value={room}
+        onChange={(e) => setRoom(e.target.value)}
+        placeholder="Enter room name"
+      />
+      <button onClick={handleJoinRoom}>Join Room</button>
       <ul>
-        {messages.map((message, index) => (
-          <li key={index}>{message.text}</li>
+        {messages.map((msg, idx) => (
+          <li key={idx}>{msg}</li>
         ))}
       </ul>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleMessageSubmit}>
         <input
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          placeholder="Enter message"
         />
         <button type="submit">Send</button>
       </form>
@@ -72,4 +69,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Index;
