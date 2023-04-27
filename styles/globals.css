@@ -81,3 +81,29 @@ td {
 /* .chakra-radio__label{
     font-size: 25px !important;
 } */
+
+
+/*-----------------------------------------*/
+/*-----| Start Charlie's Custom CSS |------*/
+/*-----------------------------------------*/
+
+/* Start CSS for AddOrder Components */
+.table-add-order th,
+.table-add-order td {
+    font-family: 'DBAdmanX', sans-serif !important;
+    font-weight: normal;
+    font-size: 1.1em;
+    text-align: center;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.table-header-border th {
+    border: 2px solid gray;
+}
+
+/* End CSS for AddOrder Components */
+
+/*-----------------------------------------*/
+/*------| End Charlie's Custom CSS |-------*/
+/*-----------------------------------------*/
