@@ -29,24 +29,25 @@ import Link from "next/link";
 import axios from "axios";
 export default function stock() {
   const [products, setProducts] = useState(null);
-  useEffect(() => {
-    async function fetchData() {
-      let checkAll = true;
-      const res = await axios.get(
-        "https://shopee-api.deksilp.com/api/getAllProduct"
-      );
-      setProducts(res.data);
-      if (res.data.product.length > 0) {
-        res.data.product.map((products) => {
-          if (products.active === 0) {
-            return (checkAll = false);
-          }
-        });
-        setIsCheckedAll(checkAll);
-      }
-    }
 
-    fetchData();
+  async function fetchAllProduct() {
+    let checkAll = true;
+    const res = await axios.get(
+      "https://shopee-api.deksilp.com/api/getAllProduct"
+    );
+    setProducts(res.data);
+    if (res.data.product.length > 0) {
+      res.data.product.map((products) => {
+        if (products.active === 0) {
+          return (checkAll = false);
+        }
+      });
+      setIsCheckedAll(checkAll);
+    }
+  }
+
+  useEffect(() => {
+    fetchAllProduct();
   }, []);
   const colunm = [
     {
@@ -177,10 +178,14 @@ export default function stock() {
       const res = await axios.post(
         `https://shopee-api.deksilp.com/api/deleteProduct/${id}`
       );
-      setProducts(res.data);
-      setIsCheckedAll(
-        res.data.product.every((product) => product.active === 1)
-      );
+      if(res.data.success) {
+        fetchAllProduct();
+      }
+      
+      // setProducts(res.data);
+      // setIsCheckedAll(
+      //   res.data.product.every((product) => product.active === 1)
+      // );
     }
 
     fetchData();
@@ -367,6 +372,7 @@ export default function stock() {
                         pl="7px"
                         src="/images/trash-bin.png"
                         h="25px"
+                        _hover={{ cursor: "pointer" }}
                         onClick={() => comfirmDelete(item.id)}
                       />
                     </Flex>
