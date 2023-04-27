@@ -159,6 +159,9 @@ function addProduct() {
 
   const modalConfirmDeleteCategory = useDisclosure();
   const modalConfirmDeleteSuccessCategory = useDisclosure();
+
+  const modalSaveOption = useDisclosure();
+  const modalSaveOptionSuccess = useDisclosure();
   // end modal chakra.ui
 
   const [checkInputCategory, setCheckInputCategory] = useState(true);
@@ -172,6 +175,8 @@ function addProduct() {
   const [imageSubCount, setImageSubCount] = useState(5);
   const [filesSub, setFilesSub] = useState([]);
   const [btnCheckSaveStep1, setBtnCheckSaveStep1] = useState(false);
+  const [subProductImg, setSubProductImg] = useState([]);
+  const [productID, setProductID] = useState('');
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -249,12 +254,25 @@ function addProduct() {
     // console.log("files", files);
     // console.log("imagesSub", imagesSub);
     // console.log("filesSub", filesSub);
-    console.log("option", option);
-    console.log("Suboption", subOption);
-    console.log("dataTable", dataTable)
+    // console.log("option", option);
+    // console.log("Suboption", subOption);
+    // console.log("dataTable", dataTable);
     event.preventDefault();
     onOpenForm1();
   };
+
+  const comfirmSaveOption = (event) => {
+    // console.log("images", images);
+    // console.log("files", files);
+    // console.log("imagesSub", imagesSub);
+    // console.log("filesSub", filesSub);
+    console.log("option", option);
+    console.log("Suboption", subOption);
+    console.log("dataTable", dataTable);
+    event.preventDefault();
+    modalSaveOption.onOpen();
+  };
+
   const closeModal = () => {
     onCloseForm1();
     onCloseForm2();
@@ -284,23 +302,40 @@ function addProduct() {
     formData.append("height_product", height);
     formData.append("sku", sku);
     formData.append("category", categoryId);
-    formData.append("option1", option);
-    formData.append("option2", subOption);
     files.forEach((file, index) => {
       formData.append(`file[${index}]`, file);
     });
     filesSub.forEach((file, index) => {
       formData.append(`image[${index}]`, file);
     });
-    formData.append("dataOption", JSON.stringify(dataTable));
     const response = await axios.post(
       "https://shopee-api.deksilp.com/api/addProduct",
       formData,
       { headers: { "Content-Type": "multipart/form-data" } }
     );
-    onCloseForm1();
-    onOpenForm2();
-    setBtnCheckSaveStep1(true);
+    if (response.data.success) {
+      onCloseForm1();
+      onOpenForm2();
+      setBtnCheckSaveStep1(true);
+      setSubProductImg(response.data.subProductImg);
+      setProductID(response.data.productID);
+    }
+  };
+
+  const saveSubOptionSuccess = async () => {
+    const formData = new FormData();
+    formData.append("productID", productID);
+    formData.append("option1", option);
+    formData.append("option2", subOption);
+    formData.append("dataOption", JSON.stringify(dataTable));
+    const response = await axios.post(
+      "https://shopee-api.deksilp.com/api/addOptionProduct",
+      formData,
+    );
+    if (response.data.success) {
+      modalSaveOption.onClose();
+      modalSaveOptionSuccess.onOpen();
+    }
   };
 
   const [category, setCategory] = useState([]);
@@ -345,7 +380,7 @@ function addProduct() {
       indexImageOption: valueSelect,
       subOption: [],
     };
-
+    console.log('valueSelect', valueSelect);
     dataTable.push(arrOption);
     setDataTable(dataTable);
     onCloseForm3();
@@ -397,6 +432,7 @@ function addProduct() {
   const [displayAdditionOption, setDisplayAdditionOption] = useState(false);
   const [displayAddProduct, setDisplayAddProduct] = useState(true);
   function additionOption() {
+    console.log("subProductImg", subProductImg);
     setDisplayAdditionOption(true);
     setDisplayAddProduct(false);
   }
@@ -1143,7 +1179,10 @@ function addProduct() {
                 </Box>
                 <Box>
                   <Flex justifyContent="center" pt="10px">
-                    <Text color={'red'}>*เงื่อนไข : แม่ค้าต้องทำการเพิ่มสินค้าให้เรียบร้อยก่อน จึงจะสามารถเพิ่มตัวเลือกให้กับสินค้าของท่านได้</Text>
+                    <Text color={"red"}>
+                      *เงื่อนไข : แม่ค้าต้องทำการเพิ่มสินค้าให้เรียบร้อยก่อน
+                      จึงจะสามารถเพิ่มตัวเลือกให้กับสินค้าของท่านได้
+                    </Text>
                   </Flex>
                   <Flex justifyContent="center">
                     {/* <Button>ยกเลิก</Button> */}
@@ -1159,7 +1198,7 @@ function addProduct() {
                       }
                       _hover={{}}
                       onClick={comfirmSave}
-                      // isDisabled={btnCheckSaveStep1}
+                      isDisabled={btnCheckSaveStep1}
                     >
                       บันทึก
                     </Button>
@@ -1168,12 +1207,12 @@ function addProduct() {
                       type="submit"
                       bg="white"
                       color="red"
-                      border={'2px solid red'}
+                      border={"2px solid red"}
                       padding={"1rem 2rem"}
                       fontSize={"20px"}
                       _hover={{}}
                       onClick={additionOption}
-                      // isDisabled={btnCheckSaveStep1 == true ? false : true}
+                      isDisabled={btnCheckSaveStep1 == true ? false : true}
                       // onClick={comfirmSave}
                     >
                       เพิ่มตัวเลือก
@@ -1312,14 +1351,28 @@ function addProduct() {
             <Box pl="115px" pt="15px">
               <Table minWidth="100%" border="1px solid" textAlign="center">
                 <Thead>
-                  <Tr bgColor={'whitesmoke'}>
-                    <Th border="1px solid" whiteSpace={'nowrap'}>{option}</Th>
-                    <Th border="1px solid" whiteSpace={'nowrap'}>{subOption}</Th>
-                    <Th border="1px solid" whiteSpace={'nowrap'}>ราคา</Th>
-                    <Th border="1px solid" whiteSpace={'nowrap'}>สต็อกสินค้า</Th>
-                    <Th border="1px solid" whiteSpace={'nowrap'}>รหัสสินค้า</Th>
-                    <Th border="1px solid" whiteSpace={'nowrap'}>ใช้งาน</Th>
-                    <Th border="1px solid" whiteSpace={'nowrap'}>ดำเนินการ</Th>
+                  <Tr bgColor={"whitesmoke"}>
+                    <Th border="1px solid" whiteSpace={"nowrap"}>
+                      {option}
+                    </Th>
+                    <Th border="1px solid" whiteSpace={"nowrap"}>
+                      {subOption}
+                    </Th>
+                    <Th border="1px solid" whiteSpace={"nowrap"}>
+                      ราคา
+                    </Th>
+                    <Th border="1px solid" whiteSpace={"nowrap"}>
+                      สต็อกสินค้า
+                    </Th>
+                    <Th border="1px solid" whiteSpace={"nowrap"}>
+                      รหัสสินค้า
+                    </Th>
+                    <Th border="1px solid" whiteSpace={"nowrap"}>
+                      ใช้งาน
+                    </Th>
+                    <Th border="1px solid" whiteSpace={"nowrap"}>
+                      ดำเนินการ
+                    </Th>
                   </Tr>
                 </Thead>
                 <Tbody>
@@ -1511,7 +1564,7 @@ function addProduct() {
                 fontSize={"20px"}
                 leftIcon={<Image src="/images/save.png" alt="" h="20px" />}
                 _hover={{}}
-                onClick={comfirmSave}
+                onClick={comfirmSaveOption}
               >
                 บันทึก
               </Button>
@@ -1545,23 +1598,23 @@ function addProduct() {
                   <Text>เลือกรูปสำหรับ tag {option}</Text>
                   <RadioGroup py="15px" value={valueSelect}>
                     <Stack direction="row">
-                      {fileImage?.map((item, index) => {
-                        return index !== 0 ? (
+                      {subProductImg?.map((item, index) => {
+                        return (
                           <Radio
-                            value={index}
+                            value={item.id}
                             display="flex"
                             flexDirection="column-reverse"
-                            onClick={(event) => setValueSelect(index)}
+                            onClick={(event) => setValueSelect(item.id)}
                           >
                             <Image
-                              onClick={(event) => setValueSelect(index)}
+                              onClick={(event) => setValueSelect(item.id)}
                               mb="10px"
-                              src={item.thumbUrl}
-                              w="50px"
-                              h="50px"
+                              src={`https://shopee-api.deksilp.com/images/shopee/products/${item.image}`}
+                              w="65px"
+                              h="65px"
                             />
                           </Radio>
-                        ) : null;
+                        );
                       })}
                     </Stack>
                   </RadioGroup>
@@ -1733,11 +1786,11 @@ function addProduct() {
             </Box>
           </ModalBody>
           <ModalFooter justifyContent="center">
-            <Link href="/stock">
+            {/* <Link href="/stock">
               <Button bg="red" color="white" _hover={{}}>
                 ไปที่หน้าคลังสินค้า
               </Button>
-            </Link>
+            </Link> */}
           </ModalFooter>
         </ModalContent>
       </Modal>
@@ -2251,6 +2304,105 @@ function addProduct() {
         </ModalContent>
       </Modal>
       {/* End Modal confirm success แก้ไขหมวดหมู่ */}
+
+      {/* Modal confirm สร้าง option ต่างๆของ Product */}
+      <Modal
+        closeOnOverlayClick={false}
+        onClose={modalSaveOption.onClose}
+        size={"lg"}
+        isOpen={modalSaveOption.isOpen}
+      >
+        <ModalOverlay />
+        <ModalContent top={"20%"}>
+          <ModalHeader></ModalHeader>
+          <ModalCloseButton
+            color={"white"}
+            bgColor={"#ff0000"}
+            borderRadius={"50px"}
+            width={"20px"}
+            height={"20px"}
+            fontSize={"9px"}
+          />
+          <ModalBody>
+            <Flex flexDirection={"column"} alignItems={"center"}>
+              <Image
+                src="/images/addshop.png"
+                width={"150px"}
+                // height={"35px"}
+                mr={"10px"}
+              />
+              <Text fontSize={"5xl"} fontWeight={"bold"} mt={"20px"}>
+                ยืนยันการสร้างตัวเลือก ?
+              </Text>
+            </Flex>
+          </ModalBody>
+          <ModalFooter justifyContent={"center"}>
+            <Button
+              onClick={modalSaveOption.onClose}
+              bgColor={"white"}
+              color={"gray"}
+              border={"2px solid gray"}
+              px={"2rem"}
+              height={"35px"}
+              mr={"10px"}
+            >
+              ยกเลิก
+            </Button>
+            <Button
+              onClick={saveSubOptionSuccess}
+              bgColor={"#ff0000"}
+              color={"white"}
+              px={"2rem"}
+              height={"35px"}
+            >
+              ยืนยัน
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      {/* End Modal confirm สร้าง option ต่างๆของ Product */}
+
+      {/* Modal confirm success แก้ไขหมวดหมู่ */}
+      <Modal
+        closeOnOverlayClick={false}
+        onClose={modalSaveOptionSuccess.onClose}
+        size={"lg"}
+        isOpen={modalSaveOptionSuccess.isOpen}
+      >
+        <ModalOverlay />
+        <ModalContent top={"20%"}>
+          <ModalHeader></ModalHeader>
+          <ModalCloseButton
+            color={"white"}
+            bgColor={"#ff0000"}
+            borderRadius={"50px"}
+            width={"20px"}
+            height={"20px"}
+            fontSize={"9px"}
+          />
+          <ModalBody>
+            <Flex flexDirection={"column"} alignItems={"center"}>
+              <Image src="/images/checkshop.png" width={"130px"} mr={"10px"} />
+              <Text fontSize={"5xl"} fontWeight={"bold"} mt={"20px"}>
+                สร้างตัวเลือกสินค้าเสร็จสิ้น
+              </Text>
+            </Flex>
+          </ModalBody>
+          <ModalFooter justifyContent={"center"}>
+            <Button
+              onClick={modalSaveOptionSuccess.onClose}
+              bgColor={"#ff0000"}
+              color={"white"}
+              px={"2rem"}
+              height={"35px"}
+            >
+              ไปที่หน้าร้านค้า
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      {/* End Modal confirm success แก้ไขหมวดหมู่ */}
+
     </>
   );
 }
