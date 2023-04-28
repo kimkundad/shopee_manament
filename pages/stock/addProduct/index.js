@@ -176,7 +176,7 @@ function addProduct() {
   const [filesSub, setFilesSub] = useState([]);
   const [btnCheckSaveStep1, setBtnCheckSaveStep1] = useState(false);
   const [subProductImg, setSubProductImg] = useState([]);
-  const [productID, setProductID] = useState('');
+  const [productID, setProductID] = useState("");
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -330,7 +330,7 @@ function addProduct() {
     formData.append("dataOption", JSON.stringify(dataTable));
     const response = await axios.post(
       "https://shopee-api.deksilp.com/api/addOptionProduct",
-      formData,
+      formData
     );
     if (response.data.success) {
       modalSaveOption.onClose();
@@ -370,6 +370,7 @@ function addProduct() {
   const [priceOption, setPriceOption] = useState(null);
   const [stockOption, setStockOption] = useState(null);
   const [skuOption, setSkuOption] = useState(null);
+  const [statusOption, setStatusOption] = useState(true);
   function addOption(event) {
     event.preventDefault();
     const arrOption = {
@@ -378,9 +379,10 @@ function addProduct() {
       stockOption: stockOption,
       skuOption: skuOption,
       indexImageOption: valueSelect,
+      statusOption: statusOption,
       subOption: [],
     };
-    console.log('valueSelect', valueSelect);
+    console.log("valueSelect", valueSelect);
     dataTable.push(arrOption);
     setDataTable(dataTable);
     onCloseForm3();
@@ -390,6 +392,7 @@ function addProduct() {
   const [priceSubOption, setPriceSubOption] = useState(null);
   const [stockSubOption, setStockSubOption] = useState(null);
   const [skuSubOption, setSkuSubOption] = useState(null);
+  const [statusSubOption, setStatusSubOption] = useState(true);
   function addSubOption(event) {
     event.preventDefault();
     const arrSubOption = {
@@ -397,6 +400,7 @@ function addProduct() {
       priceSubOption: priceSubOption,
       stockSubOption: stockSubOption,
       skuSubOption: skuSubOption,
+      statusSubOption: statusSubOption,
     };
     dataTable[valueSelect].subOption.push(arrSubOption);
     setDataTable(dataTable);
@@ -759,19 +763,21 @@ function addProduct() {
                             ml={"10px"}
                             bgColor={"green.400"}
                             color={"white"}
-                            padding={"0"}
+                            padding={"0.5rem 1rem 0.5rem 0.5rem"}
                             onClick={modalAddCategory.onOpen}
                           >
                             <SmallAddIcon boxSize={6} />
+                            เพิ่มหมวดหมู่
                           </Button>
                           <Button
                             ml={"10px"}
-                            bgColor={"#fff682"}
-                            color={"black"}
-                            padding={"0"}
+                            bgColor={"#2778c4"}
+                            color={"white"}
+                            padding={"0.5rem 1rem 0.5rem 1rem"}
                             onClick={modalEditCategory.onOpen}
                           >
-                            <EditIcon boxSize={4} />
+                            <EditIcon boxSize={4} mr={"5px"} />
+                            แก้ไขหมวดหมู่
                           </Button>
                         </Flex>
                       </Box>
@@ -1459,9 +1465,27 @@ function addProduct() {
                             />
                           </Td>
                         )}
-                        <Td border="1px solid">
-                          <Switch colorScheme="brand" />
-                        </Td>
+                        {item?.subOption?.length > 0 ? (
+                          <Td border="1px solid">
+                            <Switch
+                              colorScheme="brand"
+                              isChecked={item?.subOption[0].statusSubOption}
+                              onChange={(e) =>
+                                editDataTable(e, index, 0, "statusSubOption")
+                              }
+                            />
+                          </Td>
+                        ) : (
+                          <Td border="1px solid">
+                            <Switch
+                              colorScheme="brand"
+                              isChecked={item?.statusOption}
+                              onChange={(e) =>
+                                editDataTable(e, index, null, "statusOption")
+                              }
+                            />
+                          </Td>
+                        )}
                         {item?.subOption?.length == 0 ? (
                           <Td border="1px solid">
                             <Image
@@ -1536,7 +1560,18 @@ function addProduct() {
                               />
                             </Td>
                             <Td border="1px solid">
-                              <Switch colorScheme="brand" />
+                              <Switch
+                                colorScheme="brand"
+                                isChecked={subItem.statusSubOption}
+                                onChange={(e) =>
+                                  editDataTable(
+                                    e,
+                                    index,
+                                    subIndex,
+                                    "statusSubOption"
+                                  )
+                                }
+                              />
                             </Td>
                             <Td border="1px solid">
                               <Image
@@ -2389,20 +2424,21 @@ function addProduct() {
             </Flex>
           </ModalBody>
           <ModalFooter justifyContent={"center"}>
-            <Button
-              onClick={modalSaveOptionSuccess.onClose}
-              bgColor={"#ff0000"}
-              color={"white"}
-              px={"2rem"}
-              height={"35px"}
-            >
-              ไปที่หน้าร้านค้า
-            </Button>
+            <Link href="/stock">
+              <Button
+                onClick={modalSaveOptionSuccess.onClose}
+                bgColor={"#ff0000"}
+                color={"white"}
+                px={"2rem"}
+                height={"35px"}
+              >
+                ไปที่หน้าร้านค้า
+              </Button>
+            </Link>
           </ModalFooter>
         </ModalContent>
       </Modal>
       {/* End Modal confirm success แก้ไขหมวดหมู่ */}
-
     </>
   );
 }
