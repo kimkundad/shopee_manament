@@ -216,6 +216,7 @@ function index(product) {
                         borderRadius="lg"
                         boxShadow="md"
                         height={"185px"}
+                        width={'100%'}
                       />
                       <Image
                         src={
