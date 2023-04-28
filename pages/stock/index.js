@@ -82,6 +82,18 @@ export default function stock() {
     },
   ];
 
+  const [selectedColumns, setSelectedColumns] = useState(Array(colunm.length).fill(true));
+
+  const handleColumnChange = (index, isChecked) => {
+    const updatedColumns = [...selectedColumns];
+    updatedColumns[index] = isChecked;
+    setSelectedColumns(updatedColumns);
+  };
+
+  const testconsolelog = () => {
+    console.log("selectedColumns", selectedColumns);
+  }
+
   //setChecked Switch
   const [isCheckedAll, setIsCheckedAll] = useState(false);
   function handleAllSwitchChange() {
@@ -266,8 +278,24 @@ export default function stock() {
           </Box>
 
           <Box ml="5px" border="1px" borderColor="red" borderRadius="md">
-            <ListCheck data={colunm} />
+            <ListCheck
+              data={colunm}
+              onChange={handleColumnChange}
+              selected={selectedColumns}
+            />
           </Box>
+          {/* <Box ml="5px" border="1px" borderColor="red" borderRadius="md">
+            <Button
+              fontSize="21px"
+              bg="green"
+              variant="solid"
+              color="white"
+              _hover={{}}
+              onClick={testconsolelog}
+            >
+              ทดสอบ LOG 
+            </Button>
+          </Box> */}
         </Flex>
 
         <Table

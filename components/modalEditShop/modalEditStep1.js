@@ -270,7 +270,7 @@ function modalEditStep1(props) {
       console.log("Theme:", Theme);
       console.log("Tags:", tags);
       onClose();
-      modalCreateCategory.onOpen();
+      modalEditNextStep.onOpen();
       setInputFieldError("");
       setTextAreaFieldError("");
       setTextImageShopError("");
@@ -304,19 +304,21 @@ function modalEditStep1(props) {
 
   // ฟังก์ชัน กดถัดไปยัง modal เลือกธีม โดยก่อนจะถัดไป มีการตรวจสอบว่าได้กรอกข้อมูล หมวดหมู่แล้วหรือยัง ถ้ายังไม่ได้กรอก ไม่สามารถไป modal ถัดได้
   const handleNextModalSelectTheme = () => {
-    const isEmpty = tags.filter((tag) => tag === "");
-    console.log("isEmpty", isEmpty);
-    console.log("tags", tags);
-    if (tags.length == 0) {
-      setCheckInputCategory(false);
-    } else {
-      if (isEmpty.length > 0) {
-        setCheckInputCategory(false);
-      } else {
-        modalCreateCategory.onClose();
-        modalEditTheme.onOpen();
-      }
-    }
+    modalEditNextStep.onClose();
+    modalEditTheme.onOpen();
+    // const isEmpty = tags.filter((tag) => tag === "");
+    // console.log("isEmpty", isEmpty);
+    // console.log("tags", tags);
+    // if (tags.length == 0) {
+    //   setCheckInputCategory(false);
+    // } else {
+    //   if (isEmpty.length > 0) {
+    //     setCheckInputCategory(false);
+    //   } else {
+    //     modalCreateCategory.onClose();
+    //     modalEditTheme.onOpen();
+    //   }
+    // }
   };
   // สิ้นสุด ฟังก์ชัน กดถัดไปยัง modal เลือกธีม โดยก่อนจะถัดไป มีการตรวจสอบว่าได้กรอกข้อมูล หมวดหมู่แล้วหรือยัง ถ้ายังไม่ได้กรอก ไม่สามารถไป modal ถัดได้
 
@@ -326,7 +328,7 @@ function modalEditStep1(props) {
   };
 
   const handleConfirmEdit = () => {
-    modalEditNextStep.onClose();
+    modalEditTheme.onClose();
     modalConfirmEdit.onOpen();
   };
 
@@ -632,7 +634,7 @@ function modalEditStep1(props) {
       {/* End Modal แก้ไขร้านค้า */}
 
       {/* Modal แก้ไขหมวดหมู่ */}
-      <Modal
+      {/* <Modal
         closeOnOverlayClick={false}
         onClose={modalCreateCategory.onClose}
         size={"xl"}
@@ -733,7 +735,7 @@ function modalEditStep1(props) {
             </Button>
           </ModalFooter>
         </ModalContent>
-      </Modal>
+      </Modal> */}
       {/* End Modal แก้ไขหมวดหมู่ */}
 
       {/* Modal แก้ไขเลือกธีม */}
@@ -816,14 +818,15 @@ function modalEditStep1(props) {
               ยกเลิก
             </Button>
             <Button
-              onClick={handleNextModalEditProduct}
+              onClick={handleConfirmEdit}
               bgColor={"#ff0000"}
               color={"white"}
               px={"2rem"}
               height={"35px"}
+              leftIcon={<Image src="/images/updateshop.png" alt="" h="20px" />}
               // disabled={isLoading}
             >
-              ถัดไป
+              บันทึก
             </Button>
           </ModalFooter>
         </ModalContent>
@@ -938,7 +941,7 @@ function modalEditStep1(props) {
             </TableContainer>
           </ModalBody>
           <ModalFooter justifyContent={"center"}>
-            <Button
+            {/* <Button
               onClick={modalPreview.onOpen}
               bgColor={"white"}
               color={"#ff0000"}
@@ -950,7 +953,7 @@ function modalEditStep1(props) {
               mr={"10px"}
             >
               ดูตัวอย่าง
-            </Button>
+            </Button> */}
             <Button
               onClick={modalEditNextStep.onClose}
               bgColor={"white"}
@@ -963,14 +966,14 @@ function modalEditStep1(props) {
               ยกเลิก
             </Button>
             <Button
-              onClick={handleConfirmEdit}
+              onClick={handleNextModalSelectTheme}
               bgColor={"#ff0000"}
               color={"white"}
               px={"2rem"}
               height={"35px"}
-              leftIcon={<Image src="/images/updateshop.png" alt="" h="20px" />}
+              // leftIcon={<Image src="/images/updateshop.png" alt="" h="20px" />}
             >
-              บันทึก
+              ถัดไป
             </Button>
           </ModalFooter>
         </ModalContent>

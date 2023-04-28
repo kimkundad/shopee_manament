@@ -221,7 +221,7 @@ export default function shop() {
       );
       // ส่งค่าไปยัง API หรือทำอื่นๆ ที่ต้องการ
       modalAdd.onClose();
-      modalCreateCategory.onOpen();
+      modalAdd2.onOpen();
       setInputFieldError("");
       setTextAreaFieldError("");
       setTextImageShopError("");
@@ -256,19 +256,21 @@ export default function shop() {
 
   // ฟังก์ชัน กดถัดไปยัง modal เลือกธีม โดยก่อนจะถัดไป มีการตรวจสอบว่าได้กรอกข้อมูล หมวดหมู่แล้วหรือยัง ถ้ายังไม่ได้กรอก ไม่สามารถไป modal ถัดได้
   const handleNextModalSelectTheme = () => {
-    const isEmpty = tags.filter((tag) => tag === "");
-    console.log("isEmpty", isEmpty);
-    console.log("tags", tags);
-    if (tags.length == 0) {
-      setCheckInputCategory(false);
-    } else {
-      if (isEmpty.length > 0) {
-        setCheckInputCategory(false);
-      } else {
-        modalCreateCategory.onClose();
-        modalSelectTheme.onOpen();
-      }
-    }
+    modalAdd2.onClose();
+    modalSelectTheme.onOpen();
+    // const isEmpty = tags.filter((tag) => tag === "");
+    // console.log("isEmpty", isEmpty);
+    // console.log("tags", tags);
+    // if (tags.length == 0) {
+    //   setCheckInputCategory(false);
+    // } else {
+    //   if (isEmpty.length > 0) {
+    //     setCheckInputCategory(false);
+    //   } else {
+    //     modalCreateCategory.onClose();
+    //     modalSelectTheme.onOpen();
+    //   }
+    // }
   };
   // สิ้นสุด ฟังก์ชัน กดถัดไปยัง modal เลือกธีม โดยก่อนจะถัดไป มีการตรวจสอบว่าได้กรอกข้อมูล หมวดหมู่แล้วหรือยัง ถ้ายังไม่ได้กรอก ไม่สามารถไป modal ถัดได้
 
@@ -281,7 +283,8 @@ export default function shop() {
   // สิ้นสุด modal แสดงว่าจะยืนยันการสร้างร้านค้าใช่หือไม่
 
   const handleConfirm = () => {
-    modalAdd2.onClose();
+    console.log('selectedProducts',selectedProducts)
+    modalSelectTheme.onClose();
     modalConfirm.onOpen();
   };
 
@@ -301,9 +304,9 @@ export default function shop() {
     fileImgCoverShop.forEach((file, index) => {
       formData.append(`file2[${index}]`, file.originFileObj);
     });
-    tags.forEach((tag, index) => {
-      formData.append(`category[${index}]`, tag);
-    });
+    // tags.forEach((tag, index) => {
+    //   formData.append(`category[${index}]`, tag);
+    // });
     selected.forEach((select, index) => {
       formData.append(`selectID[${index}]`, select.id);
     });
@@ -1038,14 +1041,14 @@ export default function shop() {
               ยกเลิก
             </Button>
             <Button
-              onClick={handleNextModalConfirm}
+              onClick={handleConfirm}
               bgColor={"#ff0000"}
               color={"white"}
               px={"2rem"}
               height={"35px"}
               // disabled={isLoading}
             >
-              ถัดไป
+              สร้างร้านค้า
             </Button>
           </ModalFooter>
         </ModalContent>
@@ -1099,7 +1102,6 @@ export default function shop() {
                     <Th color={"white"}>ชื่อสินค้า</Th>
                     <Th color={"white"}>ราคา</Th>
                     <Th color={"white"}>สต๊อกสินค้า</Th>
-                    <Th color={"white"}>เลือกหมวดหมู่</Th>
                   </Tr>
                 </Thead>
                 <Tbody>
@@ -1142,41 +1144,6 @@ export default function shop() {
                           / 1,500
                         </Flex>
                       </Td>
-                      <Td>
-                        <Menu closeOnSelect={false}>
-                          <MenuButton
-                            as={Button}
-                            bgColor={"white"}
-                            border={"1px solid gray"}
-                            rightIcon={<TriangleDownIcon />}
-                          >
-                            เลือกหมวดหมู่
-                          </MenuButton>
-                          <MenuList minWidth="240px">
-                            <MenuOptionGroup
-                              title="หมวดหมู่ร้านค้า"
-                              type="checkbox"
-                              value={selectedCategories}
-                              onChange={handleCategorySelect}
-                            >
-                              {tags?.map((category, index) => (
-                                <MenuItemOption value={category}>
-                                  {category}
-                                </MenuItemOption>
-                              ))}
-                              {/* <MenuItemOption value="email">
-                                Email
-                              </MenuItemOption>
-                              <MenuItemOption value="phone">
-                                Phone
-                              </MenuItemOption>
-                              <MenuItemOption value="country">
-                                Country
-                              </MenuItemOption> */}
-                            </MenuOptionGroup>
-                          </MenuList>
-                        </Menu>
-                      </Td>
                     </Tr>
                   ))}
                 </Tbody>
@@ -1184,7 +1151,7 @@ export default function shop() {
             </TableContainer>
           </ModalBody>
           <ModalFooter justifyContent={"center"}>
-            <Button
+            {/* <Button
               onClick={modalPreview.onOpen}
               bgColor={"white"}
               color={"#ff0000"}
@@ -1196,7 +1163,7 @@ export default function shop() {
               mr={"10px"}
             >
               ดูตัวอย่าง
-            </Button>
+            </Button> */}
             <Button
               onClick={modalAdd2.onClose}
               bgColor={"white"}
@@ -1209,13 +1176,13 @@ export default function shop() {
               ยกเลิก
             </Button>
             <Button
-              onClick={handleConfirm}
+              onClick={handleNextModalSelectTheme}
               bgColor={"#ff0000"}
               color={"white"}
               px={"2rem"}
               height={"35px"}
             >
-              สร้างร้านค้า
+              ถัดไป
             </Button>
           </ModalFooter>
         </ModalContent>
