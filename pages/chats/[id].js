@@ -28,6 +28,7 @@ export default function useChats() {
   let date = "";
 
   const [messages, setMessages] = useState(null);
+  const [searchUser, setSearchUser] = useState(null);
 
   const [socket, setSocket] = useState(null);
   useEffect(() => {
@@ -45,7 +46,7 @@ export default function useChats() {
           }
           return messages;
         });
-      
+        console.log(messages)
     });
     return () => {
       newSocket.close();
@@ -90,14 +91,6 @@ export default function useChats() {
         const newMess = { ...res.data.message[0], type: "message", room };
         socket.send(JSON.stringify(newMess));
         setText("");
-
-        const formdataUserChat = new FormData();
-        formdataUserChat.append("shop_id", shopId);
-        const userChats = await axios.post(
-          "https://shopee-api.deksilp.com/api/getUserChats",
-          formdataUserChat
-        );
-        setUsers(userChats.data.users);
       }
       newMessage();
     }
@@ -106,21 +99,31 @@ export default function useChats() {
 
   useEffect(() => {
     async function fecthdata() {
-      const formdataUserChat = new FormData();
-      formdataUserChat.append("shop_id", shopId);
-      const userChats = await axios.post(
-        "https://shopee-api.deksilp.com/api/getUserChats",
-        formdataUserChat
-      );
-      setUsers(userChats.data.users);
+      if (searchUser !== null) {
+        const formdata = new FormData();
+        formdata.append("shop_id", shopId);
+        formdata.append("name", searchUser);
+        const res = await axios.post(
+          `https://shopee-api.deksilp.com/api/searchUserChats`,
+          formdata
+        );
+        setUsers(res.data.users);
+      } else {
+        const formdataUserChat = new FormData();
+        formdataUserChat.append("shop_id", shopId);
+        const userChats = await axios.post(
+          "https://shopee-api.deksilp.com/api/getUserChats",
+          formdataUserChat
+        );
+        setUsers(userChats.data.users);
+      }
     }
-    fecthdata()
+    fecthdata();
     chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
   }, [messages]);
 
-  console.log(messages);
   useEffect(() => {
-    setMessages([])
+    setMessages([]);
     if (userId !== null) {
       // eslint-disable-next-line no-inner-declarations
       async function fetchData() {
@@ -139,6 +142,20 @@ export default function useChats() {
     }
   }, [userId]);
 
+  useEffect(() => {
+    async function fecthdata() {
+      const formdata = new FormData();
+      formdata.append("shop_id", shopId);
+      formdata.append("name", searchUser);
+      const res = await axios.post(
+        `https://shopee-api.deksilp.com/api/searchUserChats`,
+        formdata
+      );
+      setUsers(res.data.users);
+    }
+    fecthdata();
+  }, [searchUser]);
+
   return (
     <Box m="10px" height={`calc(100vh - 137px)`}>
       <Text borderBottom="1px solid grey" fontSize="30px">
@@ -154,7 +171,11 @@ export default function useChats() {
       >
         <GridItem colSpan={1}>
           <Flex p="20px" borderBottom="1px solid grey" h="96px">
-            <Input type="text" placeholder="ค้นหา" />
+            <Input
+              type="text"
+              placeholder="ค้นหา"
+              onChange={(e) => setSearchUser(e.target.value)}
+            />
           </Flex>
           <Box>
             {users?.map((item, index) => {
@@ -180,11 +201,15 @@ export default function useChats() {
                     w="55px "
                   />
                   <Box alignSelf="center" pl="10px" w="50%">
-                    <Text fontSize="20px" fontWeight="bold"  w="">
-                      {item.name?.length > 15 ? item.name?.slice(0, 15) + "..." : item.name}
+                    <Text fontSize="20px" fontWeight="bold" w="">
+                      {item.name?.length > 15
+                        ? item.name?.slice(0, 15) + "..."
+                        : item.name}
                     </Text>
                     <Text fontSize="18px" color="gray">
-                      {item.message?.length > 15 ? item.message?.slice(0, 15) + "..." : item.message}
+                      {item.message?.length > 15
+                        ? item.message?.slice(0, 15) + "..."
+                        : item.message}
                     </Text>
                   </Box>
                   <Spacer />
@@ -198,23 +223,27 @@ export default function useChats() {
         </GridItem>
         <GridItem colSpan={4} borderLeft="1px solid" borderColor="grey">
           <Box fontSize="24px">
-            <Flex p="20px" borderBottom="1px solid grey" h="96px">
-              <Image
-                borderRadius="50%"
-                src={`/images/${users[0]?.avatar}`}
-                alt=""
-                h="55px "
-                w="55px "
-              />
-              <Text
-                fontSize="24px"
-                fontWeight="bold"
-                alignSelf="center"
-                pl="10px"
-              >
-                {users[0]?.name}
-              </Text>
-            </Flex>
+            {userId !== null ? (
+              <Flex p="20px" borderBottom="1px solid grey" h="96px">
+                <Image
+                  borderRadius="50%"
+                  src={`/images/${users[0]?.avatar}`}
+                  alt=""
+                  h="55px "
+                  w="55px "
+                />
+                <Text
+                  fontSize="24px"
+                  fontWeight="bold"
+                  alignSelf="center"
+                  pl="10px"
+                >
+                  {users[0]?.name}
+                </Text>
+              </Flex>
+            ) : (
+              <Flex p="20px" h="96px"></Flex>
+            )}
             <Box
               height={`calc(100vh - 395px)`}
               overflow="auto"
@@ -321,7 +350,7 @@ export default function useChats() {
                                   false
                                 )}
                               </Box>
-                              <Text alignSelf="end" fontSize="15px" >
+                              <Text alignSelf="end" fontSize="15px">
                                 {timeString} น.
                               </Text>
                             </Flex>
@@ -357,7 +386,9 @@ export default function useChats() {
                               )}
                             </Box>
                             <Box fontSize="10px" alignSelf="flex-end">
-                              {item.status == 1 ? <Text fontSize="15px">อ่านแล้ว</Text> : null}
+                              {item.status == 1 ? (
+                                <Text fontSize="15px">อ่านแล้ว</Text>
+                              ) : null}
                               <Text fontSize="15px">{timeString} น.</Text>
                             </Box>
                           </Flex>

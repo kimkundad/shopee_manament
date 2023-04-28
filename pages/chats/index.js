@@ -69,6 +69,17 @@ export default function index() {
     currentItems = shops.slice(startIndex, endIndex);
     totalItem = shops.length;
   }
+
+  const [searchShop, setSearchShop] = useState(null);
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await axios.get(
+        `https://shopee-api.deksilp.com/api/getSearchShops?search=${searchShop}`
+      );
+      setShops(response.data.shops);
+    };
+    fetchData();
+  }, [searchShop]);
   return (
     <Box m="20px">
       <Text borderBottom="1px solid grey" fontSize="30px">
@@ -79,8 +90,7 @@ export default function index() {
           ร้านค้า ({totalItem})
         </Text>
         <Spacer />
-        <Input maxWidth="200px" />
-        <Button>sss</Button>
+        <Input maxWidth="200px" onChange={(e) => setSearchShop(e.target.value)}/>
       </Flex>
 
       <Table

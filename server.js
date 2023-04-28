@@ -18,6 +18,7 @@ wss.on('connection', (ws) => {
       const room = data.room;
       console.log('1');
       if (rooms[room]) {
+        console.log(data);
         console.log('2');
         rooms[room].forEach((client) => {
           if (client.readyState === WebSocket.OPEN) {
