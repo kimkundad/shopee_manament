@@ -251,9 +251,9 @@ function addProduct() {
   } = useDisclosure();
   const comfirmSave = (event) => {
     // console.log("images", images);
-    // console.log("files", files);
+    console.log("files", files);
     // console.log("imagesSub", imagesSub);
-    // console.log("filesSub", filesSub);
+    console.log("filesSub", filesSub);
     // console.log("option", option);
     // console.log("Suboption", subOption);
     // console.log("dataTable", dataTable);

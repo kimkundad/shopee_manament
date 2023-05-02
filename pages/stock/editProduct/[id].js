@@ -34,6 +34,8 @@ import {
   Radio,
   RadioGroup,
   Stack,
+  IconButton,
+  HStack,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { BsArrowLeftCircle } from "react-icons/bs";
@@ -48,6 +50,7 @@ import {
   SmallAddIcon,
   EditIcon,
 } from "@chakra-ui/icons";
+import { DeleteIcon } from "@chakra-ui/icons";
 class PicturesWall extends React.Component {
   state = {
     fileList: [],
@@ -162,6 +165,14 @@ function UseEditProduct() {
   const [categoryIdDelete, setCategoryIdDelete] = useState(null);
   const [tags2, setTags2] = useState([]);
 
+  const [images, setImages] = useState([]);
+  const [imageCount, setImageCount] = useState(1);
+  const [files, setFiles] = useState([]);
+
+  const [imagesSub, setImagesSub] = useState([]);
+  const [imageSubCount, setImageSubCount] = useState(5);
+  const [filesSub, setFilesSub] = useState([]);
+
   const fetchDataCategory = async () => {
     axios
       .get("https://shopee-api.deksilp.com/api/get_category_all")
@@ -198,6 +209,20 @@ function UseEditProduct() {
           };
         });
 
+        const URLImage =
+          "https://shopee-api.deksilp.com/images/shopee/products/";
+        const imageUrls = product.data.product
+          .filter((item) => item.img_product !== null)
+          .map((fileName) => `${URLImage}${fileName.img_product}`);
+        const subImageUrls = product.data.product[0].allImage
+          .filter((_, index) => index !== 0)
+          .map((fileName) => ({
+            id: fileName.id,
+            url: `${URLImage}${fileName.image}`,
+          }));
+        console.log("product", product);
+        setImages(imageUrls);
+        setImagesSub(subImageUrls);
         setProduct(product.data.product[0]);
         setName_product(product.data.product[0].name_product);
         setDetail_product(product.data.product[0].detail_product);
@@ -252,6 +277,65 @@ function UseEditProduct() {
   const [fileImage, setFileImage] = useState([]);
   const [fileImageOption, setFileImageOption] = useState([]);
   const [valueSelect, setValueSelect] = useState(null);
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImages([...images, URL.createObjectURL(file)]);
+      setFiles([...files, file]);
+    }
+  };
+
+  const handleImageSubUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImagesSub([...imagesSub, URL.createObjectURL(file)]);
+      setFilesSub([...filesSub, file]);
+    }
+  };
+
+  const handleDeleteImage = (index) => {
+    const formdata = new FormData();
+    formdata.append("img_name", images[0]);
+
+    const deleteImgProduct = axios.post(
+      `https://shopee-api.deksilp.com/api/deleteImgProduct/${productId}`,
+      formdata
+    );
+    if (deleteImgProduct.data?.success) {
+      console.log(deleteImgProduct.data?.success);
+    }
+    const newTags = [...images];
+    newTags.splice(index, 1);
+    const newTags2 = [...files];
+    newTags2.splice(index, 1);
+    setImages(newTags);
+    setFiles(newTags2);
+  };
+
+  const handleDeleteImageSub = (index,img_name,id) => {
+    console.log('img_name', img_name);
+    console.log('id', id);
+    if(img_name !== undefined && id !== undefined) {
+      const formdata = new FormData();
+      formdata.append("img_name", img_name);
+  
+      const deleteImgSubProduct = axios.post(
+        `https://shopee-api.deksilp.com/api/deleteImgSubProduct/${id}`,
+        formdata
+      );
+      if (deleteImgSubProduct.data?.success) {
+        console.log(deleteImgSubProduct.data?.success);
+      }
+    }
+    const newTags = [...imagesSub];
+    newTags.splice(index, 1);
+    const newTags2 = [...filesSub];
+    newTags2.splice(index, 1);
+    setImagesSub(newTags);
+    setFilesSub(newTags2);
+  };
+
   const handleSetFileImage = (fileList) => {
     setFileImage(fileList);
   };
@@ -290,8 +374,9 @@ function UseEditProduct() {
     onClose: onCloseForm4,
   } = useDisclosure();
   const comfirmSave = (event) => {
-    console.log("fileImage", fileImage);
-    console.log("fileVideo", fileVideo);
+    // console.log("Images", images);
+    console.log("filesSub", filesSub);
+    // console.log("imageData", imageData);
     event.preventDefault();
     onOpenForm1();
   };
@@ -314,8 +399,11 @@ function UseEditProduct() {
     formData.append("name_product", name_product);
     formData.append("detail_product", detail_product);
     formData.append("categoryId", categoryId);
-    fileImage.forEach((file, index) => {
-      formData.append(`file[${index}]`, file.originFileObj);
+    files.forEach((file, index) => {
+      formData.append(`file[${index}]`, file);
+    });
+    filesSub.forEach((file, index) => {
+      formData.append(`image[${index}]`, file);
     });
     formData.append("sku", sku);
     formData.append("cost", cost);
@@ -782,20 +870,81 @@ function UseEditProduct() {
                       </GridItem>
                       <GridItem colSpan={2}>
                         <Box>
-                          <PicturesWall
+                          {/* <PicturesWall
                             setFileImage={handleSetFileImage}
                             imageData={imageData}
-                          />
+                          /> */}
+                          <HStack alignItems="flex-start" spacing={4}>
+                            {images.map((img, idx) => (
+                              <Box
+                                key={idx}
+                                position="relative"
+                                w="200px"
+                                h="150px"
+                                border="1px dashed #d9d9d9"
+                                bgColor={"whitesmoke"}
+                                borderRadius="md"
+                                bgImage={`url(${img})`}
+                                bgSize="contain"
+                                bgPosition="center"
+                                bgRepeat="no-repeat"
+                              >
+                                <IconButton
+                                  position="absolute"
+                                  top="4px"
+                                  right="4px"
+                                  icon={<DeleteIcon />}
+                                  colorScheme="red"
+                                  onClick={() => handleDeleteImage(idx)}
+                                />
+                              </Box>
+                            ))}
+                            {images.length < imageCount && (
+                              <Box
+                                w="200px"
+                                h="150px"
+                                border="1px dashed #d9d9d9"
+                                borderRadius="md"
+                                bgColor={"whitesmoke"}
+                                _hover={{ border: "1px dashed blue" }}
+                              >
+                                <label htmlFor="upload">
+                                  <Box
+                                    width="100%"
+                                    height="100%"
+                                    display="flex"
+                                    alignItems="center"
+                                    justifyContent="center"
+                                    cursor="pointer"
+                                  >
+                                    <Text fontSize="lg" color="black">
+                                      เพิ่มรูปภาพ
+                                    </Text>
+                                    <Text ml={2} fontSize="lg">
+                                      ({`${images.length}/${imageCount}`})
+                                    </Text>
+                                    <Input
+                                      type="file"
+                                      accept="image/*"
+                                      onChange={handleImageUpload}
+                                      id="upload"
+                                      display="none"
+                                    />
+                                  </Box>
+                                </label>
+                              </Box>
+                            )}
+                          </HStack>
                         </Box>
                       </GridItem>
-                      <GridItem colSpan={1} justifySelf="end">
+                      {/* <GridItem colSpan={1} justifySelf="end">
                         <Box pr="5px">
                           <Text>วิดีโอ/รูปภาพประกอบสินค้า : </Text>
                         </Box>
                       </GridItem>
                       <GridItem colSpan={2}>
                         <VideoWall setFileVideo={handleSetFileVideo} />
-                      </GridItem>
+                      </GridItem> */}
                     </Grid>
                   </GridItem>
                   <GridItem fontSize="25px" width="100%">
@@ -946,7 +1095,7 @@ function UseEditProduct() {
                             <Text>Cm</Text>
                           </InputRightElement>
                         </InputGroup>
-                        {buttonActive[0] ? (
+                        {/* {buttonActive[0] ? (
                           <Flex justifyContent="center" pt="10px">
                             <Button>ยกเลิก</Button>
                             <Button
@@ -984,11 +1133,125 @@ function UseEditProduct() {
                               เพิ่มตัวเลือกสินค้า
                             </Button>
                           </Flex>
-                        )}
+                        )} */}
                       </GridItem>
                     </Grid>
                   </GridItem>
                 </Grid>
+                <Box p={"0rem 1.5rem 1.5rem 1.5rem"}>
+                  <Box pr={5}>
+                    <Text fontSize="25px">รูปภาพประกอบสินค้า :</Text>
+                  </Box>
+                  <Box
+                    border={"1px solid #dcd9d9"}
+                    borderRadius={"15px"}
+                    padding={"0.5rem"}
+                  >
+                    <HStack alignItems="flex-start" spacing={4}>
+                      {imagesSub.map((img, idx) => (
+                        <Box
+                          key={idx}
+                          position="relative"
+                          w="200px"
+                          h="150px"
+                          border="1px dashed #d9d9d9"
+                          bgColor={"whitesmoke"}
+                          borderRadius="md"
+                          bgImage={img?.id ? `url(${img?.url})` : `url(${img})`}
+                          bgSize="contain"
+                          bgPosition="center"
+                          bgRepeat="no-repeat"
+                        >
+                          <IconButton
+                            position="absolute"
+                            top="4px"
+                            right="4px"
+                            icon={<DeleteIcon />}
+                            colorScheme="red"
+                            onClick={() => handleDeleteImageSub(idx,img?.url,img?.id)}
+                          />
+                        </Box>
+                      ))}
+                      {imagesSub.length < imageSubCount && (
+                        <Box
+                          w="200px"
+                          h="150px"
+                          border="1px dashed #d9d9d9"
+                          borderRadius="md"
+                          bgColor={"whitesmoke"}
+                          _hover={{ border: "1px dashed blue" }}
+                        >
+                          <label htmlFor="upload">
+                            <Box
+                              width="100%"
+                              height="100%"
+                              display="flex"
+                              alignItems="center"
+                              justifyContent="center"
+                              cursor="pointer"
+                            >
+                              <Text fontSize="lg" color="black">
+                                เพิ่มรูปภาพ
+                              </Text>
+                              <Text ml={2} fontSize="lg">
+                                ({`${imagesSub.length}/${imageSubCount}`})
+                              </Text>
+                              <Input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleImageSubUpload}
+                                id="upload"
+                                display="none"
+                              />
+                            </Box>
+                          </label>
+                        </Box>
+                      )}
+                    </HStack>
+                  </Box>
+                  <Box>
+                    <Flex justifyContent="center" pt="10px">
+                      <Text color={"red"}>
+                        *เงื่อนไข : แม่ค้าต้องทำการเพิ่มสินค้าให้เรียบร้อยก่อน
+                        จึงจะสามารถเพิ่มตัวเลือกให้กับสินค้าของท่านได้
+                      </Text>
+                    </Flex>
+                    <Flex justifyContent="center">
+                      {/* <Button>ยกเลิก</Button> */}
+                      <Button
+                        ml="10px"
+                        type="submit"
+                        bg="red"
+                        color="white"
+                        padding={"1rem 2rem"}
+                        fontSize={"20px"}
+                        leftIcon={
+                          <Image src="/images/save.png" alt="" h="20px" />
+                        }
+                        _hover={{}}
+                        onClick={comfirmSave}
+                        // isDisabled={btnCheckSaveStep1}
+                      >
+                        บันทึก
+                      </Button>
+                      <Button
+                        ml="10px"
+                        type="submit"
+                        bg="white"
+                        color="red"
+                        border={"2px solid red"}
+                        padding={"1rem 2rem"}
+                        fontSize={"20px"}
+                        _hover={{}}
+                        onClick={additionOption}
+                        // isDisabled={btnCheckSaveStep1 == true ? false : true}
+                        // onClick={comfirmSave}
+                      >
+                        เพิ่มตัวเลือก
+                      </Button>
+                    </Flex>
+                  </Box>
+                </Box>
               </Box>
             ) : null}
           </from>
