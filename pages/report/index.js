@@ -90,6 +90,34 @@ function index() {
       orderQuantity: 55555,
       sales: 75522,
     },
+	{
+		id: 3,
+		date: "15/1/2557",
+		nameshop: "aaaa",
+		nameproduct: "ssss",
+		productId: "5453",
+		linkshop: "asdadsa",
+		numberInvoice: 2323,
+		customername: "uuuu",
+		address: "ชลบุรี",
+		tel: "085-784-578",
+		orderQuantity: 55555,
+		sales: 75522,
+	  },
+	  {
+		id: 3,
+		date: "15/1/2557",
+		nameshop: "aaaa",
+		nameproduct: "ssss",
+		productId: "5453",
+		linkshop: "asdadsa",
+		numberInvoice: 2323,
+		customername: "uuuu",
+		address: "ชลบุรี",
+		tel: "085-784-578",
+		orderQuantity: 55555,
+		sales: 75522,
+	  },
   ]);
   const colunm = [
     {
@@ -231,7 +259,7 @@ function index() {
         </Box>
         <Spacer />
         <Box borderWidth="1px" borderColor="red" borderRadius="md">
-          <Link href="/">
+          <Link href="/report/printReport">
             <Button
               fontSize="21px"
               leftIcon={<Image src="/images/print.png" h="25px" w="25px" />}

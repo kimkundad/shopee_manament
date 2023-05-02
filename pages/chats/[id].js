@@ -127,6 +127,7 @@ export default function useChats() {
     if (userId !== null) {
       // eslint-disable-next-line no-inner-declarations
       async function fetchData() {
+        console.log(shopId);
         const formdata = new FormData();
         formdata.append("user_id", userId);
         formdata.append("shop_id", shopId);
@@ -137,6 +138,7 @@ export default function useChats() {
         setMessages(res.data.message);
       }
       fetchData();
+      
       const data = { type: "joinRoom", room };
       socket.send(JSON.stringify(data));
     }
@@ -188,7 +190,7 @@ export default function useChats() {
                   p="20px"
                   onClick={(e) => {
                     setUserId(item.id);
-                    setRoom(item.id);
+                    setRoom(item.id+shopId);
                     setDetailUser([item]);
                   }}
                   bg={item.user_id == userId ? "gray.200" : "white"}

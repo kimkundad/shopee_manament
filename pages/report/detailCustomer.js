@@ -29,16 +29,19 @@ function index() {
     <Box w="100%">
       <Box>
         <Flex justifyContent="center" p="15px">
-          <Button
-            bg="red"
-            h="25px"
-            borderRadius="3xl"
-            color="white"
-            px="7px"
-            leftIcon={<Icon as={BsArrowLeftCircle} color="white" />}
-          >
-            ย้อนกลับ
-          </Button>
+          <Link href="/report">
+            <Button
+              bg="red"
+              h="25px"
+              borderRadius="3xl"
+              color="white"
+              px="7px"
+              leftIcon={<Icon as={BsArrowLeftCircle} color="white" />}
+            >
+              ย้อนกลับ
+            </Button>
+          </Link>
+
           <Spacer />
           <Flex alignItems="center">
             <Image src="/images/user_red.png" alt="" h="40px" w="40px" />
@@ -67,7 +70,7 @@ function index() {
           borderTopColor="black"
           bg="gray.100"
         >
-          <Image src="/images/user_black.png" h="30px" m="10px"/>
+          <Image src="/images/user_black.png" h="30px" m="10px" />
           <Text fontWeight="bold">ข้อมูลลูกค้า</Text>
         </Flex>
         <Box pt="15px">
@@ -112,7 +115,7 @@ function index() {
             </GridItem>
             <GridItem colSpan={3}>
               <Grid templateColumns="repeat(2, 1fr)" gap={2}>
-              <GridItem>
+                <GridItem>
                   <Text fontWeight="bold" textAlign="end">
                     เพศ :
                   </Text>
@@ -164,7 +167,7 @@ function index() {
           borderTopColor="black"
           bg="gray.100"
         >
-          <Image src="/images/shopping-list.png" h="30px" m="10px"/>
+          <Image src="/images/shopping-list.png" h="30px" m="10px" />
           <Text fontWeight="bold">ประวัติการสั่งซื้อ</Text>
         </Flex>
         <Box pt="15px">
