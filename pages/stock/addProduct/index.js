@@ -2299,7 +2299,7 @@ function addProduct() {
       </Modal>
       {/* End Modal confirm ลบหมวดหมู่ */}
 
-      {/* Modal confirm success แก้ไขหมวดหมู่ */}
+      {/* Modal confirm success ลบหมวดหมู่ */}
       <Modal
         closeOnOverlayClick={false}
         onClose={modalConfirmDeleteSuccessCategory.onClose}
@@ -2338,7 +2338,7 @@ function addProduct() {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      {/* End Modal confirm success แก้ไขหมวดหมู่ */}
+      {/* End Modal confirm success ลบหมวดหมู่ */}
 
       {/* Modal confirm สร้าง option ต่างๆของ Product */}
       <Modal
@@ -2397,7 +2397,7 @@ function addProduct() {
       </Modal>
       {/* End Modal confirm สร้าง option ต่างๆของ Product */}
 
-      {/* Modal confirm success แก้ไขหมวดหมู่ */}
+      {/* Modal confirm success สร้างตัวเลือก */}
       <Modal
         closeOnOverlayClick={false}
         onClose={modalSaveOptionSuccess.onClose}
@@ -2438,7 +2438,7 @@ function addProduct() {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      {/* End Modal confirm success แก้ไขหมวดหมู่ */}
+      {/* End Modal confirm success สร้างตัวเลือก */}
     </>
   );
 }
