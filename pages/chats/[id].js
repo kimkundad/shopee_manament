@@ -21,6 +21,7 @@ import { useRouter } from "next/router";
 
 export default function useChats() {
   const [users, setUsers] = useState([]);
+  const [detailUser,setDetailUser] = useState([]);
   const router = useRouter();
   const shopId = router.query.id;
   const [userId, setUserId] = useState(null);
@@ -39,14 +40,13 @@ export default function useChats() {
     });
     newSocket.addEventListener("message", (event) => {
       const message = JSON.parse(event.data);
-        setMessages((messages) => {
-          const messageIds = messages.map((m) => m.id);
-          if (!messageIds.includes(message.id)) {
-            return [...messages, message];
-          }
-          return messages;
-        });
-        console.log(messages)
+      setMessages((messages) => {
+        const messageIds = messages.map((m) => m.id);
+        if (!messageIds.includes(message.id)) {
+          return [...messages, message];
+        }
+        return messages;
+      });
     });
     return () => {
       newSocket.close();
@@ -189,6 +189,7 @@ export default function useChats() {
                   onClick={(e) => {
                     setUserId(item.id);
                     setRoom(item.id);
+                    setDetailUser([item]);
                   }}
                   bg={item.user_id == userId ? "gray.200" : "white"}
                   id={item.id}
@@ -227,7 +228,7 @@ export default function useChats() {
               <Flex p="20px" borderBottom="1px solid grey" h="96px">
                 <Image
                   borderRadius="50%"
-                  src={`/images/${users[0]?.avatar}`}
+                  src={`/images/${detailUser[0]?.avatar}`}
                   alt=""
                   h="55px "
                   w="55px "
@@ -238,7 +239,7 @@ export default function useChats() {
                   alignSelf="center"
                   pl="10px"
                 >
-                  {users[0]?.name}
+                  {detailUser[0]?.name}
                 </Text>
               </Flex>
             ) : (
@@ -255,17 +256,113 @@ export default function useChats() {
                     const datatime = moment(item.created_at);
                     const dateString = datatime.format("YYYY-MM-DD");
                     const timeString = datatime.format("HH:mm");
-                    if (dateString != date) {
-                      date = dateString;
-                      if (item.recived_id == userId) {
-                        return (
-                          <Box key={index}>
-                            <Flex pt="15px" justifyContent="center">
-                              <Box bg="gray.200" borderRadius="xl">
-                                <Text px="10px">{dateString}</Text>
-                              </Box>
-                            </Flex>
-                            <Flex direction="row-reverse" pt="10px">
+                    if (item.user_id == userId) {
+                      if (dateString != date) {
+                        date = dateString;
+                        if (item.recived_id == userId) {
+                          return (
+                            <Box key={index}>
+                              <Flex pt="15px" justifyContent="center">
+                                <Box bg="gray.200" borderRadius="xl">
+                                  <Text px="10px">{dateString}</Text>
+                                </Box>
+                              </Flex>
+                              <Flex direction="row-reverse" pt="10px">
+                                <Box
+                                  mx="5px"
+                                  px="10px"
+                                  py="5px"
+                                  borderRadius="xl"
+                                  bg="gray.200"
+                                  alignSelf="center"
+                                >
+                                  {item.message !== null ? (
+                                    <Text maxWidth="300px">{item.message}</Text>
+                                  ) : (
+                                    false
+                                  )}
+                                  {item.img_message !== null ? (
+                                    <Image
+                                      src={item.img_message}
+                                      alt=""
+                                      maxWidth="150px"
+                                      py="5px"
+                                    />
+                                  ) : (
+                                    false
+                                  )}
+                                </Box>
+                                <Box fontSize="15px" alignSelf="flex-end">
+                                  {item.status == 1 ? (
+                                    <Text fontSize="15px">อ่านแล้ว</Text>
+                                  ) : null}
+                                  <Text fontSize="15px">{timeString} น.</Text>
+                                </Box>
+                              </Flex>
+                            </Box>
+                          );
+                        } else {
+                          return (
+                            <Box key={index}>
+                              <Flex pt="10px" justifyContent="center">
+                                <Box bg="gray.200" borderRadius="xl">
+                                  <Text px="10px">{dateString}</Text>
+                                </Box>
+                              </Flex>
+                              <Flex pt="10px">
+                                <Box
+                                  bg="white"
+                                  borderRadius="50%"
+                                  w="35px !important"
+                                  h="35px !important"
+                                  display="flex"
+                                  alignItems="center"
+                                  justifyContent="center"
+                                  ml="2"
+                                >
+                                  <Image
+                                    borderRadius="50%"
+                                    src={`/images/${item.avatar}`}
+                                    alt=""
+                                    h="35px !important"
+                                    w="35px !important"
+                                  />
+                                </Box>
+                                <Box
+                                  mx="5px"
+                                  px="10px"
+                                  py="5px"
+                                  borderRadius="xl"
+                                  bg="gray.200"
+                                  alignSelf="center"
+                                >
+                                  {item.message !== null ? (
+                                    <Text maxWidth="300px">{item.message}</Text>
+                                  ) : (
+                                    false
+                                  )}
+                                  {item.img_message !== null ? (
+                                    <Image
+                                      src={item.img_message}
+                                      alt=""
+                                      maxWidth="150px"
+                                      py="5px"
+                                    />
+                                  ) : (
+                                    false
+                                  )}
+                                </Box>
+                                <Text alignSelf="end" fontSize="15px">
+                                  {timeString} น.
+                                </Text>
+                              </Flex>
+                            </Box>
+                          );
+                        }
+                      } else {
+                        if (item.recived_id == userId) {
+                          return (
+                            <Flex direction="row-reverse" pt="10px" key={index}>
                               <Box
                                 mx="5px"
                                 px="10px"
@@ -290,24 +387,17 @@ export default function useChats() {
                                   false
                                 )}
                               </Box>
-                              <Box fontSize="15px" alignSelf="flex-end">
+                              <Box fontSize="10px" alignSelf="flex-end">
                                 {item.status == 1 ? (
                                   <Text fontSize="15px">อ่านแล้ว</Text>
                                 ) : null}
                                 <Text fontSize="15px">{timeString} น.</Text>
                               </Box>
                             </Flex>
-                          </Box>
-                        );
-                      } else {
-                        return (
-                          <Box key={index}>
-                            <Flex pt="10px" justifyContent="center">
-                              <Box bg="gray.200" borderRadius="xl">
-                                <Text px="10px">{dateString}</Text>
-                              </Box>
-                            </Flex>
-                            <Flex pt="10px">
+                          );
+                        } else {
+                          return (
+                            <Flex pt="10px" key={index}>
                               <Box
                                 bg="white"
                                 borderRadius="50%"
@@ -354,96 +444,11 @@ export default function useChats() {
                                 {timeString} น.
                               </Text>
                             </Flex>
-                          </Box>
-                        );
+                          );
+                        }
                       }
                     } else {
-                      if (item.recived_id == userId) {
-                        return (
-                          <Flex direction="row-reverse" pt="10px" key={index}>
-                            <Box
-                              mx="5px"
-                              px="10px"
-                              py="5px"
-                              borderRadius="xl"
-                              bg="gray.200"
-                              alignSelf="center"
-                            >
-                              {item.message !== null ? (
-                                <Text maxWidth="300px">{item.message}</Text>
-                              ) : (
-                                false
-                              )}
-                              {item.img_message !== null ? (
-                                <Image
-                                  src={item.img_message}
-                                  alt=""
-                                  maxWidth="150px"
-                                  py="5px"
-                                />
-                              ) : (
-                                false
-                              )}
-                            </Box>
-                            <Box fontSize="10px" alignSelf="flex-end">
-                              {item.status == 1 ? (
-                                <Text fontSize="15px">อ่านแล้ว</Text>
-                              ) : null}
-                              <Text fontSize="15px">{timeString} น.</Text>
-                            </Box>
-                          </Flex>
-                        );
-                      } else {
-                        return (
-                          <Flex pt="10px" key={index}>
-                            <Box
-                              bg="white"
-                              borderRadius="50%"
-                              w="35px !important"
-                              h="35px !important"
-                              display="flex"
-                              alignItems="center"
-                              justifyContent="center"
-                              ml="2"
-                            >
-                              <Image
-                                borderRadius="50%"
-                                src={`/images/${item.avatar}`}
-                                alt=""
-                                h="35px !important"
-                                w="35px !important"
-                              />
-                            </Box>
-                            <Box
-                              mx="5px"
-                              px="10px"
-                              py="5px"
-                              borderRadius="xl"
-                              bg="gray.200"
-                              alignSelf="center"
-                            >
-                              {item.message !== null ? (
-                                <Text maxWidth="300px">{item.message}</Text>
-                              ) : (
-                                false
-                              )}
-                              {item.img_message !== null ? (
-                                <Image
-                                  src={item.img_message}
-                                  alt=""
-                                  maxWidth="150px"
-                                  py="5px"
-                                />
-                              ) : (
-                                false
-                              )}
-                            </Box>
-                            <Text alignSelf="end" fontSize="15px">
-                              {timeString} น.
-                            </Text>
-                          </Flex>
-                        );
-                      }
+                      null;
                     }
                   })
                 ) : (
