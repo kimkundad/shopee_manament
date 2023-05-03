@@ -266,8 +266,8 @@ function addProduct() {
     // console.log("files", files);
     // console.log("imagesSub", imagesSub);
     // console.log("filesSub", filesSub);
-    console.log("option", option);
-    console.log("Suboption", subOption);
+    // console.log("option", option);
+    // console.log("Suboption", subOption);
     console.log("dataTable", dataTable);
     event.preventDefault();
     modalSaveOption.onOpen();

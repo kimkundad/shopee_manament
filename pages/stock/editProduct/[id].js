@@ -220,7 +220,7 @@ function UseEditProduct() {
             id: fileName.id,
             url: `${URLImage}${fileName.image}`,
           }));
-        console.log("product", product);
+        // console.log("product", product);
         setImages(imageUrls);
         setImagesSub(subImageUrls);
         setProduct(product.data.product[0]);
@@ -313,13 +313,13 @@ function UseEditProduct() {
     setFiles(newTags2);
   };
 
-  const handleDeleteImageSub = (index,img_name,id) => {
-    console.log('img_name', img_name);
-    console.log('id', id);
-    if(img_name !== undefined && id !== undefined) {
+  const handleDeleteImageSub = (index, img_name, id) => {
+    // console.log("img_name", img_name);
+    // console.log("id", id);
+    if (img_name !== undefined && id !== undefined) {
       const formdata = new FormData();
       formdata.append("img_name", img_name);
-  
+
       const deleteImgSubProduct = axios.post(
         `https://shopee-api.deksilp.com/api/deleteImgSubProduct/${id}`,
         formdata
@@ -375,7 +375,7 @@ function UseEditProduct() {
   } = useDisclosure();
   const comfirmSave = (event) => {
     // console.log("Images", images);
-    console.log("filesSub", filesSub);
+    // console.log("filesSub", filesSub);
     // console.log("imageData", imageData);
     event.preventDefault();
     onOpenForm1();
@@ -489,14 +489,26 @@ function UseEditProduct() {
     setValueSelect(null);
     onCloseForm4();
   }
-  function deleteOption(index = null, subIndex = null) {
+  function deleteOption(index = null, subIndex = null, id = null) {
     const newArr = [...dataTable];
     if (subIndex == null) {
-      newArr.splice(index, 1);
-      setDataTable(newArr);
+      axios
+        .post(`https://shopee-api.deksilp.com/api/deleteOptionProduct/${id}`)
+        .then(function (response) {
+          if (response.data.success) {
+            newArr.splice(index, 1);
+            setDataTable(newArr);
+          }
+        });
     } else {
-      newArr[index].allOption2.splice(subIndex, 1);
-      setDataTable(newArr);
+      axios
+        .post(`https://shopee-api.deksilp.com/api/deleteSubOptionProduct/${id}`)
+        .then(function (response) {
+          if (response.data.success) {
+            newArr[index].allOption2.splice(subIndex, 1);
+            setDataTable(newArr);
+          }
+        });
     }
   }
 
@@ -577,8 +589,8 @@ function UseEditProduct() {
   // ฟังก์ชันเปิด modal ยืนยันการสร้างหมวดหมู่
   const handleConfirmAddCategory = () => {
     const isEmpty = tags.filter((tag) => tag === "");
-    console.log("isEmpty", isEmpty);
-    console.log("tags", tags);
+    // console.log("isEmpty", isEmpty);
+    // console.log("tags", tags);
     if (tags.length == 0) {
       setCheckInputCategory(false);
     } else {
@@ -615,7 +627,7 @@ function UseEditProduct() {
   // ฟังก์ชันลบ tag input หมวดหมู่
   const handleDeleteTag2 = (id) => {
     modalConfirmDeleteCategory.onOpen();
-    console.log("ID:", id);
+    // console.log("ID:", id);
     setCategoryIdDelete(id);
   };
 
@@ -650,7 +662,7 @@ function UseEditProduct() {
   // ฟังก์ชันเปิด modal ยืนยันการแก้ไขหมวดหมู่
   const handleConfirmEditCategory = () => {
     const isEmpty = tags2.filter((tag) => tag.cat_name === "");
-    console.log("isEmpty", isEmpty);
+    // console.log("isEmpty", isEmpty);
     if (isEmpty.length > 0) {
       setCheckInputCategory2(false);
     } else {
@@ -659,7 +671,7 @@ function UseEditProduct() {
   };
 
   const handleConfirmEditSuccess = () => {
-    console.log("Tags2", tags2);
+    // console.log("Tags2", tags2);
     const data = {
       category: tags2,
     };
@@ -676,6 +688,18 @@ function UseEditProduct() {
       });
   };
   // จบรายการ ฟังก์ชันเพิ่มหมวดหมู่
+
+  const comfirmSaveOption = (event) => {
+    // console.log("images", images);
+    // console.log("files", files);
+    // console.log("imagesSub", imagesSub);
+    // console.log("filesSub", filesSub);
+    console.log("option", option);
+    console.log("Suboption", subOption);
+    console.log("dataTable", dataTable);
+    // event.preventDefault();
+    // modalSaveOption.onOpen();
+  };
   return (
     <>
       <Box>
@@ -712,8 +736,8 @@ function UseEditProduct() {
                   <Box>
                     <Button
                       id="0"
-                      bg={buttonActive[0] ? "red" : "white"}
-                      color={buttonActive[0] ? "white" : "red"}
+                      bg={"red"}
+                      color={"white"}
                       border="2px solid red"
                       fontSize="24px"
                       borderRadius="3xl"
@@ -731,8 +755,8 @@ function UseEditProduct() {
                   <Box>
                     <Button
                       id="1"
-                      bg={buttonActive[1] ? "red" : "white"}
-                      color={buttonActive[1] ? "white" : "red"}
+                      bg={"white"}
+                      color={"red"}
                       border="2px solid red"
                       fontSize="24px"
                       borderRadius="3xl"
@@ -1168,7 +1192,9 @@ function UseEditProduct() {
                             right="4px"
                             icon={<DeleteIcon />}
                             colorScheme="red"
-                            onClick={() => handleDeleteImageSub(idx,img?.url,img?.id)}
+                            onClick={() =>
+                              handleDeleteImageSub(idx, img?.url, img?.id)
+                            }
                           />
                         </Box>
                       ))}
@@ -1513,7 +1539,9 @@ function UseEditProduct() {
                             <Image
                               src="/images/trash-bin.png"
                               h="25px"
-                              onClick={() => deleteOption(index)}
+                              onClick={() =>
+                                deleteOption(index, null, item?.id)
+                              }
                             />
                           </Td>
                         ) : (
@@ -1521,7 +1549,9 @@ function UseEditProduct() {
                             <Image
                               src="/images/trash-bin.png"
                               h="25px"
-                              onClick={() => deleteOption(index, 0)}
+                              onClick={() =>
+                                deleteOption(index, 0, item?.allOption2[0].id)
+                              }
                             />
                           </Td>
                         )}
@@ -1573,7 +1603,9 @@ function UseEditProduct() {
                               <Image
                                 src="/images/trash-bin.png"
                                 h="25px"
-                                onClick={() => deleteOption(index, subIndex)}
+                                onClick={() =>
+                                  deleteOption(index, subIndex, subItem.id)
+                                }
                               />
                             </Td>
                           </Tr>
@@ -1593,7 +1625,7 @@ function UseEditProduct() {
                 color="white"
                 leftIcon={<Image src="/images/save.png" alt="" h="25px" />}
                 _hover={{}}
-                onClick={comfirmSave}
+                onClick={comfirmSaveOption}
               >
                 บันทึก
               </Button>
