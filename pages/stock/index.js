@@ -22,9 +22,18 @@ import {
   ModalFooter,
   ModalBody,
   useDisclosure,
+  Table,
+  Thead,
+  Tbody,
+  Tfoot,
+  Tr,
+  Th,
+  Td,
+  TableCaption,
+  TableContainer,
 } from "@chakra-ui/react";
 import ListCheck from "@/components/MenuList";
-import { Table, useAsyncList, useCollator } from "@nextui-org/react";
+// import { Table, useAsyncList, useCollator } from "@nextui-org/react";
 import Link from "next/link";
 import axios from "axios";
 export default function stock() {
@@ -82,7 +91,9 @@ export default function stock() {
     },
   ];
 
-  const [selectedColumns, setSelectedColumns] = useState(Array(colunm.length).fill(true));
+  const [selectedColumns, setSelectedColumns] = useState(
+    Array(colunm.length).fill(true)
+  );
 
   const handleColumnChange = (index, isChecked) => {
     const updatedColumns = [...selectedColumns];
@@ -92,7 +103,7 @@ export default function stock() {
 
   const testconsolelog = () => {
     console.log("selectedColumns", selectedColumns);
-  }
+  };
 
   //setChecked Switch
   const [isCheckedAll, setIsCheckedAll] = useState(false);
@@ -239,6 +250,15 @@ export default function stock() {
   }, [searchQuery]);
   //sorting colunm
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
+  };
+
   return (
     <>
       <Box w="100%">
@@ -293,12 +313,122 @@ export default function stock() {
               _hover={{}}
               onClick={testconsolelog}
             >
-              ทดสอบ LOG 
+              ทดสอบ LOG
             </Button>
           </Box> */}
         </Flex>
-
-        <Table
+        <Box padding={"0.5rem 1rem 0.5rem 1rem"}>
+          <Table
+            variant="striped"
+            colorScheme="gray"
+            css={{
+              borderRadius: "10px", // คุณสามารถปรับค่านี้ตามความต้องการ
+              overflow: "hidden", // สำหรับปิด overflow ในกรณีมีเนื้อหาที่ล้นออกมาจากขอบของตาราง
+            }}
+          >
+            <Thead bgColor={"red"}>
+              <Tr>
+                {colunm.map((item, index) => {
+                  if (selectedColumns[index]) {
+                    return (
+                      <Th color={"white"}>
+                        <Center>
+                          <Text fontSize="21px">{item.label}</Text>
+                        </Center>
+                        {index == 0 ? (
+                          <Flex justifyContent="center">
+                            <Switch
+                              colorScheme="brand"
+                              isChecked={isCheckedAll}
+                              onChange={() => handleAllSwitchChange()}
+                              size="sm"
+                            />
+                            <Text pl="5px" fontSize="15px">
+                              เปิด/ปิดทั้งหมด
+                            </Text>
+                          </Flex>
+                        ) : null}
+                      </Th>
+                    );
+                  }
+                })}
+              </Tr>
+            </Thead>
+            <Tbody>
+              {currentItems.map((item, index) => {
+                return (
+                  <Tr>
+                    {selectedColumns[0] ? (
+                      <Td>
+                        <Center>
+                          <Switch
+                            colorScheme="brand"
+                            isChecked={
+                              isCheckedAll
+                                ? true
+                                : item.active === 0
+                                ? false
+                                : true
+                            }
+                            onChange={handleActivateProduct}
+                            id={item.id}
+                          />
+                        </Center>
+                      </Td>
+                    ) : null}
+                    {selectedColumns[1] ? (
+                      <Td>
+                        <Center>{item.id}</Center>
+                      </Td>
+                    ) : null}
+                    {selectedColumns[2] ? (
+                      <Td>
+                        <Center>
+                          <Image
+                            src={`https://shopee-api.deksilp.com/images/shopee/products/${item.img_product}`}
+                            h="30px"
+                            w="30px"
+                          />
+                        </Center>
+                      </Td>
+                    ) : null}
+                    {selectedColumns[3] ? (
+                      <Td>
+                        {item.name_product.length > 10
+                          ? item.name_product.substr(0, 10) + "..."
+                          : item.name_product}
+                      </Td>
+                    ) : null}
+                    {selectedColumns[4] ? <Td>{item.stock}</Td> : null}
+                    {selectedColumns[5] ? <Td>{item.cost}</Td> : null}
+                    {selectedColumns[6] ? <Td>{item.price}</Td> : null}
+                    {selectedColumns[7] ? (
+                      <Td>{formatDate(item.created_at)}</Td>
+                    ) : null}
+                    {selectedColumns[8] ? <Td>{item.maker}</Td> : null}
+                    {selectedColumns[9] ? (
+                      <Td>
+                        <Flex justifyContent="center" w="100%">
+                          <Link href={`/stock/editProduct/${item.id}`}>
+                            <Image src="/images/edit.png" h="25px" />
+                          </Link>
+                          <Image
+                            pl="7px"
+                            src="/images/trash-bin.png"
+                            h="25px"
+                            _hover={{ cursor: "pointer" }}
+                            onClick={() => comfirmDelete(item.id)}
+                          />
+                        </Flex>
+                      </Td>
+                    ) : null}
+                  </Tr>
+                );
+              })}
+            </Tbody>
+          </Table>
+        </Box>
+        {/* <Table
           striped
           sticked
           aria-label="Example table with static content"
@@ -409,7 +539,7 @@ export default function stock() {
                       paddingRight: "0px !important",
                     }}
                   >
-                    {item.created_at}
+                    {formatDate(item.created_at)}
                   </Table.Cell>
                   <Table.Cell
                     css={{
@@ -442,8 +572,8 @@ export default function stock() {
               );
             })}
           </Table.Body>
-        </Table>
-        <Flex m="10px">
+        </Table> */}
+        <Flex padding={'0rem 1rem 1rem 1rem'}>
           <Wrap alignSelf="center" fontSize="21px">
             <WrapItem>
               <Text>แสดงผล : </Text>

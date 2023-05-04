@@ -451,20 +451,30 @@ function UseEditProduct() {
   };
 
   const saveSubOptionSuccess = async () => {
-    const formData = new FormData();
-    formData.append("productID", productId);
-    formData.append("option1", option);
-    formData.append("option2", subOption);
-    formData.append("dataOption", JSON.stringify(dataTable));
+    // const formData = new FormData();
+    // formData.append("productID", productId);
+    // formData.append("option1", option);
+    // formData.append("option2", subOption);
+    // formData.append("dataOption", dataTable);
     const response = await axios.post(
       "https://shopee-api.deksilp.com/api/editOptionProduct",
-      formData
+      {
+        productID: productId,
+        option1: option,
+        option2: subOption,
+        dataOption: dataTable,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
     );
     if (response.data.success) {
       modalSaveOption.onClose();
       modalSaveOptionSuccess.onOpen();
     }
-  }
+  };
 
   const handleSelectChange = () => {
     setDiv([...div, true]);
@@ -546,12 +556,34 @@ function UseEditProduct() {
   }
 
   function deleteAllOption() {
+    axios
+      .post(
+        `https://shopee-api.deksilp.com/api/deleteTitleOptionProduct/${productId}`
+      )
+      .then(function (response) {
+        if (response.data.success) {
+          console.log(response.data.success);
+        } else {
+          console.log("Delete title option not working");
+        }
+      });
     setOption("ตัวเลือกที่ 1");
     setSubOption("ตัวเลือกที่ 2");
     setDataTable([]);
     setDiv([]);
   }
   function deleteAllSubOption() {
+    axios
+      .post(
+        `https://shopee-api.deksilp.com/api/deleteTitleSubOptionProduct/${productId}`
+      )
+      .then(function (response) {
+        if (response.data.success) {
+          console.log(response.data.success);
+        } else {
+          console.log("Delete title sub option not working");
+        }
+      });
     setSubOption("ตัวเลือกที่ 2");
     dataTable.forEach((e) => {
       if (e.allOption2?.length > 0) {
@@ -1429,6 +1461,9 @@ function UseEditProduct() {
                     />
                     <Button
                       mt="15px"
+                      bgColor={"#52c41a"}
+                      color={"white"}
+                      _hover={{ bgColor: "#80c65e" }}
                       type="submit"
                       onClick={
                         index == 0
@@ -1445,6 +1480,9 @@ function UseEditProduct() {
                     <Button
                       ml="15px"
                       mt="15px"
+                      bgColor={"#fb3133"}
+                      color={"white"}
+                      _hover={{ bgColor: "#ff6465" }}
                       onClick={
                         index == 0 ? deleteAllOption : deleteAllSubOption
                       }
@@ -1834,7 +1872,9 @@ function UseEditProduct() {
                             flexDirection="column-reverse"
                             onClick={(event) => setValueSelect(index)}
                           >
-                            <Text onClick={(event) => setValueSelect(index)}>{item.op_name}</Text>
+                            <Text onClick={(event) => setValueSelect(index)}>
+                              {item.op_name}
+                            </Text>
                           </Radio>
                         );
                       })}
