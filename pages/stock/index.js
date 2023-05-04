@@ -386,8 +386,8 @@ export default function stock() {
                         <Center>
                           <Image
                             src={`https://shopee-api.deksilp.com/images/shopee/products/${item.img_product}`}
-                            h="30px"
-                            w="30px"
+                            h="50px"
+                            w="50px"
                           />
                         </Center>
                       </Td>

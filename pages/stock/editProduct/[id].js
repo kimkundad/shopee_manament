@@ -1495,9 +1495,10 @@ function UseEditProduct() {
             })}
             <Box pl="116px" pt="15px">
               <Button
-                border="2px solid black"
-                bg="white"
-                leftIcon={<Image src="/images/plusblack.png" alt="" h="15px" />}
+                // border="2px solid black"
+                bg="#2778c4"
+                color={'white'}
+                leftIcon={<SmallAddIcon boxSize={6} />}
                 _hover={{}}
                 onClick={handleSelectChange}
                 isDisabled={div.length > 1}
