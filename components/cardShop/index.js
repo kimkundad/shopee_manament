@@ -95,7 +95,7 @@ function index(product) {
   const handleCopyClick = (shopUrl) => () => {
     const currentUrl = window.location.origin;
     const URLShop = `${currentUrl}/${shopUrl}`;
-    navigator.clipboard.writeText(shopUrl);
+    navigator.clipboard.writeText(URLShop);
     setCopiedShopUrl(shopUrl);
   };
   // end function copy url ของร้านค้า
