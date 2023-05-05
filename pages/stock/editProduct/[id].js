@@ -162,6 +162,9 @@ function UseEditProduct() {
   const modalConfirmDeleteCategory = useDisclosure();
   const modalConfirmDeleteSuccessCategory = useDisclosure();
 
+  const modalSaveOption = useDisclosure();
+  const modalSaveOptionSuccess = useDisclosure();
+
   const [categoryIdDelete, setCategoryIdDelete] = useState(null);
   const [tags2, setTags2] = useState([]);
 
@@ -220,7 +223,7 @@ function UseEditProduct() {
             id: fileName.id,
             url: `${URLImage}${fileName.image}`,
           }));
-        console.log("product", product);
+        // console.log("product", product);
         setImages(imageUrls);
         setImagesSub(subImageUrls);
         setProduct(product.data.product[0]);
@@ -313,13 +316,13 @@ function UseEditProduct() {
     setFiles(newTags2);
   };
 
-  const handleDeleteImageSub = (index,img_name,id) => {
-    console.log('img_name', img_name);
-    console.log('id', id);
-    if(img_name !== undefined && id !== undefined) {
+  const handleDeleteImageSub = (index, img_name, id) => {
+    // console.log("img_name", img_name);
+    // console.log("id", id);
+    if (img_name !== undefined && id !== undefined) {
       const formdata = new FormData();
       formdata.append("img_name", img_name);
-  
+
       const deleteImgSubProduct = axios.post(
         `https://shopee-api.deksilp.com/api/deleteImgSubProduct/${id}`,
         formdata
@@ -375,7 +378,7 @@ function UseEditProduct() {
   } = useDisclosure();
   const comfirmSave = (event) => {
     // console.log("Images", images);
-    console.log("filesSub", filesSub);
+    // console.log("filesSub", filesSub);
     // console.log("imageData", imageData);
     event.preventDefault();
     onOpenForm1();
@@ -447,6 +450,32 @@ function UseEditProduct() {
     ); */
   };
 
+  const saveSubOptionSuccess = async () => {
+    // const formData = new FormData();
+    // formData.append("productID", productId);
+    // formData.append("option1", option);
+    // formData.append("option2", subOption);
+    // formData.append("dataOption", dataTable);
+    const response = await axios.post(
+      "https://shopee-api.deksilp.com/api/editOptionProduct",
+      {
+        productID: productId,
+        option1: option,
+        option2: subOption,
+        dataOption: dataTable,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (response.data.success) {
+      modalSaveOption.onClose();
+      modalSaveOptionSuccess.onOpen();
+    }
+  };
+
   const handleSelectChange = () => {
     setDiv([...div, true]);
   };
@@ -463,6 +492,7 @@ function UseEditProduct() {
       stock: stockOption,
       sku: skuOption,
       indexImageOption: valueSelect,
+      status: 1,
       allOption2: [],
     };
 
@@ -483,30 +513,77 @@ function UseEditProduct() {
       price: priceSubOption,
       stock: stockSubOption,
       sku: skuSubOption,
+      status: 1,
     };
     dataTable[valueSelect].allOption2.push(arrSubOption);
     setDataTable(dataTable);
     setValueSelect(null);
     onCloseForm4();
   }
-  function deleteOption(index = null, subIndex = null) {
+  function deleteOption(index = null, subIndex = null, id = null) {
     const newArr = [...dataTable];
     if (subIndex == null) {
-      newArr.splice(index, 1);
-      setDataTable(newArr);
+      if (id) {
+        axios
+          .post(`https://shopee-api.deksilp.com/api/deleteOptionProduct/${id}`)
+          .then(function (response) {
+            if (response.data.success) {
+              newArr.splice(index, 1);
+              setDataTable(newArr);
+            }
+          });
+      } else {
+        newArr.splice(index, 1);
+        setDataTable(newArr);
+      }
     } else {
-      newArr[index].allOption2.splice(subIndex, 1);
-      setDataTable(newArr);
+      if (id) {
+        axios
+          .post(
+            `https://shopee-api.deksilp.com/api/deleteSubOptionProduct/${id}`
+          )
+          .then(function (response) {
+            if (response.data.success) {
+              newArr[index].allOption2.splice(subIndex, 1);
+              setDataTable(newArr);
+            }
+          });
+      } else {
+        newArr[index].allOption2.splice(subIndex, 1);
+        setDataTable(newArr);
+      }
     }
   }
 
   function deleteAllOption() {
+    axios
+      .post(
+        `https://shopee-api.deksilp.com/api/deleteTitleOptionProduct/${productId}`
+      )
+      .then(function (response) {
+        if (response.data.success) {
+          console.log(response.data.success);
+        } else {
+          console.log("Delete title option not working");
+        }
+      });
     setOption("ตัวเลือกที่ 1");
     setSubOption("ตัวเลือกที่ 2");
     setDataTable([]);
     setDiv([]);
   }
   function deleteAllSubOption() {
+    axios
+      .post(
+        `https://shopee-api.deksilp.com/api/deleteTitleSubOptionProduct/${productId}`
+      )
+      .then(function (response) {
+        if (response.data.success) {
+          console.log(response.data.success);
+        } else {
+          console.log("Delete title sub option not working");
+        }
+      });
     setSubOption("ตัวเลือกที่ 2");
     dataTable.forEach((e) => {
       if (e.allOption2?.length > 0) {
@@ -532,17 +609,44 @@ function UseEditProduct() {
     const newArr = [...dataTable];
 
     if (subIndex == null) {
-      newArr[index] = {
-        ...newArr[index],
-        [id]: event.target.value,
-      };
+      if (id == "status") {
+        if (newArr[index].status == 1) {
+          newArr[index] = {
+            ...newArr[index],
+            [id]: 0,
+          };
+        } else {
+          newArr[index] = {
+            ...newArr[index],
+            [id]: 1,
+          };
+        }
+      } else {
+        newArr[index] = {
+          ...newArr[index],
+          [id]: event.target.value,
+        };
+      }
     } else {
-      newArr[index].allOption2[subIndex] = {
-        ...newArr[index].allOption2[subIndex],
-        [id]: event.target.value,
-      };
+      if (id == "status") {
+        if (newArr[index].allOption2[subIndex].status == 1) {
+          newArr[index].allOption2[subIndex] = {
+            ...newArr[index].allOption2[subIndex],
+            [id]: 0,
+          };
+        } else {
+          newArr[index].allOption2[subIndex] = {
+            ...newArr[index].allOption2[subIndex],
+            [id]: 1,
+          };
+        }
+      } else {
+        newArr[index].allOption2[subIndex] = {
+          ...newArr[index].allOption2[subIndex],
+          [id]: event.target.value,
+        };
+      }
     }
-
     setDataTable(newArr);
   };
 
@@ -577,8 +681,8 @@ function UseEditProduct() {
   // ฟังก์ชันเปิด modal ยืนยันการสร้างหมวดหมู่
   const handleConfirmAddCategory = () => {
     const isEmpty = tags.filter((tag) => tag === "");
-    console.log("isEmpty", isEmpty);
-    console.log("tags", tags);
+    // console.log("isEmpty", isEmpty);
+    // console.log("tags", tags);
     if (tags.length == 0) {
       setCheckInputCategory(false);
     } else {
@@ -615,7 +719,7 @@ function UseEditProduct() {
   // ฟังก์ชันลบ tag input หมวดหมู่
   const handleDeleteTag2 = (id) => {
     modalConfirmDeleteCategory.onOpen();
-    console.log("ID:", id);
+    // console.log("ID:", id);
     setCategoryIdDelete(id);
   };
 
@@ -650,7 +754,7 @@ function UseEditProduct() {
   // ฟังก์ชันเปิด modal ยืนยันการแก้ไขหมวดหมู่
   const handleConfirmEditCategory = () => {
     const isEmpty = tags2.filter((tag) => tag.cat_name === "");
-    console.log("isEmpty", isEmpty);
+    // console.log("isEmpty", isEmpty);
     if (isEmpty.length > 0) {
       setCheckInputCategory2(false);
     } else {
@@ -659,7 +763,7 @@ function UseEditProduct() {
   };
 
   const handleConfirmEditSuccess = () => {
-    console.log("Tags2", tags2);
+    // console.log("Tags2", tags2);
     const data = {
       category: tags2,
     };
@@ -676,6 +780,18 @@ function UseEditProduct() {
       });
   };
   // จบรายการ ฟังก์ชันเพิ่มหมวดหมู่
+
+  const comfirmSaveOption = (event) => {
+    // console.log("images", images);
+    // console.log("files", files);
+    // console.log("imagesSub", imagesSub);
+    // console.log("filesSub", filesSub);
+    console.log("option", option);
+    console.log("Suboption", subOption);
+    console.log("dataTable", dataTable);
+    event.preventDefault();
+    modalSaveOption.onOpen();
+  };
   return (
     <>
       <Box>
@@ -712,8 +828,8 @@ function UseEditProduct() {
                   <Box>
                     <Button
                       id="0"
-                      bg={buttonActive[0] ? "red" : "white"}
-                      color={buttonActive[0] ? "white" : "red"}
+                      bg={"red"}
+                      color={"white"}
                       border="2px solid red"
                       fontSize="24px"
                       borderRadius="3xl"
@@ -731,8 +847,8 @@ function UseEditProduct() {
                   <Box>
                     <Button
                       id="1"
-                      bg={buttonActive[1] ? "red" : "white"}
-                      color={buttonActive[1] ? "white" : "red"}
+                      bg={"white"}
+                      color={"red"}
                       border="2px solid red"
                       fontSize="24px"
                       borderRadius="3xl"
@@ -1168,7 +1284,9 @@ function UseEditProduct() {
                             right="4px"
                             icon={<DeleteIcon />}
                             colorScheme="red"
-                            onClick={() => handleDeleteImageSub(idx,img?.url,img?.id)}
+                            onClick={() =>
+                              handleDeleteImageSub(idx, img?.url, img?.id)
+                            }
                           />
                         </Box>
                       ))}
@@ -1343,6 +1461,9 @@ function UseEditProduct() {
                     />
                     <Button
                       mt="15px"
+                      bgColor={"#52c41a"}
+                      color={"white"}
+                      _hover={{ bgColor: "#80c65e" }}
                       type="submit"
                       onClick={
                         index == 0
@@ -1359,6 +1480,9 @@ function UseEditProduct() {
                     <Button
                       ml="15px"
                       mt="15px"
+                      bgColor={"#fb3133"}
+                      color={"white"}
+                      _hover={{ bgColor: "#ff6465" }}
                       onClick={
                         index == 0 ? deleteAllOption : deleteAllSubOption
                       }
@@ -1371,9 +1495,10 @@ function UseEditProduct() {
             })}
             <Box pl="116px" pt="15px">
               <Button
-                border="2px solid black"
-                bg="white"
-                leftIcon={<Image src="/images/plusblack.png" alt="" h="15px" />}
+                // border="2px solid black"
+                bg="#2778c4"
+                color={'white'}
+                leftIcon={<SmallAddIcon boxSize={6} />}
                 _hover={{}}
                 onClick={handleSelectChange}
                 isDisabled={div.length > 1}
@@ -1505,15 +1630,35 @@ function UseEditProduct() {
                             />
                           </Td>
                         )}
-                        <Td border="1px solid">
-                          <Switch colorScheme="brand" />
-                        </Td>
+                        {item?.allOption2?.length > 0 ? (
+                          <Td border="1px solid">
+                            <Switch
+                              colorScheme="brand"
+                              isChecked={item?.allOption2[0].status}
+                              onChange={(e) =>
+                                editDataTable(e, index, 0, "status")
+                              }
+                            />
+                          </Td>
+                        ) : (
+                          <Td border="1px solid">
+                            <Switch
+                              colorScheme="brand"
+                              isChecked={item?.status}
+                              onChange={(e) =>
+                                editDataTable(e, index, null, "status")
+                              }
+                            />
+                          </Td>
+                        )}
                         {item?.allOption2?.length == 0 ? (
                           <Td border="1px solid">
                             <Image
                               src="/images/trash-bin.png"
                               h="25px"
-                              onClick={() => deleteOption(index)}
+                              onClick={() =>
+                                deleteOption(index, null, item?.id)
+                              }
                             />
                           </Td>
                         ) : (
@@ -1521,7 +1666,9 @@ function UseEditProduct() {
                             <Image
                               src="/images/trash-bin.png"
                               h="25px"
-                              onClick={() => deleteOption(index, 0)}
+                              onClick={() =>
+                                deleteOption(index, 0, item?.allOption2[0].id)
+                              }
                             />
                           </Td>
                         )}
@@ -1567,13 +1714,21 @@ function UseEditProduct() {
                               />
                             </Td>
                             <Td border="1px solid">
-                              <Switch colorScheme="brand" />
+                              <Switch
+                                colorScheme="brand"
+                                isChecked={subItem.status}
+                                onChange={(e) =>
+                                  editDataTable(e, index, subIndex, "status")
+                                }
+                              />
                             </Td>
                             <Td border="1px solid">
                               <Image
                                 src="/images/trash-bin.png"
                                 h="25px"
-                                onClick={() => deleteOption(index, subIndex)}
+                                onClick={() =>
+                                  deleteOption(index, subIndex, subItem.id)
+                                }
                               />
                             </Td>
                           </Tr>
@@ -1593,7 +1748,7 @@ function UseEditProduct() {
                 color="white"
                 leftIcon={<Image src="/images/save.png" alt="" h="25px" />}
                 _hover={{}}
-                onClick={comfirmSave}
+                onClick={comfirmSaveOption}
               >
                 บันทึก
               </Button>
@@ -1630,13 +1785,13 @@ function UseEditProduct() {
                       {fileImage?.map((item, index) => {
                         return index !== 0 ? (
                           <Radio
-                            value={index}
+                            value={item.id}
                             display="flex"
                             flexDirection="column-reverse"
-                            onClick={(event) => setValueSelect(index)}
+                            onClick={(event) => setValueSelect(item.id)}
                           >
                             <Image
-                              onClick={(event) => setValueSelect(index)}
+                              onClick={(event) => setValueSelect(item.id)}
                               mb="10px"
                               src={item.url ? item.url : item.thumbUrl}
                               w="50px"
@@ -1718,7 +1873,9 @@ function UseEditProduct() {
                             flexDirection="column-reverse"
                             onClick={(event) => setValueSelect(index)}
                           >
-                            {item.op_name}
+                            <Text onClick={(event) => setValueSelect(index)}>
+                              {item.op_name}
+                            </Text>
                           </Radio>
                         );
                       })}
@@ -2332,6 +2489,106 @@ function UseEditProduct() {
         </ModalContent>
       </Modal>
       {/* End Modal confirm success ลบหมวดหมู่ */}
+
+      {/* Modal confirm แก้ไข option ต่างๆของ Product */}
+      <Modal
+        closeOnOverlayClick={false}
+        onClose={modalSaveOption.onClose}
+        size={"lg"}
+        isOpen={modalSaveOption.isOpen}
+      >
+        <ModalOverlay />
+        <ModalContent top={"20%"}>
+          <ModalHeader></ModalHeader>
+          <ModalCloseButton
+            color={"white"}
+            bgColor={"#ff0000"}
+            borderRadius={"50px"}
+            width={"20px"}
+            height={"20px"}
+            fontSize={"9px"}
+          />
+          <ModalBody>
+            <Flex flexDirection={"column"} alignItems={"center"}>
+              <Image
+                src="/images/addshop.png"
+                width={"150px"}
+                // height={"35px"}
+                mr={"10px"}
+              />
+              <Text fontSize={"5xl"} fontWeight={"bold"} mt={"20px"}>
+                ยืนยันการแก้ไขตัวเลือก ?
+              </Text>
+            </Flex>
+          </ModalBody>
+          <ModalFooter justifyContent={"center"}>
+            <Button
+              onClick={modalSaveOption.onClose}
+              bgColor={"white"}
+              color={"gray"}
+              border={"2px solid gray"}
+              px={"2rem"}
+              height={"35px"}
+              mr={"10px"}
+            >
+              ยกเลิก
+            </Button>
+            <Button
+              onClick={saveSubOptionSuccess}
+              bgColor={"#ff0000"}
+              color={"white"}
+              px={"2rem"}
+              height={"35px"}
+            >
+              ยืนยัน
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      {/* End Modal confirm แก้ไข option ต่างๆของ Product */}
+
+      {/* Modal confirm success แก้ไขตัวเลือก */}
+      <Modal
+        closeOnOverlayClick={false}
+        onClose={modalSaveOptionSuccess.onClose}
+        size={"lg"}
+        isOpen={modalSaveOptionSuccess.isOpen}
+      >
+        <ModalOverlay />
+        <ModalContent top={"20%"}>
+          <ModalHeader></ModalHeader>
+          <ModalCloseButton
+            color={"white"}
+            bgColor={"#ff0000"}
+            borderRadius={"50px"}
+            width={"20px"}
+            height={"20px"}
+            fontSize={"9px"}
+          />
+          <ModalBody>
+            <Flex flexDirection={"column"} alignItems={"center"}>
+              <Image src="/images/checkshop.png" width={"130px"} mr={"10px"} />
+              <Text fontSize={"5xl"} fontWeight={"bold"} mt={"20px"}>
+                แก้ไขตัวเลือกสินค้าเสร็จสิ้น
+              </Text>
+            </Flex>
+          </ModalBody>
+          <ModalFooter justifyContent={"center"}>
+            <Link href="/stock">
+              <Button
+                onClick={modalSaveOptionSuccess.onClose}
+                bgColor={"#ff0000"}
+                color={"white"}
+                px={"2rem"}
+                height={"35px"}
+              >
+                ไปที่หน้าร้านค้า
+              </Button>
+            </Link>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      {/* End Modal confirm success แก้ไขตัวเลือก */}
     </>
   );
 }

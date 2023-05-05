@@ -266,8 +266,8 @@ function addProduct() {
     // console.log("files", files);
     // console.log("imagesSub", imagesSub);
     // console.log("filesSub", filesSub);
-    console.log("option", option);
-    console.log("Suboption", subOption);
+    // console.log("option", option);
+    // console.log("Suboption", subOption);
     console.log("dataTable", dataTable);
     event.preventDefault();
     modalSaveOption.onOpen();
@@ -450,15 +450,43 @@ function addProduct() {
     const newArr = [...dataTable];
 
     if (subIndex == null) {
-      newArr[index] = {
-        ...newArr[index],
-        [id]: event.target.value,
-      };
+      if (id == "statusOption") {
+        if (newArr[index].statusOption == true) {
+          newArr[index] = {
+            ...newArr[index],
+            [id]: false,
+          };
+        } else {
+          newArr[index] = {
+            ...newArr[index],
+            [id]: true,
+          };
+        }
+      } else {
+        newArr[index] = {
+          ...newArr[index],
+          [id]: event.target.value,
+        };
+      }
     } else {
-      newArr[index].subOption[subIndex] = {
-        ...newArr[index].subOption[subIndex],
-        [id]: event.target.value,
-      };
+      if (id == "statusSubOption") {
+        if (newArr[index].statusSubOption == true) {
+          newArr[index].subOption[subIndex] = {
+            ...newArr[index].subOption[subIndex],
+            [id]: false,
+          };
+        } else {
+          newArr[index].subOption[subIndex] = {
+            ...newArr[index].subOption[subIndex],
+            [id]: true,
+          };
+        }
+      } else {
+        newArr[index].subOption[subIndex] = {
+          ...newArr[index].subOption[subIndex],
+          [id]: event.target.value,
+        };
+      }
     }
 
     setDataTable(newArr);
