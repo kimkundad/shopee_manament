@@ -95,7 +95,6 @@ function index(product) {
   const handleCopyClick = (shopUrl) => () => {
     const currentUrl = window.location.origin;
     const URLShop = `${currentUrl}/${shopUrl}`;
-    console.log('URLShop', URLShop)
     navigator.clipboard.writeText(shopUrl);
     setCopiedShopUrl(shopUrl);
   };
