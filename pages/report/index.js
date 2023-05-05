@@ -13,14 +13,20 @@ import {
   HStack,
   WrapItem,
   Select,
-  Tfoot,
+  Skeleton,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
 } from "@chakra-ui/react";
 import ListCheck from "@/components/MenuList";
-import { Table } from "@nextui-org/react";
 import Link from "next/link";
 import axios from "axios";
 function index() {
   const [products, setProducts] = useState([]);
+  const [loadingImg, setLoadingImg] = useState(true);
   const [column, setColumn] = useState([
     {
       label: "วันที่",
@@ -147,7 +153,6 @@ function index() {
       console.error("Failed to copy text: ", err);
     }
   };
-  console.log(currentItems);
   if (currentItems.length > 0) {
     return (
       <Box w="100%">
@@ -210,121 +215,114 @@ function index() {
             />
           </Box>
         </Flex>
-
-        <Table
-          striped
-          sticked
-          aria-label="Example table with static content"
-          css={{
-            height: "auto",
-            minWidth: "100%",
-            border: "0px",
-            boxShadow: "none",
-          }}
-        >
-          <Table.Header bg="red">
-            {column?.map((item, index) => {
-              return (
-                <Table.Column
-                  style={{ backgroundColor: "red", color: "white" }}
-                  key={index}
-                  css={{
-                    textAlign: "center",
-                    padding: "0px !important",
-                  }}
-                >
-                  <Text fontSize="21px">{item.label}</Text>
-                </Table.Column>
-              );
-            })}
-          </Table.Header>
-          <Table.Body>
-            {currentItems?.map((item, index) => {
-              return (
-                <Table.Row
-                  key={index}
-                  css={
-                    index % 2 !== 0
-                      ? { fontSize: "21px", background: "$gray100" }
-                      : { fontSize: "21px" }
+        <Box padding={"0.5rem 1rem 0.5rem 1rem"}>
+          <Table
+            variant="striped"
+            colorScheme="gray"
+            css={{
+              borderRadius: "10px",
+              overflow: "hidden",
+            }}
+          >
+            <Thead bg="red">
+              <Tr>
+                {column?.map((item, index) => {
+                  if (selectedColumns[index]) {
+                    return (
+                      <Th
+                        style={{
+                          backgroundColor: "red",
+                          color: "white",
+                          textAlign: "center",
+                        }}
+                        key={index}
+                      >
+                        <Text fontSize="21px">{item.label}</Text>
+                      </Th>
+                    );
                   }
-                >
-                  <Table.Cell css={{ textAlign: "center" }}>
-                    {item.created_at}
-                  </Table.Cell>
-                  <Table.Cell css={{ textAlign: "center" }}>
-                    {item.name_shop}
-                  </Table.Cell>
-                  <Table.Cell>{item.name_product}</Table.Cell>
-                  <Table.Cell css={{ textAlign: "center" }}>
-                    {item.sku}
-                  </Table.Cell>
-                  <Table.Cell css={{ textAlign: "center" }}>
-                    {item.url_shop !== undefined ? (
-                      <Flex justifyContent="center">
-                        <Text>{item.url_shop}</Text>
-                        <Image
-                          src="/images/copy.png"
-                          h="20px"
-                          pl="10px"
-                          alignSelf="center"
-                          onClick={(e) => copyLink(item.url_shop)}
-                        />
-                      </Flex>
+                })}
+              </Tr>
+            </Thead>
+            <Tbody>
+              {currentItems?.map((item, index) => {
+                return (
+                  <Tr key={index} fontSize="21px">
+                    {selectedColumns[0] ? <Td>{item.created_at}</Td> : null}
+                    {selectedColumns[1] ? <Td>{item.name_shop}</Td> : null}
+                    {selectedColumns[2] ? <Td>{item.name_product}</Td> : null}
+                    {selectedColumns[3] ? <Td>{item.sku}</Td> : null}
+                    {selectedColumns[4] ? (
+                      <Td>
+                        {item.url_shop !== undefined ? (
+                          <Flex justifyContent="center">
+                            <Text>{item.url_shop}</Text>
+                            <Skeleton
+                              h="20px"
+                              width="20px"
+                              borderRadius="xl"
+                              ml="10px"
+                              alignSelf="center"
+                              display={loadingImg ? "block" : "none"}
+                            />
+                            <Image
+                              src="/images/copy.png"
+                              h="20px"
+                              pl="10px"
+                              alignSelf="center"
+                              onClick={(e) => copyLink(item.url_shop)}
+                              display={!loadingImg ? "block" : "none"}
+                              onLoad={() => setLoadingImg(false)}
+                            />
+                          </Flex>
+                        ) : null}
+                      </Td>
                     ) : null}
-                  </Table.Cell>
-                  <Table.Cell css={{ textAlign: "center" }}>
-                    {item.order_id}
-                  </Table.Cell>
-                  <Table.Cell css={{ textAlign: "center" }}>
-                    <Link href="/report/detailCustomer">{item.name}</Link>
-                  </Table.Cell>
-                  <Table.Cell css={{ textAlign: "center" }}>
-                    {item.province}
-                  </Table.Cell>
-                  <Table.Cell css={{ textAlign: "center" }}>
-                    {item.tel}
-                  </Table.Cell>
-                  <Table.Cell css={{ textAlign: "center" }}>
-                    {item.num}
-                  </Table.Cell>
-                  <Table.Cell css={{ textAlign: "center" }}>
-                    {item.type == 1
-                      ? item.price_type_1
-                      : item.type == 2
-                      ? item.price_type_2
-                      : item.price_type_3}
-                  </Table.Cell>
-                </Table.Row>
-              );
-            })}
-            <Table.Row
-              css={
-                currentItems.length % 2 !== 0
-                  ? { fontSize: "21px", background: "$gray100" }
-                  : { fontSize: "21px" }
-              }
-            >
-              <Table.Cell css={{ textAlign: "center", fontWeight: "bold" }}>
-                ยอดขาย
-              </Table.Cell>
-              <Table.Cell css={{ textAlign: "center" }}></Table.Cell>
-              <Table.Cell></Table.Cell>
-              <Table.Cell css={{ textAlign: "center" }}></Table.Cell>
-              <Table.Cell css={{ textAlign: "center" }}></Table.Cell>
-              <Table.Cell css={{ textAlign: "center" }}></Table.Cell>
-              <Table.Cell css={{ textAlign: "center" }}></Table.Cell>
-              <Table.Cell css={{ textAlign: "center" }}></Table.Cell>
-              <Table.Cell css={{ textAlign: "center" }}></Table.Cell>
-              <Table.Cell css={{ textAlign: "center", fontWeight: "bold" }}>
-                {sumOrders}
-              </Table.Cell>
-              <Table.Cell css={{ textAlign: "center", fontWeight: "bold" }}>
-                {sumSales}
-              </Table.Cell>
-            </Table.Row>
-          </Table.Body>
-        </Table>
+                    {selectedColumns[5] ? <Td>{item.invoice_id}</Td> : null}
+                    {selectedColumns[6] ? (
+                      <Td>
+                        <Link
+                          href={{
+                            pathname: "/report/detailCustomer/" + item.uid,
+                          }}
+                        >
+                          {item.customer_name.length > 10
+                            ? item.customer_name?.slice(0, 10) + "..."
+                            : item.customer_name}
+                        </Link>
+                      </Td>
+                    ) : null}
+                    {selectedColumns[7] ? <Td>{item.province}</Td> : null}
+                    {selectedColumns[8] ? <Td>{item.tel}</Td> : null}
+                    {selectedColumns[9] ? <Td textAlign="end">{item.num}</Td> : null}
+                    {selectedColumns[10] ? (
+                      <Td textAlign="end">
+                        {item.type == 1
+                          ? item.price_type_1
+                          : item.type == 2
+                          ? item.price_type_2
+                          : item.price_type_3}
+                      </Td>
+                    ) : null}
+                  </Tr>
+                );
+              })}
+              <Tr fontSize="21px">
+              {selectedColumns[0] ? <Td fontWeight="bold">ยอดรวม</Td> : null}
+              {selectedColumns[1] ? <Td></Td> : null}
+              {selectedColumns[2] ? <Td></Td> : null}
+              {selectedColumns[3] ? <Td></Td> : null}
+              {selectedColumns[4] ? <Td></Td> : null}
+              {selectedColumns[5] ? <Td></Td> : null}
+              {selectedColumns[6] ? <Td></Td> : null}
+              {selectedColumns[7] ? <Td></Td> : null}
+              {selectedColumns[8] ? <Td></Td> : null}
+              {selectedColumns[9] ? <Td fontWeight="bold" textAlign="end">{sumOrders}</Td> : null}
+              {selectedColumns[10] ? <Td fontWeight="bold" textAlign="end">{sumSales}</Td> : null}
+              </Tr>
+            </Tbody>
+          </Table>
+        </Box>
         <Flex m="10px">
           <Wrap alignSelf="center" fontSize="21px">
             <WrapItem>

@@ -3,16 +3,10 @@ import {
   Flex,
   Text,
   Image,
-  Input,
-  InputGroup,
-  InputLeftElement,
   Box,
   Icon,
   Spacer,
   Button,
-  Wrap,
-  HStack,
-  WrapItem,
   Table,
   Tbody,
   Tr,
@@ -21,10 +15,33 @@ import {
   GridItem,
   Thead,
 } from "@chakra-ui/react";
-import ListCheck from "@/components/MenuList";
 import Link from "next/link";
 import { BsArrowLeftCircle } from "react-icons/bs";
+import axios from "axios";
+import { useRouter } from "next/router";
 function index() {
+  const router = useRouter();
+  const data = router.query.id;
+  console.log(data);
+  const [customer, setCustomer] = useState([]);
+  const [orders, setOrders] = useState([]);
+  useEffect(() => {
+    if (data !== undefined) {
+      async function fecthdata() {
+        const formdata = new FormData();
+        formdata.append("uid", data);
+        const res = await axios.post(
+          `https://shopee-api.deksilp.com/api/getDetailCutomer`,
+          formdata
+        );
+        setCustomer(res.data.customer[0]);
+        setOrders(res.data.orders);
+      }
+      fecthdata();
+    }
+  }, [data]);
+
+  console.log(customer, orders);
   return (
     <Box w="100%">
       <Box>
@@ -57,10 +74,19 @@ function index() {
       </Box>
       <Box px="20px">
         <Flex alignItems="center">
-          <Image src="/images/user.png" h="90px" />
+          <Image
+            src={`https://shopee-api.deksilp.com/images/shopee/avatar/${customer.avatar}`}
+            h="90px"
+            w="90px"
+            borderRadius="50%"
+          />
           <Box pl="15px">
-            <Text fontWeight="bold">อั้นนักเทนนิสระดับโลก</Text>
-            <Text>ID User : 1000000 แก้ไขล่าสุด : 12/12/65</Text>
+            <Text fontWeight="bold" fontSize="28px">
+              {customer?.user_name?.length > 15 ? customer.user_name?.slice(0, 15) + "..." : customer.user_name}
+            </Text>
+            <Text fontSize="25px">
+              ID User : {customer.uid} แก้ไขล่าสุด : {customer.updated_at}
+            </Text>
           </Box>
         </Flex>
         <Flex
@@ -71,10 +97,17 @@ function index() {
           bg="gray.100"
         >
           <Image src="/images/user_black.png" h="30px" m="10px" />
-          <Text fontWeight="bold">ข้อมูลลูกค้า</Text>
+          <Text fontWeight="bold" fontSize="25px">
+            ข้อมูลลูกค้า
+          </Text>
         </Flex>
         <Box pt="15px">
-          <Grid px="10%" templateColumns="repeat(6, 1fr)" gap={2}>
+          <Grid
+            px="10%"
+            templateColumns="repeat(6, 1fr)"
+            gap={2}
+            fontSize="21px"
+          >
             <GridItem colSpan={3}>
               <Grid templateColumns="repeat(2, 1fr)" gap={2}>
                 <GridItem>
@@ -83,7 +116,7 @@ function index() {
                   </Text>
                 </GridItem>
                 <GridItem>
-                  <Text>9/84 sadsadsadasdsadasdsad</Text>
+                  <Text>{customer.address}</Text>
                 </GridItem>
                 <GridItem>
                   <Text fontWeight="bold" textAlign="end">
@@ -91,25 +124,25 @@ function index() {
                   </Text>
                 </GridItem>
                 <GridItem>
-                  <Text>9/84 sadsadsadasdsadasdsad</Text>
+                  <Text>
+                    {customer.address} ตำบล{customer.sub_district} อำเภอ
+                    {customer.district} จังหวัด{customer.province}{" "}
+                    {customer.postcode}
+                  </Text>
                 </GridItem>
                 <GridItem>
                   <Text fontWeight="bold" textAlign="end">
                     ช่องทางติดต่อ :
                   </Text>
                 </GridItem>
-                <GridItem>
-                  <Text>9/84 sadsadsadasdsadasdsad</Text>
-                  <Text>9/84 sadsadsadasdsadasdsad</Text>
-                  <Text>9/84 sadsadsadasdsadasdsad</Text>
-                </GridItem>
+                <GridItem></GridItem>
                 <GridItem>
                   <Text fontWeight="bold" textAlign="end">
                     เบอร์โทรศัพท์ :
                   </Text>
                 </GridItem>
                 <GridItem>
-                  <Text>03030303030</Text>
+                  <Text>{customer.tel}</Text>
                 </GridItem>
               </Grid>
             </GridItem>
@@ -129,7 +162,7 @@ function index() {
                   </Text>
                 </GridItem>
                 <GridItem>
-                  <Text>10/10/64</Text>
+                  <Text>{customer.created_at}</Text>
                 </GridItem>
                 <GridItem>
                   <Text fontWeight="bold" textAlign="end">
@@ -137,7 +170,7 @@ function index() {
                   </Text>
                 </GridItem>
                 <GridItem>
-                  <Text>Gold</Text>
+                  <Text></Text>
                 </GridItem>
                 <GridItem>
                   <Text fontWeight="bold" textAlign="end">
@@ -145,7 +178,7 @@ function index() {
                   </Text>
                 </GridItem>
                 <GridItem>
-                  <Text>800</Text>
+                  <Text></Text>
                 </GridItem>
                 <GridItem>
                   <Text fontWeight="bold" textAlign="end">
@@ -153,7 +186,7 @@ function index() {
                   </Text>
                 </GridItem>
                 <GridItem>
-                  <Text>test@gmail.com</Text>
+                  <Text>{customer.email}</Text>
                 </GridItem>
               </Grid>
             </GridItem>
@@ -168,11 +201,13 @@ function index() {
           bg="gray.100"
         >
           <Image src="/images/shopping-list.png" h="30px" m="10px" />
-          <Text fontWeight="bold">ประวัติการสั่งซื้อ</Text>
+          <Text fontWeight="bold" fontSize="25px">
+            ประวัติการสั่งซื้อ
+          </Text>
         </Flex>
-        <Box pt="15px">
+        <Box py="15px">
           <Table minWidth="100%" border="1px solid" textAlign="center">
-            <Thead bg="gray.100">
+            <Thead bg="gray.100" fontSize="25px">
               <Tr>
                 <Td border="1px solid">รหัสสินค้า</Td>
                 <Td border="1px solid">รูปสินค้า</Td>
@@ -184,17 +219,41 @@ function index() {
                 <Td border="1px solid">วันที่สั่งซื้อ</Td>
               </Tr>
             </Thead>
-            <Tbody>
-              <Tr>
-                <Td border="1px solid">a</Td>
-                <Td border="1px solid">a</Td>
-                <Td border="1px solid">a</Td>
-                <Td border="1px solid">a</Td>
-                <Td border="1px solid">a</Td>
-                <Td border="1px solid">a</Td>
-                <Td border="1px solid">a</Td>
-                <Td border="1px solid">a</Td>
-              </Tr>
+            <Tbody fontSize="21px">
+              {orders?.map((item, index) => {
+                return (
+                  <Tr key={index}>
+                    <Td borderColor="black">{item.sku}</Td>
+                    <Td borderColor="black">
+                      {item.type == 1 ? (
+                        <Image
+                          h="60px"
+                          src={`https://shopee-api.deksilp.com/images/shopee/products/${item.img_product}`}
+                          alt=""
+                        />
+                      ) : (
+                        <Image
+                          h="60px"
+                          src={`https://shopee-api.deksilp.com/images/shopee/products/${item.img_pro_option}`}
+                          alt=""
+                        />
+                      )}
+                    </Td>
+                    <Td borderColor="black">{item.name_product}</Td>
+                    <Td borderColor="black">{item.invoice_id}</Td>
+                    <Td borderColor="black">{item.status}</Td>
+                    <Td borderColor="black">{item.num}</Td>
+                    <Td borderColor="black">
+                      {item.type == 1
+                        ? item.num * item.price_type_1
+                        : item.type == 2
+                        ? item.num * item.price_type_2
+                        : item.num * item.price_type_3}
+                    </Td>
+                    <Td borderColor="black">{item.created_at}</Td>
+                  </Tr>
+                );
+              })}
             </Tbody>
           </Table>
         </Box>
