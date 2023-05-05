@@ -131,6 +131,7 @@ export default function useChats() {
         const formdata = new FormData();
         formdata.append("user_id", userId);
         formdata.append("shop_id", shopId);
+        formdata.append("type",'shop');
         const res = await axios.post(
           `https://shopee-api.deksilp.com/api/getMessage`,
           formdata
@@ -198,15 +199,15 @@ export default function useChats() {
                 >
                   <Image
                     borderRadius="50%"
-                    src={`/images/${item.avatar}`}
+                    src={`https://shopee-api.deksilp.com/images/shopee/avatar/${item.avatar}`}
                     alt=""
                     h="55px "
                     w="55px "
                   />
                   <Box alignSelf="center" pl="10px" w="50%">
                     <Text fontSize="20px" fontWeight="bold" w="">
-                      {item.name?.length > 15
-                        ? item.name?.slice(0, 15) + "..."
+                      {item.name?.length > 10
+                        ? item.name?.slice(0, 10) + "..."
                         : item.name}
                     </Text>
                     <Text fontSize="18px" color="gray">
