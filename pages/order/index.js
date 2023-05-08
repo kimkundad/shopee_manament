@@ -39,15 +39,26 @@ import {
   TableContainer,
   Tooltip,
   hasArrow,
+  CheckboxGroup,
+  Image,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
-  CheckboxGroup,
-  Image,
+  MenuItemOption,
+  MenuGroup,
+  MenuOptionGroup,
+  MenuDivider,
 } from "@chakra-ui/react";
 
-import { Icon, RepeatIcon } from "@chakra-ui/icons";
+import {
+  Icon,
+  RepeatIcon,
+  HamburgerIcon,
+  AddIcon,
+  ExternalLinkIcon,
+  EditIcon,
+} from "@chakra-ui/icons";
 
 import {
   BsAlarm,
@@ -60,6 +71,7 @@ import {
   BsClockHistory,
   BsBoxFill,
   BsXCircleFill,
+  BsEyeFill,
 } from "react-icons/bs";
 
 function MenuCheckboxList(props) {
@@ -158,7 +170,7 @@ export default function Order() {
     { label: "เลือกทั้งหมด", isShow: true },
     { label: "เลขคำสั่งซื้อ", isShow: true },
     { label: "รูปสินค้า", isShow: true },
-    { label: "ชื่อสินค้า", isShow: true },
+    { label: "ชื่อผู้รับ", isShow: true },
     { label: "ที่อยู่", isShow: true },
     { label: "เบอร์โทร", isShow: true },
     { label: "จำนวน", isShow: true },
@@ -173,12 +185,9 @@ export default function Order() {
   const [searchId, setSearchId] = useState("");
   const [searchDate, setSearchDate] = useState("");
   const [checkBoxData, setCheckBoxData] = useState(labelLists);
-  const [filteredAmount, setFilteredAmount] = useState(null);
-  const [totalFilteredAmount, setTotalFilteredAmount] = useState(0);
-  const [filterCountOrders, setFilterCountOrders] = useState(null);
-  const [totalFilterCountOrders, setTotalFilterCountOrders] = useState(0);
   let totalAmount = 0;
   let totalQuantity = 0;
+
   const fetchData = async () => {
     const response = await axios.get(
       `https://shopee-api.deksilp.com/api/getOrders`
@@ -208,6 +217,19 @@ export default function Order() {
   ).length;
   const countRemand = orders.filter((item) => item.status === "ตีกลับ").length;
   const countCancel = orders.filter((item) => item.status === "ยกเลิก").length;
+
+  const handleSetStatusOrder = async (index, id, status) => {
+    const formData = new FormData();
+    formData.append("id", id);
+    formData.append("status", status);
+    const response = await axios.post(
+      "https://shopee-api.deksilp.com/api/setStatusOrders",
+      formData
+    );
+    if (response.data.success) {
+      fetchData();
+    }
+  };
 
   return (
     <>
@@ -396,7 +418,7 @@ export default function Order() {
                 type="text"
                 fontSize="21px"
                 borderColor="gray.500"
-                placeholder="ค้นหา เลขคำสั่งซื้อ"
+                placeholder="ค้นหาคำสั่งซื้อ"
                 value={searchId}
                 onChange={(e) => {
                   setSearchId(e.target.value);
@@ -449,7 +471,7 @@ export default function Order() {
           </Box>
 
           <Spacer />
-          <Box borderWidth="1px" borderColor="red" borderRadius="md">
+          {/* <Box borderWidth="1px" borderColor="red" borderRadius="md">
             <Link href="/order/add">
               <Button
                 fontSize="21px"
@@ -469,7 +491,7 @@ export default function Order() {
                 เพิ่มคำสั่งซื้อ
               </Button>
             </Link>
-          </Box>
+          </Box> */}
         </Flex>
       </Box>
       {/* End Navbar */}
@@ -496,6 +518,7 @@ export default function Order() {
                           color={"white"}
                           fontSize="15"
                           textAlign={"center"}
+                          key={index}
                         >
                           <Text>{item.label}</Text>
                           {index == 0 ? (
@@ -519,7 +542,11 @@ export default function Order() {
                     if (searchId !== "") {
                       return (
                         order.status.includes(navbarTab) &&
-                        order.orderId.toString().includes(searchId)
+                        order.orderId.toString().includes(searchId) ||
+                        order.receiverName.toString().includes(searchId) ||
+                        order.address.toString().includes(searchId) ||
+                        order.phoneNumber.toString().includes(searchId) ||
+                        order.amount.toString().includes(searchId)
                       );
                     } else if (searchDate !== "") {
                       return (
@@ -536,7 +563,7 @@ export default function Order() {
                     totalAmount += orderAmount;
                     totalQuantity += orderQuantity;
                     return (
-                      <Tr key={filteredOrder.orderId}>
+                      <Tr key={`${filteredOrder.orderId}-${index}`}>
                         {checkBoxData[0] && checkBoxData[0].isShow ? (
                           <Td
                             px={5}
@@ -621,42 +648,156 @@ export default function Order() {
                             borderRightRadius={"10"}
                             textAlign={"center"}
                           >
-                            <HStack>
-                              <IconButton
-                                icon={<BsClockHistory />}
-                                size="xs"
-                                color={"#f84c01"}
-                                borderColor={"#f84c01"}
-                                aria-label="Edit"
-                                variant="outline"
-                              />
-                              <IconButton
-                                icon={<BsBoxFill />}
-                                size="xs"
-                                color={"#f84c01"}
-                                borderColor={"#f84c01"}
-                                aria-label="Edit"
-                                variant="outline"
-                              />
-                              <IconButton
-                                icon={<BsXCircleFill />}
-                                size="xs"
-                                color={"#f84c01"}
-                                borderColor={"#f84c01"}
-                                aria-label="Edit"
-                                variant="outline"
-                              />
-                            </HStack>
+                            {navbarTab == "ที่ต้องชำระ" ? (
+                              <Menu>
+                                <MenuButton
+                                  as={IconButton}
+                                  aria-label="Options"
+                                  icon={<HamburgerIcon />}
+                                  variant="outline"
+                                  border="none"
+                                />
+                                <MenuList>
+                                  <MenuItem
+                                    icon={<Icon as={BsEyeFill} boxSize={4} />}
+                                  >
+                                    ดูรายละเอียด
+                                  </MenuItem>
+                                  <MenuItem
+                                    icon={<Icon as={BsBoxSeam} boxSize={4} />}
+                                    onClick={() => {
+                                      handleSetStatusOrder(
+                                        index,
+                                        filteredOrder.ID,
+                                        "กำลังแพ็ค"
+                                      );
+                                    }}
+                                  >
+                                    เปลี่ยนสถานะ "กำลังแพ็ค"
+                                  </MenuItem>
+                                  <MenuItem
+                                    icon={
+                                      <Icon as={BsXOctagonFill} boxSize={4} />
+                                    }
+                                    onClick={() => {
+                                      handleSetStatusOrder(
+                                        index,
+                                        filteredOrder.ID,
+                                        "ยกเลิก"
+                                      );
+                                    }}
+                                  >
+                                    ยกเลิกคำสั่งซื้อ
+                                  </MenuItem>
+                                </MenuList>
+                              </Menu>
+                            ) : (
+                              <HStack>
+                                {/* <IconButton
+                                  icon={<BsClockHistory />}
+                                  size="xs"
+                                  color={"#f84c01"}
+                                  borderColor={"#f84c01"}
+                                  aria-label="Edit"
+                                  variant="outline"
+                                /> */}
+                                {navbarTab == "กำลังแพ็ค" && (
+                                  <IconButton
+                                    icon={<Image src={'/images/delivery-truck 1.png'} width={'14px'}/>}
+                                    size="xs"
+                                    color={"#f84c01"}
+                                    borderColor={"#f84c01"}
+                                    aria-label="Edit"
+                                    variant="outline"
+                                    onClick={() => {
+                                      handleSetStatusOrder(
+                                        index,
+                                        filteredOrder.ID,
+                                        "พร้อมส่ง"
+                                      );
+                                    }}
+                                  />
+                                )}
+                                {navbarTab == "พร้อมส่ง" && (
+                                  <IconButton
+                                    icon={<Image src={'/images/delivery-truck 2.png'} width={'14px'}/>}
+                                    size="xs"
+                                    color={"#f84c01"}
+                                    borderColor={"#f84c01"}
+                                    aria-label="Edit"
+                                    variant="outline"
+                                    onClick={() => {
+                                      handleSetStatusOrder(
+                                        index,
+                                        filteredOrder.ID,
+                                        "จัดส่งสำเร็จ"
+                                      );
+                                    }}
+                                  />
+                                )}
+                                {navbarTab == "จัดส่งสำเร็จ" && (
+                                  <IconButton
+                                    icon={<Image src={'/images/ส่งสำเร็จ 1.png'} width={'14px'}/>}
+                                    size="xs"
+                                    color={"#f84c01"}
+                                    borderColor={"#f84c01"}
+                                    aria-label="Edit"
+                                    variant="outline"
+                                    onClick={() => {
+                                      handleSetStatusOrder(
+                                        index,
+                                        filteredOrder.ID,
+                                        "ส่งสำเร็จ"
+                                      );
+                                    }}
+                                  />
+                                )}
+                                {navbarTab == "ส่งสำเร็จ" && (
+                                  <IconButton
+                                    icon={<Image src={'/images/ตีกลับ.png'} width={'14px'}/>}
+                                    size="xs"
+                                    color={"#f84c01"}
+                                    borderColor={"#f84c01"}
+                                    aria-label="Edit"
+                                    variant="outline"
+                                    onClick={() => {
+                                      handleSetStatusOrder(
+                                        index,
+                                        filteredOrder.ID,
+                                        "ตีกลับ"
+                                      );
+                                    }}
+                                  />
+                                )}
+                                <IconButton
+                                  icon={<BsXCircleFill />}
+                                  size="xs"
+                                  color={"#f84c01"}
+                                  borderColor={"#f84c01"}
+                                  aria-label="Edit"
+                                  variant="outline"
+                                  onClick={() => {
+                                    handleSetStatusOrder(
+                                      index,
+                                      filteredOrder.ID,
+                                      "ยกเลิก"
+                                    );
+                                  }}
+                                />
+                              </HStack>
+                            )}
                           </Td>
                         ) : null}
                       </Tr>
                     );
                   })}
               </Tbody>
-              <Tfoot>
-                <Th colSpan={6}>ยอดรวม</Th>
-                <Th>{totalQuantity}</Th>
-                <Th colSpan={5}>{totalAmount}</Th>
+              <Tfoot bgColor={"whitesmoke"}>
+                <Tr>
+                  <Th colSpan={6}>ยอดรวม</Th>
+                  <Th>{totalQuantity}</Th>
+                  <Th colSpan={5}>{totalAmount}</Th>
+                </Tr>
               </Tfoot>
             </Table>
           </TableContainer>
