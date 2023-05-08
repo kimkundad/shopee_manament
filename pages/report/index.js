@@ -85,6 +85,16 @@ function index() {
       setProducts(res.data.reports);
       setCurrentItems(res.data.reports.data);
       setTotalPages(res.data.reports.last_page);
+
+      const formdataTotal = new FormData();
+      let user_id = 3; // ถ้ามี login เปลี่ยนเป็น uid ของคน login
+      formdataTotal.append("uid", user_id);
+      const resTotal = await axios.post(
+        `https://shopee-api.deksilp.com/api/totalOrders`,
+        formdataTotal
+      );
+      setSumSales(resTotal?.data?.total?.total_price);
+      setSumOrders(resTotal?.data?.total?.total_num);
     }
     fecthdata();
   }, []);
@@ -93,6 +103,7 @@ function index() {
     async function fecthdata() {
       const formdata = new FormData();
       formdata.append("itemsPerPage", itemsPerPage);
+      formdata.append("search",search);
       const res = await axios.post(
         `https://shopee-api.deksilp.com/api/getReports?page=${currentPage}`,
         formdata
@@ -104,28 +115,11 @@ function index() {
         setCurrentPage(1);
         setinputValue(1);
       }
-  
-      /* let sumSale = 0;
-      filteredData?.forEach((item) => {
-        if (item.type == 1) {
-          sumSale += item.price_type_1;
-        } else if (item.type == 2) {
-          sumSale += item.price_type_2;
-        } else if (item.type == 3) {
-          sumSale += item.price_type_3;
-        }
-      });
-      setSumSales(sumSale);
-      let sumOrder = 0;
-      filteredData?.forEach((item) => {
-        sumOrder += item.num;
-      });
-      setSumOrders(sumOrder); */
+
     }
     fecthdata();
-  }, [currentPage,itemsPerPage]);
+  }, [currentPage,itemsPerPage,search]);
 
-  console.log(itemsPerPage);
   /* useEffect(() => {
     let item = parseInt(itemsPerPage);
     const newArr = [...products];
