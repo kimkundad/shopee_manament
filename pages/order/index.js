@@ -520,16 +520,33 @@ export default function Order() {
                           textAlign={"center"}
                           key={index}
                         >
-                          <Text>{item.label}</Text>
-                          {index == 0 ? (
+                          {item.label === "ดำเนินการ" && (
+                            <>
+                              {navbarTab === "ตีกลับ" && (
+                                <Text>วันที่ตีกลับ</Text>
+                              )}
+                              {navbarTab === "ยกเลิก" && (
+                                <Text>วันที่ยกเลิก</Text>
+                              )}
+                              {navbarTab !== "ยกเลิก" && navbarTab !== "ตีกลับ" &&(
+                                <Text>{item.label}</Text>
+                              )}
+                            </>
+                          )}
+                          {item.label !== "ดำเนินการ" && (
+                            <>
+                              <Text>{item.label}</Text>
+                            </>
+                          )}
+                          {index === 0 && (
                             <Center>
                               <Checkbox
                                 size="md"
                                 colorScheme="green"
                                 defaultChecked
-                              ></Checkbox>
+                              />
                             </Center>
-                          ) : null}
+                          )}
                         </Th>
                       );
                     }
@@ -541,8 +558,8 @@ export default function Order() {
                   .filter((order) => {
                     if (searchId !== "") {
                       return (
-                        order.status.includes(navbarTab) &&
-                        order.orderId.toString().includes(searchId) ||
+                        (order.status.includes(navbarTab) &&
+                          order.orderId.toString().includes(searchId)) ||
                         order.receiverName.toString().includes(searchId) ||
                         order.address.toString().includes(searchId) ||
                         order.phoneNumber.toString().includes(searchId) ||
@@ -703,7 +720,12 @@ export default function Order() {
                                 /> */}
                                 {navbarTab == "กำลังแพ็ค" && (
                                   <IconButton
-                                    icon={<Image src={'/images/delivery-truck 1.png'} width={'14px'}/>}
+                                    icon={
+                                      <Image
+                                        src={"/images/delivery-truck 1.png"}
+                                        width={"14px"}
+                                      />
+                                    }
                                     size="xs"
                                     color={"#f84c01"}
                                     borderColor={"#f84c01"}
@@ -720,7 +742,12 @@ export default function Order() {
                                 )}
                                 {navbarTab == "พร้อมส่ง" && (
                                   <IconButton
-                                    icon={<Image src={'/images/delivery-truck 2.png'} width={'14px'}/>}
+                                    icon={
+                                      <Image
+                                        src={"/images/delivery-truck 2.png"}
+                                        width={"14px"}
+                                      />
+                                    }
                                     size="xs"
                                     color={"#f84c01"}
                                     borderColor={"#f84c01"}
@@ -737,7 +764,12 @@ export default function Order() {
                                 )}
                                 {navbarTab == "จัดส่งสำเร็จ" && (
                                   <IconButton
-                                    icon={<Image src={'/images/ส่งสำเร็จ 1.png'} width={'14px'}/>}
+                                    icon={
+                                      <Image
+                                        src={"/images/ส่งสำเร็จ 1.png"}
+                                        width={"14px"}
+                                      />
+                                    }
                                     size="xs"
                                     color={"#f84c01"}
                                     borderColor={"#f84c01"}
@@ -754,7 +786,12 @@ export default function Order() {
                                 )}
                                 {navbarTab == "ส่งสำเร็จ" && (
                                   <IconButton
-                                    icon={<Image src={'/images/ตีกลับ.png'} width={'14px'}/>}
+                                    icon={
+                                      <Image
+                                        src={"/images/ตีกลับ.png"}
+                                        width={"14px"}
+                                      />
+                                    }
                                     size="xs"
                                     color={"#f84c01"}
                                     borderColor={"#f84c01"}
@@ -769,21 +806,30 @@ export default function Order() {
                                     }}
                                   />
                                 )}
-                                <IconButton
-                                  icon={<BsXCircleFill />}
-                                  size="xs"
-                                  color={"#f84c01"}
-                                  borderColor={"#f84c01"}
-                                  aria-label="Edit"
-                                  variant="outline"
-                                  onClick={() => {
-                                    handleSetStatusOrder(
-                                      index,
-                                      filteredOrder.ID,
-                                      "ยกเลิก"
-                                    );
-                                  }}
-                                />
+                                {navbarTab != "ตีกลับ" &&
+                                navbarTab != "ยกเลิก" ? (
+                                  <IconButton
+                                    icon={<BsXCircleFill />}
+                                    size="xs"
+                                    color={"#f84c01"}
+                                    borderColor={"#f84c01"}
+                                    aria-label="Edit"
+                                    variant="outline"
+                                    onClick={() => {
+                                      handleSetStatusOrder(
+                                        index,
+                                        filteredOrder.ID,
+                                        "ยกเลิก"
+                                      );
+                                    }}
+                                  />
+                                ) : null}
+                                {navbarTab == "ตีกลับ" && (
+                                  <Text>{filteredOrder.updateAt}</Text>
+                                )}
+                                {navbarTab == "ยกเลิก" && (
+                                  <Text>{filteredOrder.updateAt}</Text>
+                                )}
                               </HStack>
                             )}
                           </Td>
