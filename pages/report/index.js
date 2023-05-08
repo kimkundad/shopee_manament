@@ -24,6 +24,9 @@ import {
 import ListCheck from "@/components/MenuList";
 import Link from "next/link";
 import axios from "axios";
+import { DateRangePicker, DateRange } from "react-date-range";
+import "react-date-range/dist/styles.css"; // main css file
+import "react-date-range/dist/theme/default.css"; // theme css file
 function index() {
   const [products, setProducts] = useState([]);
   const [loadingImg, setLoadingImg] = useState(true);
@@ -73,15 +76,57 @@ function index() {
   const [sumOrders, setSumOrders] = useState(0);
   useEffect(() => {
     async function fecthdata() {
+      const formdata = new FormData();
+      formdata.append("itemsPerPage", itemsPerPage);
       const res = await axios.post(
-        `https://shopee-api.deksilp.com/api/getReports`
+        `https://shopee-api.deksilp.com/api/getReports`,
+        formdata
       );
       setProducts(res.data.reports);
+      setCurrentItems(res.data.reports.data);
+      setTotalPages(res.data.reports.last_page);
     }
     fecthdata();
   }, []);
 
   useEffect(() => {
+    async function fecthdata() {
+      const formdata = new FormData();
+      formdata.append("itemsPerPage", itemsPerPage);
+      const res = await axios.post(
+        `https://shopee-api.deksilp.com/api/getReports?page=${currentPage}`,
+        formdata
+      );
+      setProducts(res.data.reports);
+      setCurrentItems(res.data.reports.data);
+      setTotalPages(res.data.reports.last_page);
+      if (currentPage > res.data.reports.last_page) {
+        setCurrentPage(1);
+        setinputValue(1);
+      }
+  
+      /* let sumSale = 0;
+      filteredData?.forEach((item) => {
+        if (item.type == 1) {
+          sumSale += item.price_type_1;
+        } else if (item.type == 2) {
+          sumSale += item.price_type_2;
+        } else if (item.type == 3) {
+          sumSale += item.price_type_3;
+        }
+      });
+      setSumSales(sumSale);
+      let sumOrder = 0;
+      filteredData?.forEach((item) => {
+        sumOrder += item.num;
+      });
+      setSumOrders(sumOrder); */
+    }
+    fecthdata();
+  }, [currentPage,itemsPerPage]);
+
+  console.log(itemsPerPage);
+  /* useEffect(() => {
     let item = parseInt(itemsPerPage);
     const newArr = [...products];
     const filteredData = newArr.filter((item) =>
@@ -114,7 +159,7 @@ function index() {
       sumOrder += item.num;
     });
     setSumOrders(sumOrder);
-  }, [products, currentPage, itemsPerPage, search]);
+  }, [products, currentPage, itemsPerPage, search]); */
   //pagination
   const handleSelectChange = (event) => {
     setItemPerpages(event.target.value);
@@ -156,6 +201,31 @@ function index() {
     }
   };
 
+  const presets = [
+    {
+      label: "Today",
+      startDate: new Date(),
+      endDate: new Date(),
+    },
+    {
+      label: "Last 7 Days",
+      startDate: new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000),
+      endDate: new Date(),
+    },
+    {
+      label: "Last 30 Days",
+      startDate: new Date(new Date().getTime() - 30 * 24 * 60 * 60 * 1000),
+      endDate: new Date(),
+    },
+  ];
+
+  const [selectedRange, setSelectedRange] = useState({
+    startDate: new Date(),
+    endDate: new Date(),
+    key: "selection",
+  });
+
+  const [showDateRangePicker, setShowDateRangePicker] = useState(false);
   return (
     <Box w="100%">
       <Flex justifyContent="center" alignItems="center">
@@ -186,13 +256,27 @@ function index() {
               <Image src="/images/calendar.png" h="20px" w="20px" />
             </InputLeftElement>
             <Input
-              type="date"
+              value={`${selectedRange.startDate.toLocaleDateString()} - ${selectedRange.endDate.toLocaleDateString()}`}
+              onFocus={() => setShowDateRangePicker(true)}
+              readOnly
+              type="text"
               borderRadius="3xl"
               fontSize="21px"
               borderColor="gray.500"
-              placeholder="เลือกวันที่"
             />
           </InputGroup>
+          {showDateRangePicker && (
+            <div style={{ position: "absolute", border: "1px solid" }}>
+              <DateRangePicker
+                ranges={[selectedRange]}
+                onChange={(ranges) => {
+                  setSelectedRange(ranges.selection);
+                  setShowDateRangePicker(false);
+                }}
+                shortcuts={presets}
+              />
+            </div>
+          )}
         </Box>
         <Spacer />
         <Box borderWidth="1px" borderColor="red" borderRadius="md">
@@ -353,7 +437,7 @@ function index() {
             <Text>จำนวนสินค้า : </Text>
           </WrapItem>
           <WrapItem>
-            <Text>{products?.length}</Text>
+            <Text>{products?.total}</Text>
           </WrapItem>
         </Wrap>
         <Spacer />
