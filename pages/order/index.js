@@ -66,8 +66,9 @@ function MenuCheckboxList(props) {
   const { values, onValueChange } = props;
 
   function handleCheck(e, index) {
-    values[index].isShow = e.target.checked;
-    onValueChange(values);
+    const newValues = [...values];
+    newValues[index].isShow = e.target.checked;
+    onValueChange(newValues);
     console.log(props.values);
   }
 
@@ -153,18 +154,6 @@ function showHideTableField(lists) {
 // }
 
 export default function Order() {
-	const [orders, setOrders] = useState([]);
-	const fetchData = async () => {
-		const response = await axios.get(
-			`https://shopee-api.deksilp.com/api/getOrders`
-		  );
-		  setOrders(response.data.orders)
-	}
-
-	useEffect(() => {
-		fetchData();
-		console.log('orders', orders)
-	}, [])
   const labelLists = [
     { label: "เลือกทั้งหมด", isShow: true },
     { label: "เลขคำสั่งซื้อ", isShow: true },
@@ -179,8 +168,32 @@ export default function Order() {
     { label: "ผู้ทำรายการ", isShow: true },
     { label: "ดำเนินการ", isShow: true },
   ];
+  const [orders, setOrders] = useState([]);
+  const [navbarTab, setNavbarTab] = useState("ที่ต้องชำระ");
+  const [searchId, setSearchId] = useState("");
+  const [searchDate, setSearchDate] = useState("");
+  const [checkBoxData, setCheckBoxData] = useState(labelLists);
+  const [filteredAmount, setFilteredAmount] = useState(null);
+  const [totalFilteredAmount, setTotalFilteredAmount] = useState(0);
+  const [filterCountOrders, setFilterCountOrders] = useState(null);
+  const [totalFilterCountOrders, setTotalFilterCountOrders] = useState(0);
+  let totalAmount = 0;
+  let totalQuantity = 0;
+  const fetchData = async () => {
+    const response = await axios.get(
+      `https://shopee-api.deksilp.com/api/getOrders`
+    );
+    setOrders(response.data.orders);
+  };
 
-  const countOrder = orders.filter((item) => item.status === "ที่ต้องชำระ").length;
+  useEffect(() => {
+    fetchData();
+    console.log("orders", orders);
+  }, []);
+
+  const countOrder = orders.filter(
+    (item) => item.status === "ที่ต้องชำระ"
+  ).length;
   const countPacking = orders.filter(
     (item) => item.status === "กำลังแพ็ค"
   ).length;
@@ -196,17 +209,6 @@ export default function Order() {
   const countRemand = orders.filter((item) => item.status === "ตีกลับ").length;
   const countCancel = orders.filter((item) => item.status === "ยกเลิก").length;
 
-  const [navbarTab, setNavbarTab] = useState("ที่ต้องชำระ");
-  const [searchId, setSearchId] = useState("");
-  const [searchDate, setSearchDate] = useState("");
-  const [checkBoxData, setCheckBoxData] = useState(labelLists);
-  const [filteredAmount, setFilteredAmount] = useState(null);
-  const [totalFilteredAmount, setTotalFilteredAmount] = useState(0);
-  const [filterCountOrders, setFilterCountOrders] = useState(null);
-  const [totalFilterCountOrders, setTotalFilterCountOrders] = useState(0);
-
-  
-
   return (
     <>
       {/* Start Header */}
@@ -214,8 +216,8 @@ export default function Order() {
         <Center>
           <HStack>
             <Image
-              width={'36px'}
-              height={'36px'}
+              width={"36px"}
+              height={"36px"}
               src={"/images/menu/คำสั่งซื้อ.png"}
               alt={"รูปคำสั่งซื้อ"}
             />
@@ -382,7 +384,12 @@ export default function Order() {
           <Box>
             <InputGroup>
               <InputLeftElement pointerEvents="none">
-                <Image src="/images/search.png" width={'20px'} height={'20px'} alt="" />
+                <Image
+                  src="/images/search.png"
+                  width={"20px"}
+                  height={"20px"}
+                  alt=""
+                />
               </InputLeftElement>
               <Input
                 borderRadius="3xl"
@@ -403,8 +410,8 @@ export default function Order() {
               <InputLeftElement pointerEvents="none">
                 <Image
                   src="/images/calendar.png"
-                  width={'20px'}
-                  height={'20px'}
+                  width={"20px"}
+                  height={"20px"}
                   alt=""
                 />
               </InputLeftElement>
@@ -450,7 +457,7 @@ export default function Order() {
                   <Image
                     src="/images/pluswhite.png"
                     width={"15px"}
-                    height={'15px'}
+                    height={"15px"}
                     alt=""
                   />
                 }
@@ -481,8 +488,8 @@ export default function Order() {
             >
               <Thead>
                 <Tr bg={"#f84c01"}>
-                  {checkBoxData.map((item, index) => {
-                    if (item.isShow) {
+                  {labelLists.map((item, index) => {
+                    if (checkBoxData[index] && checkBoxData[index].isShow) {
                       return (
                         <Th
                           p={2}
@@ -524,100 +531,132 @@ export default function Order() {
                     }
                   })
                   .map((filteredOrder, index) => {
+                    const orderAmount = Number(filteredOrder.amount);
+                    const orderQuantity = Number(filteredOrder.quantity);
+                    totalAmount += orderAmount;
+                    totalQuantity += orderQuantity;
                     return (
                       <Tr key={filteredOrder.orderId}>
-                        <Td
-                          px={5}
-                          py={2}
-                          borderLeftRadius={"10"}
-                          textAlign={"center"}
-                        >
-                          <Checkbox
-                            size="md"
-                            colorScheme="green"
-                            defaultChecked
-                          ></Checkbox>
-                        </Td>
-                        <Td p={2} textAlign={"center"}>
-                          {filteredOrder.orderId}
-                        </Td>
-                        <Td p={2}>
-                          <Center>
-                            <Image
-                              src={`https://shopee-api.deksilp.com/images/shopee/products/${filteredOrder.imageThumbnail}`}
-                              width={30}
-                              height={30}
-                              alt="bay"
-                            />
-                          </Center>
-                        </Td>
-                        <Td p={2} textAlign={"center"}>
-                          {filteredOrder.receiverName}
-                        </Td>
-                        <Td p={2} textAlign={"center"}>
-                          {filteredOrder.address}
-                        </Td>
-                        <Td p={2} textAlign={"center"}>
-                          {filteredOrder.phoneNumber}
-                        </Td>
-                        <Td p={2} textAlign={"center"}>
-                          {filteredOrder.quantity}
-                        </Td>
-                        <Td p={2} textAlign={"center"}>
-                          {filteredOrder.amount}
-                        </Td>
-                        <Td p={2}>
-                          <Center>
-                            <Image
-                              src={`/images/banks/${filteredOrder.bankThumbnail}`}
-                              width={30}
-                              height={30}
-                              alt="bay"
-                            />
-                          </Center>
-                        </Td>
-                        <Td p={2} textAlign={"center"}>
-                          {filteredOrder.createAt}
-                        </Td>
-                        <Td p={2} textAlign={"center"}>
-                          Admin
-                        </Td>
-                        <Td p={2} borderRightRadius={"10"} textAlign={"center"}>
-                          <HStack>
-                            <IconButton
-                              icon={<BsClockHistory />}
-                              size="xs"
-                              color={"#f84c01"}
-                              borderColor={"#f84c01"}
-                              aria-label="Edit"
-                              variant="outline"
-                            />
-                            <IconButton
-                              icon={<BsBoxFill />}
-                              size="xs"
-                              color={"#f84c01"}
-                              borderColor={"#f84c01"}
-                              aria-label="Edit"
-                              variant="outline"
-                            />
-                            <IconButton
-                              icon={<BsXCircleFill />}
-                              size="xs"
-                              color={"#f84c01"}
-                              borderColor={"#f84c01"}
-                              aria-label="Edit"
-                              variant="outline"
-                            />
-                          </HStack>
-                        </Td>
+                        {checkBoxData[0] && checkBoxData[0].isShow ? (
+                          <Td
+                            px={5}
+                            py={2}
+                            borderLeftRadius={"10"}
+                            textAlign={"center"}
+                          >
+                            <Checkbox
+                              size="md"
+                              colorScheme="green"
+                              defaultChecked
+                            ></Checkbox>
+                          </Td>
+                        ) : null}
+                        {checkBoxData[1] && checkBoxData[1].isShow ? (
+                          <Td p={2} textAlign={"center"}>
+                            {filteredOrder.orderId}
+                          </Td>
+                        ) : null}
+                        {checkBoxData[2] && checkBoxData[2].isShow ? (
+                          <Td p={2}>
+                            <Center>
+                              <Image
+                                src={`https://shopee-api.deksilp.com/images/shopee/products/${filteredOrder.imageThumbnail}`}
+                                width={30}
+                                height={30}
+                                alt="bay"
+                              />
+                            </Center>
+                          </Td>
+                        ) : null}
+                        {checkBoxData[3] && checkBoxData[3].isShow ? (
+                          <Td p={2} textAlign={"center"}>
+                            {filteredOrder.receiverName}
+                          </Td>
+                        ) : null}
+                        {checkBoxData[4] && checkBoxData[4].isShow ? (
+                          <Td p={2} textAlign={"center"}>
+                            {filteredOrder.address}
+                          </Td>
+                        ) : null}
+                        {checkBoxData[5] && checkBoxData[5].isShow ? (
+                          <Td p={2} textAlign={"center"}>
+                            {filteredOrder.phoneNumber}
+                          </Td>
+                        ) : null}
+                        {checkBoxData[6] && checkBoxData[6].isShow ? (
+                          <Td p={2} textAlign={"center"}>
+                            {filteredOrder.quantity}
+                          </Td>
+                        ) : null}
+                        {checkBoxData[7] && checkBoxData[7].isShow ? (
+                          <Td p={2} textAlign={"center"}>
+                            {filteredOrder.amount}
+                          </Td>
+                        ) : null}
+                        {checkBoxData[8] && checkBoxData[8].isShow ? (
+                          <Td p={2}>
+                            <Center>
+                              <Image
+                                src={`/images/banks/${filteredOrder.bankThumbnail}`}
+                                width={30}
+                                height={30}
+                                alt="bay"
+                              />
+                            </Center>
+                          </Td>
+                        ) : null}
+                        {checkBoxData[9] && checkBoxData[9].isShow ? (
+                          <Td p={2} textAlign={"center"}>
+                            {filteredOrder.createAt}
+                          </Td>
+                        ) : null}
+                        {checkBoxData[10] && checkBoxData[10].isShow ? (
+                          <Td p={2} textAlign={"center"}>
+                            Admin
+                          </Td>
+                        ) : null}
+                        {checkBoxData[11] && checkBoxData[11].isShow ? (
+                          <Td
+                            p={2}
+                            borderRightRadius={"10"}
+                            textAlign={"center"}
+                          >
+                            <HStack>
+                              <IconButton
+                                icon={<BsClockHistory />}
+                                size="xs"
+                                color={"#f84c01"}
+                                borderColor={"#f84c01"}
+                                aria-label="Edit"
+                                variant="outline"
+                              />
+                              <IconButton
+                                icon={<BsBoxFill />}
+                                size="xs"
+                                color={"#f84c01"}
+                                borderColor={"#f84c01"}
+                                aria-label="Edit"
+                                variant="outline"
+                              />
+                              <IconButton
+                                icon={<BsXCircleFill />}
+                                size="xs"
+                                color={"#f84c01"}
+                                borderColor={"#f84c01"}
+                                aria-label="Edit"
+                                variant="outline"
+                              />
+                            </HStack>
+                          </Td>
+                        ) : null}
                       </Tr>
                     );
                   })}
               </Tbody>
               <Tfoot>
                 <Th colSpan={6}>ยอดรวม</Th>
-                <Th>{totalFilterCountOrders}</Th>
-                <Th colSpan={5}>{totalFilteredAmount}</Th>
+                <Th>{totalQuantity}</Th>
+                <Th colSpan={5}>{totalAmount}</Th>
               </Tfoot>
             </Table>
           </TableContainer>
