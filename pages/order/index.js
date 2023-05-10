@@ -49,6 +49,16 @@ import {
   MenuGroup,
   MenuOptionGroup,
   MenuDivider,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+  Grid,
+  GridItem,
 } from "@chakra-ui/react";
 
 import {
@@ -72,6 +82,7 @@ import {
   BsBoxFill,
   BsXCircleFill,
   BsEyeFill,
+  BsFillClipboard2CheckFill,
 } from "react-icons/bs";
 
 function MenuCheckboxList(props) {
@@ -140,15 +151,6 @@ function MenuCheckboxList(props) {
   );
 }
 
-function showHideTableField(lists) {
-  // console.log(lists[0])
-  // if (lists[index].isShow === true) {
-  // 	return 'show'
-  // } else {
-  // 	return 'none'
-  // }
-}
-
 // function InsertDataTable(props) {
 //   let query = props.name;
 //   let searchValue = props.onSearchValue;
@@ -169,7 +171,7 @@ export default function Order() {
   const labelLists = [
     { label: "เลือกทั้งหมด", isShow: true },
     { label: "เลขคำสั่งซื้อ", isShow: true },
-    { label: "รูปสินค้า", isShow: true },
+    // { label: "รูปสินค้า", isShow: true },
     { label: "ชื่อผู้รับ", isShow: true },
     { label: "ที่อยู่", isShow: true },
     { label: "เบอร์โทร", isShow: true },
@@ -177,7 +179,7 @@ export default function Order() {
     { label: "ยอดสั่งซื้อ", isShow: true },
     { label: "การชำระเงิน", isShow: true },
     { label: "วันที่สั่งซื้อ", isShow: true },
-    { label: "ผู้ทำรายการ", isShow: true },
+    // { label: "ผู้ทำรายการ", isShow: false },
     { label: "ดำเนินการ", isShow: true },
   ];
   const [orders, setOrders] = useState([]);
@@ -187,6 +189,8 @@ export default function Order() {
   const [checkBoxData, setCheckBoxData] = useState(labelLists);
   let totalAmount = 0;
   let totalQuantity = 0;
+  const modalSlipPayment = useDisclosure();
+  const modalOpenImgSlipPayment = useDisclosure();
 
   const fetchData = async () => {
     const response = await axios.get(
@@ -197,7 +201,6 @@ export default function Order() {
 
   useEffect(() => {
     fetchData();
-    console.log("orders", orders);
   }, []);
 
   const countOrder = orders.filter(
@@ -231,6 +234,15 @@ export default function Order() {
     }
   };
 
+  const handleOpenModalSlipPayment = (id) => {
+    modalSlipPayment.onOpen();
+    const data = orders.filter((item) => item.ID === id)
+    console.log('data',data);
+  };
+
+  const handleOpenModalImgSlip = () => {
+    modalOpenImgSlipPayment.onOpen();
+  };
   return (
     <>
       {/* Start Header */}
@@ -528,9 +540,10 @@ export default function Order() {
                               {navbarTab === "ยกเลิก" && (
                                 <Text>วันที่ยกเลิก</Text>
                               )}
-                              {navbarTab !== "ยกเลิก" && navbarTab !== "ตีกลับ" &&(
-                                <Text>{item.label}</Text>
-                              )}
+                              {navbarTab !== "ยกเลิก" &&
+                                navbarTab !== "ตีกลับ" && (
+                                  <Text>{item.label}</Text>
+                                )}
                             </>
                           )}
                           {item.label !== "ดำเนินการ" && (
@@ -600,7 +613,7 @@ export default function Order() {
                             {filteredOrder.orderId}
                           </Td>
                         ) : null}
-                        {checkBoxData[2] && checkBoxData[2].isShow ? (
+                        {/* {checkBoxData[2] && checkBoxData[2].isShow ? (
                           <Td p={2}>
                             <Center>
                               <Image
@@ -611,33 +624,33 @@ export default function Order() {
                               />
                             </Center>
                           </Td>
-                        ) : null}
-                        {checkBoxData[3] && checkBoxData[3].isShow ? (
+                        ) : null} */}
+                        {checkBoxData[2] && checkBoxData[2].isShow ? (
                           <Td p={2} textAlign={"center"}>
                             {filteredOrder.receiverName}
                           </Td>
                         ) : null}
-                        {checkBoxData[4] && checkBoxData[4].isShow ? (
+                        {checkBoxData[3] && checkBoxData[3].isShow ? (
                           <Td p={2} textAlign={"center"}>
                             {filteredOrder.address}
                           </Td>
                         ) : null}
-                        {checkBoxData[5] && checkBoxData[5].isShow ? (
+                        {checkBoxData[4] && checkBoxData[4].isShow ? (
                           <Td p={2} textAlign={"center"}>
                             {filteredOrder.phoneNumber}
                           </Td>
                         ) : null}
-                        {checkBoxData[6] && checkBoxData[6].isShow ? (
+                        {checkBoxData[5] && checkBoxData[5].isShow ? (
                           <Td p={2} textAlign={"center"}>
                             {filteredOrder.quantity}
                           </Td>
                         ) : null}
-                        {checkBoxData[7] && checkBoxData[7].isShow ? (
+                        {checkBoxData[6] && checkBoxData[6].isShow ? (
                           <Td p={2} textAlign={"center"}>
                             {filteredOrder.amount}
                           </Td>
                         ) : null}
-                        {checkBoxData[8] && checkBoxData[8].isShow ? (
+                        {checkBoxData[7] && checkBoxData[7].isShow ? (
                           <Td p={2}>
                             <Center>
                               <Image
@@ -649,17 +662,17 @@ export default function Order() {
                             </Center>
                           </Td>
                         ) : null}
-                        {checkBoxData[9] && checkBoxData[9].isShow ? (
+                        {checkBoxData[8] && checkBoxData[8].isShow ? (
                           <Td p={2} textAlign={"center"}>
                             {filteredOrder.createAt}
                           </Td>
                         ) : null}
-                        {checkBoxData[10] && checkBoxData[10].isShow ? (
+                        {/* {checkBoxData[10] && checkBoxData[10].isShow ? (
                           <Td p={2} textAlign={"center"}>
                             Admin
                           </Td>
-                        ) : null}
-                        {checkBoxData[11] && checkBoxData[11].isShow ? (
+                        ) : null} */}
+                        {checkBoxData[9] && checkBoxData[9].isShow ? (
                           <Td
                             p={2}
                             borderRightRadius={"10"}
@@ -675,6 +688,17 @@ export default function Order() {
                                   border="none"
                                 />
                                 <MenuList>
+                                  <MenuItem
+                                    icon={
+                                      <Icon
+                                        as={BsFillClipboard2CheckFill}
+                                        boxSize={4}
+                                      />
+                                    }
+                                    onClick={() => {handleOpenModalSlipPayment(filteredOrder.ID)}}
+                                  >
+                                    ดูหลักฐานการชำระเงิน
+                                  </MenuItem>
                                   <MenuItem
                                     icon={<Icon as={BsEyeFill} boxSize={4} />}
                                   >
@@ -840,15 +864,125 @@ export default function Order() {
               </Tbody>
               <Tfoot bgColor={"whitesmoke"}>
                 <Tr>
-                  <Th colSpan={6}>ยอดรวม</Th>
+                  <Th colSpan={5}>ยอดรวม</Th>
                   <Th>{totalQuantity}</Th>
-                  <Th colSpan={5}>{totalAmount}</Th>
+                  <Th colSpan={4}>{totalAmount}</Th>
                 </Tr>
               </Tfoot>
             </Table>
           </TableContainer>
         </Flex>
       </Box>
+      <Modal
+        closeOnOverlayClick={false}
+        isOpen={modalSlipPayment.isOpen}
+        onClose={modalSlipPayment.onClose}
+        size={"xl"}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader fontSize={"33px"}>
+            <Center>
+              <Image src={"/images/receipt.png"} width={"25px"} />
+              <Text ml={3}>หลักฐานการชำระเงิน</Text>
+            </Center>
+          </ModalHeader>
+          <ModalCloseButton
+            bgColor={"red"}
+            color={"white"}
+            borderRadius={"50px"}
+            fontSize={"10px"}
+            width={"20px"}
+            height={"20px"}
+          />
+          <ModalBody pb={6}>
+            <Center>
+              <Grid templateColumns="repeat(2, 1fr)" gap={6}>
+                <GridItem w="100%">
+                  <Text fontSize={"20px"}>โอนจาก : มดหอม จัดผล</Text>
+                </GridItem>
+                <GridItem w="100%">
+                  <Text fontSize={"20px"}>เลขบัญชี : 987-654-3210</Text>
+                </GridItem>
+                <GridItem w="100%">
+                  <Text fontSize={"20px"}>ไปยัง : หยกน้อย เจ้าปัญญา</Text>
+                </GridItem>
+                <GridItem w="100%">
+                  <Text fontSize={"20px"}>เลขบัญชี : 012-345-6789</Text>
+                </GridItem>
+                <GridItem w="100%">
+                  <Text fontSize={"20px"}>วันที่ : 08/02/06</Text>
+                </GridItem>
+                <GridItem w="100%">
+                  <Text fontSize={"20px"}>เวลา : 12:25</Text>
+                </GridItem>
+                <GridItem w="100%">
+                  <Text fontSize={"20px"}>จำนวนเงิน : 125.00</Text>
+                </GridItem>
+                <GridItem w="100%">
+                  <Text fontSize={"20px"}>รหัสอ้างอิง : 0123456789012</Text>
+                </GridItem>
+              </Grid>
+            </Center>
+            <Box mt={5}>
+              <Center>
+                <Box bgColor={"#000"} position="relative" overflow="hidden">
+                  <Image
+                    src={"/images/No-Image.png"}
+                    h={"300px"}
+                    transition={"300ms"}
+                    _hover={{ opacity: 0.5, cursor: "pointer" }}
+                    onClick={handleOpenModalImgSlip}
+                  />
+                </Box>
+              </Center>
+            </Box>
+          </ModalBody>
+
+          <ModalFooter justifyContent={"center"}>
+            <Button colorScheme="red" mr={3}>
+              ยืนยัน
+            </Button>
+            {/* <Button onClick={modalSlipPayment.onClose}>Cancel</Button> */}
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal
+        closeOnOverlayClick={false}
+        isOpen={modalOpenImgSlipPayment.isOpen}
+        onClose={modalOpenImgSlipPayment.onClose}
+        // size={"xl"}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader></ModalHeader>
+          <ModalCloseButton
+            bgColor={"red"}
+            color={"white"}
+            borderRadius={"50px"}
+            fontSize={"10px"}
+            width={"20px"}
+            height={"20px"}
+          />
+          <ModalBody padding={"0 1rem"}>
+            <Box mt={5}>
+              <Image src={"/images/No-Image.png"} w={"100%"} h={"100%"} />
+            </Box>
+          </ModalBody>
+
+          <ModalFooter justifyContent={"center"}>
+            <Button
+              colorScheme="red"
+              mr={3}
+              onClick={modalOpenImgSlipPayment.onClose}
+            >
+              ยืนยัน
+            </Button>
+            {/* <Button onClick={modalSlipPayment.onClose}>Cancel</Button> */}
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       {/* End Table */}
     </>
   );
