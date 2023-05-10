@@ -218,7 +218,7 @@ function index(product) {
                         borderRadius="lg"
                         boxShadow="md"
                         height={"185px"}
-                        width={'100%'}
+                        width={"100%"}
                       />
                       <Image
                         src={
@@ -253,11 +253,12 @@ function index(product) {
                       </Flex>
                     </Box>
                     <Box mt={"0.75rem"}>
-                      <Flex justifyContent={"space-around"}>
+                      <Flex justifyContent={"space-evenly"} alignItems={'center'}>
+                        <Input type="text" value={`${window.location.origin}/${shops.url_shop}`} mr={2} readOnly/>
                         <Button
                           bgColor={"white"}
                           border={"2px solid red"}
-                          height={"30px"}
+                          height={"40px"}
                           onClick={handleCopyClick(shops.url_shop)}
                         >
                           <Image
@@ -267,10 +268,12 @@ function index(product) {
                           />
                           <Text ml={"8px"} fontSize="xl" color={"#ff0000"}>
                             {copiedShopUrl === shops.url_shop
-                              ? "คัดลอกสำเร็จ!"
-                              : "คัดลอกลิงค์"}
+                              ? "สำเร็จ!"
+                              : "คัดลอก"}
                           </Text>
                         </Button>
+                      </Flex>
+                      <Flex justifyContent={"space-around"} mt={3}>
                         <Button
                           bgColor={"white"}
                           border={"2px solid black"}

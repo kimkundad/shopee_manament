@@ -192,6 +192,18 @@ export default function Order() {
   const modalSlipPayment = useDisclosure();
   const modalOpenImgSlipPayment = useDisclosure();
 
+  const modalDetailOrder = useDisclosure();
+
+  // ชื่อตัวแปรของการดูรายละเอียดหลักฐาน
+  const [namePayment, setNamePayment] = useState("");
+  const [accountNumberPayment, setAccountNumberPayment] = useState("");
+  const [datePayment, setDatePayment] = useState("");
+  const [timePayment, setTimePayment] = useState("");
+  const [pricePayment, setPricePayment] = useState("");
+  const [codePayment, setCodePayment] = useState("");
+  const [imageSlip, setImageSlip] = useState("");
+  // end
+
   const fetchData = async () => {
     const response = await axios.get(
       `https://shopee-api.deksilp.com/api/getOrders`
@@ -236,12 +248,25 @@ export default function Order() {
 
   const handleOpenModalSlipPayment = (id) => {
     modalSlipPayment.onOpen();
-    const data = orders.filter((item) => item.ID === id)
-    console.log('data',data);
+    const data = orders.filter((item) => item.ID === id);
+    console.log(data);
+    setNamePayment(data[0].receiverName);
+    setAccountNumberPayment(data[0].accountNumber);
+    setDatePayment(data[0].dateSlipPayment);
+    setTimePayment(data[0].timeSlipPayment);
+    setPricePayment(data[0].amount);
+    setCodePayment(data[0].orderId);
+    setImageSlip(data[0].slipPayment);
   };
 
   const handleOpenModalImgSlip = () => {
     modalOpenImgSlipPayment.onOpen();
+  };
+
+  const handleOpenModalDetailOrder = (id) => {
+    modalDetailOrder.onOpen();
+    const data = orders.filter((item) => item.ID === id);
+    console.log("Detail order", data);
   };
   return (
     <>
@@ -652,14 +677,56 @@ export default function Order() {
                         ) : null}
                         {checkBoxData[7] && checkBoxData[7].isShow ? (
                           <Td p={2}>
-                            <Center>
-                              <Image
-                                src={`/images/banks/${filteredOrder.bankThumbnail}`}
-                                width={30}
-                                height={30}
-                                alt="bay"
-                              />
-                            </Center>
+                            {filteredOrder.typePaymentOrder == "โอนเงิน" ? (
+                              <Center>
+                                {filteredOrder.bankThumbnail !== null ? (
+                                  <Box position="relative">
+                                    <Image
+                                      src={`/images/banks/${filteredOrder.bankThumbnail}`}
+                                      width={30}
+                                      height={30}
+                                      alt="bay"
+                                    />
+                                    <Image
+                                      src="/images/check2.png"
+                                      width={"15px"}
+                                      height={"15px"}
+                                      alt="bay"
+                                      position="absolute"
+                                      top={"-5px"}
+                                      right={"-5px"}
+                                    />
+                                  </Box>
+                                ) : (
+                                  <Box position="relative">
+                                    <Image
+                                      src={`/images/banks/qr.png`}
+                                      width={30}
+                                      height={30}
+                                      alt="bay"
+                                    />
+                                    <Image
+                                      src="/images/ออเดอร์.png"
+                                      width={"15px"}
+                                      height={"15px"}
+                                      alt="bay"
+                                      position="absolute"
+                                      top={"-5px"}
+                                      right={"-5px"}
+                                    />
+                                  </Box>
+                                )}
+                              </Center>
+                            ) : (
+                              <Center>
+                                <Image
+                                  src={`/images/พร้อมส่ง.png`}
+                                  width={"45px"}
+                                  height={"45px"}
+                                  alt="bay"
+                                />
+                              </Center>
+                            )}
                           </Td>
                         ) : null}
                         {checkBoxData[8] && checkBoxData[8].isShow ? (
@@ -688,19 +755,31 @@ export default function Order() {
                                   border="none"
                                 />
                                 <MenuList>
-                                  <MenuItem
-                                    icon={
-                                      <Icon
-                                        as={BsFillClipboard2CheckFill}
-                                        boxSize={4}
-                                      />
-                                    }
-                                    onClick={() => {handleOpenModalSlipPayment(filteredOrder.ID)}}
-                                  >
-                                    ดูหลักฐานการชำระเงิน
-                                  </MenuItem>
+                                  {filteredOrder.typePaymentOrder ==
+                                    "โอนเงิน" && (
+                                    <MenuItem
+                                      icon={
+                                        <Icon
+                                          as={BsFillClipboard2CheckFill}
+                                          boxSize={4}
+                                        />
+                                      }
+                                      onClick={() => {
+                                        handleOpenModalSlipPayment(
+                                          filteredOrder.ID
+                                        );
+                                      }}
+                                    >
+                                      ดูหลักฐานการชำระเงิน
+                                    </MenuItem>
+                                  )}
                                   <MenuItem
                                     icon={<Icon as={BsEyeFill} boxSize={4} />}
+                                    onClick={() => {
+                                      handleOpenModalDetailOrder(
+                                        filteredOrder.ID
+                                      );
+                                    }}
                                   >
                                     ดูรายละเอียด
                                   </MenuItem>
@@ -873,6 +952,8 @@ export default function Order() {
           </TableContainer>
         </Flex>
       </Box>
+
+      {/* modal ดูหลักฐานการชำระเงิน */}
       <Modal
         closeOnOverlayClick={false}
         isOpen={modalSlipPayment.isOpen}
@@ -897,38 +978,62 @@ export default function Order() {
           />
           <ModalBody pb={6}>
             <Center>
-              <Grid templateColumns="repeat(2, 1fr)" gap={6}>
-                <GridItem w="100%">
-                  <Text fontSize={"20px"}>โอนจาก : มดหอม จัดผล</Text>
-                </GridItem>
-                <GridItem w="100%">
-                  <Text fontSize={"20px"}>เลขบัญชี : 987-654-3210</Text>
-                </GridItem>
-                <GridItem w="100%">
-                  <Text fontSize={"20px"}>ไปยัง : หยกน้อย เจ้าปัญญา</Text>
-                </GridItem>
-                <GridItem w="100%">
-                  <Text fontSize={"20px"}>เลขบัญชี : 012-345-6789</Text>
-                </GridItem>
-                <GridItem w="100%">
-                  <Text fontSize={"20px"}>วันที่ : 08/02/06</Text>
-                </GridItem>
-                <GridItem w="100%">
-                  <Text fontSize={"20px"}>เวลา : 12:25</Text>
-                </GridItem>
-                <GridItem w="100%">
-                  <Text fontSize={"20px"}>จำนวนเงิน : 125.00</Text>
-                </GridItem>
-                <GridItem w="100%">
-                  <Text fontSize={"20px"}>รหัสอ้างอิง : 0123456789012</Text>
-                </GridItem>
-              </Grid>
+              {accountNumberPayment != null ? (
+                <Grid templateColumns="repeat(2, 1fr)" gap={6}>
+                  <GridItem w="100%">
+                    <Text fontSize={"20px"}>โอนจาก : {namePayment}</Text>
+                  </GridItem>
+                  <GridItem w="100%">
+                    <Text fontSize={"20px"}>
+                      เลขบัญชี : {accountNumberPayment}
+                    </Text>
+                  </GridItem>
+                  <GridItem w="100%">
+                    <Text fontSize={"20px"}>วันที่ : {datePayment}</Text>
+                  </GridItem>
+                  <GridItem w="100%">
+                    <Text fontSize={"20px"}>เวลา : {timePayment}</Text>
+                  </GridItem>
+                  <GridItem w="100%">
+                    <Text fontSize={"20px"}>จำนวนเงิน : {pricePayment}</Text>
+                  </GridItem>
+                  <GridItem w="100%">
+                    <Text fontSize={"20px"}>รหัสอ้างอิง : {codePayment}</Text>
+                  </GridItem>
+                </Grid>
+              ) : (
+                <Grid templateColumns="repeat(2, 1fr)" gap={6}>
+                  <GridItem w="100%">
+                    <Text fontSize={"20px"}>โอนจาก : {namePayment}</Text>
+                  </GridItem>
+                  <GridItem w="100%">
+                    <Text fontSize={"20px"}>สถานะ : รอการชำระเงิน</Text>
+                  </GridItem>
+                  <GridItem w="100%">
+                    <Text fontSize={"20px"}>วันที่ : -</Text>
+                  </GridItem>
+                  <GridItem w="100%">
+                    <Text fontSize={"20px"}>เวลา : -</Text>
+                  </GridItem>
+                  <GridItem w="100%">
+                    <Text fontSize={"20px"}>จำนวนเงิน : -</Text>
+                  </GridItem>
+                  <GridItem w="100%">
+                    <Text fontSize={"20px"}>รหัสอ้างอิง : -</Text>
+                  </GridItem>
+                </Grid>
+              )}
             </Center>
             <Box mt={5}>
               <Center>
                 <Box bgColor={"#000"} position="relative" overflow="hidden">
                   <Image
-                    src={"/images/No-Image.png"}
+                    // src={"/images/No-Image.png"}
+                    src={
+                      imageSlip != null
+                        ? `https://shopee-api.deksilp.com/images/shopee/slip/${imageSlip}`
+                        : "/images/No-Image.png"
+                    }
                     h={"300px"}
                     transition={"300ms"}
                     _hover={{ opacity: 0.5, cursor: "pointer" }}
@@ -967,7 +1072,17 @@ export default function Order() {
           />
           <ModalBody padding={"0 1rem"}>
             <Box mt={5}>
-              <Image src={"/images/No-Image.png"} w={"100%"} h={"100%"} />
+              <Center>
+                <Image
+                  src={
+                    imageSlip != null
+                      ? `https://shopee-api.deksilp.com/images/shopee/slip/${imageSlip}`
+                      : "/images/No-Image.png"
+                  }
+                  w={"350px"}
+                  h={"520px"}
+                />
+              </Center>
             </Box>
           </ModalBody>
 
@@ -983,6 +1098,122 @@ export default function Order() {
           </ModalFooter>
         </ModalContent>
       </Modal>
+      {/*end modal ดูหลักฐานการชำระเงิน */}
+
+      {/* modal ดูรายละเอียด */}
+      <Modal
+        closeOnOverlayClick={false}
+        isOpen={modalDetailOrder.isOpen}
+        onClose={modalDetailOrder.onClose}
+        size={"xl"}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader fontSize={"33px"}>
+            <Center>
+              <Image src={"/images/คำสั่งซื้อ ส้ม.png"} width={"35px"} />
+              <Text ml={3}>ข้อมูลคำสั่งซื้อ</Text>
+            </Center>
+          </ModalHeader>
+          <ModalCloseButton
+            bgColor={"red"}
+            color={"white"}
+            borderRadius={"50px"}
+            fontSize={"10px"}
+            width={"20px"}
+            height={"20px"}
+          />
+          <ModalBody pb={6}>
+            <Grid
+              templateRows="repeat(1, 1fr)"
+              templateColumns="repeat(3, 1fr)"
+              gap={4}
+            >
+              <GridItem colSpan={1} textAlign={"end"}>
+                ชื่อผู้รับ :{" "}
+              </GridItem>
+              <GridItem colSpan={2}>มดหอม จัดผล</GridItem>
+              <GridItem colSpan={1} textAlign={"end"}>
+                ที่อยู่ผู้รับ :
+              </GridItem>
+              <GridItem colSpan={2}>
+                9/84 มบ.บางแสนมหานคร ต.แสนสุข อ.เมือง จ.ชลบุรี 20130
+              </GridItem>
+              <GridItem colSpan={1} textAlign={"end"}>
+                เบอร์โทรศัพท์ :
+              </GridItem>
+              <GridItem colSpan={2}>081-234-5678</GridItem>
+              <GridItem colSpan={1}></GridItem>
+              <GridItem colSpan={2}>
+                <Checkbox defaultChecked>
+                  ที่อยู่สำหรับออกใบเสร็จ/กำกับภาษีเหมือนที่อยู่ผู้รับ
+                </Checkbox>
+              </GridItem>
+            </Grid>
+            <Box>
+              <Flex
+                alignItems="center"
+                mt="15px"
+                borderTop="1px"
+                borderTopColor="black"
+                bg="gray.100"
+              >
+                <Image src="/images/user_black.png" h="20px" m="8px" />
+                <Text fontWeight="bold" fontSize="20px">
+                  ข้อมูลคำสั่งซื้อ
+                </Text>
+              </Flex>
+              <TableContainer fontSize="17" width={"100%"} mt={3}>
+                <Table
+                  variant="striped"
+                  colorScheme="gray"
+                  css={{
+                    overflow: "hidden",
+                    border: "1px solid black",
+                  }}
+                >
+                  <Thead>
+                    <Tr bg={"whitesmoke"}>
+                      <Th color={"black"}>เลขคำสั่งซื้อ</Th>
+                      <Th color={"black"}>รูปสินค้า</Th>
+                      <Th color={"black"}>ชื่อสินค้า</Th>
+                      <Th color={"black"}>จำนวน</Th>
+                      <Th color={"black"}>ราคา</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    <Tr>
+                      <Td></Td>
+                      <Td></Td>
+                      <Td></Td>
+                      <Td></Td>
+                      <Td></Td>
+                    </Tr>
+                  </Tbody>
+                </Table>
+              </TableContainer>
+              <Grid
+                templateRows="repeat(1, 1fr)"
+                templateColumns="repeat(4, 1fr)"
+                gap={4}
+                p={3}
+              >
+                <GridItem colSpan={1} textAlign={"end"}>
+                  การชำระเงิน :{" "}
+                </GridItem>
+                <GridItem colSpan={1}>ธนาคารไทยพาณิชย์</GridItem>
+                <GridItem colSpan={1} textAlign={"end"}>
+                  ยอดรวม
+                </GridItem>
+                <GridItem colSpan={1} textAlign={"end"}>
+                  303.00
+                </GridItem>
+              </Grid>
+            </Box>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+      {/* end modal ดูรายละเอียด */}
       {/* End Table */}
     </>
   );
