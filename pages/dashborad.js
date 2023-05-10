@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState, useLayoutEffect, useRef } from "react";
 import {
   Flex,
   Text,
@@ -7,15 +7,54 @@ import {
   Grid,
   GridItem,
   Spacer,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
 } from "@chakra-ui/react";
 import { Line, Doughnut, Pie, Bar } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import { Table } from "@nextui-org/react";
 import faker from "faker";
 import Chart from "chart.js/auto";
-import ModalLogin from '@/components/ModalLogin';
-
+import ModalLogin from "@/components/ModalLogin";
+import axios from "axios";
 export default function DashBoard() {
+  const [dataTable, setDataTable] = useState([]);
+  const [dataPieProducts, setDataPieProducts] = useState([]);
+  const [dataPieShops, setDataPieShops] = useState([]);
+  const [dataLines, setDataLine] = useState([]);
+  const [dataBars, setDataBar] = useState([]);
+  const [allStock, setAllStock] = useState(null);
+  const [totalSales, setTotalSales] = useState();
+  const [totalDelivery, setTotalDelivery] = useState(null);
+  useEffect(() => {
+    async function fecthdata() {
+      const formdata = new FormData();
+      let user_id = 3; // ถ้ามี login เปลี่ยนเป็น uid ของคน login
+      formdata.append("uid", user_id);
+      const res = await axios.post(
+        `https://shopee-api.deksilp.com/api/dashboard`,
+        formdata
+      );
+      setDataTable(res.data.data_table);
+      setDataPieProducts(res.data.data_chart_pie_products);
+      setDataPieShops(res.data.data_chart_pie_shops);
+      setDataLine(res.data.data_chart_line);
+      setDataBar(res.data.data_chart_bar);
+      setAllStock(res.data.all_stock[0].allStock);
+      setTotalSales(res.data.total_sales[0].total_sales);
+      setTotalDelivery(res.data.total_delivery[0]);
+    }
+    fecthdata();
+  }, []);
+  console.log(dataTable);
+  console.log(dataPieProducts);
+  console.log(dataPieShops);
+  console.log(dataLines);
+  console.log(dataBars);
+  console.log(allStock);
   ChartJS.register(ArcElement, Tooltip, Legend);
   const dataLine = {
     labels: [
@@ -52,12 +91,25 @@ export default function DashBoard() {
     },
   };
 
-  const dataDonut = {
+  const dataDonutStock = {
     labels: [],
     datasets: [
       {
         label: "# of Votes",
-        data: [12, 19],
+        data: [totalSales, allStock],
+        backgroundColor: ["rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)"],
+        borderColor: ["rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)"],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const dataDonutDelivery = {
+    labels: [],
+    datasets: [
+      {
+        label: "# of Votes",
+        data: [totalDelivery?.sum_payment, totalDelivery?.sum_cash_on_delivery],
         backgroundColor: ["rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)"],
         borderColor: ["rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)"],
         borderWidth: 1,
@@ -69,34 +121,93 @@ export default function DashBoard() {
     cutout: "70%",
   };
 
-  const textCenter = {
-    id: "textCenter",
-    beforeDatasetDraw(chart, args, pluginOptions) {
-      const { ctx, data } = chart;
-      let sum = 1200;
-      ctx.save();
-      ctx.font = "20px sans-serif";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(
-        "จำนวน",
-        chart.getDatasetMeta(0).data[0].x,
-        chart.getDatasetMeta(0).data[0].y-10
-      );
-      ctx.fillText(
-        sum.toLocaleString(),
-        chart.getDatasetMeta(0).data[0].x,
-        chart.getDatasetMeta(0).data[0].y+20
-      );
-    },
-  };
+  const [textCenterStock, setTextCenterStock] = useState(false);
+  const [textCenterDelivery, setTextCenterDelivery] = useState(false);
+  useEffect(() => {
+    if (allStock !== null && totalDelivery !== null) {
+      const stock = {
+        id: "textCenter",
+        beforeDatasetDraw(chart, args, pluginOptions) {
+          const { ctx, data } = chart;
+          let sum = parseInt(allStock);
+          ctx.save();
+          ctx.font = "20px sans-serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(
+            "จำนวน",
+            chart.getDatasetMeta(0).data[0].x,
+            chart.getDatasetMeta(0).data[0].y - 10
+          );
+          ctx.fillText(
+            sum?.toLocaleString(),
+            chart.getDatasetMeta(0).data[0].x,
+            chart.getDatasetMeta(0).data[0].y + 20
+          );
+        },
+      };
+      setTextCenterStock(stock);
+      const delivery = {
+        id: "textCenter",
+        beforeDatasetDraw(chart, args, pluginOptions) {
+          const { ctx, data } = chart;
+          let sum =
+            parseInt(totalDelivery.sum_payment) +
+            parseInt(totalDelivery.sum_cash_on_delivery);
+          ctx.save();
+          ctx.font = "20px sans-serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(
+            "จำนวน",
+            chart.getDatasetMeta(0).data[0].x,
+            chart.getDatasetMeta(0).data[0].y - 10
+          );
+          ctx.fillText(
+            sum?.toLocaleString(),
+            chart.getDatasetMeta(0).data[0].x,
+            chart.getDatasetMeta(0).data[0].y + 20
+          );
+        },
+      };
+      setTextCenterDelivery(delivery);
+    }
+  }, [allStock]);
 
-  const dataPie = {
+  const dataPieProduct = {
     labels: [],
     datasets: [
       {
         label: "My First Dataset",
-        data: [300, 50, 100],
+        data: [
+          dataPieProducts[0]?.total_num,
+          dataPieProducts[1]?.total_num,
+          dataPieProducts[2]?.total_num,
+        ],
+        backgroundColor: [
+          "rgba(255, 99, 132, 1)",
+          "rgba(54, 162, 235, 1)",
+          "rgba(255, 206, 86, 1)",
+        ],
+        borderColor: [
+          "rgba(255, 99, 132, 1)",
+          "rgba(54, 162, 235, 1)",
+          "rgba(255, 206, 86, 1)",
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+  const dataPieShop = {
+    labels: [],
+    datasets: [
+      {
+        label: "My First Dataset",
+        data: [
+          dataPieProducts[0]?.total_num,
+          dataPieProducts[1]?.total_num,
+          dataPieProducts[2]?.total_num,
+        ],
         backgroundColor: [
           "rgba(255, 99, 132, 1)",
           "rgba(54, 162, 235, 1)",
@@ -124,7 +235,7 @@ export default function DashBoard() {
       tooltip: {
         callbacks: {
           label: function (context) {
-            return `${context.label}: ${context.parsed}%`;
+            return `${context.label}: ${context.parsed}`;
           },
         },
       },
@@ -158,9 +269,7 @@ export default function DashBoard() {
     "July",
   ];
 
-  const test = [
-    10,12,12,45,78,42,10
-  ]
+  const test = [10, 12, 12, 45, 78, 42, 10];
   const dataBar = {
     labels,
     datasets: [
@@ -181,6 +290,16 @@ export default function DashBoard() {
       },
     ],
   };
+
+  const divRef = useRef(null);
+  const [divHeight, setDivHeight] = useState(null);
+
+  useLayoutEffect(() => {
+    if (divRef.current) {
+      setDivHeight(divRef.current.getBoundingClientRect().height);
+    }
+  }, [divHeight]);
+
   return (
     <Box bg="gray.100">
       <Box>test</Box>
@@ -188,37 +307,24 @@ export default function DashBoard() {
         <Box bg="white" borderRadius="xl">
           <GridItem textAlign="-webkit-center" w="100%" h="300px" p="15px">
             สินค้าขายดี
-            <Pie data={dataPie} options={optionsPie} />
+            <Pie data={dataPieProduct} options={optionsPie} />
           </GridItem>
           <Box p="25px">
-            <Flex py="5px" borderBottom="1px solid">
-              <Text>จำนวนขายรวม</Text>
-              <Spacer />
-              <Text>4,578</Text>
-              <Spacer />
-              <Text>จำนวนขายรวม</Text>
-              <Spacer />
-              <Text>4,578</Text>
-            </Flex>
-            <Flex py="5px" borderBottom="1px solid">
-              <Text>จำนวนขายรวม</Text>
-              <Spacer />
-              <Text>4,578</Text>
-              <Spacer />
-              <Text>จำนวนขายรวม</Text>
-              <Spacer />
-              <Text>4,578</Text>
-            </Flex>
-            <Flex py="5px" justifyContent="center">
-              <Text>จำนวนขายรวม</Text>
-              <Text pl="70px">4,578</Text>
-            </Flex>
+            {dataPieProducts?.map((item, index) => {
+              return (
+                <Flex py="5px" borderBottom="1px solid">
+                  <Text>จำนวนขายรวม</Text>
+                  <Spacer />
+                  <Text>{item.total_num}</Text>
+                </Flex>
+              );
+            })}
           </Box>
         </Box>
         <Box bg="white" borderRadius="xl">
           <GridItem textAlign="-webkit-center" w="100%" h="300px" p="15px">
             ร้านค้าขายดี
-            <Pie data={dataPie} options={optionsPie} />
+            <Pie data={dataPieShop} options={optionsPie} />
           </GridItem>
           <Box p="25px">
             <Flex py="5px" borderBottom="1px solid">
@@ -260,66 +366,51 @@ export default function DashBoard() {
         <Line data={dataLine} options={optionsLine} />
       </Box>
       <Grid templateColumns="repeat(2, 1fr)" gap={6} mb="20px">
-        <GridItem
-          textAlign="-webkit-center"
-          w="100%"
-          h="350px"
-          p="15px"
-          bg="white"
-          overflow="auto"
-          borderRadius="xl"
-        >
-          <Table
-            aria-label="Example table with static content"
-            css={{
-              height: "350px",
-              minWidth: "100%",
-            }}
+        {divHeight ? (
+          <GridItem
+            textAlign="-webkit-center"
+            w="100%"
+            h={`${divHeight}px`}
+            p="15px"
+            bg="white"
+            overflow="auto"
+            borderRadius="xl"
           >
-            <Table.Header>
-              <Table.Column>ชื่อร้าน</Table.Column>
-              <Table.Column>ยอดขาย</Table.Column>
-              <Table.Column>สินค้าขายดี</Table.Column>
-            </Table.Header>
-            <Table.Body>
-              <Table.Row key="1">
-                <Table.Cell>Tony Reichert</Table.Cell>
-                <Table.Cell>CEO</Table.Cell>
-                <Table.Cell>Active</Table.Cell>
-              </Table.Row>
-              <Table.Row key="2">
-                <Table.Cell>Zoey Lang</Table.Cell>
-                <Table.Cell>Technical Lead</Table.Cell>
-                <Table.Cell>Paused</Table.Cell>
-              </Table.Row>
-              <Table.Row key="3">
-                <Table.Cell>Jane Fisher</Table.Cell>
-                <Table.Cell>Senior Developer</Table.Cell>
-                <Table.Cell>Active</Table.Cell>
-              </Table.Row>
-              <Table.Row key="4">
-                <Table.Cell>William Howard</Table.Cell>
-                <Table.Cell>Community Manager</Table.Cell>
-                <Table.Cell>Vacation</Table.Cell>
-              </Table.Row>
-              <Table.Row key="4">
-                <Table.Cell>William Howard</Table.Cell>
-                <Table.Cell>Community Manager</Table.Cell>
-                <Table.Cell>Vacation</Table.Cell>
-              </Table.Row>
-              <Table.Row key="4">
-                <Table.Cell>William Howard</Table.Cell>
-                <Table.Cell>Community Manager</Table.Cell>
-                <Table.Cell>Vacation</Table.Cell>
-              </Table.Row>
-              <Table.Row key="4">
-                <Table.Cell>William Howard</Table.Cell>
-                <Table.Cell>Community Manager</Table.Cell>
-                <Table.Cell>Vacation</Table.Cell>
-              </Table.Row>
-            </Table.Body>
-          </Table>
-        </GridItem>
+            <Table
+              variant="striped"
+              colorScheme="gray"
+              css={{
+                borderRadius: "10px",
+                overflow: "hidden",
+              }}
+            >
+              <Thead bg="red">
+                <Tr>
+                  <Th>
+                    <Text>ชื่อร้าน</Text>
+                  </Th>
+                  <Th>
+                    <Text>ยอดขาย</Text>
+                  </Th>
+                  <Th>
+                    <Text>สินค้าขายดี</Text>
+                  </Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {dataTable?.map((item, index) => {
+                  return (
+                    <Tr>
+                      <Td>{item.name_shop}</Td>
+                      <Td>{parseFloat(item.total_price).toLocaleString()}</Td>
+                      <Td>{item.name_product}</Td>
+                    </Tr>
+                  );
+                })}
+              </Tbody>
+            </Table>
+          </GridItem>
+        ) : null}
         <GridItem
           textAlign="-webkit-center"
           w="100%"
@@ -327,9 +418,34 @@ export default function DashBoard() {
           p="15px"
           bg="white"
           borderRadius="xl"
+          ref={divRef}
         >
           ยอดขายร้านค้า
           <Bar options={optionsBar} data={dataBar} />
+          <Box p="25px">
+            <Flex py="5px" borderBottom="1px solid">
+              <Text>จำนวนขายรวม</Text>
+              <Spacer />
+              <Text>4,578</Text>
+              <Spacer />
+              <Text>จำนวนขายรวม</Text>
+              <Spacer />
+              <Text>4,578</Text>
+            </Flex>
+            <Flex py="5px" borderBottom="1px solid">
+              <Text>จำนวนขายรวม</Text>
+              <Spacer />
+              <Text>4,578</Text>
+              <Spacer />
+              <Text>จำนวนขายรวม</Text>
+              <Spacer />
+              <Text>4,578</Text>
+            </Flex>
+            <Flex py="5px" justifyContent="center">
+              <Text>จำนวนขายรวม</Text>
+              <Text pl="70px">4,578</Text>
+            </Flex>
+          </Box>
         </GridItem>
       </Grid>
       <Grid templateColumns="repeat(3, 1fr)" gap={6}>
@@ -343,22 +459,26 @@ export default function DashBoard() {
         >
           สินค้า
           <Box h="200px">
-            <Doughnut
-              data={dataDonut}
-              options={optionsDonut}
-              plugins={[textCenter]}
-            />
+            {textCenterStock ? (
+              <Doughnut
+                data={dataDonutStock}
+                options={optionsDonut}
+                plugins={[textCenterStock]}
+              />
+            ) : null}
           </Box>
           <Box>
             <Flex>
               <Text>จำนวนคงเหลือ</Text>
               <Spacer />
-              <Text>899 ชิ้น</Text>
+              <Text>
+                {parseInt(allStock - totalSales).toLocaleString()} ชิ้น
+              </Text>
             </Flex>
             <Flex>
               <Text>จำนวนขายออก</Text>
               <Spacer />
-              <Text>301 ชิ้น</Text>
+              <Text>{parseInt(totalSales).toLocaleString()} ชิ้น</Text>
             </Flex>
           </Box>
         </GridItem>
@@ -373,21 +493,21 @@ export default function DashBoard() {
           การจัดส่ง
           <Box h="200px">
             <Doughnut
-              data={dataDonut}
+              data={dataDonutDelivery}
               options={optionsDonut}
-              plugins={[textCenter]}
+              plugins={[textCenterStock]}
             />
           </Box>
           <Box>
             <Flex>
               <Text>การจัดส่งพัสดุด่วน</Text>
               <Spacer />
-              <Text>899 ชิ้น</Text>
+              <Text>{allStock - totalSales} ชิ้น</Text>
             </Flex>
             <Flex>
               <Text>พัสดุลงทะเบียน</Text>
               <Spacer />
-              <Text>301 ชิ้น</Text>
+              <Text>{totalSales} ชิ้น</Text>
             </Flex>
           </Box>
         </GridItem>
@@ -401,27 +521,33 @@ export default function DashBoard() {
         >
           การชำระเงิน
           <Box h="200px">
-            <Doughnut
-              data={dataDonut}
-              options={optionsDonut}
-              plugins={[textCenter]}
-            />
+            {textCenterDelivery ? (
+              <Doughnut
+                data={dataDonutDelivery}
+                options={optionsDonut}
+                plugins={[textCenterDelivery]}
+              />
+            ) : null}
           </Box>
           <Box>
             <Flex>
               <Text>โอนเงิน</Text>
               <Spacer />
-              <Text>899 ชิ้น</Text>
+              <Text>
+                {parseInt(totalDelivery?.sum_payment).toLocaleString()} ชิ้น
+              </Text>
             </Flex>
             <Flex>
               <Text>เก็บเงินปลายทาง</Text>
               <Spacer />
-              <Text>301 ชิ้น</Text>
+              <Text>
+                {parseInt(totalDelivery?.sum_cash_on_delivery).toLocaleString()}{" "}
+                ชิ้น
+              </Text>
             </Flex>
           </Box>
         </GridItem>
       </Grid>
-      
     </Box>
   );
 }

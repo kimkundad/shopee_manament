@@ -24,9 +24,6 @@ import {
 import ListCheck from "@/components/MenuList";
 import Link from "next/link";
 import axios from "axios";
-import { DateRangePicker, DateRange } from "react-date-range";
-import "react-date-range/dist/styles.css"; // main css file
-import "react-date-range/dist/theme/default.css"; // theme css file
 function index() {
   const [products, setProducts] = useState([]);
   const [loadingImg, setLoadingImg] = useState(true);
@@ -74,10 +71,23 @@ function index() {
   //sum
   const [sumSales, setSumSales] = useState(0);
   const [sumOrders, setSumOrders] = useState(0);
+
+  const [selectedRange, setSelectedRange] = useState({
+    startDate: new Date(2000, 4, 9),
+    endDate: new Date(2100, 4, 9),
+    key: "selection",
+  });
   useEffect(() => {
     async function fecthdata() {
+      selectedRange.startDate.setHours(0, 0, 0, 0);
+      selectedRange.endDate.setHours(23, 59, 59, 999);
+      const startDateTimestamp = selectedRange.startDate.getTime();
+      const endDateTimestamp = selectedRange.endDate.getTime();
       const formdata = new FormData();
       formdata.append("itemsPerPage", itemsPerPage);
+      formdata.append("startDate", startDateTimestamp);
+      formdata.append("endDate", endDateTimestamp);
+      formdata.append("search", search);
       const res = await axios.post(
         `https://shopee-api.deksilp.com/api/getReports`,
         formdata
@@ -101,9 +111,15 @@ function index() {
 
   useEffect(() => {
     async function fecthdata() {
+      selectedRange.startDate.setHours(0, 0, 0, 0);
+      selectedRange.endDate.setHours(23, 59, 59, 999);
+      const startDateTimestamp = selectedRange.startDate.getTime();
+      const endDateTimestamp = selectedRange.endDate.getTime();
       const formdata = new FormData();
       formdata.append("itemsPerPage", itemsPerPage);
-      formdata.append("search",search);
+      formdata.append("startDate", startDateTimestamp);
+      formdata.append("endDate", endDateTimestamp);
+      formdata.append("search", search);
       const res = await axios.post(
         `https://shopee-api.deksilp.com/api/getReports?page=${currentPage}`,
         formdata
@@ -115,10 +131,9 @@ function index() {
         setCurrentPage(1);
         setinputValue(1);
       }
-
     }
     fecthdata();
-  }, [currentPage,itemsPerPage,search]);
+  }, [currentPage, itemsPerPage, search]);
 
   /* useEffect(() => {
     let item = parseInt(itemsPerPage);
@@ -195,30 +210,6 @@ function index() {
     }
   };
 
-  const presets = [
-    {
-      label: "Today",
-      startDate: new Date(),
-      endDate: new Date(),
-    },
-    {
-      label: "Last 7 Days",
-      startDate: new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000),
-      endDate: new Date(),
-    },
-    {
-      label: "Last 30 Days",
-      startDate: new Date(new Date().getTime() - 30 * 24 * 60 * 60 * 1000),
-      endDate: new Date(),
-    },
-  ];
-
-  const [selectedRange, setSelectedRange] = useState({
-    startDate: new Date(),
-    endDate: new Date(),
-    key: "selection",
-  });
-
   const [showDateRangePicker, setShowDateRangePicker] = useState(false);
   return (
     <Box w="100%">
@@ -250,7 +241,7 @@ function index() {
               <Image src="/images/calendar.png" h="20px" w="20px" />
             </InputLeftElement>
             <Input
-              value={`${selectedRange.startDate.toLocaleDateString()} - ${selectedRange.endDate.toLocaleDateString()}`}
+              placeholder="เลือกวันที่"
               onFocus={() => setShowDateRangePicker(true)}
               readOnly
               type="text"
@@ -261,14 +252,14 @@ function index() {
           </InputGroup>
           {showDateRangePicker && (
             <div style={{ position: "absolute", border: "1px solid" }}>
-              <DateRangePicker
+              {/* <DateRangePicker
                 ranges={[selectedRange]}
                 onChange={(ranges) => {
                   setSelectedRange(ranges.selection);
                   setShowDateRangePicker(false);
                 }}
                 shortcuts={presets}
-              />
+              /> */}
             </div>
           )}
         </Box>
@@ -332,7 +323,15 @@ function index() {
                   {selectedColumns[0] ? <Td>{item.created_at}</Td> : null}
                   {selectedColumns[1] ? <Td>{item.name_shop}</Td> : null}
                   {selectedColumns[2] ? <Td>{item.name_product}</Td> : null}
-                  {selectedColumns[3] ? <Td>{item.sku}</Td> : null}
+                  {selectedColumns[3] ? (
+                    <Td>
+                      {item.type == 1
+                        ? item.sku_type_1
+                        : item.type == 2
+                        ? item.sku_type_2
+                        : item.sku_type_3}
+                    </Td>
+                  ) : null}
                   {selectedColumns[4] ? (
                     <Td>
                       {item.url_shop !== undefined ? (
