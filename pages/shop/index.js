@@ -441,7 +441,7 @@ export default function shop() {
   };
   //------------------------------------------------------------
 
-  // ฟังก์ชันนี้เป็นฟังก์ชันเลือกสินค้า ซึ่ง ณ ตอนนี้ไม่ได้ใช้
+  // ฟังก์ชันนี้เป็นฟังก์ชันเลือกสินค้า ซึ่ง ณ ตอนนี้ใช้
   const handleAllCheckboxChange = (e) => {
     if (e.target.checked) {
       setSelectedProducts(getProducts.map((product) => product.id));
@@ -457,7 +457,7 @@ export default function shop() {
       setSelectedProducts([...selectedProducts, productId]);
     }
   };
-  // สิ้นสุด ฟังก์ชันนี้เป็นฟังก์ชันเลือกสินค้า ซึ่ง ณ ตอนนี้ไม่ได้ใช้
+  // สิ้นสุด ฟังก์ชันนี้เป็นฟังก์ชันเลือกสินค้า ซึ่ง ณ ตอนนี้ใช้
 
   // const [swiper, setSwiper] = useState(null);
 

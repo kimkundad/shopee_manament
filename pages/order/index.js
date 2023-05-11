@@ -183,13 +183,13 @@ export default function Order() {
     { label: "ดำเนินการ", isShow: true },
   ];
   const [orders, setOrders] = useState([]);
-  const [navbarTab, setNavbarTab] = useState("ที่ต้องชำระ");
+  const [navbarTab, setNavbarTab] = useState("ตรวจสอบคำสั่งซื้อ");
   const [searchId, setSearchId] = useState("");
   const [searchDate, setSearchDate] = useState("");
   const [checkBoxData, setCheckBoxData] = useState(labelLists);
   let totalAmount = 0;
   let totalQuantity = 0;
-  const modalSlipPayment = useDisclosure();
+  let amountProduct = "";
   const modalOpenImgSlipPayment = useDisclosure();
 
   const modalDetailOrder = useDisclosure();
@@ -202,6 +202,16 @@ export default function Order() {
   const [pricePayment, setPricePayment] = useState("");
   const [codePayment, setCodePayment] = useState("");
   const [imageSlip, setImageSlip] = useState("");
+  const [typePayment, setTypePayment] = useState("");
+  const [detailOrder, setDetailOrder] = useState([]);
+  const [idOrder, setIdOrder] = useState("");
+  const [codeOrder, setCodeOrder] = useState("");
+  const [nameBank, setNameBank] = useState("");
+  const [dateCreateOrder, setDateCreateOrder] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [addressReceiverName, setAddressReceiverName] = useState("");
+  const [checkIssueTaxInvoice, setCheckIssueTaxInvoice] = useState(true);
+  const [selectedOrders, setSelectedOrders] = useState([]);
   // end
 
   const fetchData = async () => {
@@ -209,6 +219,7 @@ export default function Order() {
       `https://shopee-api.deksilp.com/api/getOrders`
     );
     setOrders(response.data.orders);
+    console.log(orders);
   };
 
   useEffect(() => {
@@ -216,7 +227,7 @@ export default function Order() {
   }, []);
 
   const countOrder = orders.filter(
-    (item) => item.status === "ที่ต้องชำระ"
+    (item) => item.status === "ตรวจสอบคำสั่งซื้อ"
   ).length;
   const countPacking = orders.filter(
     (item) => item.status === "กำลังแพ็ค"
@@ -243,20 +254,8 @@ export default function Order() {
     );
     if (response.data.success) {
       fetchData();
+      modalDetailOrder.onClose();
     }
-  };
-
-  const handleOpenModalSlipPayment = (id) => {
-    modalSlipPayment.onOpen();
-    const data = orders.filter((item) => item.ID === id);
-    console.log(data);
-    setNamePayment(data[0].receiverName);
-    setAccountNumberPayment(data[0].accountNumber);
-    setDatePayment(data[0].dateSlipPayment);
-    setTimePayment(data[0].timeSlipPayment);
-    setPricePayment(data[0].amount);
-    setCodePayment(data[0].orderId);
-    setImageSlip(data[0].slipPayment);
   };
 
   const handleOpenModalImgSlip = () => {
@@ -266,7 +265,87 @@ export default function Order() {
   const handleOpenModalDetailOrder = (id) => {
     modalDetailOrder.onOpen();
     const data = orders.filter((item) => item.ID === id);
-    console.log("Detail order", data);
+    const optionsDate = {
+      day: "numeric",
+      month: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      second: "numeric",
+    }; // กำหนดรูปแบบวันที่และเวลา
+    const optionsPrice = {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    };
+    const optionsDateOnly = {
+      day: "numeric",
+      month: "numeric",
+      year: "numeric",
+    }; // กำหนดรูปแบบแค่วันที่อย่างเดียว
+    const amountOrder = data[0].amount;
+    const formattedPrice = amountOrder.toLocaleString("en-US", optionsPrice);
+    const dateOrder = new Date(data[0].createAt); // แปลงค่าวันที่ให้เป็น Date object
+    const formattedDate = dateOrder.toLocaleDateString("th-TH", optionsDate); // แปลงวันที่เป็นรูปแบบ "DD/MM/YYYY"
+    const datePayment = new Date(data[0].dateSlipPayment); // แปลงค่าวันที่ให้เป็น Date object
+    const formattedDatePayment = datePayment.toLocaleDateString(
+      "th-TH",
+      optionsDateOnly
+    ); // แปลงวันที่เป็นรูปแบบ "DD/MM/YYYY"
+
+    const addressReceiverName = `${data[0].address} ต.${data[0].sub_district} อ.${data[0].district} จ.${data[0].province} ${data[0].postcode}`;
+    setTypePayment(data[0].typePaymentOrder);
+    setNamePayment(data[0].receiverName);
+    setAccountNumberPayment(data[0].accountNumber);
+    setDatePayment(formattedDatePayment);
+    setTimePayment(data[0].timeSlipPayment);
+    setPricePayment(formattedPrice);
+    setCodePayment(data[0].orderId);
+    setImageSlip(data[0].slipPayment);
+    setDetailOrder(data[0].orderDetails);
+    setCodeOrder(data[0].orderId);
+    setNameBank(data[0].nameBank);
+    setPhoneNumber(data[0].phoneNumber);
+    setDateCreateOrder(formattedDate);
+    setAddressReceiverName(addressReceiverName);
+    setIdOrder(data[0].ID);
+    console.log("Order", data);
+    console.log("Detail order", detailOrder);
+  };
+
+  const handleIssueTaxInvoice = (event) => {
+    const value = event.target.checked;
+    setCheckIssueTaxInvoice(value);
+  };
+
+  const handleAllCheckboxChange = (e) => {
+    if (e.target.checked) {
+      setSelectedOrders(orders.map((order) => order.ID));
+    } else {
+      setSelectedOrders([]);
+    }
+  };
+
+  const handleCheckboxChange = (orderId) => {
+    if (selectedOrders.includes(orderId)) {
+      setSelectedOrders(selectedOrders.filter((id) => id !== orderId));
+    } else {
+      setSelectedOrders([...selectedOrders, orderId]);
+    }
+  };
+
+  const handelLogSelect = async () => {
+    const formData = new FormData();
+    selectedOrders.forEach((ids, index) => {
+      formData.append(`ids[${index}]`, ids);
+    });
+    const response = await axios.post(
+      "https://shopee-api.deksilp.com/api/setStatusOrdersMulti",
+      formData
+    );
+    if (response.data.success) {
+      fetchData();
+      setSelectedOrders([]);
+    }
   };
   return (
     <>
@@ -295,7 +374,7 @@ export default function Order() {
             <Tab
               _selected={{ borderBottomColor: "red", borderBottomWidth: "3px" }}
               w="160px"
-              onClick={() => setNavbarTab("ที่ต้องชำระ")}
+              onClick={() => setNavbarTab("ตรวจสอบคำสั่งซื้อ")}
             >
               <Icon as={BsAlarm} boxSize={5} />
               <Text as="b" fontSize={17} px={4}>
@@ -581,7 +660,10 @@ export default function Order() {
                               <Checkbox
                                 size="md"
                                 colorScheme="green"
-                                defaultChecked
+                                isChecked={
+                                  selectedOrders.length === orders.length
+                                }
+                                onChange={handleAllCheckboxChange}
                               />
                             </Center>
                           )}
@@ -599,7 +681,7 @@ export default function Order() {
                         (order.status.includes(navbarTab) &&
                           order.orderId.toString().includes(searchId)) ||
                         order.receiverName.toString().includes(searchId) ||
-                        order.address.toString().includes(searchId) ||
+                        order.province.toString().includes(searchId) ||
                         order.phoneNumber.toString().includes(searchId) ||
                         order.amount.toString().includes(searchId)
                       );
@@ -617,6 +699,19 @@ export default function Order() {
                     const orderQuantity = Number(filteredOrder.quantity);
                     totalAmount += orderAmount;
                     totalQuantity += orderQuantity;
+                    const optionsDate = {
+                      day: "numeric",
+                      month: "numeric",
+                      year: "numeric",
+                      hour: "numeric",
+                      minute: "numeric",
+                      second: "numeric",
+                    }; // กำหนดรูปแบบวันที่และเวลา
+                    const dateOrder = new Date(filteredOrder.createAt); // แปลงค่าวันที่ให้เป็น Date object
+                    const formattedDate = dateOrder.toLocaleDateString(
+                      "th-TH",
+                      optionsDate
+                    ); // แปลงวันที่เป็นรูปแบบ "DD/MM/YYYY"
                     return (
                       <Tr key={`${filteredOrder.orderId}-${index}`}>
                         {checkBoxData[0] && checkBoxData[0].isShow ? (
@@ -629,7 +724,13 @@ export default function Order() {
                             <Checkbox
                               size="md"
                               colorScheme="green"
-                              defaultChecked
+                              border="1px solid gray"
+                              isChecked={selectedOrders.includes(
+                                filteredOrder.ID
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange(filteredOrder.ID)
+                              }
                             ></Checkbox>
                           </Td>
                         ) : null}
@@ -657,7 +758,7 @@ export default function Order() {
                         ) : null}
                         {checkBoxData[3] && checkBoxData[3].isShow ? (
                           <Td p={2} textAlign={"center"}>
-                            {filteredOrder.address}
+                            {filteredOrder.province}
                           </Td>
                         ) : null}
                         {checkBoxData[4] && checkBoxData[4].isShow ? (
@@ -731,7 +832,7 @@ export default function Order() {
                         ) : null}
                         {checkBoxData[8] && checkBoxData[8].isShow ? (
                           <Td p={2} textAlign={"center"}>
-                            {filteredOrder.createAt}
+                            {formattedDate}
                           </Td>
                         ) : null}
                         {/* {checkBoxData[10] && checkBoxData[10].isShow ? (
@@ -745,75 +846,70 @@ export default function Order() {
                             borderRightRadius={"10"}
                             textAlign={"center"}
                           >
-                            {navbarTab == "ที่ต้องชำระ" ? (
-                              <Menu>
-                                <MenuButton
-                                  as={IconButton}
-                                  aria-label="Options"
-                                  icon={<HamburgerIcon />}
-                                  variant="outline"
-                                  border="none"
+                            <Center>
+                              {navbarTab == "ตรวจสอบคำสั่งซื้อ" ? (
+                                // <Menu>
+                                //   <MenuButton
+                                //     as={IconButton}
+                                //     aria-label="Options"
+                                //     icon={<HamburgerIcon />}
+                                //     variant="outline"
+                                //     border="none"
+                                //   />
+                                //   <MenuList>
+                                //     <MenuItem
+                                //       icon={<Icon as={BsEyeFill} boxSize={4} />}
+                                //       onClick={() => {
+                                //         handleOpenModalDetailOrder(
+                                //           filteredOrder.ID
+                                //         );
+                                //       }}
+                                //     >
+                                //       ดูรายละเอียด
+                                //     </MenuItem>
+                                //     <MenuItem
+                                //       icon={<Icon as={BsBoxSeam} boxSize={4} />}
+                                //       onClick={() => {
+                                //         handleSetStatusOrder(
+                                //           index,
+                                //           filteredOrder.ID,
+                                //           "กำลังแพ็ค"
+                                //         );
+                                //       }}
+                                //     >
+                                //       เปลี่ยนสถานะ "กำลังแพ็ค"
+                                //     </MenuItem>
+                                //     <MenuItem
+                                //       icon={
+                                //         <Icon as={BsXOctagonFill} boxSize={4} />
+                                //       }
+                                //       onClick={() => {
+                                //         handleSetStatusOrder(
+                                //           index,
+                                //           filteredOrder.ID,
+                                //           "ยกเลิก"
+                                //         );
+                                //       }}
+                                //     >
+                                //       ยกเลิกคำสั่งซื้อ
+                                //     </MenuItem>
+                                //   </MenuList>
+                                // </Menu>
+
+                                <Image
+                                  src={"/images/research.png"}
+                                  w={"30px"}
+                                  h={"30px"}
+                                  _hover={{ cursor: "pointer" }}
+                                  onClick={() => {
+                                    handleOpenModalDetailOrder(
+                                      filteredOrder.ID
+                                    );
+                                  }}
                                 />
-                                <MenuList>
-                                  {filteredOrder.typePaymentOrder ==
-                                    "โอนเงิน" && (
-                                    <MenuItem
-                                      icon={
-                                        <Icon
-                                          as={BsFillClipboard2CheckFill}
-                                          boxSize={4}
-                                        />
-                                      }
-                                      onClick={() => {
-                                        handleOpenModalSlipPayment(
-                                          filteredOrder.ID
-                                        );
-                                      }}
-                                    >
-                                      ดูหลักฐานการชำระเงิน
-                                    </MenuItem>
-                                  )}
-                                  <MenuItem
-                                    icon={<Icon as={BsEyeFill} boxSize={4} />}
-                                    onClick={() => {
-                                      handleOpenModalDetailOrder(
-                                        filteredOrder.ID
-                                      );
-                                    }}
-                                  >
-                                    ดูรายละเอียด
-                                  </MenuItem>
-                                  <MenuItem
-                                    icon={<Icon as={BsBoxSeam} boxSize={4} />}
-                                    onClick={() => {
-                                      handleSetStatusOrder(
-                                        index,
-                                        filteredOrder.ID,
-                                        "กำลังแพ็ค"
-                                      );
-                                    }}
-                                  >
-                                    เปลี่ยนสถานะ "กำลังแพ็ค"
-                                  </MenuItem>
-                                  <MenuItem
-                                    icon={
-                                      <Icon as={BsXOctagonFill} boxSize={4} />
-                                    }
-                                    onClick={() => {
-                                      handleSetStatusOrder(
-                                        index,
-                                        filteredOrder.ID,
-                                        "ยกเลิก"
-                                      );
-                                    }}
-                                  >
-                                    ยกเลิกคำสั่งซื้อ
-                                  </MenuItem>
-                                </MenuList>
-                              </Menu>
-                            ) : (
-                              <HStack>
-                                {/* <IconButton
+                              ) : (
+                                <HStack>
+                                  {/* <IconButton
                                   icon={<BsClockHistory />}
                                   size="xs"
                                   color={"#f84c01"}
@@ -821,120 +917,121 @@ export default function Order() {
                                   aria-label="Edit"
                                   variant="outline"
                                 /> */}
-                                {navbarTab == "กำลังแพ็ค" && (
-                                  <IconButton
-                                    icon={
-                                      <Image
-                                        src={"/images/delivery-truck 1.png"}
-                                        width={"14px"}
-                                      />
-                                    }
-                                    size="xs"
-                                    color={"#f84c01"}
-                                    borderColor={"#f84c01"}
-                                    aria-label="Edit"
-                                    variant="outline"
-                                    onClick={() => {
-                                      handleSetStatusOrder(
-                                        index,
-                                        filteredOrder.ID,
-                                        "พร้อมส่ง"
-                                      );
-                                    }}
-                                  />
-                                )}
-                                {navbarTab == "พร้อมส่ง" && (
-                                  <IconButton
-                                    icon={
-                                      <Image
-                                        src={"/images/delivery-truck 2.png"}
-                                        width={"14px"}
-                                      />
-                                    }
-                                    size="xs"
-                                    color={"#f84c01"}
-                                    borderColor={"#f84c01"}
-                                    aria-label="Edit"
-                                    variant="outline"
-                                    onClick={() => {
-                                      handleSetStatusOrder(
-                                        index,
-                                        filteredOrder.ID,
-                                        "จัดส่งสำเร็จ"
-                                      );
-                                    }}
-                                  />
-                                )}
-                                {navbarTab == "จัดส่งสำเร็จ" && (
-                                  <IconButton
-                                    icon={
-                                      <Image
-                                        src={"/images/ส่งสำเร็จ 1.png"}
-                                        width={"14px"}
-                                      />
-                                    }
-                                    size="xs"
-                                    color={"#f84c01"}
-                                    borderColor={"#f84c01"}
-                                    aria-label="Edit"
-                                    variant="outline"
-                                    onClick={() => {
-                                      handleSetStatusOrder(
-                                        index,
-                                        filteredOrder.ID,
-                                        "ส่งสำเร็จ"
-                                      );
-                                    }}
-                                  />
-                                )}
-                                {navbarTab == "ส่งสำเร็จ" && (
-                                  <IconButton
-                                    icon={
-                                      <Image
-                                        src={"/images/ตีกลับ.png"}
-                                        width={"14px"}
-                                      />
-                                    }
-                                    size="xs"
-                                    color={"#f84c01"}
-                                    borderColor={"#f84c01"}
-                                    aria-label="Edit"
-                                    variant="outline"
-                                    onClick={() => {
-                                      handleSetStatusOrder(
-                                        index,
-                                        filteredOrder.ID,
-                                        "ตีกลับ"
-                                      );
-                                    }}
-                                  />
-                                )}
-                                {navbarTab != "ตีกลับ" &&
-                                navbarTab != "ยกเลิก" ? (
-                                  <IconButton
-                                    icon={<BsXCircleFill />}
-                                    size="xs"
-                                    color={"#f84c01"}
-                                    borderColor={"#f84c01"}
-                                    aria-label="Edit"
-                                    variant="outline"
-                                    onClick={() => {
-                                      handleSetStatusOrder(
-                                        index,
-                                        filteredOrder.ID,
-                                        "ยกเลิก"
-                                      );
-                                    }}
-                                  />
-                                ) : null}
-                                {navbarTab == "ตีกลับ" && (
-                                  <Text>{filteredOrder.updateAt}</Text>
-                                )}
-                                {navbarTab == "ยกเลิก" && (
-                                  <Text>{filteredOrder.updateAt}</Text>
-                                )}
-                              </HStack>
-                            )}
+                                  {navbarTab == "กำลังแพ็ค" && (
+                                    <IconButton
+                                      icon={
+                                        <Image
+                                          src={"/images/delivery-truck 1.png"}
+                                          width={"14px"}
+                                        />
+                                      }
+                                      size="xs"
+                                      color={"#f84c01"}
+                                      borderColor={"#f84c01"}
+                                      aria-label="Edit"
+                                      variant="outline"
+                                      onClick={() => {
+                                        handleSetStatusOrder(
+                                          index,
+                                          filteredOrder.ID,
+                                          "พร้อมส่ง"
+                                        );
+                                      }}
+                                    />
+                                  )}
+                                  {navbarTab == "พร้อมส่ง" && (
+                                    <IconButton
+                                      icon={
+                                        <Image
+                                          src={"/images/delivery-truck 2.png"}
+                                          width={"14px"}
+                                        />
+                                      }
+                                      size="xs"
+                                      color={"#f84c01"}
+                                      borderColor={"#f84c01"}
+                                      aria-label="Edit"
+                                      variant="outline"
+                                      onClick={() => {
+                                        handleSetStatusOrder(
+                                          index,
+                                          filteredOrder.ID,
+                                          "จัดส่งสำเร็จ"
+                                        );
+                                      }}
+                                    />
+                                  )}
+                                  {navbarTab == "จัดส่งสำเร็จ" && (
+                                    <IconButton
+                                      icon={
+                                        <Image
+                                          src={"/images/ส่งสำเร็จ 1.png"}
+                                          width={"14px"}
+                                        />
+                                      }
+                                      size="xs"
+                                      color={"#f84c01"}
+                                      borderColor={"#f84c01"}
+                                      aria-label="Edit"
+                                      variant="outline"
+                                      onClick={() => {
+                                        handleSetStatusOrder(
+                                          index,
+                                          filteredOrder.ID,
+                                          "ส่งสำเร็จ"
+                                        );
+                                      }}
+                                    />
+                                  )}
+                                  {navbarTab == "ส่งสำเร็จ" && (
+                                    <IconButton
+                                      icon={
+                                        <Image
+                                          src={"/images/ตีกลับ.png"}
+                                          width={"14px"}
+                                        />
+                                      }
+                                      size="xs"
+                                      color={"#f84c01"}
+                                      borderColor={"#f84c01"}
+                                      aria-label="Edit"
+                                      variant="outline"
+                                      onClick={() => {
+                                        handleSetStatusOrder(
+                                          index,
+                                          filteredOrder.ID,
+                                          "ตีกลับ"
+                                        );
+                                      }}
+                                    />
+                                  )}
+                                  {navbarTab != "ตีกลับ" &&
+                                  navbarTab != "ยกเลิก" ? (
+                                    <IconButton
+                                      icon={<BsXCircleFill />}
+                                      size="xs"
+                                      color={"#f84c01"}
+                                      borderColor={"#f84c01"}
+                                      aria-label="Edit"
+                                      variant="outline"
+                                      onClick={() => {
+                                        handleSetStatusOrder(
+                                          index,
+                                          filteredOrder.ID,
+                                          "ยกเลิก"
+                                        );
+                                      }}
+                                    />
+                                  ) : null}
+                                  {navbarTab == "ตีกลับ" && (
+                                    <Text>{filteredOrder.updateAt}</Text>
+                                  )}
+                                  {navbarTab == "ยกเลิก" && (
+                                    <Text>{filteredOrder.updateAt}</Text>
+                                  )}
+                                </HStack>
+                              )}
+                            </Center>
                           </Td>
                         ) : null}
                       </Tr>
@@ -951,21 +1048,29 @@ export default function Order() {
             </Table>
           </TableContainer>
         </Flex>
+        <Box mt={5}>
+          <Center>
+            <Button bgColor={"green"} color={"white"} onClick={handelLogSelect}>
+              ยืนยันคำสั่งซื้อ
+            </Button>
+          </Center>
+        </Box>
       </Box>
 
-      {/* modal ดูหลักฐานการชำระเงิน */}
+      {/* modal ดูรายละเอียด */}
       <Modal
         closeOnOverlayClick={false}
-        isOpen={modalSlipPayment.isOpen}
-        onClose={modalSlipPayment.onClose}
+        isOpen={modalDetailOrder.isOpen}
+        onClose={modalDetailOrder.onClose}
         size={"xl"}
+        scrollBehavior={"inside"}
       >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader fontSize={"33px"}>
             <Center>
-              <Image src={"/images/receipt.png"} width={"25px"} />
-              <Text ml={3}>หลักฐานการชำระเงิน</Text>
+              <Image src={"/images/คำสั่งซื้อ ส้ม.png"} width={"35px"} />
+              <Text ml={3}>ข้อมูลคำสั่งซื้อ</Text>
             </Center>
           </ModalHeader>
           <ModalCloseButton
@@ -977,78 +1082,394 @@ export default function Order() {
             height={"20px"}
           />
           <ModalBody pb={6}>
-            <Center>
-              {accountNumberPayment != null ? (
-                <Grid templateColumns="repeat(2, 1fr)" gap={6}>
-                  <GridItem w="100%">
-                    <Text fontSize={"20px"}>โอนจาก : {namePayment}</Text>
-                  </GridItem>
-                  <GridItem w="100%">
-                    <Text fontSize={"20px"}>
-                      เลขบัญชี : {accountNumberPayment}
-                    </Text>
-                  </GridItem>
-                  <GridItem w="100%">
-                    <Text fontSize={"20px"}>วันที่ : {datePayment}</Text>
-                  </GridItem>
-                  <GridItem w="100%">
-                    <Text fontSize={"20px"}>เวลา : {timePayment}</Text>
-                  </GridItem>
-                  <GridItem w="100%">
-                    <Text fontSize={"20px"}>จำนวนเงิน : {pricePayment}</Text>
-                  </GridItem>
-                  <GridItem w="100%">
-                    <Text fontSize={"20px"}>รหัสอ้างอิง : {codePayment}</Text>
-                  </GridItem>
-                </Grid>
-              ) : (
-                <Grid templateColumns="repeat(2, 1fr)" gap={6}>
-                  <GridItem w="100%">
-                    <Text fontSize={"20px"}>โอนจาก : {namePayment}</Text>
-                  </GridItem>
-                  <GridItem w="100%">
-                    <Text fontSize={"20px"}>สถานะ : รอการชำระเงิน</Text>
-                  </GridItem>
-                  <GridItem w="100%">
-                    <Text fontSize={"20px"}>วันที่ : -</Text>
-                  </GridItem>
-                  <GridItem w="100%">
-                    <Text fontSize={"20px"}>เวลา : -</Text>
-                  </GridItem>
-                  <GridItem w="100%">
-                    <Text fontSize={"20px"}>จำนวนเงิน : -</Text>
-                  </GridItem>
-                  <GridItem w="100%">
-                    <Text fontSize={"20px"}>รหัสอ้างอิง : -</Text>
-                  </GridItem>
-                </Grid>
-              )}
-            </Center>
-            <Box mt={5}>
-              <Center>
-                <Box bgColor={"#000"} position="relative" overflow="hidden">
-                  <Image
-                    // src={"/images/No-Image.png"}
-                    src={
-                      imageSlip != null
-                        ? `https://shopee-api.deksilp.com/images/shopee/slip/${imageSlip}`
-                        : "/images/No-Image.png"
-                    }
-                    h={"300px"}
-                    transition={"300ms"}
-                    _hover={{ opacity: 0.5, cursor: "pointer" }}
-                    onClick={handleOpenModalImgSlip}
-                  />
+            {typePayment == "โอนเงิน" && (
+              <Box>
+                <Flex
+                  alignItems="center"
+                  mt="15px"
+                  borderTop="1px"
+                  borderTopColor="black"
+                  bg="gray.100"
+                >
+                  <Image src="/images/shopping-list.png" h="20px" m="8px" />
+                  <Text fontWeight="bold" fontSize="20px">
+                    หลักฐานการขำระเงิน
+                  </Text>
+                </Flex>
+                <Center mt={5}>
+                  {accountNumberPayment != null ? (
+                    <Grid templateColumns="repeat(2, 1fr)" gap={6}>
+                      <GridItem w="100%">
+                        <Text>โอนจาก : {namePayment}</Text>
+                      </GridItem>
+                      <GridItem w="100%">
+                        <Text>เลขบัญชี : {accountNumberPayment}</Text>
+                      </GridItem>
+                      <GridItem w="100%">
+                        <Text>วันที่ : {datePayment}</Text>
+                      </GridItem>
+                      <GridItem w="100%">
+                        <Text>เวลา : {timePayment}</Text>
+                      </GridItem>
+                      <GridItem w="100%">
+                        <Text>จำนวนเงิน : {pricePayment}</Text>
+                      </GridItem>
+                      <GridItem w="100%">
+                        <Text>รหัสอ้างอิง : {codePayment}</Text>
+                      </GridItem>
+                    </Grid>
+                  ) : (
+                    <Grid templateColumns="repeat(2, 1fr)" gap={6}>
+                      <GridItem w="100%">
+                        <Text>โอนจาก : {namePayment}</Text>
+                      </GridItem>
+                      <GridItem w="100%">
+                        <Text>สถานะ : รอการชำระเงิน</Text>
+                      </GridItem>
+                      <GridItem w="100%">
+                        <Text>วันที่ : -</Text>
+                      </GridItem>
+                      <GridItem w="100%">
+                        <Text>เวลา : -</Text>
+                      </GridItem>
+                      <GridItem w="100%">
+                        <Text>จำนวนเงิน : -</Text>
+                      </GridItem>
+                      <GridItem w="100%">
+                        <Text>รหัสอ้างอิง : -</Text>
+                      </GridItem>
+                    </Grid>
+                  )}
+                </Center>
+                <Box mt={5}>
+                  <Center>
+                    <Box bgColor={"#000"} position="relative" overflow="hidden">
+                      <Image
+                        // src={"/images/No-Image.png"}
+                        src={
+                          imageSlip != null
+                            ? `https://shopee-api.deksilp.com/images/shopee/slip/${imageSlip}`
+                            : "/images/No-Image.png"
+                        }
+                        h={"300px"}
+                        transition={"300ms"}
+                        _hover={{ opacity: 0.5, cursor: "pointer" }}
+                        onClick={handleOpenModalImgSlip}
+                      />
+                    </Box>
+                  </Center>
                 </Box>
-              </Center>
+              </Box>
+            )}
+            <Box mt={5}>
+              <Flex
+                alignItems="center"
+                mt="15px"
+                borderTop="1px"
+                borderTopColor="black"
+                bg="gray.100"
+              >
+                <Image src="/images/shopping-list.png" h="20px" m="8px" />
+                <Text fontWeight="bold" fontSize="20px">
+                  รายละเอียดผู้รับ
+                </Text>
+              </Flex>
+              <Grid
+                templateRows="repeat(1, 1fr)"
+                templateColumns="repeat(3, 1fr)"
+                gap={4}
+                mt={3}
+              >
+                <GridItem colSpan={1} textAlign={"end"}>
+                  ชื่อผู้รับ :{" "}
+                </GridItem>
+                <GridItem colSpan={2}>{namePayment}</GridItem>
+                <GridItem colSpan={1} textAlign={"end"}>
+                  ที่อยู่ผู้รับ :
+                </GridItem>
+                <GridItem colSpan={2}>{addressReceiverName}</GridItem>
+                <GridItem colSpan={1} textAlign={"end"}>
+                  เบอร์โทรศัพท์ :
+                </GridItem>
+                <GridItem colSpan={2}>{phoneNumber}</GridItem>
+                <GridItem colSpan={1}></GridItem>
+                <GridItem colSpan={2}>
+                  <Checkbox
+                    isChecked={checkIssueTaxInvoice}
+                    onChange={handleIssueTaxInvoice}
+                  >
+                    ที่อยู่สำหรับออกใบเสร็จ/กำกับภาษีเหมือนที่อยู่ผู้รับ
+                  </Checkbox>
+                </GridItem>
+              </Grid>
+            </Box>
+            <Box display={checkIssueTaxInvoice ? "none" : "block"}>
+              <Flex
+                alignItems="center"
+                mt="15px"
+                borderTop="1px"
+                borderTopColor="black"
+                bg="gray.100"
+              >
+                <Image src="/images/home.png" h="20px" m="8px" />
+                <Text fontWeight="bold" fontSize="20px">
+                  ที่อยู่สำหรับออกใบเสร็จ/กำกับภาษี
+                </Text>
+              </Flex>
+              <Grid
+                templateRows="repeat(1, 1fr)"
+                templateColumns="repeat(4, 1fr)"
+                gap={4}
+                p={"1rem 1rem 0.5rem 0rem"}
+                alignItems="end"
+              >
+                <GridItem colSpan={1} textAlign={"end"}>
+                  ชื่อผู้รับ :{" "}
+                </GridItem>
+                <GridItem colSpan={2}>
+                  <Input placeholder="ชื่อผู้รับ..." size="sm" />
+                </GridItem>
+                <GridItem colSpan={1}></GridItem>
+                <GridItem colSpan={1} textAlign={"end"}>
+                  เบอร์โทรศัพท์ :
+                </GridItem>
+                <GridItem colSpan={2}>
+                  <Input placeholder="เบอร์โทรศัพท์..." size="sm" />
+                </GridItem>
+                <GridItem colSpan={1}></GridItem>
+                <GridItem colSpan={1} textAlign={"end"}>
+                  ชื่อบริษัท :
+                </GridItem>
+                <GridItem colSpan={3}>
+                  <Input placeholder="ชื่อบริษัท..." size="sm" />
+                </GridItem>
+                <GridItem colSpan={1} textAlign={"end"}>
+                  ที่อยู่บริษัท :
+                </GridItem>
+                <GridItem colSpan={3}>
+                  <Input placeholder="ที่อยู่บริษัท..." size="sm" />
+                </GridItem>
+                <GridItem colSpan={1} textAlign={"end"}>
+                  ตำบล :{" "}
+                </GridItem>
+                <GridItem colSpan={1}>
+                  <Input placeholder="ตำบล..." size="sm" />
+                </GridItem>
+                <GridItem colSpan={1} textAlign={"end"}>
+                  อำเภอ :{" "}
+                </GridItem>
+                <GridItem colSpan={1}>
+                  <Input placeholder="อำเภอ..." size="sm" />
+                </GridItem>
+                <GridItem colSpan={1} textAlign={"end"}>
+                  จังหวัด :{" "}
+                </GridItem>
+                <GridItem colSpan={1}>
+                  <Input placeholder="จังหวัด..." size="sm" />
+                </GridItem>
+                <GridItem colSpan={1} textAlign={"end"}>
+                  ไปรษณีย์ :{" "}
+                </GridItem>
+                <GridItem colSpan={1}>
+                  <Input placeholder="ไปรษณีย์..." size="sm" />
+                </GridItem>
+              </Grid>
+            </Box>
+            <Box>
+              <Flex
+                alignItems="center"
+                mt="15px"
+                borderTop="1px"
+                borderTopColor="black"
+                bg="gray.100"
+              >
+                <Image src="/images/shopping-list.png" h="20px" m="8px" />
+                <Text fontWeight="bold" fontSize="20px">
+                  ข้อมูลคำสั่งซื้อ
+                </Text>
+              </Flex>
+              <TableContainer fontSize="17" width={"100%"} mt={3}>
+                <Table
+                  variant="striped"
+                  colorScheme="gray"
+                  css={{
+                    overflow: "hidden",
+                    border: "1px solid black",
+                    borderCollapse: "collapse",
+                  }}
+                >
+                  <Thead>
+                    <Tr bg={"whitesmoke"}>
+                      <Th color={"black"}>เลขคำสั่งซื้อ</Th>
+                      <Th color={"black"}>รูปสินค้า</Th>
+                      <Th color={"black"}>ชื่อสินค้า</Th>
+                      <Th color={"black"}>จำนวน</Th>
+                      <Th color={"black"}>ราคา</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    {detailOrder.map((detail, index) => {
+                      const optionsPriceProduct = {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      };
+                      if (detail.option1 === 0 && detail.option2 === 0) {
+                        amountProduct = detail.priceProduct;
+                      } else if (detail.option1 !== 0 && detail.option2 === 0) {
+                        amountProduct = detail.priceProductOption1;
+                      } else if (detail.option1 !== 0 && detail.option2 !== 0) {
+                        amountProduct = detail.priceProductOption2;
+                      }
+
+                      const formattedPriceProduct =
+                        amountProduct.toLocaleString(
+                          "en-US",
+                          optionsPriceProduct
+                        );
+                      return (
+                        <Tr key={index}>
+                          <Td>{codeOrder}</Td>
+                          <Td>
+                            <Image
+                              src={
+                                detail.option1 === 0
+                                  ? `https://shopee-api.deksilp.com/images/shopee/products/${detail.imgProduct}`
+                                  : `https://shopee-api.deksilp.com/images/shopee/products/${detail.imgProductOption}`
+                              }
+                              h="50px"
+                              w="50px"
+                            />
+                          </Td>
+                          <Td>{detail.nameProduct}</Td>
+                          <Td>{detail.num}</Td>
+                          <Td>
+                            {detail.option1 === 0 && detail.option2 === 0
+                              ? formattedPriceProduct
+                              : null}
+                            {detail.option1 !== 0 && detail.option2 === 0
+                              ? formattedPriceProduct
+                              : null}
+                            {detail.option1 !== 0 && detail.option2 !== 0
+                              ? formattedPriceProduct
+                              : null}
+                          </Td>
+                        </Tr>
+                      );
+                    })}
+                  </Tbody>
+                </Table>
+              </TableContainer>
+              <Grid
+                templateRows="repeat(1, 1fr)"
+                templateColumns="repeat(4, 1fr)"
+                gap={4}
+                p={"1rem 1.5rem 0rem 0rem"}
+                alignItems="end"
+              >
+                <GridItem colSpan={1} textAlign={"end"}>
+                  การชำระเงิน :{" "}
+                </GridItem>
+                <GridItem colSpan={1}>
+                  {nameBank === null ? "เก็บเงินปลายทาง" : nameBank}
+                </GridItem>
+                <GridItem colSpan={1} textAlign={"end"}>
+                  ยอดรวม
+                </GridItem>
+                <GridItem colSpan={1} textAlign={"end"}>
+                  {pricePayment}
+                </GridItem>
+                <GridItem colSpan={1} textAlign={"end"}>
+                  ขนส่ง :{" "}
+                </GridItem>
+                <GridItem colSpan={1}>รูป</GridItem>
+                <GridItem colSpan={1} textAlign={"end"}>
+                  ค่าส่ง
+                </GridItem>
+                <GridItem colSpan={1} textAlign={"end"}>
+                  40.00
+                </GridItem>
+                <GridItem colSpan={1} textAlign={"end"}>
+                  วันที่สั่งซื้อ :{" "}
+                </GridItem>
+                <GridItem colSpan={1}>{dateCreateOrder}</GridItem>
+                <GridItem
+                  colSpan={1}
+                  textAlign={"end"}
+                  fontWeight={"bold"}
+                  fontSize={"20px"}
+                >
+                  รวมทั้งสิ้น
+                </GridItem>
+                <GridItem colSpan={1} textAlign={"end"}>
+                  {pricePayment}
+                </GridItem>
+              </Grid>
+            </Box>
+            <Box>
+              <Flex
+                alignItems="center"
+                mt="15px"
+                borderTop="1px"
+                borderTopColor="black"
+                bg="gray.100"
+              >
+                <Image src="/images/shopping-list.png" h="20px" m="8px" />
+                <Text fontWeight="bold" fontSize="20px">
+                  ประวัติการสั่งซื้อ
+                </Text>
+              </Flex>
+              <TableContainer fontSize="17" width={"100%"} mt={3}>
+                <Table
+                  variant="striped"
+                  colorScheme="gray"
+                  css={{
+                    overflow: "hidden",
+                    border: "1px solid black",
+                    borderCollapse: "collapse",
+                  }}
+                >
+                  <Thead>
+                    <Tr bg={"whitesmoke"}>
+                      <Th color={"black"}>เลขคำสั่งซื้อ</Th>
+                      <Th color={"black"}>รูปสินค้า</Th>
+                      <Th color={"black"}>ชื่อสินค้า</Th>
+                      <Th color={"black"}>จำนวน</Th>
+                      <Th color={"black"}>ราคา</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    <Tr>
+                      <Td></Td>
+                      <Td></Td>
+                      <Td></Td>
+                      <Td></Td>
+                      <Td></Td>
+                    </Tr>
+                  </Tbody>
+                </Table>
+              </TableContainer>
             </Box>
           </ModalBody>
-
-          <ModalFooter justifyContent={"center"}>
-            <Button colorScheme="red" mr={3}>
-              ยืนยัน
+          <ModalFooter alignItems={"center"} justifyContent={"center"}>
+            <Button
+              onClick={() => {
+                handleSetStatusOrder(0, idOrder, "ยกเลิก");
+              }}
+              mr={2}
+              bgColor={"red"}
+              color={"white"}
+            >
+              ยกเลิกคำสั่งซื้อ
             </Button>
-            {/* <Button onClick={modalSlipPayment.onClose}>Cancel</Button> */}
+            <Button
+              onClick={() => {
+                handleSetStatusOrder(0, idOrder, "กำลังแพ็ค");
+              }}
+              bgColor={"green"}
+              color={"white"}
+            >
+              ยืนยันคำสั่งซื้อ
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
@@ -1079,8 +1500,10 @@ export default function Order() {
                       ? `https://shopee-api.deksilp.com/images/shopee/slip/${imageSlip}`
                       : "/images/No-Image.png"
                   }
-                  w={"350px"}
-                  h={"520px"}
+                  // w={"350px"}
+                  // h={"520px"}
+                  w={"100%"}
+                  h={"605px"}
                 />
               </Center>
             </Box>
@@ -1096,121 +1519,6 @@ export default function Order() {
             </Button>
             {/* <Button onClick={modalSlipPayment.onClose}>Cancel</Button> */}
           </ModalFooter>
-        </ModalContent>
-      </Modal>
-      {/*end modal ดูหลักฐานการชำระเงิน */}
-
-      {/* modal ดูรายละเอียด */}
-      <Modal
-        closeOnOverlayClick={false}
-        isOpen={modalDetailOrder.isOpen}
-        onClose={modalDetailOrder.onClose}
-        size={"xl"}
-      >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader fontSize={"33px"}>
-            <Center>
-              <Image src={"/images/คำสั่งซื้อ ส้ม.png"} width={"35px"} />
-              <Text ml={3}>ข้อมูลคำสั่งซื้อ</Text>
-            </Center>
-          </ModalHeader>
-          <ModalCloseButton
-            bgColor={"red"}
-            color={"white"}
-            borderRadius={"50px"}
-            fontSize={"10px"}
-            width={"20px"}
-            height={"20px"}
-          />
-          <ModalBody pb={6}>
-            <Grid
-              templateRows="repeat(1, 1fr)"
-              templateColumns="repeat(3, 1fr)"
-              gap={4}
-            >
-              <GridItem colSpan={1} textAlign={"end"}>
-                ชื่อผู้รับ :{" "}
-              </GridItem>
-              <GridItem colSpan={2}>มดหอม จัดผล</GridItem>
-              <GridItem colSpan={1} textAlign={"end"}>
-                ที่อยู่ผู้รับ :
-              </GridItem>
-              <GridItem colSpan={2}>
-                9/84 มบ.บางแสนมหานคร ต.แสนสุข อ.เมือง จ.ชลบุรี 20130
-              </GridItem>
-              <GridItem colSpan={1} textAlign={"end"}>
-                เบอร์โทรศัพท์ :
-              </GridItem>
-              <GridItem colSpan={2}>081-234-5678</GridItem>
-              <GridItem colSpan={1}></GridItem>
-              <GridItem colSpan={2}>
-                <Checkbox defaultChecked>
-                  ที่อยู่สำหรับออกใบเสร็จ/กำกับภาษีเหมือนที่อยู่ผู้รับ
-                </Checkbox>
-              </GridItem>
-            </Grid>
-            <Box>
-              <Flex
-                alignItems="center"
-                mt="15px"
-                borderTop="1px"
-                borderTopColor="black"
-                bg="gray.100"
-              >
-                <Image src="/images/user_black.png" h="20px" m="8px" />
-                <Text fontWeight="bold" fontSize="20px">
-                  ข้อมูลคำสั่งซื้อ
-                </Text>
-              </Flex>
-              <TableContainer fontSize="17" width={"100%"} mt={3}>
-                <Table
-                  variant="striped"
-                  colorScheme="gray"
-                  css={{
-                    overflow: "hidden",
-                    border: "1px solid black",
-                  }}
-                >
-                  <Thead>
-                    <Tr bg={"whitesmoke"}>
-                      <Th color={"black"}>เลขคำสั่งซื้อ</Th>
-                      <Th color={"black"}>รูปสินค้า</Th>
-                      <Th color={"black"}>ชื่อสินค้า</Th>
-                      <Th color={"black"}>จำนวน</Th>
-                      <Th color={"black"}>ราคา</Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    <Tr>
-                      <Td></Td>
-                      <Td></Td>
-                      <Td></Td>
-                      <Td></Td>
-                      <Td></Td>
-                    </Tr>
-                  </Tbody>
-                </Table>
-              </TableContainer>
-              <Grid
-                templateRows="repeat(1, 1fr)"
-                templateColumns="repeat(4, 1fr)"
-                gap={4}
-                p={3}
-              >
-                <GridItem colSpan={1} textAlign={"end"}>
-                  การชำระเงิน :{" "}
-                </GridItem>
-                <GridItem colSpan={1}>ธนาคารไทยพาณิชย์</GridItem>
-                <GridItem colSpan={1} textAlign={"end"}>
-                  ยอดรวม
-                </GridItem>
-                <GridItem colSpan={1} textAlign={"end"}>
-                  303.00
-                </GridItem>
-              </Grid>
-            </Box>
-          </ModalBody>
         </ModalContent>
       </Modal>
       {/* end modal ดูรายละเอียด */}
