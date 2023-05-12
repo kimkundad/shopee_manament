@@ -83,7 +83,11 @@ import {
   BsXCircleFill,
   BsEyeFill,
   BsFillClipboard2CheckFill,
+  BsArrowBarDown,
 } from "react-icons/bs";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import THSarabunNew from "@/components/THSarabunNew";
 
 function MenuCheckboxList(props) {
   const { values, onValueChange } = props;
@@ -193,6 +197,7 @@ export default function Order() {
   const modalOpenImgSlipPayment = useDisclosure();
 
   const modalDetailOrder = useDisclosure();
+  const ModalConfirmSetStatus = useDisclosure();
 
   // ชื่อตัวแปรของการดูรายละเอียดหลักฐาน
   const [namePayment, setNamePayment] = useState("");
@@ -333,11 +338,12 @@ export default function Order() {
     }
   };
 
-  const handelLogSelect = async () => {
+  const handelLogSelect = async (status) => {
     const formData = new FormData();
     selectedOrders.forEach((ids, index) => {
       formData.append(`ids[${index}]`, ids);
     });
+    formData.append(`status`, status);
     const response = await axios.post(
       "https://shopee-api.deksilp.com/api/setStatusOrdersMulti",
       formData
@@ -345,6 +351,94 @@ export default function Order() {
     if (response.data.success) {
       fetchData();
       setSelectedOrders([]);
+      ModalConfirmSetStatus.onClose();
+    }
+  };
+
+  const handleCheckSelect = () => {
+    const selected = orders.filter((order) =>
+      selectedOrders.includes(order.ID)
+    );
+    if (selectedOrders.length > 0) {
+      const optionsDate = {
+        day: "numeric",
+        month: "numeric",
+        year: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        second: "numeric",
+      }; // กำหนดรูปแบบวันที่และเวลา
+      const date = new Date();
+      const formattedDate = date.toLocaleDateString("th-TH", optionsDate); // แปลงวันที่เป็นรูปแบบ "DD/MM/YYYY"
+
+      // Create a new instance of jsPDF
+      const doc = new jsPDF();
+
+      // Add the Thai font
+      doc.addFileToVFS("THSarabunNew.ttf", THSarabunNew);
+      doc.addFont("THSarabunNew.ttf", "THSarabunNew", "normal");
+      doc.setFont("THSarabunNew");
+
+      // Add recipient's name, address and phone number
+      doc.text("Recipient Name: " + selected[0].receiverName, 10, 10);
+      doc.text("Address: " + selected[0].address, 10, 20);
+      doc.text("Phone Number: " + selected[0].phoneNumber, 10, 30);
+
+      // Define the table columns
+      const header = ["Order ID", "Product Name", "Num", "Price"];
+      const columnWidths = [40, 70, 30, 30];
+      const headerHeight = 10;
+      const cellHeight = 10;
+
+      // Draw the table header
+      let x = 10;
+      for (let i = 0; i < header.length; i++) {
+        doc.setFillColor(220, 220, 220);
+        doc.rect(x, 40, columnWidths[i], headerHeight, "F"); // Draw a filled rectangle for each header cell
+        doc.rect(x, 40, columnWidths[i], headerHeight); // Draw the cell border
+        doc.text(header[i], x + 2, 48); // The y value is 40 (top of the cell) + half the cell height
+        x += columnWidths[i];
+      }
+
+      // Draw the table rows
+      let y = 50; // Start y below the header
+      for (let i = 0; i < selected[0].orderDetails.length; i++) {
+        const product = selected[0].orderDetails[i];
+        const row = [
+          selected[0].orderId.toString(),
+          product.nameProduct,
+          product.num.toString(),
+          product.priceProduct.toString(),
+        ];
+        x = 10;
+        for (let j = 0; j < row.length; j++) {
+          doc.text(row[j], x + 2, y + cellHeight / 2 + 2);
+          // The y value is the top of the cell + half the cell height
+          doc.rect(x, y, columnWidths[j], cellHeight); // Draw the cell border
+          x += columnWidths[j];
+        }
+        y += cellHeight;
+      }
+
+      // Save the PDF as a blob
+      const pdfBlob = doc.output("blob");
+
+      // Create a blob URL
+      const url = URL.createObjectURL(pdfBlob);
+
+      // Open the PDF in a new tab
+      window.open(url, "_blank");
+
+      // Create a link element, click it to start the download
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `orders-${formattedDate}.pdf`;
+      link.click();
+
+      // Clean up
+      link.remove();
+      URL.revokeObjectURL(url);
+      ModalConfirmSetStatus.onOpen();
     }
   };
   return (
@@ -608,6 +702,21 @@ export default function Order() {
               </Button>
             </Link>
           </Box> */}
+          {navbarTab === "กำลังแพ็ค" && (
+            <Box borderWidth="1px" borderColor="green" borderRadius="md">
+              <Button
+                fontSize="21px"
+                leftIcon={<Icon as={BsArrowBarDown} boxSize={5} />}
+                bg="green"
+                variant="solid"
+                color="white"
+                _hover={{}}
+                onClick={handleCheckSelect}
+              >
+                ดาวน์โหลดคำสั่งซื้อ
+              </Button>
+            </Box>
+          )}
         </Flex>
       </Box>
       {/* End Navbar */}
@@ -1048,13 +1157,19 @@ export default function Order() {
             </Table>
           </TableContainer>
         </Flex>
-        <Box mt={5}>
-          <Center>
-            <Button bgColor={"green"} color={"white"} onClick={handelLogSelect}>
-              ยืนยันคำสั่งซื้อ
-            </Button>
-          </Center>
-        </Box>
+        {navbarTab === "ตรวจสอบคำสั่งซื้อ" && (
+          <Box mt={5}>
+            <Center>
+              <Button
+                bgColor={"green"}
+                color={"white"}
+                onClick={() => {handelLogSelect("กำลังแพ็ค")}}
+              >
+                ยืนยันคำสั่งซื้อ
+              </Button>
+            </Center>
+          </Box>
+        )}
       </Box>
 
       {/* modal ดูรายละเอียด */}
@@ -1522,6 +1637,56 @@ export default function Order() {
         </ModalContent>
       </Modal>
       {/* end modal ดูรายละเอียด */}
+
+      <Modal
+        closeOnOverlayClick={false}
+        isOpen={ModalConfirmSetStatus.isOpen}
+        onClose={ModalConfirmSetStatus.onClose}
+        isCentered
+        // size={"xl"}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader></ModalHeader>
+          <ModalCloseButton
+            bgColor={"red"}
+            color={"white"}
+            borderRadius={"50px"}
+            fontSize={"10px"}
+            width={"20px"}
+            height={"20px"}
+          />
+          <ModalBody padding={"0 1rem"}>
+            <Box mt={5}>
+              <Flex justifyContent={'center'} alignItems={'center'} flexDirection={'column'}>
+                <Image src={"/images/check.png"} w={"100px"} h={"100px"} />
+                <Text fontSize={"30px"} fontWeight={"bold"} mt={5}>
+                  ยืนยันการแพ็คสินค้าสำเร็จหรือไม่
+                </Text>
+              </Flex>
+            </Box>
+          </ModalBody>
+
+          <ModalFooter justifyContent={"center"}>
+            <Button
+              colorScheme="red"
+              mr={3}
+              onClick={ModalConfirmSetStatus.onClose}
+            >
+              ยกเลิก
+            </Button>
+            <Button
+              colorScheme="green"
+              mr={3}
+              onClick={() => {handelLogSelect("พร้อมส่ง")}}
+            >
+              ยืนยัน
+            </Button>
+            {/* <Button onClick={modalSlipPayment.onClose}>Cancel</Button> */}
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
       {/* End Table */}
     </>
   );
