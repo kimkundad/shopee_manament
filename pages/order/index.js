@@ -186,6 +186,7 @@ export default function Order() {
 
   const modalDetailOrder = useDisclosure();
   const ModalConfirmSetStatus = useDisclosure();
+  const ModalInputTax = useDisclosure();
 
   // ชื่อตัวแปรของการดูรายละเอียดหลักฐาน
   const [namePayment, setNamePayment] = useState("");
@@ -830,7 +831,7 @@ export default function Order() {
                     _hover={{}}
                     onClick={handleCheckSelect}
                   >
-                    ดาวน์โหลดคำสั่งซื้อ
+                    พิมพ์ใบคำสั่งซื้อ
                   </Button>
                 </Box>
               </Flex>
@@ -1166,26 +1167,45 @@ export default function Order() {
                                     />
                                   )}
                                   {navbarTab == "พร้อมส่ง" && (
-                                    <IconButton
-                                      icon={
-                                        <Image
-                                          src={"/images/delivery-truck 2.png"}
-                                          width={"14px"}
-                                        />
-                                      }
-                                      size="xs"
-                                      color={"#f84c01"}
-                                      borderColor={"#f84c01"}
-                                      aria-label="Edit"
-                                      variant="outline"
-                                      onClick={() => {
-                                        handleSetStatusOrder(
-                                          index,
-                                          filteredOrder.ID,
-                                          "จัดส่งสำเร็จ"
-                                        );
-                                      }}
-                                    />
+                                    <Box>
+                                      <IconButton
+                                        icon={
+                                          <Image
+                                            src={
+                                              "/images/เพิ่ม shopping-list.png"
+                                            }
+                                            width={"14px"}
+                                          />
+                                        }
+                                        size="xs"
+                                        color={"#f84c01"}
+                                        borderColor={"#f84c01"}
+                                        aria-label="Edit"
+                                        variant="outline"
+                                        mr={2}
+                                        onClick={ModalInputTax.onOpen}
+                                      />
+                                      <IconButton
+                                        icon={
+                                          <Image
+                                            src={"/images/delivery-truck 2.png"}
+                                            width={"14px"}
+                                          />
+                                        }
+                                        size="xs"
+                                        color={"#f84c01"}
+                                        borderColor={"#f84c01"}
+                                        aria-label="Edit"
+                                        variant="outline"
+                                        onClick={() => {
+                                          handleSetStatusOrder(
+                                            index,
+                                            filteredOrder.ID,
+                                            "จัดส่งสำเร็จ"
+                                          );
+                                        }}
+                                      />
+                                    </Box>
                                   )}
                                   {navbarTab == "จัดส่งสำเร็จ" && (
                                     <IconButton
@@ -1832,6 +1852,29 @@ export default function Order() {
         </ModalContent>
       </Modal>
 
+      <Modal
+        closeOnOverlayClick={false}
+        isOpen={ModalInputTax.isOpen}
+        onClose={ModalInputTax.onClose}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            <Center>
+              <Text fontSize={'33px'}>ใส่หมายเลข Tax คำสั่งซื้อ</Text>
+            </Center>
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody pb={6}></ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme="green" mr={3}>
+              บันทึก
+            </Button>
+            <Button onClick={ModalInputTax.onClose}>ยกเลิก</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       {/* End Table */}
     </>
   );
