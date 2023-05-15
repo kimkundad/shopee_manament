@@ -88,6 +88,7 @@ import {
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import THSarabunNew from "@/components/THSarabunNew";
+import THSarabunNewBlod from "@/components/THSarabunNewBlod";
 
 function MenuCheckboxList(props) {
   const { values, onValueChange } = props;
@@ -370,56 +371,71 @@ export default function Order() {
       }; // กำหนดรูปแบบวันที่และเวลา
       const date = new Date();
       const formattedDate = date.toLocaleDateString("th-TH", optionsDate); // แปลงวันที่เป็นรูปแบบ "DD/MM/YYYY"
-
       // Create a new instance of jsPDF
       const doc = new jsPDF();
 
       // Add the Thai font
       doc.addFileToVFS("THSarabunNew.ttf", THSarabunNew);
+      doc.addFileToVFS("THSarabunNew Bold.ttf", THSarabunNewBlod);
       doc.addFont("THSarabunNew.ttf", "THSarabunNew", "normal");
+      doc.addFont("THSarabunNew Bold.ttf", "THSarabunNewBlod", "bold");
       doc.setFont("THSarabunNew");
 
-      // Add recipient's name, address and phone number
-      doc.text("Recipient Name: " + selected[0].receiverName, 10, 10);
-      doc.text("Address: " + selected[0].address, 10, 20);
-      doc.text("Phone Number: " + selected[0].phoneNumber, 10, 30);
+      let y = 10; // Start y at the top of the page
 
-      // Define the table columns
-      const header = ["Order ID", "Product Name", "Num", "Price"];
-      const columnWidths = [40, 70, 30, 30];
-      const headerHeight = 10;
-      const cellHeight = 10;
-
-      // Draw the table header
-      let x = 10;
-      for (let i = 0; i < header.length; i++) {
-        doc.setFillColor(220, 220, 220);
-        doc.rect(x, 40, columnWidths[i], headerHeight, "F"); // Draw a filled rectangle for each header cell
-        doc.rect(x, 40, columnWidths[i], headerHeight); // Draw the cell border
-        doc.text(header[i], x + 2, 48); // The y value is 40 (top of the cell) + half the cell height
-        x += columnWidths[i];
-      }
-
-      // Draw the table rows
-      let y = 50; // Start y below the header
-      for (let i = 0; i < selected[0].orderDetails.length; i++) {
-        const product = selected[0].orderDetails[i];
-        const row = [
-          selected[0].orderId.toString(),
-          product.nameProduct,
-          product.num.toString(),
-          product.priceProduct.toString(),
-        ];
-        x = 10;
-        for (let j = 0; j < row.length; j++) {
-          doc.text(row[j], x + 2, y + cellHeight / 2 + 2);
-          // The y value is the top of the cell + half the cell height
-          doc.rect(x, y, columnWidths[j], cellHeight); // Draw the cell border
-          x += columnWidths[j];
+      selected.forEach((order, index) => {
+        if (index !== 0) {
+          doc.addPage();
+          y = 10;
         }
-        y += cellHeight;
-      }
+        const addressReceiverName = `${order.address} ต.${order.sub_district} อ.${order.district} จ.${order.province} ${order.postcode}`;
+        // Add recipient's name, address and phone number
+        doc.setFont("THSarabunNewBlod", "bold");
+        doc.setFontSize(16);
+        doc.text("Recipient Name: " + order.receiverName, 10, y);
+        doc.setFont("THSarabunNew", "normal");
+        doc.setFontSize(14);
+        doc.text("Address: " + addressReceiverName, 10, y + 10);
+        doc.text("Phone Number: " + order.phoneNumber, 10, y + 20);
 
+        // Draw the table header
+        const header = ["Order ID", "Product Name", "Num", "Price"];
+        const columnWidths = [40, 70, 30, 30];
+        const headerHeight = 10;
+        const cellHeight = 10;
+        let x = 10;
+        for (let i = 0; i < header.length; i++) {
+          doc.setFillColor(220, 220, 220);
+          doc.rect(x, y + 30, columnWidths[i], headerHeight, "F"); // Draw a filled rectangle for each header cell
+          doc.rect(x, y + 30, columnWidths[i], headerHeight); // Draw the cell border
+          doc.text(header[i], x + 2, y + 38); // The y value is y + 30 (top of the cell) + half the cell height
+          x += columnWidths[i];
+        }
+
+        // Draw the table rows
+        y += 40; // Start y below the header
+        for (let i = 0; i < order.orderDetails.length; i++) {
+          const product = order.orderDetails[i];
+          const row = [
+            order.orderId.toString(),
+            product.nameProduct,
+            product.num.toString(),
+            product.priceProduct.toString(),
+          ];
+          x = 10;
+          for (let j = 0; j < row.length; j++) {
+            doc.text(row[j], x + 2, y + cellHeight / 2 + 2);
+            // The y value is the top of the cell + half the cell height
+            doc.rect(x, y, columnWidths[j], cellHeight); // Draw the cell border
+            x += columnWidths[j];
+          }
+          y += cellHeight;
+        }
+        doc.text("ยอดรวม: ", 122, y + 10);
+        doc.text(order.amount.toString(), 152, y + 10);
+        // Increment y by a certain amount to leave some space between each order
+        y += 20;
+      });
       // Save the PDF as a blob
       const pdfBlob = doc.output("blob");
 
@@ -1163,7 +1179,9 @@ export default function Order() {
               <Button
                 bgColor={"green"}
                 color={"white"}
-                onClick={() => {handelLogSelect("กำลังแพ็ค")}}
+                onClick={() => {
+                  handelLogSelect("กำลังแพ็ค");
+                }}
               >
                 ยืนยันคำสั่งซื้อ
               </Button>
@@ -1658,7 +1676,11 @@ export default function Order() {
           />
           <ModalBody padding={"0 1rem"}>
             <Box mt={5}>
-              <Flex justifyContent={'center'} alignItems={'center'} flexDirection={'column'}>
+              <Flex
+                justifyContent={"center"}
+                alignItems={"center"}
+                flexDirection={"column"}
+              >
                 <Image src={"/images/check.png"} w={"100px"} h={"100px"} />
                 <Text fontSize={"30px"} fontWeight={"bold"} mt={5}>
                   ยืนยันการแพ็คสินค้าสำเร็จหรือไม่
@@ -1678,7 +1700,9 @@ export default function Order() {
             <Button
               colorScheme="green"
               mr={3}
-              onClick={() => {handelLogSelect("พร้อมส่ง")}}
+              onClick={() => {
+                handelLogSelect("พร้อมส่ง");
+              }}
             >
               ยืนยัน
             </Button>
