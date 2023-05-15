@@ -49,13 +49,21 @@ export default function DashBoard() {
     }
     fecthdata();
   }, []);
-  console.log(dataTable);
-  console.log(dataPieProducts);
-  console.log(dataPieShops);
-  console.log(dataLines);
-  console.log(dataBars);
-  console.log(allStock);
   ChartJS.register(ArcElement, Tooltip, Legend);
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
   const dataLine = {
     labels: [
       "ม.ค.",
@@ -73,8 +81,8 @@ export default function DashBoard() {
     ],
     datasets: [
       {
-        label: "My First Dataset",
-        data: [65, 59, 80, 81, 56, 55, 40, 42, 49, 42, 45, 12],
+        label: "",
+        data: dataLines.map((element) => element.total_price),
         fill: false,
         borderColor: "red",
       },
@@ -179,11 +187,7 @@ export default function DashBoard() {
     datasets: [
       {
         label: "My First Dataset",
-        data: [
-          dataPieProducts[0]?.total_num,
-          dataPieProducts[1]?.total_num,
-          dataPieProducts[2]?.total_num,
-        ],
+        data: dataPieProducts.map((element) => element.total_num),
         backgroundColor: [
           "rgba(255, 99, 132, 1)",
           "rgba(54, 162, 235, 1)",
@@ -203,11 +207,7 @@ export default function DashBoard() {
     datasets: [
       {
         label: "My First Dataset",
-        data: [
-          dataPieProducts[0]?.total_num,
-          dataPieProducts[1]?.total_num,
-          dataPieProducts[2]?.total_num,
-        ],
+        data: dataPieShops.map((element) => element.total_num),
         backgroundColor: [
           "rgba(255, 99, 132, 1)",
           "rgba(54, 162, 235, 1)",
@@ -259,36 +259,17 @@ export default function DashBoard() {
     },
   };
 
-  const labels = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-  ];
+  const labels = ["January", "May"];
 
-  const test = [10, 12, 12, 45, 78, 42, 10];
+  const [dataTest,setDataTest] = useState([]);
+  dataBars?.map((item,index) => {
+    {item.data?.map((subItem,subIndex) => {
+      
+    })}
+  })
   const dataBar = {
     labels,
-    datasets: [
-      {
-        label: "Dataset 1",
-        data: test.map((item) => item),
-        backgroundColor: "rgb(255, 99, 132)",
-      },
-      {
-        label: "Dataset 2",
-        data: test.map((item) => item),
-        backgroundColor: "rgb(75, 192, 192)",
-      },
-      {
-        label: "Dataset 3",
-        data: test.map((item) => item),
-        backgroundColor: "rgb(53, 162, 235)",
-      },
-    ],
+    datasets: [dataBars?.map((item, index) => {})],
   };
 
   const divRef = useRef(null);
@@ -305,28 +286,39 @@ export default function DashBoard() {
       <Box>test</Box>
       <Grid templateColumns="repeat(2, 1fr)" gap={6}>
         <Box bg="white" borderRadius="xl">
-          <GridItem textAlign="-webkit-center" w="100%" h="300px" p="15px">
+          <Text fontSize="28px" p="15px" textAlign="center">
             สินค้าขายดี
+          </Text>
+          <Box textAlign="-webkit-center" w="100%" height="300px">
             <Pie data={dataPieProduct} options={optionsPie} />
-          </GridItem>
-          <Box p="25px">
+          </Box>
+          <Box p="25px" pb="0px">
             {dataPieProducts?.map((item, index) => {
               return (
-                <Flex py="5px" borderBottom="1px solid">
+                <Flex
+                  py="5px"
+                  borderBottom={
+                    dataPieProducts.length - 1 == index ? "none" : "1px solid"
+                  }
+                >
                   <Text>จำนวนขายรวม</Text>
                   <Spacer />
-                  <Text>{item.total_num}</Text>
+                  <Text>{parseInt(item.total_num).toLocaleString()}</Text>
                 </Flex>
               );
             })}
           </Box>
         </Box>
         <Box bg="white" borderRadius="xl">
-          <GridItem textAlign="-webkit-center" w="100%" h="300px" p="15px">
-            ร้านค้าขายดี
+          <Box>
+            <Text fontSize="28px" p="15px" textAlign="center">
+              ร้านค้าขายดี
+            </Text>
+          </Box>
+          <Box textAlign="-webkit-center" w="100%" h="300px">
             <Pie data={dataPieShop} options={optionsPie} />
-          </GridItem>
-          <Box p="25px">
+          </Box>
+          <Box p="25px" pb="0px">
             <Flex py="5px" borderBottom="1px solid">
               <Text>จำนวนขายรวม</Text>
               <Spacer />

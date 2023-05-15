@@ -24,6 +24,9 @@ import {
 import ListCheck from "@/components/MenuList";
 import Link from "next/link";
 import axios from "axios";
+import { jsPDF } from "jspdf";
+import THSarabunNew from "@/components/THSarabunNew";
+import THSarabunNewBold from "@/components/THSarabunNewBold";
 function index() {
   const [products, setProducts] = useState([]);
   const [loadingImg, setLoadingImg] = useState(true);
@@ -210,6 +213,54 @@ function index() {
     }
   };
 
+  const doc = new jsPDF();
+
+  const printPDF = () => {
+    doc.addFileToVFS("THSarabunNew.ttf", THSarabunNew);
+    doc.addFileToVFS("THSarabunNew Bold.ttf", THSarabunNewBold);
+    doc.addFont("THSarabunNew.ttf", "THSarabunNew", "normal");
+    doc.addFont("THSarabunNew Bold.ttf", "THSarabunNewBold", "bold");
+    doc.setFont("THSarabunNew");
+    doc.setFont("THSarabunNewBold", "bold");
+    // Add recipient's name, address and phone number
+    doc.setFontSize(44);
+    doc.setTextColor(255, 0, 0);
+    const textWidth1 =
+      (doc.getStringUnitWidth("รายงาน") * doc.internal.getFontSize()) /
+      doc.internal.scaleFactor;
+    const x1 = (doc.internal.pageSize.width - textWidth1) / 2;
+    doc.text("รายงาน", x1, 20);
+
+    doc.setFont("THSarabunNew", "normal");
+    const header = ["Order ID", "Product Name", "Num", "Price"];
+    const columnWidths = [40, 70, 30, 30];
+    const headerHeight = 10;
+    const cellHeight = 10;
+
+    // Draw the table header
+    let x = 10;
+    for (let i = 0; i < header.length; i++) {
+      doc.setFillColor(220, 220, 220);
+      doc.rect(x, 40, columnWidths[i], headerHeight, "F"); // Draw a filled rectangle for each header cell
+      doc.rect(x, 40, columnWidths[i], headerHeight); // Draw the cell border
+      doc.text(header[i], x + 2, 48); // The y value is 40 (top of the cell) + half the cell height
+      x += columnWidths[i];
+    }
+    const pdfBlob = doc.output("blob");
+
+    // Create a blob URL
+    const url = URL.createObjectURL(pdfBlob);
+
+    // Open the PDF in a new tab
+    window.open(url, "_blank");
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `a.pdf`;
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  };
+
   const [showDateRangePicker, setShowDateRangePicker] = useState(false);
   return (
     <Box w="100%">
@@ -265,18 +316,17 @@ function index() {
         </Box>
         <Spacer />
         <Box borderWidth="1px" borderColor="red" borderRadius="md">
-          <Link href="/report/printReport">
-            <Button
-              fontSize="21px"
-              leftIcon={<Image src="/images/print.png" h="25px" w="25px" />}
-              bg="red"
-              variant="solid"
-              color="white"
-              _hover={{}}
-            >
-              พิมพ์รายงาน
-            </Button>
-          </Link>
+          <Button
+            fontSize="21px"
+            leftIcon={<Image src="/images/print.png" h="25px" w="25px" />}
+            bg="red"
+            variant="solid"
+            color="white"
+            _hover={{}}
+            onClick={printPDF}
+          >
+            พิมพ์รายงาน
+          </Button>
         </Box>
 
         <Box ml="5px" border="1px" borderColor="red" borderRadius="md">

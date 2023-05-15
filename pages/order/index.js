@@ -88,7 +88,7 @@ import {
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import THSarabunNew from "@/components/THSarabunNew";
-import THSarabunNewBlod from "@/components/THSarabunNewBlod";
+import THSarabunNewBold from "@/components/THSarabunNewBold";
 
 function MenuCheckboxList(props) {
   const { values, onValueChange } = props;
@@ -376,9 +376,9 @@ export default function Order() {
 
       // Add the Thai font
       doc.addFileToVFS("THSarabunNew.ttf", THSarabunNew);
-      doc.addFileToVFS("THSarabunNew Bold.ttf", THSarabunNewBlod);
+      doc.addFileToVFS("THSarabunNew Bold.ttf", THSarabunNewBold);
       doc.addFont("THSarabunNew.ttf", "THSarabunNew", "normal");
-      doc.addFont("THSarabunNew Bold.ttf", "THSarabunNewBlod", "bold");
+      doc.addFont("THSarabunNew Bold.ttf", "THSarabunNewBold", "bold");
       doc.setFont("THSarabunNew");
 
       let y = 10; // Start y at the top of the page
@@ -390,7 +390,7 @@ export default function Order() {
         }
         const addressReceiverName = `${order.address} ต.${order.sub_district} อ.${order.district} จ.${order.province} ${order.postcode}`;
         // Add recipient's name, address and phone number
-        doc.setFont("THSarabunNewBlod", "bold");
+        doc.setFont("THSarabunNewBold", "bold");
         doc.setFontSize(16);
         doc.text("Recipient Name: " + order.receiverName, 10, y);
         doc.setFont("THSarabunNew", "normal");
