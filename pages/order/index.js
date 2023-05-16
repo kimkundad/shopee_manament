@@ -214,11 +214,13 @@ export default function Order() {
   const [selectedAllOrder, setSelectedAllOrder] = useState(false);
   const [showListOrderPDF, setShowListOrderPDF] = useState(true);
   const [nextStatus, setNextStatus] = useState("");
+  const [trackingOrderId, setTrackingOrderId] = useState("");
+  const [tracking, setTracking] = useState("");
   // end
 
   const fetchData = async () => {
     const response = await axios.get(
-      `https://shopee-api.deksilp.com/api/getOrders`
+      `https://api.sellpang.com/api/getOrders`
     );
     setOrders(response.data.orders);
     console.log(orders);
@@ -256,7 +258,7 @@ export default function Order() {
     formData.append("id", id);
     formData.append("status", status);
     const response = await axios.post(
-      "https://shopee-api.deksilp.com/api/setStatusOrders",
+      "https://api.sellpang.com/api/setStatusOrders",
       formData
     );
     if (response.data.success) {
@@ -357,7 +359,7 @@ export default function Order() {
       });
       formData.append(`status`, status);
       const response = await axios.post(
-        "https://shopee-api.deksilp.com/api/setStatusOrdersMulti",
+        "https://api.sellpang.com/api/setStatusOrdersMulti",
         formData
       );
       if (response.data.success) {
@@ -750,6 +752,32 @@ export default function Order() {
     setIdOrder(id);
     modalCancelSetStatusSingle.onOpen();
   };
+
+  const handleInputTracking = (id, orderID) => {
+    setIdOrder(id);
+    setTrackingOrderId(orderID);
+    ModalInputTax.onOpen();
+  };
+
+  const inputTracking = (e) => {
+    setTracking(e.target.value);
+  }
+
+  const handleInsertTracking = async () => {
+    const formData = new FormData();
+    formData.append(`orderId`, idOrder);
+    formData.append(`tracking`, tracking);
+    const response = await axios.post(
+      "https://api.sellpang.com/api/addTrackingOrder",
+      formData
+    );
+    if (response.data.success) {
+      fetchData();
+      ModalInputTax.onClose();
+      setTracking("");
+    }
+  };
+
   return (
     <>
       {/* Start Header */}
@@ -1209,7 +1237,7 @@ export default function Order() {
                           <Td p={2}>
                             <Center>
                               <Image
-                                src={`https://shopee-api.deksilp.com/images/shopee/products/${filteredOrder.imageThumbnail}`}
+                                src={`https://api.sellpang.com/images/shopee/products/${filteredOrder.imageThumbnail}`}
                                 width={30}
                                 height={30}
                                 alt="bay"
@@ -1365,7 +1393,12 @@ export default function Order() {
                                         borderColor={"#f84c01"}
                                         aria-label="Edit"
                                         variant="outline"
-                                        onClick={ModalInputTax.onOpen}
+                                        onClick={() => {
+                                          handleInputTracking(
+                                            filteredOrder.ID,
+                                            filteredOrder.orderId
+                                          );
+                                        }}
                                       />
                                     </Box>
                                   )}
@@ -1551,7 +1584,7 @@ export default function Order() {
                         // src={"/images/No-Image.png"}
                         src={
                           imageSlip != null
-                            ? `https://shopee-api.deksilp.com/images/shopee/slip/${imageSlip}`
+                            ? `https://api.sellpang.com/images/shopee/slip/${imageSlip}`
                             : "/images/No-Image.png"
                         }
                         h={"300px"}
@@ -1736,8 +1769,8 @@ export default function Order() {
                             <Image
                               src={
                                 detail.option1 === 0
-                                  ? `https://shopee-api.deksilp.com/images/shopee/products/${detail.imgProduct}`
-                                  : `https://shopee-api.deksilp.com/images/shopee/products/${detail.imgProductOption}`
+                                  ? `https://api.sellpang.com/images/shopee/products/${detail.imgProduct}`
+                                  : `https://api.sellpang.com/images/shopee/products/${detail.imgProductOption}`
                               }
                               h="50px"
                               w="50px"
@@ -1898,7 +1931,7 @@ export default function Order() {
                 <Image
                   src={
                     imageSlip != null
-                      ? `https://shopee-api.deksilp.com/images/shopee/slip/${imageSlip}`
+                      ? `https://api.sellpang.com/images/shopee/slip/${imageSlip}`
                       : "/images/No-Image.png"
                   }
                   // w={"350px"}
@@ -2005,10 +2038,20 @@ export default function Order() {
             width={"20px"}
             height={"20px"}
           />
-          <ModalBody pb={6}></ModalBody>
+          <ModalBody pb={6}>
+            <FormControl>
+              <FormLabel>Order ID</FormLabel>
+              <Input bgColor={"whitesmoke"} value={trackingOrderId} readOnly />
+            </FormControl>
 
-          <ModalFooter justifyContent={'center'}>
-            <Button colorScheme="green" mr={3}>
+            <FormControl mt={4}>
+              <FormLabel>Tracking</FormLabel>
+              <Input placeholder="Tracking" onChange={inputTracking}/>
+            </FormControl>
+          </ModalBody>
+
+          <ModalFooter justifyContent={"center"}>
+            <Button colorScheme="green" mr={3} onClick={handleInsertTracking}>
               บันทึก
             </Button>
             <Button onClick={ModalInputTax.onClose}>ยกเลิก</Button>
