@@ -25,6 +25,9 @@ import ListCheck from "@/components/MenuList";
 import Link from "next/link";
 import axios from "axios";
 import { jsPDF } from "jspdf";
+import DBadmanX from "@/components/DBadmanX";
+import DBadmanXBold from "@/components/DBadmanXBold";
+import autoTable from "jspdf-autotable";
 import THSarabunNew from "@/components/THSarabunNew";
 import THSarabunNewBold from "@/components/THSarabunNewBold";
 function index() {
@@ -65,6 +68,7 @@ function index() {
       label: "ยอดขาย",
     },
   ]);
+
   const [itemsPerPage, setItemPerpages] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
   const [inputValue, setinputValue] = useState(1);
@@ -138,41 +142,6 @@ function index() {
     fecthdata();
   }, [currentPage, itemsPerPage, search]);
 
-  /* useEffect(() => {
-    let item = parseInt(itemsPerPage);
-    const newArr = [...products];
-    const filteredData = newArr.filter((item) =>
-      Object.values(item).join(" ").toLowerCase().includes(search.toLowerCase())
-    );
-    setTotalPages(Math.ceil(filteredData?.length / item));
-    const startIndex = (currentPage - 1) * item;
-    const endIndex = startIndex + item;
-    const items = filteredData?.slice(startIndex, endIndex);
-    setCurrentItems(items);
-
-    if (currentPage > totalPages) {
-      setCurrentPage(1);
-      setinputValue(1);
-    }
-
-    let sumSale = 0;
-    filteredData?.forEach((item) => {
-      if (item.type == 1) {
-        sumSale += item.price_type_1;
-      } else if (item.type == 2) {
-        sumSale += item.price_type_2;
-      } else if (item.type == 3) {
-        sumSale += item.price_type_3;
-      }
-    });
-    setSumSales(sumSale);
-    let sumOrder = 0;
-    filteredData?.forEach((item) => {
-      sumOrder += item.num;
-    });
-    setSumOrders(sumOrder);
-  }, [products, currentPage, itemsPerPage, search]); */
-  //pagination
   const handleSelectChange = (event) => {
     setItemPerpages(event.target.value);
   };
@@ -214,38 +183,164 @@ function index() {
   };
 
   const doc = new jsPDF();
-
+  console.log(products);
   const printPDF = () => {
-    doc.addFileToVFS("THSarabunNew.ttf", THSarabunNew);
-    doc.addFileToVFS("THSarabunNew Bold.ttf", THSarabunNewBold);
-    doc.addFont("THSarabunNew.ttf", "THSarabunNew", "normal");
-    doc.addFont("THSarabunNew Bold.ttf", "THSarabunNewBold", "bold");
-    doc.setFont("THSarabunNew");
-    doc.setFont("THSarabunNewBold", "bold");
+    doc.addFileToVFS("DBAdmanX.ttf", DBadmanX);
+    doc.addFileToVFS("DB-Adman-X-Bd.ttf", DBadmanXBold);
+    doc.addFont("DBAdmanX.ttf", "DBadmanX", "normal");
+    doc.addFont("DB-Adman-X-Bd.ttf", "DBadmanXBold", "bold");
+    doc.setFont("DBadmanX");
+    doc.setFont("DBadmanXBold", "bold");
     // Add recipient's name, address and phone number
     doc.setFontSize(44);
     doc.setTextColor(255, 0, 0);
+    let y1 = 11;
     const textWidth1 =
       (doc.getStringUnitWidth("รายงาน") * doc.internal.getFontSize()) /
       doc.internal.scaleFactor;
-    const x1 = (doc.internal.pageSize.width - textWidth1) / 2;
-    doc.text("รายงาน", x1, 20);
+    const x1 = (doc.internal.pageSize.width - textWidth1 - 14) / 2;
+    // Add the image to the PDF document
+    doc.addImage("/images/menu/report.png", "JPEG", x1, y1, 10, 10);
 
-    doc.setFont("THSarabunNew", "normal");
-    const header = ["Order ID", "Product Name", "Num", "Price"];
-    const columnWidths = [40, 70, 30, 30];
-    const headerHeight = 10;
-    const cellHeight = 10;
+    // Calculate the width of the image
+    let imgWidth = 10;
 
-    // Draw the table header
-    let x = 10;
-    for (let i = 0; i < header.length; i++) {
-      doc.setFillColor(220, 220, 220);
-      doc.rect(x, 40, columnWidths[i], headerHeight, "F"); // Draw a filled rectangle for each header cell
-      doc.rect(x, 40, columnWidths[i], headerHeight); // Draw the cell border
-      doc.text(header[i], x + 2, 48); // The y value is 40 (top of the cell) + half the cell height
-      x += columnWidths[i];
-    }
+    // Add the text to the PDF document, aligned with the right edge of the image
+    doc.text("รายงาน", x1 + imgWidth + 5, 10 + 10);
+
+    doc.setFont("DBadmanX", "normal");
+    doc.setFontSize(14);
+    doc.setTextColor(0, 0, 0);
+
+    const x2 = doc.internal.pageSize.width - 40;
+    doc.text("วันที่ : 12/11/55", x2, 30, { align: "left" });
+
+    const x3 = doc.internal.pageSize.width - 40;
+    doc.text("เวลา : 14:12:12 น.", x3, 35, { align: "left" });
+    /* const columns = ["วันที่", "ชื่อร้านค้า", "ชื่อสินค้า", "รหัสสินค้า", "ลิงค์ร้านค้า", "เลขคำสั่งชื้อ", "ชื่อลูกค้า", "ที่อยู่", "เบอร์โทรศัพท์", "จำนวนสั่งซื้อ", "ยอดขาย"]; */
+
+    const headers = [
+      "วันที่",
+      "ชื่อร้านค้า",
+      "ชื่อสินค้า",
+      "รหัสสินค้า",
+      "เลขคำสั่งชื้อ",
+      "ชื่อลูกค้า",
+      "ที่อยู่",
+      "เบอร์โทรศัพท์",
+      "จำนวนสั่งซื้อ",
+      "ยอดขาย",
+    ];
+
+    // Set the table properties
+    const tableTop = 40; // Y-coordinate for the top of the table
+    const tableLeft = 5; // X-coordinate for the left of the table
+    const lineHeight = 15; // Minimum line height for text
+    const padding = 2; // Padding for each cell
+    // Calculate the cell width based on available space
+    const availableWidth = doc.internal.pageSize.getWidth() - tableLeft * 2;
+    const cellWidth = availableWidth / headers.length;
+
+    // Set the initial position for the table
+    let xPos = tableLeft;
+    let yPos = tableTop;
+
+    // Set the font size and style
+    doc.setFontSize(10);
+    doc.setFont("DBadmanXBold", "bold");
+    // Calculate the maximum cell height in each row
+    let newArr = [];
+    products.data.forEach((item, index) => {
+      newArr = [
+        ...newArr,
+        item.type == 1
+          ? [
+              item.created_at,
+              item.name_shop,
+              item.name_product,
+              item.sku_type_1,
+              item.invoice_id,
+              item.name,
+              item.province,
+              item.tel,
+              item.num,
+              item.price_type_1 * item.num,
+            ]
+          : item.type == 2
+          ? [
+              item.created_at,
+              item.name_shop,
+              item.name_product,
+              item.sku_type_2,
+              item.invoice_id,
+              item.name,
+              item.province,
+              item.tel,
+              item.num,
+              item.price_type_2 * item.num,
+            ]
+          : [
+              item.created_at,
+              item.name_shop,
+              item.name_product,
+              item.sku_type_3,
+              item.invoice_id,
+              item.name,
+              item.province,
+              item.tel,
+              item.num,
+              item.price_type_3 * item.num,
+            ],
+      ];
+    });
+    console.log(newArr);
+    const rowHeights = newArr.map((row) => {
+      let maxHeight = lineHeight; // Minimum height for the row
+      console.log(maxHeight)
+      row.forEach((cell) => {
+        const cellHeight =
+          doc.getTextDimensions(cell, { maxWidth: cellWidth * padding }).h +
+          padding * 2;
+        maxHeight = Math.max(maxHeight, cellHeight);
+      });
+      return maxHeight;
+    });
+
+    // Draw the table headers
+    headers.forEach((header) => {
+      doc.setFillColor(255, 0, 0); // Set fill color for header
+      doc.rect(xPos, yPos, cellWidth, lineHeight, "F"); // Draw filled rectangle for header
+      doc.setTextColor(255, 255, 255);
+      doc.text(header, xPos + padding, yPos + padding + lineHeight / 2); // Draw header text
+      xPos += cellWidth; // Move to the next column
+    });
+    doc.setFontSize(8);
+    doc.setFont("DBadmanX", "normal");
+    // Draw the table rows
+    yPos += lineHeight; // Move to the first row position
+
+    newArr.forEach((row, rowIndex) => {
+      const rowHeight = rowHeights[rowIndex]; // Get the calculated height for the current row
+      xPos = tableLeft; // Reset the X position for each row
+      row.forEach((cell, cellIndex) => {
+        let value = cell.toString();
+        doc.setTextColor(0, 0, 0);
+        if (rowIndex % 2 != 0) {
+          doc.setFillColor(255, 255, 255);
+        } else {
+          doc.setFillColor(238, 238, 238);
+        }
+        doc.rect(xPos, yPos, cellWidth, rowHeight, "F"); // Draw filled rectangle for cell
+        doc.text(value, xPos + padding, yPos - padding + rowHeight / 2, {
+          maxWidth: cellWidth - padding * 2,
+          align: "left",
+          baseline: "alphabetic",
+        }); // Draw cell text
+
+        xPos += cellWidth; // Move to the next column
+      });
+      yPos += rowHeight; // Move to the next row position
+    });
     const pdfBlob = doc.output("blob");
 
     // Create a blob URL
@@ -337,7 +432,7 @@ function index() {
           />
         </Box>
       </Flex>
-      <Box padding={"0.5rem 1rem 0.5rem 1rem"}>
+      <Box id="pdf-content" padding={"0.5rem 1rem 0.5rem 1rem"}>
         <Table
           variant="striped"
           colorScheme="gray"
