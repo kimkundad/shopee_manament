@@ -166,7 +166,7 @@ export default function AdminManagement() {
   };
 
   const fetchAllUsers = async () => {
-    Axios.get("https://shopee-api.deksilp.com/api/getAllUsers").then(function (
+    Axios.get("https://api.sellpang.com/api/getAllUsers").then(function (
       response
     ) {
       setAllUsers(response.data.users);
@@ -188,7 +188,7 @@ export default function AdminManagement() {
       set_permission_admin_manage: perAdminManage,
       set_permission_settings: perSettings,
     };
-    Axios.post("https://shopee-api.deksilp.com/api/createSubAdmin", data).then(
+    Axios.post("https://api.sellpang.com/api/createSubAdmin", data).then(
       function (response) {
         if (response.data.success) {
           fetchAllUsers();
@@ -212,7 +212,7 @@ export default function AdminManagement() {
       set_permission_admin_manage: editPerAdminManage,
       set_permission_settings: editPerSettings,
     };
-    Axios.post("https://shopee-api.deksilp.com/api/updateSubAdmin", data).then(
+    Axios.post("https://api.sellpang.com/api/updateSubAdmin", data).then(
       function (response) {
         if (response.data.success) {
           fetchAllUsers();
@@ -307,7 +307,7 @@ export default function AdminManagement() {
       userID: userIdAdmin,
     };
 
-    Axios.post("https://shopee-api.deksilp.com/api/deleteSubAdmin", data).then(
+    Axios.post("https://api.sellpang.com/api/deleteSubAdmin", data).then(
       function (response) {
         if (response.data.success) {
           fetchAllUsers();
@@ -331,7 +331,7 @@ export default function AdminManagement() {
   useEffect(() => {
     const fetchData = async () => {
       const response = await Axios.get(
-        `https://shopee-api.deksilp.com/api/getSearchDateSubAdmin?search=${searchDateSubAdmin}`
+        `https://api.sellpang.com/api/getSearchDateSubAdmin?search=${searchDateSubAdmin}`
       );
       setAllUsers(response.data.users);
     };
@@ -354,7 +354,7 @@ export default function AdminManagement() {
   useEffect(() => {
     const fetchData = async () => {
       const response = await Axios.get(
-        `https://shopee-api.deksilp.com/api/getSearchName?search=${searchName}`
+        `https://api.sellpang.com/api/getSearchName?search=${searchName}`
       );
       setAllUsers(response.data.users);
     };

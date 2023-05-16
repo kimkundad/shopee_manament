@@ -28,7 +28,7 @@ export default function Layout(props) {
         formdata.append("user_id", user_id);
         formdata.append("shop_id", shop_id);
         const res = await axios.post(
-          `https://shopee-api.deksilp.com/api/getMessage`,
+          `https://api.sellpang.com/api/getMessage`,
           formdata
         );
         setMessage(res.data.message);

@@ -31,7 +31,7 @@ function index() {
         const formdata = new FormData();
         formdata.append("uid", data);
         const res = await axios.post(
-          `https://shopee-api.deksilp.com/api/getDetailCutomer`,
+          `https://api.sellpang.com/api/getDetailCutomer`,
           formdata
         );
         setCustomer(res.data.customer[0]);
@@ -75,7 +75,7 @@ function index() {
       <Box px="20px">
         <Flex alignItems="center">
           <Image
-            src={`https://shopee-api.deksilp.com/images/shopee/avatar/${customer.avatar}`}
+            src={`https://api.sellpang.com/images/shopee/avatar/${customer.avatar}`}
             h="90px"
             w="90px"
             borderRadius="50%"
@@ -228,13 +228,13 @@ function index() {
                       {item.type == 1 ? (
                         <Image
                           h="60px"
-                          src={`https://shopee-api.deksilp.com/images/shopee/products/${item.img_product}`}
+                          src={`https://api.sellpang.com/images/shopee/products/${item.img_product}`}
                           alt=""
                         />
                       ) : (
                         <Image
                           h="60px"
-                          src={`https://shopee-api.deksilp.com/images/shopee/products/${item.img_pro_option}`}
+                          src={`https://api.sellpang.com/images/shopee/products/${item.img_pro_option}`}
                           alt=""
                         />
                       )}

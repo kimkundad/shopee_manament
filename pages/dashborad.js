@@ -29,13 +29,14 @@ export default function DashBoard() {
   const [allStock, setAllStock] = useState(null);
   const [totalSales, setTotalSales] = useState();
   const [totalDelivery, setTotalDelivery] = useState(null);
+  const [totalPayment, setTotalPayment] = useState(null);
   useEffect(() => {
     async function fecthdata() {
       const formdata = new FormData();
       let user_id = 3; // ถ้ามี login เปลี่ยนเป็น uid ของคน login
       formdata.append("uid", user_id);
       const res = await axios.post(
-        `https://shopee-api.deksilp.com/api/dashboard`,
+        `https://api.sellpang.com/api/dashboard`,
         formdata
       );
       setDataTable(res.data.data_table);
@@ -46,6 +47,7 @@ export default function DashBoard() {
       setAllStock(res.data.all_stock[0].allStock);
       setTotalSales(res.data.total_sales[0].total_sales);
       setTotalDelivery(res.data.total_delivery[0]);
+      setTotalPayment(res.data.total_payment[0]);
     }
     fecthdata();
   }, []);
@@ -117,7 +119,20 @@ export default function DashBoard() {
     datasets: [
       {
         label: "# of Votes",
-        data: [totalDelivery?.sum_payment, totalDelivery?.sum_cash_on_delivery],
+        data: [totalDelivery?.sum_sent, totalDelivery?.sum_not_sent],
+        backgroundColor: ["rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)"],
+        borderColor: ["rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)"],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const dataDonutPaymnet = {
+    labels: [],
+    datasets: [
+      {
+        label: "# of Votes",
+        data: [totalPayment?.sum_payment, totalPayment?.sum_cash_on_delivery],
         backgroundColor: ["rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)"],
         borderColor: ["rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)"],
         borderWidth: 1,
@@ -131,6 +146,7 @@ export default function DashBoard() {
 
   const [textCenterStock, setTextCenterStock] = useState(false);
   const [textCenterDelivery, setTextCenterDelivery] = useState(false);
+  const [textCenterPayment, setTextCenterPayment] = useState(false);
   useEffect(() => {
     if (allStock !== null && totalDelivery !== null) {
       const stock = {
@@ -160,8 +176,8 @@ export default function DashBoard() {
         beforeDatasetDraw(chart, args, pluginOptions) {
           const { ctx, data } = chart;
           let sum =
-            parseInt(totalDelivery.sum_payment) +
-            parseInt(totalDelivery.sum_cash_on_delivery);
+            parseInt(totalDelivery.sum_sent) +
+            parseInt(totalDelivery.sum_not_sent);
           ctx.save();
           ctx.font = "20px sans-serif";
           ctx.textAlign = "center";
@@ -179,29 +195,66 @@ export default function DashBoard() {
         },
       };
       setTextCenterDelivery(delivery);
+      const payment = {
+        id: "textCenter",
+        beforeDatasetDraw(chart, args, pluginOptions) {
+          const { ctx, data } = chart;
+          let sum =
+            parseInt(totalPayment.sum_payment) +
+            parseInt(totalPayment.sum_cash_on_delivery);
+          ctx.save();
+          ctx.font = "20px sans-serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(
+            "จำนวน",
+            chart.getDatasetMeta(0).data[0].x,
+            chart.getDatasetMeta(0).data[0].y - 10
+          );
+          ctx.fillText(
+            sum?.toLocaleString(),
+            chart.getDatasetMeta(0).data[0].x,
+            chart.getDatasetMeta(0).data[0].y + 20
+          );
+        },
+      };
+      setTextCenterPayment(payment);
     }
-  }, [allStock]);
+  }, [allStock, totalDelivery]);
 
   const dataPieProduct = {
     labels: [],
     datasets: [
       {
         label: "My First Dataset",
-        data: dataPieProducts.map((element) => element.total_num),
+        data: dataPieProducts.map((element) => ({
+          value: element.total_num,
+          formattedValue: element.total_num.toLocaleString(),
+        })),
         backgroundColor: [
           "rgba(255, 99, 132, 1)",
           "rgba(54, 162, 235, 1)",
           "rgba(255, 206, 86, 1)",
+          "rgba(150, 134, 86, 1)",
+          "rgba(100, 206, 86, 1)",
         ],
         borderColor: [
           "rgba(255, 99, 132, 1)",
           "rgba(54, 162, 235, 1)",
           "rgba(255, 206, 86, 1)",
+          "rgba(150, 134, 86, 1)",
+          "rgba(100, 206, 86, 1)",
         ],
         borderWidth: 1,
       },
     ],
   };
+
+  // Add arrows to the pie chart output values
+  dataPieProduct.datasets[0].data.forEach((dataPoint) => {
+    const arrow = dataPoint.value >= 0 ? "↑" : "↓";
+    dataPoint.formattedValue = arrow + " " + dataPoint.formattedValue;
+  });
   const dataPieShop = {
     labels: [],
     datasets: [
@@ -259,17 +312,35 @@ export default function DashBoard() {
     },
   };
 
-  const labels = ["January", "May"];
-
-  const [dataTest,setDataTest] = useState([]);
-  dataBars?.map((item,index) => {
-    {item.data?.map((subItem,subIndex) => {
-      
-    })}
-  })
+  const labels = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+  ];
+  const test = [10, 12, 12, 45, 78, 42, 10];
   const dataBar = {
     labels,
-    datasets: [dataBars?.map((item, index) => {})],
+    datasets: [
+      {
+        label: "Dataset 1",
+        data: test.map((item) => item),
+        backgroundColor: "rgb(255, 99, 132)",
+      },
+      {
+        label: "Dataset 2",
+        data: test.map((item) => item),
+        backgroundColor: "rgb(75, 192, 192)",
+      },
+      {
+        label: "Dataset 3",
+        data: test.map((item) => item),
+        backgroundColor: "rgb(53, 162, 235)",
+      },
+    ],
   };
 
   const divRef = useRef(null);
@@ -375,27 +446,36 @@ export default function DashBoard() {
                 borderRadius: "10px",
                 overflow: "hidden",
               }}
+              h="vh"
             >
               <Thead bg="red">
                 <Tr>
                   <Th>
-                    <Text>ชื่อร้าน</Text>
+                    <Text fontSize="24px" color="white">
+                      ชื่อร้าน
+                    </Text>
                   </Th>
                   <Th>
-                    <Text>ยอดขาย</Text>
+                    <Text fontSize="24px" color="white">
+                      ยอดขาย
+                    </Text>
                   </Th>
                   <Th>
-                    <Text>สินค้าขายดี</Text>
+                    <Text fontSize="24px" color="white">
+                      สินค้าขายดี
+                    </Text>
                   </Th>
                 </Tr>
               </Thead>
               <Tbody>
                 {dataTable?.map((item, index) => {
                   return (
-                    <Tr>
+                    <Tr fontSize="20px">
                       <Td>{item.name_shop}</Td>
                       <Td>{parseFloat(item.total_price).toLocaleString()}</Td>
-                      <Td>{item.name_product}</Td>
+                      <Td w="300px">
+                        <Text>{item.name_product}</Text>
+                      </Td>
                     </Tr>
                   );
                 })}
@@ -484,22 +564,28 @@ export default function DashBoard() {
         >
           การจัดส่ง
           <Box h="200px">
-            <Doughnut
-              data={dataDonutDelivery}
-              options={optionsDonut}
-              plugins={[textCenterStock]}
-            />
+            {textCenterDelivery ? (
+              <Doughnut
+                data={dataDonutDelivery}
+                options={optionsDonut}
+                plugins={[textCenterDelivery]}
+              />
+            ) : null}
           </Box>
           <Box>
             <Flex>
-              <Text>การจัดส่งพัสดุด่วน</Text>
-              <Spacer />
-              <Text>{allStock - totalSales} ชิ้น</Text>
-            </Flex>
-            <Flex>
               <Text>พัสดุลงทะเบียน</Text>
               <Spacer />
-              <Text>{totalSales} ชิ้น</Text>
+              <Text>
+                {parseInt(totalDelivery?.sum_sent).toLocaleString()} ชิ้น
+              </Text>
+            </Flex>
+            <Flex>
+              <Text>พัสดุที่ยังไม่ลงทะเบียน</Text>
+              <Spacer />
+              <Text>
+                {parseInt(totalDelivery?.sum_not_sent).toLocaleString()} ชิ้น
+              </Text>
             </Flex>
           </Box>
         </GridItem>
@@ -513,11 +599,11 @@ export default function DashBoard() {
         >
           การชำระเงิน
           <Box h="200px">
-            {textCenterDelivery ? (
+            {textCenterPayment ? (
               <Doughnut
-                data={dataDonutDelivery}
+                data={dataDonutPaymnet}
                 options={optionsDonut}
-                plugins={[textCenterDelivery]}
+                plugins={[textCenterPayment]}
               />
             ) : null}
           </Box>
@@ -526,14 +612,14 @@ export default function DashBoard() {
               <Text>โอนเงิน</Text>
               <Spacer />
               <Text>
-                {parseInt(totalDelivery?.sum_payment).toLocaleString()} ชิ้น
+                {parseInt(totalPayment?.sum_payment).toLocaleString()} ชิ้น
               </Text>
             </Flex>
             <Flex>
               <Text>เก็บเงินปลายทาง</Text>
               <Spacer />
               <Text>
-                {parseInt(totalDelivery?.sum_cash_on_delivery).toLocaleString()}{" "}
+                {parseInt(totalPayment?.sum_cash_on_delivery).toLocaleString()}{" "}
                 ชิ้น
               </Text>
             </Flex>

@@ -312,7 +312,7 @@ export default function shop() {
     });
     formData.append("themeShop", Theme);
 
-    Axios.post("https://shopee-api.deksilp.com/api/createShop", formData, {
+    Axios.post("https://api.sellpang.com/api/createShop", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     }).then(function (response) {
       if (response.data.success) {
@@ -326,7 +326,7 @@ export default function shop() {
 
   // ฟังก์ชัน เรียกข้อมูลร้านค้าใหม่ทั้งหมดที่ส่งมาจากหลังบ้าน
   const fetchAllShops = async () => {
-    Axios.get("https://shopee-api.deksilp.com/api/getAllShops").then(function (
+    Axios.get("https://api.sellpang.com/api/getAllShops").then(function (
       response
     ) {
       setShops(response.data.shops);
@@ -334,7 +334,7 @@ export default function shop() {
   };
 
   useEffect(() => {
-    Axios.get("https://shopee-api.deksilp.com/api/getAllProduct").then(
+    Axios.get("https://api.sellpang.com/api/getAllProduct").then(
       function (response) {
         setProducts(response.data.product);
       }
@@ -375,7 +375,7 @@ export default function shop() {
   useEffect(() => {
     const fetchData = async () => {
       const response = await Axios.get(
-        `https://shopee-api.deksilp.com/api/getSearchShops?search=${query}`
+        `https://api.sellpang.com/api/getSearchShops?search=${query}`
       );
       setShops(response.data.shops);
     };
@@ -388,7 +388,7 @@ export default function shop() {
   useEffect(() => {
     const fetchData = async () => {
       const response = await Axios.get(
-        `https://shopee-api.deksilp.com/api/getSearchDateShops?search=${searchDateShops}`
+        `https://api.sellpang.com/api/getSearchDateShops?search=${searchDateShops}`
       );
       setShops(response.data.shops);
     };
@@ -408,7 +408,7 @@ export default function shop() {
   useEffect(() => {
     const fetchData = async () => {
       const response = await Axios.get(
-        `https://shopee-api.deksilp.com/api/getFilterShops?type=${filterShops}`
+        `https://api.sellpang.com/api/getFilterShops?type=${filterShops}`
       );
       setShops(response.data.shops);
     };
@@ -1117,7 +1117,7 @@ export default function shop() {
                       <Td isNumeric>
                         <Image
                           src={
-                            "https://shopee-api.deksilp.com/images/shopee/products/" +
+                            "https://api.sellpang.com/images/shopee/products/" +
                             getPro.img_product
                           }
                           height={"50px"}
@@ -1424,7 +1424,7 @@ export default function shop() {
                       <Image
                         height={"62px"}
                         width={"100%"}
-                        src="https://shopee-api.deksilp.com/images/shopee/products/7k2ldlmlvyZ17a3oMOPlwggkU74SQCmXj39G3DIR.jpg"
+                        src="https://api.sellpang.com/images/shopee/products/7k2ldlmlvyZ17a3oMOPlwggkU74SQCmXj39G3DIR.jpg"
                         alt="Green double couch with wooden legs"
                         borderRadius="lg"
                       />
@@ -1497,7 +1497,7 @@ export default function shop() {
                       <Image
                         height={"62px"}
                         width={"100%"}
-                        src="https://shopee-api.deksilp.com/images/shopee/products/rTz62XhqqVPe9KVBjkDjqo1M1M7xAgPK7jbpAjGP.jpg"
+                        src="https://api.sellpang.com/images/shopee/products/rTz62XhqqVPe9KVBjkDjqo1M1M7xAgPK7jbpAjGP.jpg"
                         alt="Green double couch with wooden legs"
                         borderRadius="lg"
                       />
@@ -1570,7 +1570,7 @@ export default function shop() {
                       <Image
                         height={"62px"}
                         width={"100%"}
-                        src="https://shopee-api.deksilp.com/images/shopee/products/FbkeB0WtBsLQUJtlIvAoGCmaf4bFP9REvY4IA7hw.jpg"
+                        src="https://api.sellpang.com/images/shopee/products/FbkeB0WtBsLQUJtlIvAoGCmaf4bFP9REvY4IA7hw.jpg"
                         alt="Green double couch with wooden legs"
                         borderRadius="lg"
                       />
@@ -1643,7 +1643,7 @@ export default function shop() {
                       <Image
                         height={"62px"}
                         width={"100%"}
-                        src="https://shopee-api.deksilp.com/images/shopee/products/MjDW7GIFILiO6yNSdmtaYHjMHRMHKTnXxBXgt8ez.jpg"
+                        src="https://api.sellpang.com/images/shopee/products/MjDW7GIFILiO6yNSdmtaYHjMHRMHKTnXxBXgt8ez.jpg"
                         alt="Green double couch with wooden legs"
                         borderRadius="lg"
                       />

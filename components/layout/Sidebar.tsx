@@ -57,7 +57,7 @@ const Sidebar = ({ open, navItems = defaultNavItems, setOpen }: Props) => {
               <Link key={index} href={item.href}>
                 <li
                   className={classNames({
-                    "text-white bg-red-600": true, //colors
+                    "text-white bg-red-600 text-2xl": true, //colors
                     "flex gap-4 items-center ": true, //layout
                     "transition-colors duration-300": true, //animation
                     "rounded-xl p-2 mx-2 pl-10": true, //self style
@@ -72,7 +72,7 @@ const Sidebar = ({ open, navItems = defaultNavItems, setOpen }: Props) => {
                   onMouseEnter={() => handleMouseOver(index)}
                   onMouseLeave={() => handleMouseOut()}
                   className={classNames({
-                    "text-black hover:bg-red-600 hover:text-white": true, //colors
+                    "text-black hover:bg-red-600 hover:text-white text-2xl": true, //colors
                     "flex gap-4 items-center ": true, //layout
                     "transition-colors duration-300": true, //animation
                     "rounded-xl p-2 mx-2 pl-10": true, //self style
@@ -102,7 +102,7 @@ const Sidebar = ({ open, navItems = defaultNavItems, setOpen }: Props) => {
               alt="profile image"
             />
             <div className="flex flex-col ">
-              <Link href="/contact" className="text-black text-xl">
+              <Link href="/contact" className="text-black text-2xl">
                 ติดต่อทีมงาน
               </Link>
             </div>

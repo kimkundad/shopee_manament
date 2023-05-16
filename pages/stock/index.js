@@ -42,7 +42,7 @@ export default function stock() {
   async function fetchAllProduct() {
     let checkAll = true;
     const res = await axios.get(
-      "https://shopee-api.deksilp.com/api/getAllProduct"
+      "https://api.sellpang.com/api/getAllProduct"
     );
     setProducts(res.data);
     if (res.data.product.length > 0) {
@@ -110,7 +110,7 @@ export default function stock() {
   function handleAllSwitchChange() {
     async function fetchData() {
       const res = await axios.put(
-        `https://shopee-api.deksilp.com/api/setActiveAllProduct/?checked=${!isCheckedAll}`
+        `https://api.sellpang.com/api/setActiveAllProduct/?checked=${!isCheckedAll}`
       );
       setProducts(res.data);
       setIsCheckedAll(!isCheckedAll);
@@ -121,7 +121,7 @@ export default function stock() {
   const handleActivateProduct = (event) => {
     async function fetchData() {
       const res = await axios.put(
-        `https://shopee-api.deksilp.com/api/setActiveProduct/?id=${event.target.id}&checked=${event.target.checked}`
+        `https://api.sellpang.com/api/setActiveProduct/?id=${event.target.id}&checked=${event.target.checked}`
       );
       setProducts(res.data);
       setIsCheckedAll(
@@ -199,7 +199,7 @@ export default function stock() {
   function deleteProduct() {
     async function fetchData() {
       const res = await axios.post(
-        `https://shopee-api.deksilp.com/api/deleteProduct/${id}`
+        `https://api.sellpang.com/api/deleteProduct/${id}`
       );
       if (res.data.success) {
         fetchAllProduct();
@@ -231,7 +231,7 @@ export default function stock() {
     const fetchData = async () => {
       let checkAll = true;
       const response = await axios.get(
-        `https://shopee-api.deksilp.com/api/getSearchProduct?search=${searchQuery}`
+        `https://api.sellpang.com/api/getSearchProduct?search=${searchQuery}`
       );
       setProducts(response.data);
       if (response.data.product.length > 0) {
@@ -385,7 +385,7 @@ export default function stock() {
                       <Td>
                         <Center>
                           <Image
-                            src={`https://shopee-api.deksilp.com/images/shopee/products/${item.img_product}`}
+                            src={`https://api.sellpang.com/images/shopee/products/${item.img_product}`}
                             h="50px"
                             w="50px"
                           />
@@ -493,7 +493,7 @@ export default function stock() {
                   <Table.Cell>
                     <Center>
                       <Image
-                        src={`https://shopee-api.deksilp.com/images/shopee/products/${item.img_product}`}
+                        src={`https://api.sellpang.com/images/shopee/products/${item.img_product}`}
                         h="30px"
                         w="30px"
                       />

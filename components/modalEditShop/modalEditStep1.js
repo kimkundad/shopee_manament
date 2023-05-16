@@ -88,7 +88,7 @@ class PicturesShop extends React.Component {
         uid: "-1",
         name: this.props.nameImgShop,
         status: "done",
-        url: `https://shopee-api.deksilp.com/images/shopee/shop/${this.props.nameImgShop}`,
+        url: `https://api.sellpang.com/images/shopee/shop/${this.props.nameImgShop}`,
       },
     ],
   };
@@ -127,7 +127,7 @@ class PicturesCoverShop extends React.Component {
         uid: "-1",
         name: this.props.nameImgCoverShop,
         status: "done",
-        url: `https://shopee-api.deksilp.com/images/shopee/cover_img_shop/${this.props.nameImgCoverShop}`,
+        url: `https://api.sellpang.com/images/shopee/cover_img_shop/${this.props.nameImgCoverShop}`,
       },
     ],
   };
@@ -192,7 +192,7 @@ function modalEditStep1(props) {
       uid: "-1",
       name: Shops.img_shop,
       status: "done",
-      url: `https://shopee-api.deksilp.com/images/shopee/shop/${Shops.img_shop}`,
+      url: `https://api.sellpang.com/images/shopee/shop/${Shops.img_shop}`,
     },
   ];
 
@@ -201,7 +201,7 @@ function modalEditStep1(props) {
       uid: "-1",
       name: Shops.cover_img_shop,
       status: "done",
-      url: `https://shopee-api.deksilp.com/images/shopee/cover_img_shop/${Shops.cover_img_shop}`,
+      url: `https://api.sellpang.com/images/shopee/cover_img_shop/${Shops.cover_img_shop}`,
     },
   ];
 
@@ -219,7 +219,7 @@ function modalEditStep1(props) {
 
   const fetchListProduct = async () => {
     Axios.get(
-      "https://shopee-api.deksilp.com/api/getListProduct/" + shopID
+      "https://api.sellpang.com/api/getListProduct/" + shopID
     ).then(function (response) {
       if (response.data.success) {
         setListProduct(response.data.list_products);
@@ -250,7 +250,7 @@ function modalEditStep1(props) {
     setIsLoading(true);
     try {
       Axios.get(
-        "https://shopee-api.deksilp.com/api/getCategoryShop/" + shopID
+        "https://api.sellpang.com/api/getCategoryShop/" + shopID
       ).then(function (response) {
         if (response.data.success) {
           setTags(response.data.category_shop);
@@ -351,7 +351,7 @@ function modalEditStep1(props) {
     });
     formData.append("editThemeShop", Theme);
 
-    Axios.post("https://shopee-api.deksilp.com/api/editShop", formData, {
+    Axios.post("https://api.sellpang.com/api/editShop", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     }).then(function (response) {
       if (response.data.success) {
@@ -905,7 +905,7 @@ function modalEditStep1(props) {
                         <Td isNumeric>
                           <Image
                             src={
-                              "https://shopee-api.deksilp.com/images/shopee/products/" +
+                              "https://api.sellpang.com/images/shopee/products/" +
                               getPro.img_product
                             }
                             width={"30px"}
@@ -1122,7 +1122,7 @@ function modalEditStep1(props) {
             >
               <Box height={"121px"} width={"227px"}>
                 <Image
-                  // src="https://shopee-api.deksilp.com/images/shopee/cover_img_shop/ow9eC03MUxqOWwVBWEPGv3eLIAHKyx5my8A2yP6O.jpg"
+                  // src="https://api.sellpang.com/images/shopee/cover_img_shop/ow9eC03MUxqOWwVBWEPGv3eLIAHKyx5my8A2yP6O.jpg"
                   src={
                     editFileImgCoverShop[0]?.url ||
                     editFileImgCoverShop[0]?.thumbUrl
@@ -1143,7 +1143,7 @@ function modalEditStep1(props) {
               left={"120px"}
             >
               <Image
-                // src="https://shopee-api.deksilp.com/images/shopee/shop/rDM383VIMS22QpH2QJkexfrmUOMLiMiBmZEKYMQb.jpg"
+                // src="https://api.sellpang.com/images/shopee/shop/rDM383VIMS22QpH2QJkexfrmUOMLiMiBmZEKYMQb.jpg"
                 src={editFileImgShop[0]?.url || editFileImgShop[0]?.thumbUrl}
                 width={"50px"}
                 height={"50px"}
@@ -1323,7 +1323,7 @@ function modalEditStep1(props) {
                       <Image
                         height={"62px"}
                         width={"100%"}
-                        src="https://shopee-api.deksilp.com/images/shopee/products/7k2ldlmlvyZ17a3oMOPlwggkU74SQCmXj39G3DIR.jpg"
+                        src="https://api.sellpang.com/images/shopee/products/7k2ldlmlvyZ17a3oMOPlwggkU74SQCmXj39G3DIR.jpg"
                         alt="Green double couch with wooden legs"
                         borderRadius="lg"
                       />
@@ -1401,7 +1401,7 @@ function modalEditStep1(props) {
                       <Image
                         height={"62px"}
                         width={"100%"}
-                        src="https://shopee-api.deksilp.com/images/shopee/products/rTz62XhqqVPe9KVBjkDjqo1M1M7xAgPK7jbpAjGP.jpg"
+                        src="https://api.sellpang.com/images/shopee/products/rTz62XhqqVPe9KVBjkDjqo1M1M7xAgPK7jbpAjGP.jpg"
                         alt="Green double couch with wooden legs"
                         borderRadius="lg"
                       />
@@ -1479,7 +1479,7 @@ function modalEditStep1(props) {
                       <Image
                         height={"62px"}
                         width={"100%"}
-                        src="https://shopee-api.deksilp.com/images/shopee/products/FbkeB0WtBsLQUJtlIvAoGCmaf4bFP9REvY4IA7hw.jpg"
+                        src="https://api.sellpang.com/images/shopee/products/FbkeB0WtBsLQUJtlIvAoGCmaf4bFP9REvY4IA7hw.jpg"
                         alt="Green double couch with wooden legs"
                         borderRadius="lg"
                       />
@@ -1557,7 +1557,7 @@ function modalEditStep1(props) {
                       <Image
                         height={"62px"}
                         width={"100%"}
-                        src="https://shopee-api.deksilp.com/images/shopee/products/MjDW7GIFILiO6yNSdmtaYHjMHRMHKTnXxBXgt8ez.jpg"
+                        src="https://api.sellpang.com/images/shopee/products/MjDW7GIFILiO6yNSdmtaYHjMHRMHKTnXxBXgt8ez.jpg"
                         alt="Green double couch with wooden legs"
                         borderRadius="lg"
                       />

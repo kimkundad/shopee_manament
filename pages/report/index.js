@@ -96,7 +96,7 @@ function index() {
       formdata.append("endDate", endDateTimestamp);
       formdata.append("search", search);
       const res = await axios.post(
-        `https://shopee-api.deksilp.com/api/getReports`,
+        `https://api.sellpang.com/api/getReports`,
         formdata
       );
       setReports(res.data.reports);
@@ -107,7 +107,7 @@ function index() {
       let user_id = 3; // ถ้ามี login เปลี่ยนเป็น uid ของคน login
       formdataTotal.append("uid", user_id);
       const resTotal = await axios.post(
-        `https://shopee-api.deksilp.com/api/totalOrders`,
+        `https://api.sellpang.com/api/totalOrders`,
         formdataTotal
       );
       setSumSales(resTotal?.data?.total?.total_price);
@@ -128,7 +128,7 @@ function index() {
       formdata.append("endDate", endDateTimestamp);
       formdata.append("search", search);
       const res = await axios.post(
-        `https://shopee-api.deksilp.com/api/getReports?page=${currentPage}`,
+        `https://api.sellpang.com/api/getReports?page=${currentPage}`,
         formdata
       );
       setReports(res.data.reports);
@@ -195,7 +195,7 @@ function index() {
       formdata.append("endDate", endDateTimestamp);
       formdata.append("search", search);
       const res = await axios.post(
-        `https://shopee-api.deksilp.com/api/getReports?page=${i}`,
+        `https://api.sellpang.com/api/getReports?page=${i}`,
         formdata
       );
       doc.addFileToVFS("DBAdmanX.ttf", DBadmanX);

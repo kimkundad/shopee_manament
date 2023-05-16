@@ -57,7 +57,7 @@ export const getUserInfo = (router) => async (dispatch, getState) => {
     
     axios.request({
         method: "GET",
-        url: 'https://shopee-api.deksilp.com/api/auth/user-profile',
+        url: 'https://api.sellpang.com/api/auth/user-profile',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',

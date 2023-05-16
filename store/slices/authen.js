@@ -55,7 +55,7 @@ export const getUserAuthen = (user, router) => async dispatch => {
   
     axios.request({
         method: "POST",
-        url: 'https://shopee-api.deksilp.com/api/login',
+        url: 'https://api.sellpang.com/api/login',
         data: user,
         headers: {
           'Accept': 'application/json',

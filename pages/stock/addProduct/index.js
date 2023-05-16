@@ -309,7 +309,7 @@ function addProduct() {
       formData.append(`image[${index}]`, file);
     });
     const response = await axios.post(
-      "https://shopee-api.deksilp.com/api/addProduct",
+      "https://api.sellpang.com/api/addProduct",
       formData,
       { headers: { "Content-Type": "multipart/form-data" } }
     );
@@ -329,7 +329,7 @@ function addProduct() {
     formData.append("option2", subOption);
     formData.append("dataOption", JSON.stringify(dataTable));
     const response = await axios.post(
-      "https://shopee-api.deksilp.com/api/addOptionProduct",
+      "https://api.sellpang.com/api/addOptionProduct",
       formData
     );
     if (response.data.success) {
@@ -341,13 +341,13 @@ function addProduct() {
   const [category, setCategory] = useState([]);
   // function fetchData() {
   //   const res = axios.get(
-  //     "https://shopee-api.deksilp.com/api/get_category_all"
+  //     "https://api.sellpang.com/api/get_category_all"
   //   );
   //   setCategory(res.data.category);
   // }
   const fetchData = async () => {
     axios
-      .get("https://shopee-api.deksilp.com/api/get_category_all")
+      .get("https://api.sellpang.com/api/get_category_all")
       .then(function (response) {
         setCategory(response.data.category);
         setTags2(response.data.category);
@@ -543,7 +543,7 @@ function addProduct() {
     });
 
     axios
-      .post("https://shopee-api.deksilp.com/api/addCategory", formData, {
+      .post("https://api.sellpang.com/api/addCategory", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       })
       .then(function (response) {
@@ -578,7 +578,7 @@ function addProduct() {
   const handleConfirmDeleteSuccess = () => {
     axios
       .post(
-        "https://shopee-api.deksilp.com/api/deleteCategory/" + categoryIdDelete
+        "https://api.sellpang.com/api/deleteCategory/" + categoryIdDelete
       )
       .then(function (response) {
         if (response.data.success) {
@@ -625,7 +625,7 @@ function addProduct() {
     // });
 
     axios
-      .post("https://shopee-api.deksilp.com/api/EditCategory", data)
+      .post("https://api.sellpang.com/api/EditCategory", data)
       .then(function (response) {
         if (response.data.success) {
           modalConfirmEdit.onClose();
@@ -1672,7 +1672,7 @@ function addProduct() {
                             <Image
                               onClick={(event) => setValueSelect(item.id)}
                               mb="10px"
-                              src={`https://shopee-api.deksilp.com/images/shopee/products/${item.image}`}
+                              src={`https://api.sellpang.com/images/shopee/products/${item.image}`}
                               w="65px"
                               h="65px"
                             />

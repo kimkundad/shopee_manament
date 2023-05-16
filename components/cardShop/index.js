@@ -106,7 +106,7 @@ function index(product) {
       shopID: deleteShopID,
     };
 
-    Axios.post("https://shopee-api.deksilp.com/api/DeleteShop", data).then(
+    Axios.post("https://api.sellpang.com/api/DeleteShop", data).then(
       function (response) {
         if (response.data.success) {
           modalDelete.onClose();
@@ -140,7 +140,7 @@ function index(product) {
     };
 
     Axios.post(
-      "https://shopee-api.deksilp.com/api/changeStatusShop",
+      "https://api.sellpang.com/api/changeStatusShop",
       data
     ).then(function (response) {
       if (response.data.success) {
@@ -210,7 +210,7 @@ function index(product) {
                     <Box>
                       <Image
                         src={
-                          "https://shopee-api.deksilp.com/images/shopee/cover_img_shop/" +
+                          "https://api.sellpang.com/images/shopee/cover_img_shop/" +
                           shops.cover_img_shop
                         }
                         pos="relative"
@@ -222,7 +222,7 @@ function index(product) {
                       />
                       <Image
                         src={
-                          "https://shopee-api.deksilp.com/images/shopee/shop/" +
+                          "https://api.sellpang.com/images/shopee/shop/" +
                           shops.img_shop
                         }
                         pos="absolute"

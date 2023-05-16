@@ -22,7 +22,7 @@ export default function index() {
   useEffect(() => {
     async function fecthdata() {
       const res = await axios.get(
-        "https://shopee-api.deksilp.com/api/getAllShops"
+        "https://api.sellpang.com/api/getAllShops"
       );
       setShops(res.data.shops);
     }
@@ -74,7 +74,7 @@ export default function index() {
   useEffect(() => {
     const fetchData = async () => {
       const response = await axios.get(
-        `https://shopee-api.deksilp.com/api/getSearchShops?search=${searchShop}`
+        `https://api.sellpang.com/api/getSearchShops?search=${searchShop}`
       );
       setShops(response.data.shops);
     };
@@ -129,7 +129,7 @@ export default function index() {
                     <Flex>
                       <Image
                         borderRadius="50%"
-                        src={`https://shopee-api.deksilp.com/images/shopee/shop/${item.img_shop}`}
+                        src={`https://api.sellpang.com/images/shopee/shop/${item.img_shop}`}
                         alt=""
                         w="50px"
                         h="50px"

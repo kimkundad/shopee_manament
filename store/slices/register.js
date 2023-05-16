@@ -100,7 +100,7 @@ export const postRegis = (user, router) => async dispatch => {
    // console.log(user)
     axios.request({
         method: "POST",
-        url: 'https://shopee-api.deksilp.com/api/createUser',
+        url: 'https://api.sellpang.com/api/createUser',
         data: user,
         headers: {
           'Accept': 'application/json',

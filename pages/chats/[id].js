@@ -58,7 +58,7 @@ export default function useChats() {
       const formdata = new FormData();
       formdata.append("shop_id", shopId);
       const res = await axios.post(
-        "https://shopee-api.deksilp.com/api/getUserChats",
+        "https://api.sellpang.com/api/getUserChats",
         formdata
       );
       setUsers(res.data.users);
@@ -84,7 +84,7 @@ export default function useChats() {
         formdata.append("shop_id", shop_id);
         formdata.append("message", text);
         const res = await axios.post(
-          `https://shopee-api.deksilp.com/api/sendMessage`,
+          `https://api.sellpang.com/api/sendMessage`,
           formdata
         );
 
@@ -104,7 +104,7 @@ export default function useChats() {
         formdata.append("shop_id", shopId);
         formdata.append("name", searchUser);
         const res = await axios.post(
-          `https://shopee-api.deksilp.com/api/searchUserChats`,
+          `https://api.sellpang.com/api/searchUserChats`,
           formdata
         );
         setUsers(res.data.users);
@@ -112,7 +112,7 @@ export default function useChats() {
         const formdataUserChat = new FormData();
         formdataUserChat.append("shop_id", shopId);
         const userChats = await axios.post(
-          "https://shopee-api.deksilp.com/api/getUserChats",
+          "https://api.sellpang.com/api/getUserChats",
           formdataUserChat
         );
         setUsers(userChats.data.users);
@@ -133,7 +133,7 @@ export default function useChats() {
         formdata.append("shop_id", shopId);
         formdata.append("type",'shop');
         const res = await axios.post(
-          `https://shopee-api.deksilp.com/api/getMessage`,
+          `https://api.sellpang.com/api/getMessage`,
           formdata
         );
         setMessages(res.data.message);
@@ -151,7 +151,7 @@ export default function useChats() {
       formdata.append("shop_id", shopId);
       formdata.append("name", searchUser);
       const res = await axios.post(
-        `https://shopee-api.deksilp.com/api/searchUserChats`,
+        `https://api.sellpang.com/api/searchUserChats`,
         formdata
       );
       setUsers(res.data.users);
@@ -199,7 +199,7 @@ export default function useChats() {
                 >
                   <Image
                     borderRadius="50%"
-                    src={`https://shopee-api.deksilp.com/images/shopee/avatar/${item.avatar}`}
+                    src={`https://api.sellpang.com/images/shopee/avatar/${item.avatar}`}
                     alt=""
                     h="55px "
                     w="55px "
