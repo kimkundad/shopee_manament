@@ -183,7 +183,6 @@ function index() {
   };
 
   const doc = new jsPDF();
-  console.log(products);
   const printPDF = () => {
     doc.addFileToVFS("DBAdmanX.ttf", DBadmanX);
     doc.addFileToVFS("DB-Adman-X-Bd.ttf", DBadmanXBold);
@@ -235,7 +234,7 @@ function index() {
     // Set the table properties
     const tableTop = 40; // Y-coordinate for the top of the table
     const tableLeft = 5; // X-coordinate for the left of the table
-    const lineHeight = 15; // Minimum line height for text
+    const lineHeight = 10; // Minimum line height for text
     const padding = 2; // Padding for each cell
     // Calculate the cell width based on available space
     const availableWidth = doc.internal.pageSize.getWidth() - tableLeft * 2;
@@ -293,19 +292,22 @@ function index() {
             ],
       ];
     });
-    console.log(newArr);
-    const rowHeights = newArr.map((row) => {
-      let maxHeight = lineHeight; // Minimum height for the row
-      console.log(maxHeight)
+    const rowHeights = [];
+    newArr.map((row) => {
+      let maxHeight = 0; // Maximum height of the current row
+
       row.forEach((cell) => {
         const cellHeight =
-          doc.getTextDimensions(cell, { maxWidth: cellWidth * padding }).h +
+          doc.getTextDimensions(cell, { maxWidth: cellWidth - padding * 2 }).h +
           padding * 2;
         maxHeight = Math.max(maxHeight, cellHeight);
       });
-      return maxHeight;
+      if(maxHeight > 20){
+        maxHeight = maxHeight/1.5
+      }
+      rowHeights.push(maxHeight);
     });
-
+    console.log(rowHeights)
     // Draw the table headers
     headers.forEach((header) => {
       doc.setFillColor(255, 0, 0); // Set fill color for header
@@ -331,7 +333,8 @@ function index() {
           doc.setFillColor(238, 238, 238);
         }
         doc.rect(xPos, yPos, cellWidth, rowHeight, "F"); // Draw filled rectangle for cell
-        doc.text(value, xPos + padding, yPos - padding + rowHeight / 2, {
+        let divide = (rowHeight /10)+(rowHeight /10);
+        doc.text(value, xPos + padding, yPos + rowHeight / divide, {
           maxWidth: cellWidth - padding * 2,
           align: "left",
           baseline: "alphabetic",
