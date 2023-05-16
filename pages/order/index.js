@@ -87,6 +87,7 @@ import {
   BsEyeFill,
   BsFillClipboard2CheckFill,
   BsArrowBarDown,
+  BsFillPrinterFill,
 } from "react-icons/bs";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
@@ -187,6 +188,10 @@ export default function Order() {
   const modalDetailOrder = useDisclosure();
   const ModalConfirmSetStatus = useDisclosure();
   const ModalInputTax = useDisclosure();
+  const modalConfirmSetStatusMulti = useDisclosure();
+  const modalCancelSetStatusMulti = useDisclosure();
+  const modalConfirmSetStatusSingle = useDisclosure();
+  const modalCancelSetStatusSingle = useDisclosure();
 
   // ชื่อตัวแปรของการดูรายละเอียดหลักฐาน
   const [namePayment, setNamePayment] = useState("");
@@ -207,7 +212,8 @@ export default function Order() {
   const [checkIssueTaxInvoice, setCheckIssueTaxInvoice] = useState(true);
   const [selectedOrders, setSelectedOrders] = useState([]);
   const [selectedAllOrder, setSelectedAllOrder] = useState(false);
-  const [showListOrderPDF, setShowListOrderPDF] = useState(false);
+  const [showListOrderPDF, setShowListOrderPDF] = useState(true);
+  const [nextStatus, setNextStatus] = useState("");
   // end
 
   const fetchData = async () => {
@@ -256,6 +262,8 @@ export default function Order() {
     if (response.data.success) {
       fetchData();
       modalDetailOrder.onClose();
+      modalConfirmSetStatusSingle.onClose();
+      modalCancelSetStatusSingle.onClose();
     }
   };
 
@@ -309,6 +317,7 @@ export default function Order() {
     setDateCreateOrder(formattedDate);
     setAddressReceiverName(addressReceiverName);
     setIdOrder(data[0].ID);
+    setNextStatus("กำลังแพ็ค");
     console.log("Order", data);
     console.log("Detail order", detailOrder);
   };
@@ -355,6 +364,7 @@ export default function Order() {
         fetchData();
         setSelectedOrders([]);
         ModalConfirmSetStatus.onClose();
+        modalConfirmSetStatus2.onClose();
       }
     }
   };
@@ -540,6 +550,205 @@ export default function Order() {
       URL.revokeObjectURL(url);
       ModalConfirmSetStatus.onOpen();
     }
+  };
+
+  const handleOpenModalSetStatusMulti = () => {
+    if (selectedOrders.length > 0) {
+      modalConfirmSetStatusMulti.onOpen();
+    }
+  };
+
+  const handleOpenModalCancelStatusMulti = () => {
+    if (selectedOrders.length > 0) {
+      modalCancelSetStatusMulti.onOpen();
+    }
+  };
+
+  const handleSetStatusOrderSingle = (index, id, status) => {
+    setIdOrder(id);
+    setNextStatus(status);
+    modalConfirmSetStatusSingle.onOpen();
+    const selected = orders.filter((order) => order.ID === id);
+    const optionsDate = {
+      day: "numeric",
+      month: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      second: "numeric",
+    }; // กำหนดรูปแบบวันที่และเวลา
+    const date = new Date();
+    const formattedDate = date.toLocaleDateString("th-TH", optionsDate); // แปลงวันที่เป็นรูปแบบ "DD/MM/YYYY"
+    // Create a new instance of jsPDF
+    const doc = showListOrderPDF ? new jsPDF() : new jsPDF("p", "mm", "a5");
+
+    // Add the Thai font
+    doc.addFileToVFS("THSarabunNew.ttf", THSarabunNew);
+    doc.addFileToVFS("THSarabunNew Bold.ttf", THSarabunNewBold);
+    doc.addFont("THSarabunNew.ttf", "THSarabunNew", "normal");
+    doc.addFont("THSarabunNew Bold.ttf", "THSarabunNewBold", "bold");
+    doc.setFont("THSarabunNew");
+
+    let y = 10; // Start y at the top of the page
+    const maxHeight = showListOrderPDF ? 280 : 200;
+
+    selected.forEach((order, index) => {
+      if (showListOrderPDF) {
+        if (index !== 0) {
+          doc.addPage();
+          y = 10;
+        }
+      } else {
+        if (y + 90 > maxHeight) {
+          doc.addPage();
+          y = 10;
+        }
+      }
+
+      const addressReceiverName = `${order.address} ต.${order.sub_district} อ.${order.district} จ.${order.province} ${order.postcode}`;
+      // Add recipient's name, address and phone number
+      doc.setFont("THSarabunNewBold", "bold");
+      doc.setFontSize(20);
+      doc.text("ผู้รับ", showListOrderPDF ? 10 : 5, y);
+      doc.setFont("THSarabunNew", "normal");
+      doc.setFontSize(16);
+      doc.text(
+        "ชื่อ: " + order.receiverName,
+        showListOrderPDF ? 10 : 5,
+        y + 10
+      );
+      doc.text(
+        "ที่อยู่: " + addressReceiverName,
+        showListOrderPDF ? 10 : 5,
+        y + 20
+      );
+      doc.text(
+        "เบอร์โทรศัพท์: " + order.phoneNumber,
+        showListOrderPDF ? 10 : 5,
+        y + 30
+      );
+      doc.line(
+        showListOrderPDF ? 10 : 5,
+        y + 40,
+        showListOrderPDF ? 190 : 140,
+        y + 40
+      );
+
+      doc.setFont("THSarabunNewBold", "bold");
+      doc.setFontSize(20);
+      doc.text("ผู้ส่ง", showListOrderPDF ? 190 : 140, y + 50, {
+        align: "right",
+      });
+      doc.setFont("THSarabunNew", "normal");
+      doc.setFontSize(16);
+      doc.text(
+        "ชื่อ: " + order.receiverName,
+        showListOrderPDF ? 190 : 140,
+        y + 60,
+        {
+          align: "right",
+        }
+      );
+      doc.text(
+        "ที่อยู่: " + addressReceiverName,
+        showListOrderPDF ? 190 : 140,
+        y + 70,
+        {
+          align: "right",
+        }
+      );
+      doc.text(
+        "เบอร์โทรศัพท์: " + order.phoneNumber,
+        showListOrderPDF ? 190 : 140,
+        y + 80,
+        {
+          align: "right",
+        }
+      );
+
+      if (showListOrderPDF) {
+        // Draw the table header
+        const header = ["Order ID", "Product Name", "Num", "Price"];
+        const columnWidths = showListOrderPDF
+          ? [40, 80, 30, 30]
+          : [20, 35, 15, 15];
+        const headerHeight = 10;
+        const cellHeight = 10;
+        let x = showListOrderPDF ? 10 : 5;
+        for (let i = 0; i < header.length; i++) {
+          doc.setFillColor(220, 220, 220);
+          doc.rect(x, y + 90, columnWidths[i], headerHeight, "F"); // Draw a filled rectangle for each header cell
+          doc.rect(x, y + 90, columnWidths[i], headerHeight); // Draw the cell border
+          doc.text(header[i], x + 2, y + 98);
+          x += columnWidths[i];
+        }
+
+        // Draw the table rows
+        y += 100; // Start y below the header
+        let maxLines = 1;
+        for (let i = 0; i < order.orderDetails.length; i++) {
+          const product = order.orderDetails[i];
+          const row = [
+            order.orderId.toString(),
+            product.nameProduct,
+            product.num.toString(),
+            product.priceProduct.toString(),
+          ];
+          x = showListOrderPDF ? 10 : 5;
+          for (let j = 0; j < row.length; j++) {
+            const lines = doc.splitTextToSize(row[j], columnWidths[j] - 4); // Subtract a bit from the column width for padding
+            maxLines = Math.max(maxLines, lines.length);
+            for (let k = 0; k < lines.length; k++) {
+              doc.text(
+                lines[k],
+                x + 2,
+                y + cellHeight / 2 + 2 + k * cellHeight
+              );
+            }
+            x += columnWidths[j];
+          }
+          // Now we draw the table lines
+          x = showListOrderPDF ? 10 : 5;
+          for (let j = 0; j < row.length; j++) {
+            doc.rect(x, y, columnWidths[j], cellHeight * maxLines); // Draw the cell border
+            x += columnWidths[j];
+          }
+          y += cellHeight * maxLines;
+          maxLines = 1; // Reset maxLines for the next row
+        }
+        doc.setFont("THSarabunNewBold", "bold");
+        doc.text("ยอดรวม ", showListOrderPDF ? 132 : 61, y + 10);
+        doc.text(order.amount.toString(), showListOrderPDF ? 162 : 76, y + 10);
+        // Increment y by a certain amount to leave some space between each order
+        y += 20;
+      }
+      if (!showListOrderPDF) {
+        y += 100;
+      }
+    });
+    // Save the PDF as a blob
+    const pdfBlob = doc.output("blob");
+
+    // Create a blob URL
+    const url = URL.createObjectURL(pdfBlob);
+
+    // Open the PDF in a new tab
+    window.open(url, "_blank");
+
+    // Create a link element, click it to start the download
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `orders-${formattedDate}.pdf`;
+    link.click();
+
+    // Clean up
+    link.remove();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleSetStatusCancelOrderSingle = (index, id) => {
+    setIdOrder(id);
+    modalCancelSetStatusSingle.onOpen();
   };
   return (
     <>
@@ -802,10 +1011,40 @@ export default function Order() {
               </Button>
             </Link>
           </Box> */}
+          {navbarTab === "ตรวจสอบคำสั่งซื้อ" && (
+            <Box>
+              <Center>
+                <Button
+                  bgColor={"white"}
+                  color={"green"}
+                  border={"3px solid green"}
+                  fontSize={"20px"}
+                  mr={2}
+                  _hover={{ bgColor: "green", color: "white" }}
+                  // onClick={() => {
+                  //   handelLogSelect("กำลังแพ็ค");
+                  // }}
+                  onClick={handleOpenModalSetStatusMulti}
+                >
+                  ยืนยันคำสั่งซื้อ
+                </Button>
+                <Button
+                  bgColor={"white"}
+                  color={"red"}
+                  border={"3px solid red"}
+                  fontSize={"20px"}
+                  _hover={{ bgColor: "red", color: "white" }}
+                  onClick={handleOpenModalCancelStatusMulti}
+                >
+                  ยกเลิกคำสั่งซื้อ
+                </Button>
+              </Center>
+            </Box>
+          )}
           {navbarTab === "กำลังแพ็ค" && (
             <Box>
               <Flex alignItems={"center"}>
-                <Box
+                {/* <Box
                   borderWidth="1px"
                   borderColor="gray"
                   borderRadius="md"
@@ -820,11 +1059,11 @@ export default function Order() {
                   >
                     <Text fontSize={"xl"}>แสดงรายการคำสั่งซื้อ</Text>
                   </Checkbox>
-                </Box>
+                </Box> */}
                 <Box borderWidth="1px" borderColor="green" borderRadius="md">
                   <Button
                     fontSize="21px"
-                    leftIcon={<Icon as={BsArrowBarDown} boxSize={5} />}
+                    leftIcon={<Icon as={BsFillPrinterFill} boxSize={5} />}
                     bg="green"
                     variant="solid"
                     color="white"
@@ -1075,54 +1314,6 @@ export default function Order() {
                           >
                             <Center>
                               {navbarTab == "ตรวจสอบคำสั่งซื้อ" ? (
-                                // <Menu>
-                                //   <MenuButton
-                                //     as={IconButton}
-                                //     aria-label="Options"
-                                //     icon={<HamburgerIcon />}
-                                //     variant="outline"
-                                //     border="none"
-                                //   />
-                                //   <MenuList>
-                                //     <MenuItem
-                                //       icon={<Icon as={BsEyeFill} boxSize={4} />}
-                                //       onClick={() => {
-                                //         handleOpenModalDetailOrder(
-                                //           filteredOrder.ID
-                                //         );
-                                //       }}
-                                //     >
-                                //       ดูรายละเอียด
-                                //     </MenuItem>
-                                //     <MenuItem
-                                //       icon={<Icon as={BsBoxSeam} boxSize={4} />}
-                                //       onClick={() => {
-                                //         handleSetStatusOrder(
-                                //           index,
-                                //           filteredOrder.ID,
-                                //           "กำลังแพ็ค"
-                                //         );
-                                //       }}
-                                //     >
-                                //       เปลี่ยนสถานะ "กำลังแพ็ค"
-                                //     </MenuItem>
-                                //     <MenuItem
-                                //       icon={
-                                //         <Icon as={BsXOctagonFill} boxSize={4} />
-                                //       }
-                                //       onClick={() => {
-                                //         handleSetStatusOrder(
-                                //           index,
-                                //           filteredOrder.ID,
-                                //           "ยกเลิก"
-                                //         );
-                                //       }}
-                                //     >
-                                //       ยกเลิกคำสั่งซื้อ
-                                //     </MenuItem>
-                                //   </MenuList>
-                                // </Menu>
-
                                 <Image
                                   src={"/images/research.png"}
                                   w={"30px"}
@@ -1136,14 +1327,6 @@ export default function Order() {
                                 />
                               ) : (
                                 <HStack>
-                                  {/* <IconButton
-                                  icon={<BsClockHistory />}
-                                  size="xs"
-                                  color={"#f84c01"}
-                                  borderColor={"#f84c01"}
-                                  aria-label="Edit"
-                                  variant="outline"
-                                /> */}
                                   {navbarTab == "กำลังแพ็ค" && (
                                     <IconButton
                                       icon={
@@ -1158,7 +1341,7 @@ export default function Order() {
                                       aria-label="Edit"
                                       variant="outline"
                                       onClick={() => {
-                                        handleSetStatusOrder(
+                                        handleSetStatusOrderSingle(
                                           index,
                                           filteredOrder.ID,
                                           "พร้อมส่ง"
@@ -1182,28 +1365,7 @@ export default function Order() {
                                         borderColor={"#f84c01"}
                                         aria-label="Edit"
                                         variant="outline"
-                                        mr={2}
                                         onClick={ModalInputTax.onOpen}
-                                      />
-                                      <IconButton
-                                        icon={
-                                          <Image
-                                            src={"/images/delivery-truck 2.png"}
-                                            width={"14px"}
-                                          />
-                                        }
-                                        size="xs"
-                                        color={"#f84c01"}
-                                        borderColor={"#f84c01"}
-                                        aria-label="Edit"
-                                        variant="outline"
-                                        onClick={() => {
-                                          handleSetStatusOrder(
-                                            index,
-                                            filteredOrder.ID,
-                                            "จัดส่งสำเร็จ"
-                                          );
-                                        }}
                                       />
                                     </Box>
                                   )}
@@ -1261,10 +1423,9 @@ export default function Order() {
                                       aria-label="Edit"
                                       variant="outline"
                                       onClick={() => {
-                                        handleSetStatusOrder(
+                                        handleSetStatusCancelOrderSingle(
                                           index,
-                                          filteredOrder.ID,
-                                          "ยกเลิก"
+                                          filteredOrder.ID
                                         );
                                       }}
                                     />
@@ -1297,31 +1458,6 @@ export default function Order() {
             </Table>
           </TableContainer>
         </Flex>
-        {navbarTab === "ตรวจสอบคำสั่งซื้อ" && (
-          <Box mt={5}>
-            <Center>
-              <Button
-                bgColor={"red"}
-                color={"white"}
-                mr={2}
-                onClick={() => {
-                  handelLogSelect("ยกเลิก");
-                }}
-              >
-                ยกเลิกคำสั่งซื้อ
-              </Button>
-              <Button
-                bgColor={"green"}
-                color={"white"}
-                onClick={() => {
-                  handelLogSelect("กำลังแพ็ค");
-                }}
-              >
-                ยืนยันคำสั่งซื้อ
-              </Button>
-            </Center>
-          </Box>
-        )}
       </Box>
 
       {/* modal ดูรายละเอียด */}
@@ -1718,28 +1854,23 @@ export default function Order() {
             </Box>
           </ModalBody>
           <ModalFooter alignItems={"center"} justifyContent={"center"}>
-            <Button onClick={modalDetailOrder.onClose} mr={2}>
-              ยกเลิก
+            <Button
+              mr={2}
+              onClick={modalConfirmSetStatusSingle.onOpen}
+              bgColor={"green"}
+              color={"white"}
+            >
+              ยืนยันคำสั่งซื้อ
             </Button>
             <Button
-              onClick={() => {
-                handleSetStatusOrder(0, idOrder, "ยกเลิก");
-              }}
+              onClick={modalCancelSetStatusSingle.onOpen}
               mr={2}
               bgColor={"red"}
               color={"white"}
             >
               ยกเลิกคำสั่งซื้อ
             </Button>
-            <Button
-              onClick={() => {
-                handleSetStatusOrder(0, idOrder, "กำลังแพ็ค");
-              }}
-              bgColor={"green"}
-              color={"white"}
-            >
-              ยืนยันคำสั่งซื้อ
-            </Button>
+            <Button onClick={modalDetailOrder.onClose}>ยกเลิก</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
@@ -1820,15 +1951,24 @@ export default function Order() {
               >
                 <Image src={"/images/check.png"} w={"100px"} h={"100px"} />
                 <Text fontSize={"30px"} fontWeight={"bold"} mt={5}>
-                  ยืนยันการแพ็คสินค้าสำเร็จหรือไม่
+                  ยืนยัน/ยกเลิก
+                </Text>
+                <Text fontSize={"25px"}>
+                  ยืนยันหรือยกเลิกการแพ็คสินค้าใช่หรือไม่
                 </Text>
               </Flex>
             </Box>
           </ModalBody>
 
           <ModalFooter justifyContent={"center"}>
-            <Button mr={3} onClick={ModalConfirmSetStatus.onClose}>
-              ยกเลิก
+            <Button
+              colorScheme="green"
+              mr={3}
+              onClick={() => {
+                handelLogSelect("พร้อมส่ง");
+              }}
+            >
+              ยืนยันการแพ็ค
             </Button>
             <Button
               colorScheme="red"
@@ -1839,14 +1979,7 @@ export default function Order() {
             >
               ยกเลิกการแพ็ค
             </Button>
-            <Button
-              colorScheme="green"
-              onClick={() => {
-                handelLogSelect("พร้อมส่ง");
-              }}
-            >
-              ยืนยันการแพ็ค
-            </Button>
+            <Button onClick={ModalConfirmSetStatus.onClose}>ยกเลิก</Button>
             {/* <Button onClick={modalSlipPayment.onClose}>Cancel</Button> */}
           </ModalFooter>
         </ModalContent>
@@ -1861,17 +1994,209 @@ export default function Order() {
         <ModalContent>
           <ModalHeader>
             <Center>
-              <Text fontSize={'33px'}>ใส่หมายเลข Tax คำสั่งซื้อ</Text>
+              <Text fontSize={"33px"}>ใส่หมายเลข Tracking คำสั่งซื้อ</Text>
             </Center>
           </ModalHeader>
-          <ModalCloseButton />
+          <ModalCloseButton
+            bgColor={"red"}
+            color={"white"}
+            borderRadius={"50px"}
+            fontSize={"10px"}
+            width={"20px"}
+            height={"20px"}
+          />
           <ModalBody pb={6}></ModalBody>
 
-          <ModalFooter>
+          <ModalFooter justifyContent={'center'}>
             <Button colorScheme="green" mr={3}>
               บันทึก
             </Button>
             <Button onClick={ModalInputTax.onClose}>ยกเลิก</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal
+        onClose={modalConfirmSetStatusMulti.onClose}
+        isOpen={modalConfirmSetStatusMulti.isOpen}
+        isCentered
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader></ModalHeader>
+          <ModalCloseButton
+            bgColor={"red"}
+            color={"white"}
+            borderRadius={"50px"}
+            fontSize={"10px"}
+            width={"20px"}
+            height={"20px"}
+          />
+          <ModalBody>
+            <Box mt={5}>
+              <Flex
+                justifyContent={"center"}
+                alignItems={"center"}
+                flexDirection={"column"}
+              >
+                <Image src={"/images/check.png"} w={"100px"} h={"100px"} />
+                <Text fontSize={"30px"} fontWeight={"bold"} mt={5}>
+                  ยืนยันตรวจสอบคำสั่งซื้อ
+                </Text>
+              </Flex>
+            </Box>
+          </ModalBody>
+          <ModalFooter justifyContent={"center"}>
+            <Button
+              colorScheme="green"
+              mr={3}
+              onClick={() => {
+                handelLogSelect("กำลังแพ็ค");
+              }}
+            >
+              ยืนยัน
+            </Button>
+            <Button onClick={modalConfirmSetStatusMulti.onClose}>ยกเลิก</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal
+        onClose={modalCancelSetStatusMulti.onClose}
+        isOpen={modalCancelSetStatusMulti.isOpen}
+        isCentered
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader></ModalHeader>
+          <ModalCloseButton
+            bgColor={"red"}
+            color={"white"}
+            borderRadius={"50px"}
+            fontSize={"10px"}
+            width={"20px"}
+            height={"20px"}
+          />
+          <ModalBody>
+            <Box mt={5}>
+              <Flex
+                justifyContent={"center"}
+                alignItems={"center"}
+                flexDirection={"column"}
+              >
+                <Image src={"/images/check.png"} w={"100px"} h={"100px"} />
+                <Text fontSize={"30px"} fontWeight={"bold"} mt={5}>
+                  ยืนยันยกเลิกคำสั่งซื้อ
+                </Text>
+              </Flex>
+            </Box>
+          </ModalBody>
+          <ModalFooter justifyContent={"center"}>
+            <Button
+              colorScheme="green"
+              mr={3}
+              onClick={() => {
+                handelLogSelect("ยกเลิก");
+              }}
+            >
+              ยืนยัน
+            </Button>
+            <Button onClick={modalCancelSetStatusMulti.onClose}>ยกเลิก</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal
+        onClose={modalConfirmSetStatusSingle.onClose}
+        isOpen={modalConfirmSetStatusSingle.isOpen}
+        isCentered
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader></ModalHeader>
+          <ModalCloseButton
+            bgColor={"red"}
+            color={"white"}
+            borderRadius={"50px"}
+            fontSize={"10px"}
+            width={"20px"}
+            height={"20px"}
+          />
+          <ModalBody>
+            <Box mt={5}>
+              <Flex
+                justifyContent={"center"}
+                alignItems={"center"}
+                flexDirection={"column"}
+              >
+                <Image src={"/images/check.png"} w={"100px"} h={"100px"} />
+                <Text fontSize={"30px"} fontWeight={"bold"} mt={5}>
+                  ยืนยันคำสั่งซื้อ
+                </Text>
+                <Text fontSize={"20px"} fontWeight={"bold"}>
+                  ยืนยันคำสั่งซื้อเพื่อไปขั้นตอนถัดไป
+                </Text>
+              </Flex>
+            </Box>
+          </ModalBody>
+          <ModalFooter justifyContent={"center"}>
+            <Button
+              colorScheme="green"
+              mr={3}
+              onClick={() => {
+                handleSetStatusOrder(0, idOrder, nextStatus);
+              }}
+            >
+              ยืนยัน
+            </Button>
+            <Button onClick={modalConfirmSetStatusSingle.onClose}>
+              ยกเลิก
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal
+        onClose={modalCancelSetStatusSingle.onClose}
+        isOpen={modalCancelSetStatusSingle.isOpen}
+        isCentered
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader></ModalHeader>
+          <ModalCloseButton
+            bgColor={"red"}
+            color={"white"}
+            borderRadius={"50px"}
+            fontSize={"10px"}
+            width={"20px"}
+            height={"20px"}
+          />
+          <ModalBody>
+            <Box mt={5}>
+              <Flex
+                justifyContent={"center"}
+                alignItems={"center"}
+                flexDirection={"column"}
+              >
+                <Image src={"/images/check.png"} w={"100px"} h={"100px"} />
+                <Text fontSize={"30px"} fontWeight={"bold"} mt={5}>
+                  ยกเลิกคำสั่งซื้อ
+                </Text>
+              </Flex>
+            </Box>
+          </ModalBody>
+          <ModalFooter justifyContent={"center"}>
+            <Button
+              colorScheme="green"
+              mr={3}
+              onClick={() => {
+                handleSetStatusOrder(0, idOrder, "ยกเลิก");
+              }}
+            >
+              ยืนยัน
+            </Button>
+            <Button onClick={modalCancelSetStatusSingle.onClose}>ยกเลิก</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
