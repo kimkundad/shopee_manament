@@ -59,6 +59,9 @@ import {
   useDisclosure,
   Grid,
   GridItem,
+  FormControl,
+  FormLabel,
+  Switch,
 } from "@chakra-ui/react";
 
 import {
@@ -156,22 +159,6 @@ function MenuCheckboxList(props) {
   );
 }
 
-// function InsertDataTable(props) {
-//   let query = props.name;
-//   let searchValue = props.onSearchValue;
-//   let searchDate = props.onSearchDate;
-//   const { onFilteredAmount, onFilterCountOrders } = props;
-
-//   let totalAmount = 0;
-//   let totalOrders = 0;
-//   return (
-//     <>
-//       {onFilteredAmount(totalAmount)}
-//       {onFilterCountOrders(totalOrders)}
-//     </>
-//   );
-// }
-
 export default function Order() {
   const labelLists = [
     { label: "เลือกทั้งหมด", isShow: true },
@@ -199,6 +186,7 @@ export default function Order() {
 
   const modalDetailOrder = useDisclosure();
   const ModalConfirmSetStatus = useDisclosure();
+  const ModalInputTax = useDisclosure();
 
   // ชื่อตัวแปรของการดูรายละเอียดหลักฐาน
   const [namePayment, setNamePayment] = useState("");
@@ -218,6 +206,8 @@ export default function Order() {
   const [addressReceiverName, setAddressReceiverName] = useState("");
   const [checkIssueTaxInvoice, setCheckIssueTaxInvoice] = useState(true);
   const [selectedOrders, setSelectedOrders] = useState([]);
+  const [selectedAllOrder, setSelectedAllOrder] = useState(false);
+  const [showListOrderPDF, setShowListOrderPDF] = useState(false);
   // end
 
   const fetchData = async () => {
@@ -231,6 +221,11 @@ export default function Order() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    setSelectedAllOrder(false);
+    setSelectedOrders([]);
+  }, [navbarTab]);
 
   const countOrder = orders.filter(
     (item) => item.status === "ตรวจสอบคำสั่งซื้อ"
@@ -325,9 +320,15 @@ export default function Order() {
 
   const handleAllCheckboxChange = (e) => {
     if (e.target.checked) {
-      setSelectedOrders(orders.map((order) => order.ID));
+      setSelectedOrders(
+        orders
+          .filter((order) => navbarTab === order.status)
+          .map((order) => order.ID)
+      );
+      setSelectedAllOrder(e.target.checked);
     } else {
       setSelectedOrders([]);
+      setSelectedAllOrder(e.target.checked);
     }
   };
 
@@ -340,23 +341,34 @@ export default function Order() {
   };
 
   const handelLogSelect = async (status) => {
-    const formData = new FormData();
-    selectedOrders.forEach((ids, index) => {
-      formData.append(`ids[${index}]`, ids);
-    });
-    formData.append(`status`, status);
-    const response = await axios.post(
-      "https://shopee-api.deksilp.com/api/setStatusOrdersMulti",
-      formData
-    );
-    if (response.data.success) {
-      fetchData();
-      setSelectedOrders([]);
-      ModalConfirmSetStatus.onClose();
+    if (selectedOrders.length > 0) {
+      const formData = new FormData();
+      selectedOrders.forEach((ids, index) => {
+        formData.append(`ids[${index}]`, ids);
+      });
+      formData.append(`status`, status);
+      const response = await axios.post(
+        "https://shopee-api.deksilp.com/api/setStatusOrdersMulti",
+        formData
+      );
+      if (response.data.success) {
+        fetchData();
+        setSelectedOrders([]);
+        ModalConfirmSetStatus.onClose();
+      }
+    }
+  };
+
+  const handleSetShowListOrder = (e) => {
+    if (e.target.checked) {
+      setShowListOrderPDF(e.target.checked);
+    } else {
+      setShowListOrderPDF(e.target.checked);
     }
   };
 
   const handleCheckSelect = () => {
+    console.log("selectedOrders", selectedOrders);
     const selected = orders.filter((order) =>
       selectedOrders.includes(order.ID)
     );
@@ -372,7 +384,7 @@ export default function Order() {
       const date = new Date();
       const formattedDate = date.toLocaleDateString("th-TH", optionsDate); // แปลงวันที่เป็นรูปแบบ "DD/MM/YYYY"
       // Create a new instance of jsPDF
-      const doc = new jsPDF();
+      const doc = showListOrderPDF ? new jsPDF() : new jsPDF("p", "mm", "a5");
 
       // Add the Thai font
       doc.addFileToVFS("THSarabunNew.ttf", THSarabunNew);
@@ -382,59 +394,131 @@ export default function Order() {
       doc.setFont("THSarabunNew");
 
       let y = 10; // Start y at the top of the page
+      const maxHeight = showListOrderPDF ? 280 : 200;
 
       selected.forEach((order, index) => {
-        if (index !== 0) {
-          doc.addPage();
-          y = 10;
+        if (showListOrderPDF) {
+          if (index !== 0) {
+            doc.addPage();
+            y = 10;
+          }
+        } else {
+          if (y + 90 > maxHeight) {
+            doc.addPage();
+            y = 10;
+          }
         }
+
         const addressReceiverName = `${order.address} ต.${order.sub_district} อ.${order.district} จ.${order.province} ${order.postcode}`;
         // Add recipient's name, address and phone number
         doc.setFont("THSarabunNewBold", "bold");
-        doc.setFontSize(16);
-        doc.text("Recipient Name: " + order.receiverName, 10, y);
+        doc.setFontSize(20);
+        doc.text("ผู้รับ", showListOrderPDF ? 10 : 5, y);
         doc.setFont("THSarabunNew", "normal");
-        doc.setFontSize(14);
-        doc.text("Address: " + addressReceiverName, 10, y + 10);
-        doc.text("Phone Number: " + order.phoneNumber, 10, y + 20);
+        doc.setFontSize(16);
+        doc.text(
+          "ชื่อ: " + order.receiverName,
+          showListOrderPDF ? 10 : 5,
+          y + 10
+        );
+        doc.text(
+          "ที่อยู่: " + addressReceiverName,
+          showListOrderPDF ? 10 : 5,
+          y + 20
+        );
+        doc.text(
+          "เบอร์โทรศัพท์: " + order.phoneNumber,
+          showListOrderPDF ? 10 : 5,
+          y + 30
+        );
+        doc.line(
+          showListOrderPDF ? 10 : 5,
+          y + 40,
+          showListOrderPDF ? 190 : 140,
+          y + 40
+        );
 
-        // Draw the table header
-        const header = ["Order ID", "Product Name", "Num", "Price"];
-        const columnWidths = [40, 70, 30, 30];
-        const headerHeight = 10;
-        const cellHeight = 10;
-        let x = 10;
-        for (let i = 0; i < header.length; i++) {
-          doc.setFillColor(220, 220, 220);
-          doc.rect(x, y + 30, columnWidths[i], headerHeight, "F"); // Draw a filled rectangle for each header cell
-          doc.rect(x, y + 30, columnWidths[i], headerHeight); // Draw the cell border
-          doc.text(header[i], x + 2, y + 38); // The y value is y + 30 (top of the cell) + half the cell height
-          x += columnWidths[i];
-        }
-
-        // Draw the table rows
-        y += 40; // Start y below the header
-        for (let i = 0; i < order.orderDetails.length; i++) {
-          const product = order.orderDetails[i];
-          const row = [
-            order.orderId.toString(),
-            product.nameProduct,
-            product.num.toString(),
-            product.priceProduct.toString(),
-          ];
-          x = 10;
-          for (let j = 0; j < row.length; j++) {
-            doc.text(row[j], x + 2, y + cellHeight / 2 + 2);
-            // The y value is the top of the cell + half the cell height
-            doc.rect(x, y, columnWidths[j], cellHeight); // Draw the cell border
-            x += columnWidths[j];
+        doc.setFont("THSarabunNewBold", "bold");
+        doc.setFontSize(20);
+        doc.text("ผู้ส่ง", showListOrderPDF ? 190 : 140, y + 50, {
+          align: "right",
+        });
+        doc.setFont("THSarabunNew", "normal");
+        doc.setFontSize(16);
+        doc.text(
+          "ชื่อ: " + order.receiverName,
+          showListOrderPDF ? 190 : 140,
+          y + 60,
+          {
+            align: "right",
           }
-          y += cellHeight;
+        );
+        doc.text(
+          "ที่อยู่: " + addressReceiverName,
+          showListOrderPDF ? 190 : 140,
+          y + 70,
+          {
+            align: "right",
+          }
+        );
+        doc.text(
+          "เบอร์โทรศัพท์: " + order.phoneNumber,
+          showListOrderPDF ? 190 : 140,
+          y + 80,
+          {
+            align: "right",
+          }
+        );
+
+        if (showListOrderPDF) {
+          // Draw the table header
+          const header = ["Order ID", "Product Name", "Num", "Price"];
+          const columnWidths = showListOrderPDF
+            ? [40, 80, 30, 30]
+            : [20, 35, 15, 15];
+          const headerHeight = 10;
+          const cellHeight = 10;
+          let x = showListOrderPDF ? 10 : 5;
+          for (let i = 0; i < header.length; i++) {
+            doc.setFillColor(220, 220, 220);
+            doc.rect(x, y + 90, columnWidths[i], headerHeight, "F"); // Draw a filled rectangle for each header cell
+            doc.rect(x, y + 90, columnWidths[i], headerHeight); // Draw the cell border
+            doc.text(header[i], x + 2, y + 98);
+            x += columnWidths[i];
+          }
+
+          // Draw the table rows
+          y += 100; // Start y below the header
+          for (let i = 0; i < order.orderDetails.length; i++) {
+            const product = order.orderDetails[i];
+            const row = [
+              order.orderId.toString(),
+              product.nameProduct,
+              product.num.toString(),
+              product.priceProduct.toString(),
+            ];
+            x = showListOrderPDF ? 10 : 5;
+            for (let j = 0; j < row.length; j++) {
+              doc.text(row[j], x + 2, y + cellHeight / 2 + 2);
+              // The y value is the top of the cell + half the cell height
+              doc.rect(x, y, columnWidths[j], cellHeight); // Draw the cell border
+              x += columnWidths[j];
+            }
+            y += cellHeight;
+          }
+          doc.setFont("THSarabunNewBold", "bold");
+          doc.text("ยอดรวม ", showListOrderPDF ? 132 : 61, y + 10);
+          doc.text(
+            order.amount.toString(),
+            showListOrderPDF ? 162 : 76,
+            y + 10
+          );
+          // Increment y by a certain amount to leave some space between each order
+          y += 20;
         }
-        doc.text("ยอดรวม: ", 122, y + 10);
-        doc.text(order.amount.toString(), 152, y + 10);
-        // Increment y by a certain amount to leave some space between each order
-        y += 20;
+        if (!showListOrderPDF) {
+          y += 100;
+        }
       });
       // Save the PDF as a blob
       const pdfBlob = doc.output("blob");
@@ -719,18 +803,38 @@ export default function Order() {
             </Link>
           </Box> */}
           {navbarTab === "กำลังแพ็ค" && (
-            <Box borderWidth="1px" borderColor="green" borderRadius="md">
-              <Button
-                fontSize="21px"
-                leftIcon={<Icon as={BsArrowBarDown} boxSize={5} />}
-                bg="green"
-                variant="solid"
-                color="white"
-                _hover={{}}
-                onClick={handleCheckSelect}
-              >
-                ดาวน์โหลดคำสั่งซื้อ
-              </Button>
+            <Box>
+              <Flex alignItems={"center"}>
+                <Box
+                  borderWidth="1px"
+                  borderColor="gray"
+                  borderRadius="md"
+                  mr={2}
+                  p={"5px 10px 5px 10px"}
+                >
+                  <Checkbox
+                    colorScheme="green"
+                    borderColor="gray"
+                    isChecked={showListOrderPDF}
+                    onChange={handleSetShowListOrder}
+                  >
+                    <Text fontSize={"xl"}>แสดงรายการคำสั่งซื้อ</Text>
+                  </Checkbox>
+                </Box>
+                <Box borderWidth="1px" borderColor="green" borderRadius="md">
+                  <Button
+                    fontSize="21px"
+                    leftIcon={<Icon as={BsArrowBarDown} boxSize={5} />}
+                    bg="green"
+                    variant="solid"
+                    color="white"
+                    _hover={{}}
+                    onClick={handleCheckSelect}
+                  >
+                    พิมพ์ใบคำสั่งซื้อ
+                  </Button>
+                </Box>
+              </Flex>
             </Box>
           )}
         </Flex>
@@ -738,7 +842,7 @@ export default function Order() {
       {/* End Navbar */}
 
       {/* Start Table */}
-      <Box p={5} minHeight={800}>
+      <Box p={"0rem 1rem 0rem 1rem"} minHeight={800}>
         <Flex justifyContent={"space-between"}>
           <TableContainer fontSize="17" width={"100%"}>
             <Table
@@ -785,9 +889,7 @@ export default function Order() {
                               <Checkbox
                                 size="md"
                                 colorScheme="green"
-                                isChecked={
-                                  selectedOrders.length === orders.length
-                                }
+                                isChecked={selectedAllOrder}
                                 onChange={handleAllCheckboxChange}
                               />
                             </Center>
@@ -843,7 +945,7 @@ export default function Order() {
                           <Td
                             px={5}
                             py={2}
-                            borderLeftRadius={"10"}
+                            // borderLeftRadius={"10"}
                             textAlign={"center"}
                           >
                             <Checkbox
@@ -968,7 +1070,7 @@ export default function Order() {
                         {checkBoxData[9] && checkBoxData[9].isShow ? (
                           <Td
                             p={2}
-                            borderRightRadius={"10"}
+                            // borderRightRadius={"10"}
                             textAlign={"center"}
                           >
                             <Center>
@@ -1065,26 +1167,45 @@ export default function Order() {
                                     />
                                   )}
                                   {navbarTab == "พร้อมส่ง" && (
-                                    <IconButton
-                                      icon={
-                                        <Image
-                                          src={"/images/delivery-truck 2.png"}
-                                          width={"14px"}
-                                        />
-                                      }
-                                      size="xs"
-                                      color={"#f84c01"}
-                                      borderColor={"#f84c01"}
-                                      aria-label="Edit"
-                                      variant="outline"
-                                      onClick={() => {
-                                        handleSetStatusOrder(
-                                          index,
-                                          filteredOrder.ID,
-                                          "จัดส่งสำเร็จ"
-                                        );
-                                      }}
-                                    />
+                                    <Box>
+                                      <IconButton
+                                        icon={
+                                          <Image
+                                            src={
+                                              "/images/เพิ่ม shopping-list.png"
+                                            }
+                                            width={"14px"}
+                                          />
+                                        }
+                                        size="xs"
+                                        color={"#f84c01"}
+                                        borderColor={"#f84c01"}
+                                        aria-label="Edit"
+                                        variant="outline"
+                                        mr={2}
+                                        onClick={ModalInputTax.onOpen}
+                                      />
+                                      <IconButton
+                                        icon={
+                                          <Image
+                                            src={"/images/delivery-truck 2.png"}
+                                            width={"14px"}
+                                          />
+                                        }
+                                        size="xs"
+                                        color={"#f84c01"}
+                                        borderColor={"#f84c01"}
+                                        aria-label="Edit"
+                                        variant="outline"
+                                        onClick={() => {
+                                          handleSetStatusOrder(
+                                            index,
+                                            filteredOrder.ID,
+                                            "จัดส่งสำเร็จ"
+                                          );
+                                        }}
+                                      />
+                                    </Box>
                                   )}
                                   {navbarTab == "จัดส่งสำเร็จ" && (
                                     <IconButton
@@ -1166,8 +1287,11 @@ export default function Order() {
               <Tfoot bgColor={"whitesmoke"}>
                 <Tr>
                   <Th colSpan={5}>ยอดรวม</Th>
-                  <Th>{totalQuantity}</Th>
-                  <Th colSpan={4}>{totalAmount}</Th>
+                  <Th textAlign={"center"}>{totalQuantity}</Th>
+                  <Th textAlign={"center"} colSpan={1}>
+                    {totalAmount}
+                  </Th>
+                  <Th colSpan={3}>{""}</Th>
                 </Tr>
               </Tfoot>
             </Table>
@@ -1176,6 +1300,16 @@ export default function Order() {
         {navbarTab === "ตรวจสอบคำสั่งซื้อ" && (
           <Box mt={5}>
             <Center>
+              <Button
+                bgColor={"red"}
+                color={"white"}
+                mr={2}
+                onClick={() => {
+                  handelLogSelect("ยกเลิก");
+                }}
+              >
+                ยกเลิกคำสั่งซื้อ
+              </Button>
               <Button
                 bgColor={"green"}
                 color={"white"}
@@ -1584,6 +1718,9 @@ export default function Order() {
             </Box>
           </ModalBody>
           <ModalFooter alignItems={"center"} justifyContent={"center"}>
+            <Button onClick={modalDetailOrder.onClose} mr={2}>
+              ยกเลิก
+            </Button>
             <Button
               onClick={() => {
                 handleSetStatusOrder(0, idOrder, "ยกเลิก");
@@ -1690,27 +1827,54 @@ export default function Order() {
           </ModalBody>
 
           <ModalFooter justifyContent={"center"}>
-            <Button
-              colorScheme="red"
-              mr={3}
-              onClick={ModalConfirmSetStatus.onClose}
-            >
+            <Button mr={3} onClick={ModalConfirmSetStatus.onClose}>
               ยกเลิก
             </Button>
             <Button
-              colorScheme="green"
+              colorScheme="red"
               mr={3}
+              onClick={() => {
+                handelLogSelect("ยกเลิก");
+              }}
+            >
+              ยกเลิกการแพ็ค
+            </Button>
+            <Button
+              colorScheme="green"
               onClick={() => {
                 handelLogSelect("พร้อมส่ง");
               }}
             >
-              ยืนยัน
+              ยืนยันการแพ็ค
             </Button>
             {/* <Button onClick={modalSlipPayment.onClose}>Cancel</Button> */}
           </ModalFooter>
         </ModalContent>
       </Modal>
 
+      <Modal
+        closeOnOverlayClick={false}
+        isOpen={ModalInputTax.isOpen}
+        onClose={ModalInputTax.onClose}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            <Center>
+              <Text fontSize={'33px'}>ใส่หมายเลข Tax คำสั่งซื้อ</Text>
+            </Center>
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody pb={6}></ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme="green" mr={3}>
+              บันทึก
+            </Button>
+            <Button onClick={ModalInputTax.onClose}>ยกเลิก</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       {/* End Table */}
     </>
   );
