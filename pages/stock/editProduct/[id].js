@@ -36,6 +36,7 @@ import {
   Stack,
   IconButton,
   HStack,
+  InputRightAddon,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { BsArrowLeftCircle } from "react-icons/bs";
@@ -212,8 +213,7 @@ function UseEditProduct() {
           };
         });
 
-        const URLImage =
-          "https://api.sellpang.com/images/shopee/products/";
+        const URLImage = "https://api.sellpang.com/images/shopee/products/";
         const imageUrls = product.data.product
           .filter((item) => item.img_product !== null)
           .map((fileName) => `${URLImage}${fileName.img_product}`);
@@ -419,10 +419,7 @@ function UseEditProduct() {
     formData.append("height", height);
 
     axios
-      .post(
-        `https://api.sellpang.com/api/editProduct/${productId}`,
-        formData
-      )
+      .post(`https://api.sellpang.com/api/editProduct/${productId}`, formData)
       .then(function (response) {
         if (response.data.success) {
           onCloseForm1();
@@ -539,9 +536,7 @@ function UseEditProduct() {
     } else {
       if (id) {
         axios
-          .post(
-            `https://api.sellpang.com/api/deleteSubOptionProduct/${id}`
-          )
+          .post(`https://api.sellpang.com/api/deleteSubOptionProduct/${id}`)
           .then(function (response) {
             if (response.data.success) {
               newArr[index].allOption2.splice(subIndex, 1);
@@ -725,9 +720,7 @@ function UseEditProduct() {
 
   const handleConfirmDeleteSuccess = () => {
     axios
-      .post(
-        "https://api.sellpang.com/api/deleteCategory/" + categoryIdDelete
-      )
+      .post("https://api.sellpang.com/api/deleteCategory/" + categoryIdDelete)
       .then(function (response) {
         if (response.data.success) {
           modalConfirmDeleteCategory.onClose();
@@ -1094,9 +1087,7 @@ function UseEditProduct() {
                             value={cost}
                             onChange={(e) => setCost(parseInt(e.target.value))}
                           />
-                          <InputRightElement>
-                            <Text>฿</Text>
-                          </InputRightElement>
+                          <InputRightAddon children="฿" />
                         </InputGroup>
                       </GridItem>
                       <GridItem colSpan={1} justifySelf="end">
@@ -1114,9 +1105,7 @@ function UseEditProduct() {
                             onChange={(e) => setPrice(parseInt(e.target.value))}
                             isRequired
                           />
-                          <InputRightElement>
-                            <Text>฿</Text>
-                          </InputRightElement>
+                          <InputRightAddon children="฿" />
                         </InputGroup>
                       </GridItem>
                       <GridItem colSpan={1} justifySelf="end">
@@ -1135,9 +1124,7 @@ function UseEditProduct() {
                               setPrice_sales(parseInt(e.target.value))
                             }
                           />
-                          <InputRightElement>
-                            <Text>฿</Text>
-                          </InputRightElement>
+                          <InputRightAddon children="%" />
                         </InputGroup>
                       </GridItem>
                       <GridItem colSpan={1} justifySelf="end">
@@ -1167,9 +1154,7 @@ function UseEditProduct() {
                             value={weight}
                             onChange={(e) => setWeight(e.target.value)}
                           />
-                          <InputRightElement>
-                            <Text>Kg</Text>
-                          </InputRightElement>
+                          <InputRightAddon children="Kg." />
                         </InputGroup>
                       </GridItem>
                       <GridItem colSpan={1} justifySelf="end">
@@ -1185,9 +1170,7 @@ function UseEditProduct() {
                             value={width}
                             onChange={(e) => setWidth(e.target.value)}
                           />
-                          <InputRightElement>
-                            <Text>Cm</Text>
-                          </InputRightElement>
+                          <InputRightAddon children="Cm." />
                         </InputGroup>
                         <InputGroup mt="10px">
                           <Input
@@ -1196,9 +1179,7 @@ function UseEditProduct() {
                             value={length}
                             onChange={(e) => setLength(e.target.value)}
                           />
-                          <InputRightElement>
-                            <Text>Cm</Text>
-                          </InputRightElement>
+                          <InputRightAddon children="Cm." />
                         </InputGroup>
                         <InputGroup mt="10px">
                           <Input
@@ -1207,9 +1188,7 @@ function UseEditProduct() {
                             value={height}
                             onChange={(e) => setHeight(e.target.value)}
                           />
-                          <InputRightElement>
-                            <Text>Cm</Text>
-                          </InputRightElement>
+                          <InputRightAddon children="Cm." />
                         </InputGroup>
                         {/* {buttonActive[0] ? (
                           <Flex justifyContent="center" pt="10px">
@@ -1497,7 +1476,7 @@ function UseEditProduct() {
               <Button
                 // border="2px solid black"
                 bg="#2778c4"
-                color={'white'}
+                color={"white"}
                 leftIcon={<SmallAddIcon boxSize={6} />}
                 _hover={{}}
                 onClick={handleSelectChange}

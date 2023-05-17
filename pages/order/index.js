@@ -187,8 +187,6 @@ export default function Order() {
   const [totalOrders, setTotalOrders] = useState(0);
   const [totalAmount, setTotalAmount] = useState(0);
   const [totalNum, setTotalNum] = useState(0);
-  // let totalAmount = 0;
-  // let totalQuantity = 0;
   let amountProduct = "";
   const modalOpenImgSlipPayment = useDisclosure();
 
@@ -230,6 +228,25 @@ export default function Order() {
   const [countDelivered, setCountDelivered] = useState("");
   const [countRemand, setCountRemand] = useState("");
   const [countCancel, setCountCancel] = useState("");
+  const [selectedOption, setSelectedOption] = useState("");
+
+  const optionsShipping = [
+    {
+      value: "thaipost",
+      label: "ไปรษณีย์ไทย",
+      imageUrl: "/images/shipping/thailand_post.webp",
+    },
+    {
+      value: "kerry",
+      label: "Kerry Express",
+      imageUrl: "/images/shipping/kerry_express.png",
+    },
+    {
+      value: "flash",
+      label: "Flash Express",
+      imageUrl: "/images/shipping/flash_express.png",
+    },
+  ];
   // end
 
   const fetchData = async () => {
@@ -243,15 +260,15 @@ export default function Order() {
     setTotalOrders(response.data.orders.total);
     setOrders(response.data.orders.data);
     setTotalPages(response.data.orders.last_page);
-    setCountOrder(response.data.count_status1)
-    setCountPacking(response.data.count_status2)
-    setCountReadyShip(response.data.count_status3)
-    setCountDelivering(response.data.count_status4)
-    setCountDelivered(response.data.count_status5)
-    setCountRemand(response.data.count_status6)
-    setCountCancel(response.data.count_status7)
-    setTotalAmount(response.data.total_Amount)
-    setTotalNum(response.data.total_Num)
+    setCountOrder(response.data.count_status1);
+    setCountPacking(response.data.count_status2);
+    setCountReadyShip(response.data.count_status3);
+    setCountDelivering(response.data.count_status4);
+    setCountDelivered(response.data.count_status5);
+    setCountRemand(response.data.count_status6);
+    setCountCancel(response.data.count_status7);
+    setTotalAmount(response.data.total_Amount);
+    setTotalNum(response.data.total_Num);
     console.log(orders);
   };
 
@@ -305,24 +322,6 @@ export default function Order() {
     setCurrentPage(page);
     setinputValue(page);
   };
-
-  // const countOrder = orders.filter(
-  //   (item) => item.status === "ตรวจสอบคำสั่งซื้อ"
-  // ).length;
-  // const countPacking = orders.filter(
-  //   (item) => item.status === "กำลังแพ็ค"
-  // ).length;
-  // const countReadyShip = orders.filter(
-  //   (item) => item.status === "พร้อมส่ง"
-  // ).length;
-  // const countDelivering = orders.filter(
-  //   (item) => item.status === "จัดส่งสำเร็จ"
-  // ).length;
-  // const countDelivered = orders.filter(
-  //   (item) => item.status === "ส่งสำเร็จ"
-  // ).length;
-  // const countRemand = orders.filter((item) => item.status === "ตีกลับ").length;
-  // const countCancel = orders.filter((item) => item.status === "ยกเลิก").length;
 
   const handleSetStatusOrder = async (index, id, status) => {
     const formData = new FormData();
@@ -437,7 +436,7 @@ export default function Order() {
         fetchData();
         setSelectedOrders([]);
         ModalConfirmSetStatus.onClose();
-        modalConfirmSetStatus2.onClose();
+        modalConfirmSetStatusMulti.onClose();
       }
     }
   };
@@ -848,10 +847,15 @@ export default function Order() {
     setTracking(e.target.value);
   };
 
+  const handleChange = (event) => {
+    setSelectedOption(event.target.value);
+  };
+
   const handleInsertTracking = async () => {
     const formData = new FormData();
     formData.append(`orderId`, idOrder);
     formData.append(`tracking`, tracking);
+    formData.append(`shipping`, selectedOption);
     const response = await axios.post(
       "https://api.sellpang.com/api/addTrackingOrder",
       formData
@@ -860,6 +864,7 @@ export default function Order() {
       fetchData();
       ModalInputTax.onClose();
       setTracking("");
+      setSelectedOption("");
     }
   };
 
@@ -1194,7 +1199,7 @@ export default function Order() {
                         <Th
                           p={2}
                           color={"white"}
-                          fontSize="15"
+                          fontSize="18"
                           textAlign={"center"}
                           key={index}
                         >
@@ -1255,10 +1260,6 @@ export default function Order() {
                     }
                   })
                   .map((filteredOrder, index) => {
-                    // const orderAmount = Number(filteredOrder.amount);
-                    // const orderQuantity = Number(filteredOrder.quantity);
-                    // totalAmount += orderAmount;
-                    // totalQuantity += orderQuantity;
                     const optionsDate = {
                       day: "numeric",
                       month: "numeric",
@@ -1546,7 +1547,9 @@ export default function Order() {
               </Tbody>
               <Tfoot bgColor={"whitesmoke"}>
                 <Tr>
-                  <Th colSpan={5}>ยอดรวม</Th>
+                  <Th colSpan={5} fontSize={"16px"} fontWeight={"bold"}>
+                    ยอดรวม
+                  </Th>
                   <Th textAlign={"center"}>{totalNum}</Th>
                   <Th textAlign={"center"} colSpan={1}>
                     {totalAmount}
@@ -2177,6 +2180,30 @@ export default function Order() {
             <FormControl>
               <FormLabel>Order ID</FormLabel>
               <Input bgColor={"whitesmoke"} value={trackingOrderId} readOnly />
+            </FormControl>
+
+            <FormControl mt={4}>
+              <FormLabel>เลือกขนส่ง</FormLabel>
+              <Select
+                placeholder="เลือกขนส่ง"
+                value={selectedOption}
+                onChange={handleChange}
+              >
+                {optionsShipping.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    <Flex align="center">
+                      <Box mr="2">
+                        <Image
+                          src={option.imageUrl}
+                          alt={option.label}
+                          boxSize="20px"
+                        />
+                      </Box>
+                      <Text>{option.label}</Text>
+                    </Flex>
+                  </option>
+                ))}
+              </Select>
             </FormControl>
 
             <FormControl mt={4}>

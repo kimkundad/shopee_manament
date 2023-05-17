@@ -39,6 +39,7 @@ import {
   IconButton,
   HStack,
   Th,
+  InputRightAddon,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { BsArrowLeftCircle } from "react-icons/bs";
@@ -577,9 +578,7 @@ function addProduct() {
 
   const handleConfirmDeleteSuccess = () => {
     axios
-      .post(
-        "https://api.sellpang.com/api/deleteCategory/" + categoryIdDelete
-      )
+      .post("https://api.sellpang.com/api/deleteCategory/" + categoryIdDelete)
       .then(function (response) {
         if (response.data.success) {
           modalConfirmDeleteCategory.onClose();
@@ -962,10 +961,10 @@ function addProduct() {
                       <InputGroup>
                         <Input
                           pr="40px"
-                          type="number"
+                          type="text"
                           placeholder="ระบุรหัสสินค้า"
                           value={sku}
-                          onChange={(e) => setSku(parseInt(e.target.value))}
+                          onChange={(e) => setSku(e.target.value)}
                         />
                       </InputGroup>
                     </GridItem>
@@ -983,9 +982,7 @@ function addProduct() {
                           value={cost}
                           onChange={(e) => setCost(parseInt(e.target.value))}
                         />
-                        <InputRightElement>
-                          <Text>฿</Text>
-                        </InputRightElement>
+                        <InputRightAddon children="฿" />
                       </InputGroup>
                     </GridItem>
                     <GridItem colSpan={1} justifySelf="end">
@@ -1003,9 +1000,7 @@ function addProduct() {
                           onChange={(e) => setPrice(parseInt(e.target.value))}
                           isRequired
                         />
-                        <InputRightElement>
-                          <Text>฿</Text>
-                        </InputRightElement>
+                        <InputRightAddon children="฿" />
                       </InputGroup>
                     </GridItem>
                     <GridItem colSpan={1} justifySelf="end">
@@ -1018,15 +1013,16 @@ function addProduct() {
                         <Input
                           pr="40px"
                           type="number"
-                          placeholder="ระบุลดราคา"
+                          placeholder="ระบุลดราคา ( กรุณากรอกเป็นจำนวนเปอร์เซ็น )"
                           value={price_sales}
                           onChange={(e) =>
                             setPrice_sales(parseInt(e.target.value))
                           }
                         />
-                        <InputRightElement>
-                          <Text>฿</Text>
-                        </InputRightElement>
+                        <InputRightAddon children="%" />
+                        {/* <InputRightElement>
+                          <Text fontSize={'xl'}>%</Text>
+                        </InputRightElement> */}
                       </InputGroup>
                     </GridItem>
                     <GridItem colSpan={1} justifySelf="end">
@@ -1056,9 +1052,7 @@ function addProduct() {
                           value={weight}
                           onChange={(e) => setWeight(e.target.value)}
                         />
-                        <InputRightElement>
-                          <Text>Kg</Text>
-                        </InputRightElement>
+                        <InputRightAddon children="Kg." />
                       </InputGroup>
                     </GridItem>
                     <GridItem colSpan={1} justifySelf="end">
@@ -1073,9 +1067,7 @@ function addProduct() {
                           placeholder="ระบุความกว้างสินค้า"
                           onChange={(e) => setWidth(e.target.value)}
                         />
-                        <InputRightElement>
-                          <Text>Cm</Text>
-                        </InputRightElement>
+                        <InputRightAddon children="Cm." />
                       </InputGroup>
                       <InputGroup mt="10px">
                         <Input
@@ -1083,9 +1075,7 @@ function addProduct() {
                           placeholder="ระบุความยาวสินค้า"
                           onChange={(e) => setLength(e.target.value)}
                         />
-                        <InputRightElement>
-                          <Text>Cm</Text>
-                        </InputRightElement>
+                        <InputRightAddon children="Cm." />
                       </InputGroup>
                       <InputGroup mt="10px">
                         <Input
@@ -1093,9 +1083,7 @@ function addProduct() {
                           placeholder="ระบุความสูงสินค้า"
                           onChange={(e) => setHeight(e.target.value)}
                         />
-                        <InputRightElement>
-                          <Text>Cm</Text>
-                        </InputRightElement>
+                        <InputRightAddon children="Cm." />
                       </InputGroup>
                       {/* {buttonActive[0] ? (
                         <Flex justifyContent="center" pt="10px">
