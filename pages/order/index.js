@@ -219,9 +219,7 @@ export default function Order() {
   // end
 
   const fetchData = async () => {
-    const response = await axios.get(
-      `https://api.sellpang.com/api/getOrders`
-    );
+    const response = await axios.get(`https://api.sellpang.com/api/getOrders`);
     setOrders(response.data.orders);
     console.log(orders);
   };
@@ -501,6 +499,7 @@ export default function Order() {
 
           // Draw the table rows
           y += 100; // Start y below the header
+          let maxLines = 1;
           for (let i = 0; i < order.orderDetails.length; i++) {
             const product = order.orderDetails[i];
             const row = [
@@ -511,12 +510,25 @@ export default function Order() {
             ];
             x = showListOrderPDF ? 10 : 5;
             for (let j = 0; j < row.length; j++) {
-              doc.text(row[j], x + 2, y + cellHeight / 2 + 2);
-              // The y value is the top of the cell + half the cell height
-              doc.rect(x, y, columnWidths[j], cellHeight); // Draw the cell border
+              const lines = doc.splitTextToSize(row[j], columnWidths[j] - 4); // Subtract a bit from the column width for padding
+              maxLines = Math.max(maxLines, lines.length);
+              for (let k = 0; k < lines.length; k++) {
+                doc.text(
+                  lines[k],
+                  x + 2,
+                  y + cellHeight / 2 + 2 + k * cellHeight
+                );
+              }
               x += columnWidths[j];
             }
-            y += cellHeight;
+            // Now we draw the table lines
+            x = showListOrderPDF ? 10 : 5;
+            for (let j = 0; j < row.length; j++) {
+              doc.rect(x, y, columnWidths[j], cellHeight * maxLines); // Draw the cell border
+              x += columnWidths[j];
+            }
+            y += cellHeight * maxLines;
+            maxLines = 1; // Reset maxLines for the next row
           }
           doc.setFont("THSarabunNewBold", "bold");
           doc.text("ยอดรวม ", showListOrderPDF ? 132 : 61, y + 10);
@@ -761,7 +773,7 @@ export default function Order() {
 
   const inputTracking = (e) => {
     setTracking(e.target.value);
-  }
+  };
 
   const handleInsertTracking = async () => {
     const formData = new FormData();
@@ -2046,7 +2058,7 @@ export default function Order() {
 
             <FormControl mt={4}>
               <FormLabel>Tracking</FormLabel>
-              <Input placeholder="Tracking" onChange={inputTracking}/>
+              <Input placeholder="Tracking" onChange={inputTracking} />
             </FormControl>
           </ModalBody>
 
