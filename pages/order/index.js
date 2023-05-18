@@ -180,8 +180,13 @@ export default function Order() {
   const [searchId, setSearchId] = useState("");
   const [searchDate, setSearchDate] = useState("");
   const [checkBoxData, setCheckBoxData] = useState(labelLists);
-  let totalAmount = 0;
-  let totalQuantity = 0;
+  const [numShowItems, setNumShowItems] = useState(5);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [inputValue, setinputValue] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalOrders, setTotalOrders] = useState(0);
+  const [totalAmount, setTotalAmount] = useState(0);
+  const [totalNum, setTotalNum] = useState(0);
   let amountProduct = "";
   const modalOpenImgSlipPayment = useDisclosure();
 
@@ -216,42 +221,107 @@ export default function Order() {
   const [nextStatus, setNextStatus] = useState("");
   const [trackingOrderId, setTrackingOrderId] = useState("");
   const [tracking, setTracking] = useState("");
+  const [countOrder, setCountOrder] = useState("");
+  const [countPacking, setCountPacking] = useState("");
+  const [countReadyShip, setCountReadyShip] = useState("");
+  const [countDelivering, setCountDelivering] = useState("");
+  const [countDelivered, setCountDelivered] = useState("");
+  const [countRemand, setCountRemand] = useState("");
+  const [countCancel, setCountCancel] = useState("");
+  const [selectedOption, setSelectedOption] = useState("");
+
+  const optionsShipping = [
+    {
+      value: "thaipost",
+      label: "ไปรษณีย์ไทย",
+      imageUrl: "/images/shipping/thailand_post.webp",
+    },
+    {
+      value: "kerry",
+      label: "Kerry Express",
+      imageUrl: "/images/shipping/kerry_express.png",
+    },
+    {
+      value: "flash",
+      label: "Flash Express",
+      imageUrl: "/images/shipping/flash_express.png",
+    },
+  ];
   // end
 
   const fetchData = async () => {
-    const response = await axios.get(
-      `https://api.sellpang.com/api/getOrders`
+    const formData = new FormData();
+    formData.append("navbarTab", navbarTab);
+    formData.append("numShowItems", numShowItems);
+    const response = await axios.post(
+      `https://api.sellpang.com/api/getOrders`,
+      formData
     );
-    setOrders(response.data.orders);
+    setTotalOrders(response.data.orders.total);
+    setOrders(response.data.orders.data);
+    setTotalPages(response.data.orders.last_page);
+    setCountOrder(response.data.count_status1);
+    setCountPacking(response.data.count_status2);
+    setCountReadyShip(response.data.count_status3);
+    setCountDelivering(response.data.count_status4);
+    setCountDelivered(response.data.count_status5);
+    setCountRemand(response.data.count_status6);
+    setCountCancel(response.data.count_status7);
+    setTotalAmount(response.data.total_Amount);
+    setTotalNum(response.data.total_Num);
     console.log(orders);
   };
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [navbarTab]);
 
   useEffect(() => {
     setSelectedAllOrder(false);
     setSelectedOrders([]);
   }, [navbarTab]);
 
-  const countOrder = orders.filter(
-    (item) => item.status === "ตรวจสอบคำสั่งซื้อ"
-  ).length;
-  const countPacking = orders.filter(
-    (item) => item.status === "กำลังแพ็ค"
-  ).length;
-  const countReadyShip = orders.filter(
-    (item) => item.status === "พร้อมส่ง"
-  ).length;
-  const countDelivering = orders.filter(
-    (item) => item.status === "จัดส่งสำเร็จ"
-  ).length;
-  const countDelivered = orders.filter(
-    (item) => item.status === "ส่งสำเร็จ"
-  ).length;
-  const countRemand = orders.filter((item) => item.status === "ตีกลับ").length;
-  const countCancel = orders.filter((item) => item.status === "ยกเลิก").length;
+  useEffect(() => {
+    async function fecthdata() {
+      const formData = new FormData();
+      formData.append("navbarTab", navbarTab);
+      formData.append("numShowItems", numShowItems);
+      const response = await axios.post(
+        `https://api.sellpang.com/api/getOrders?page=${currentPage}`,
+        formData
+      );
+      setTotalOrders(response.data.orders.total);
+      setOrders(response.data.orders.data);
+      setTotalPages(response.data.orders.last_page);
+      if (currentPage > response.data.orders.last_page) {
+        setCurrentPage(1);
+        setinputValue(1);
+      }
+    }
+    fecthdata();
+  }, [currentPage, numShowItems]);
+
+  const handleSelectChange = (event) => {
+    setNumShowItems(event.target.value);
+  };
+
+  const handleInputChange = (event) => {
+    if (
+      event.target.value !== "" &&
+      event.target.value >= 1 &&
+      event.target.value <= totalPages
+    ) {
+      setCurrentPage(parseInt(event.target.value));
+      setinputValue(parseInt(event.target.value));
+    } else if (event.target.value === "") {
+      setinputValue("");
+    }
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    setinputValue(page);
+  };
 
   const handleSetStatusOrder = async (index, id, status) => {
     const formData = new FormData();
@@ -366,7 +436,7 @@ export default function Order() {
         fetchData();
         setSelectedOrders([]);
         ModalConfirmSetStatus.onClose();
-        modalConfirmSetStatus2.onClose();
+        modalConfirmSetStatusMulti.onClose();
       }
     }
   };
@@ -501,6 +571,7 @@ export default function Order() {
 
           // Draw the table rows
           y += 100; // Start y below the header
+          let maxLines = 1;
           for (let i = 0; i < order.orderDetails.length; i++) {
             const product = order.orderDetails[i];
             const row = [
@@ -511,12 +582,25 @@ export default function Order() {
             ];
             x = showListOrderPDF ? 10 : 5;
             for (let j = 0; j < row.length; j++) {
-              doc.text(row[j], x + 2, y + cellHeight / 2 + 2);
-              // The y value is the top of the cell + half the cell height
-              doc.rect(x, y, columnWidths[j], cellHeight); // Draw the cell border
+              const lines = doc.splitTextToSize(row[j], columnWidths[j] - 4); // Subtract a bit from the column width for padding
+              maxLines = Math.max(maxLines, lines.length);
+              for (let k = 0; k < lines.length; k++) {
+                doc.text(
+                  lines[k],
+                  x + 2,
+                  y + cellHeight / 2 + 2 + k * cellHeight
+                );
+              }
               x += columnWidths[j];
             }
-            y += cellHeight;
+            // Now we draw the table lines
+            x = showListOrderPDF ? 10 : 5;
+            for (let j = 0; j < row.length; j++) {
+              doc.rect(x, y, columnWidths[j], cellHeight * maxLines); // Draw the cell border
+              x += columnWidths[j];
+            }
+            y += cellHeight * maxLines;
+            maxLines = 1; // Reset maxLines for the next row
           }
           doc.setFont("THSarabunNewBold", "bold");
           doc.text("ยอดรวม ", showListOrderPDF ? 132 : 61, y + 10);
@@ -761,12 +845,17 @@ export default function Order() {
 
   const inputTracking = (e) => {
     setTracking(e.target.value);
-  }
+  };
+
+  const handleChange = (event) => {
+    setSelectedOption(event.target.value);
+  };
 
   const handleInsertTracking = async () => {
     const formData = new FormData();
     formData.append(`orderId`, idOrder);
     formData.append(`tracking`, tracking);
+    formData.append(`shipping`, selectedOption);
     const response = await axios.post(
       "https://api.sellpang.com/api/addTrackingOrder",
       formData
@@ -775,6 +864,7 @@ export default function Order() {
       fetchData();
       ModalInputTax.onClose();
       setTracking("");
+      setSelectedOption("");
     }
   };
 
@@ -1049,9 +1139,6 @@ export default function Order() {
                   fontSize={"20px"}
                   mr={2}
                   _hover={{ bgColor: "green", color: "white" }}
-                  // onClick={() => {
-                  //   handelLogSelect("กำลังแพ็ค");
-                  // }}
                   onClick={handleOpenModalSetStatusMulti}
                 >
                   ยืนยันคำสั่งซื้อ
@@ -1072,22 +1159,6 @@ export default function Order() {
           {navbarTab === "กำลังแพ็ค" && (
             <Box>
               <Flex alignItems={"center"}>
-                {/* <Box
-                  borderWidth="1px"
-                  borderColor="gray"
-                  borderRadius="md"
-                  mr={2}
-                  p={"5px 10px 5px 10px"}
-                >
-                  <Checkbox
-                    colorScheme="green"
-                    borderColor="gray"
-                    isChecked={showListOrderPDF}
-                    onChange={handleSetShowListOrder}
-                  >
-                    <Text fontSize={"xl"}>แสดงรายการคำสั่งซื้อ</Text>
-                  </Checkbox>
-                </Box> */}
                 <Box borderWidth="1px" borderColor="green" borderRadius="md">
                   <Button
                     fontSize="21px"
@@ -1128,7 +1199,7 @@ export default function Order() {
                         <Th
                           p={2}
                           color={"white"}
-                          fontSize="15"
+                          fontSize="18"
                           textAlign={"center"}
                           key={index}
                         >
@@ -1189,10 +1260,6 @@ export default function Order() {
                     }
                   })
                   .map((filteredOrder, index) => {
-                    const orderAmount = Number(filteredOrder.amount);
-                    const orderQuantity = Number(filteredOrder.quantity);
-                    totalAmount += orderAmount;
-                    totalQuantity += orderQuantity;
                     const optionsDate = {
                       day: "numeric",
                       month: "numeric",
@@ -1480,8 +1547,10 @@ export default function Order() {
               </Tbody>
               <Tfoot bgColor={"whitesmoke"}>
                 <Tr>
-                  <Th colSpan={5}>ยอดรวม</Th>
-                  <Th textAlign={"center"}>{totalQuantity}</Th>
+                  <Th colSpan={5} fontSize={"16px"} fontWeight={"bold"}>
+                    ยอดรวม
+                  </Th>
+                  <Th textAlign={"center"}>{totalNum}</Th>
                   <Th textAlign={"center"} colSpan={1}>
                     {totalAmount}
                   </Th>
@@ -1490,6 +1559,75 @@ export default function Order() {
               </Tfoot>
             </Table>
           </TableContainer>
+        </Flex>
+        <Flex m="10px">
+          <Wrap alignSelf="center" fontSize="21px">
+            <WrapItem>
+              <Text>แสดงผล : </Text>
+            </WrapItem>
+            <WrapItem>
+              <Select size="xs" onChange={handleSelectChange}>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="30">30</option>
+              </Select>
+            </WrapItem>
+            <WrapItem>
+              <Text>จำนวนสินค้า : </Text>
+            </WrapItem>
+            <WrapItem>
+              <Text>{totalOrders}</Text>
+            </WrapItem>
+          </Wrap>
+          <Spacer />
+          <HStack spacing="2" alignSelf="center" fontSize="21px">
+            <Button
+              disabled={currentPage === 1 || currentPage < 1}
+              onClick={() =>
+                handlePageChange(
+                  currentPage === 1 ? currentPage : currentPage - 1
+                )
+              }
+              background="white"
+              _hover={{}}
+            >
+              <Image
+                src="/images/arrow/left-arrow.png"
+                alt=""
+                h="15px"
+                w="10px"
+              />
+            </Button>
+
+            <Text>หน้า</Text>
+            <Input
+              htmlSize={1}
+              placeholder={inputValue}
+              size="xs"
+              onChange={handleInputChange}
+              value={inputValue}
+            />
+            <Text whitespace="nowrap">จาก</Text>
+            <Text whitespace="nowrap">{totalPages}</Text>
+            <Button
+              disabled={currentPage >= totalPages}
+              onClick={() =>
+                handlePageChange(
+                  currentPage === totalPages ? currentPage : currentPage + 1
+                )
+              }
+              background="white"
+              _hover={{}}
+            >
+              <Image
+                src="/images/arrow/right-arrow.png"
+                alt=""
+                h="15px"
+                w="10px"
+              />
+            </Button>
+          </HStack>
         </Flex>
       </Box>
 
@@ -2045,8 +2183,32 @@ export default function Order() {
             </FormControl>
 
             <FormControl mt={4}>
+              <FormLabel>เลือกขนส่ง</FormLabel>
+              <Select
+                placeholder="เลือกขนส่ง"
+                value={selectedOption}
+                onChange={handleChange}
+              >
+                {optionsShipping.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    <Flex align="center">
+                      <Box mr="2">
+                        <Image
+                          src={option.imageUrl}
+                          alt={option.label}
+                          boxSize="20px"
+                        />
+                      </Box>
+                      <Text>{option.label}</Text>
+                    </Flex>
+                  </option>
+                ))}
+              </Select>
+            </FormControl>
+
+            <FormControl mt={4}>
               <FormLabel>Tracking</FormLabel>
-              <Input placeholder="Tracking" onChange={inputTracking}/>
+              <Input placeholder="Tracking" onChange={inputTracking} />
             </FormControl>
           </ModalBody>
 
