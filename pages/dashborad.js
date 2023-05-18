@@ -25,7 +25,8 @@ export default function DashBoard() {
   const [dataPieProducts, setDataPieProducts] = useState([]);
   const [dataPieShops, setDataPieShops] = useState([]);
   const [dataLines, setDataLine] = useState([]);
-  const [dataBars, setDataBar] = useState([]);
+  const [dataBars, setDataBars] = useState([]);
+  const [dataShopBars, setDataShopBars] = useState([]);
   const [allStock, setAllStock] = useState(null);
   const [totalSales, setTotalSales] = useState();
   const [totalDelivery, setTotalDelivery] = useState(null);
@@ -43,11 +44,12 @@ export default function DashBoard() {
       setDataPieProducts(res.data.data_chart_pie_products);
       setDataPieShops(res.data.data_chart_pie_shops);
       setDataLine(res.data.data_chart_line);
-      setDataBar(res.data.data_chart_bar);
+      setDataBars(res.data.data_chart_bar);
       setAllStock(res.data.all_stock[0].allStock);
       setTotalSales(res.data.total_sales[0].total_sales);
       setTotalDelivery(res.data.total_delivery[0]);
       setTotalPayment(res.data.total_payment[0]);
+      setDataShopBars(res.data.data_shop_bar);
     }
     fecthdata();
   }, []);
@@ -106,9 +108,9 @@ export default function DashBoard() {
     datasets: [
       {
         label: "# of Votes",
-        data: [totalSales, allStock],
-        backgroundColor: ["rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)"],
-        borderColor: ["rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)"],
+        data: [allStock, totalSales],
+        backgroundColor: ["rgba(0, 9, 255, 1)", "rgba(213, 213, 213, 1)"],
+        borderColor: ["rgba(0, 9, 255, 1)", "rgba(213, 213, 213, 1)"],
         borderWidth: 1,
       },
     ],
@@ -120,8 +122,8 @@ export default function DashBoard() {
       {
         label: "# of Votes",
         data: [totalDelivery?.sum_sent, totalDelivery?.sum_not_sent],
-        backgroundColor: ["rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)"],
-        borderColor: ["rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)"],
+        backgroundColor: ["rgba(255, 51, 153, 1)", "rgba(213, 213, 213, 1)"],
+        borderColor: ["rgba(255, 51, 153, 1)", "rgba(213, 213, 213, 1)"],
         borderWidth: 1,
       },
     ],
@@ -133,15 +135,15 @@ export default function DashBoard() {
       {
         label: "# of Votes",
         data: [totalPayment?.sum_payment, totalPayment?.sum_cash_on_delivery],
-        backgroundColor: ["rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)"],
-        borderColor: ["rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)"],
+        backgroundColor: ["rgba(255, 230, 0, 1)", "rgba(213, 213, 213, 1)"],
+        borderColor: ["rgba(255, 230, 0, 1)", "rgba(213, 213, 213, 1)"],
         borderWidth: 1,
       },
     ],
   };
 
   const optionsDonut = {
-    cutout: "70%",
+    cutout: "63%",
   };
 
   const [textCenterStock, setTextCenterStock] = useState(false);
@@ -321,27 +323,46 @@ export default function DashBoard() {
     "June",
     "July",
   ];
-  const test = [10, 12, 12, 45, 78, 42, 10];
-  const dataBar = {
-    labels,
-    datasets: [
-      {
-        label: "Dataset 1",
-        data: test.map((item) => item),
-        backgroundColor: "rgb(255, 99, 132)",
-      },
-      {
-        label: "Dataset 2",
-        data: test.map((item) => item),
-        backgroundColor: "rgb(75, 192, 192)",
-      },
-      {
-        label: "Dataset 3",
-        data: test.map((item) => item),
-        backgroundColor: "rgb(53, 162, 235)",
-      },
-    ],
-  };
+
+  const [dataBar, setDataBar] = useState(false);
+  useEffect(() => {
+    const labels = [];
+    const shop = dataShopBars;
+    
+    const shops = shop.map(item => {
+      return { name_shop: item.name_shop, data: [] };
+    });
+    
+    dataBars?.forEach((item,index) => {
+      labels.push(item.month);
+      item.data.forEach((subItem) => {
+        let shopIndex = shops.findIndex(
+          (item) => item.name_shop == subItem.name_shop
+        );
+        shops[shopIndex].data.push(subItem.total_num)
+      });
+      shops.forEach((shop) => {
+        if(shop.data.length == index){
+          shop.data.push(0)
+        }
+      });
+    });
+    const color = [
+      "rgb(255, 99, 132)",
+      "rgba(0, 9, 255)"
+
+    ]
+    const data = shops.map((item,index) => {
+      return {label: item.name_shop,data:item.data,backgroundColor: color[index]}
+    })
+    const newDataBar = {
+      labels,
+      datasets: data
+
+    };
+    setDataBar(newDataBar);
+  }, [dataBars]);
+
 
   const divRef = useRef(null);
   const [divHeight, setDivHeight] = useState(null);
@@ -350,7 +371,7 @@ export default function DashBoard() {
     if (divRef.current) {
       setDivHeight(divRef.current.getBoundingClientRect().height);
     }
-  }, [divHeight]);
+  }, [dataBar]);
 
   return (
     <Box bg="gray.100">
@@ -450,17 +471,17 @@ export default function DashBoard() {
             >
               <Thead bg="red">
                 <Tr>
-                  <Th>
+                  <Th py="20px">
                     <Text fontSize="24px" color="white">
                       ชื่อร้าน
                     </Text>
                   </Th>
-                  <Th>
+                  <Th py="20px">
                     <Text fontSize="24px" color="white">
                       ยอดขาย
                     </Text>
                   </Th>
-                  <Th>
+                  <Th py="20px">
                     <Text fontSize="24px" color="white">
                       สินค้าขายดี
                     </Text>
@@ -493,7 +514,7 @@ export default function DashBoard() {
           ref={divRef}
         >
           ยอดขายร้านค้า
-          <Bar options={optionsBar} data={dataBar} />
+          {dataBar ? <Bar options={optionsBar} data={dataBar} /> : null}
           <Box p="25px">
             <Flex py="5px" borderBottom="1px solid">
               <Text>จำนวนขายรวม</Text>
