@@ -2191,16 +2191,7 @@ export default function Order() {
               >
                 {optionsShipping.map((option) => (
                   <option key={option.value} value={option.value}>
-                    <Flex align="center">
-                      <Box mr="2">
-                        <Image
-                          src={option.imageUrl}
-                          alt={option.label}
-                          boxSize="20px"
-                        />
-                      </Box>
                       <Text>{option.label}</Text>
-                    </Flex>
                   </option>
                 ))}
               </Select>
