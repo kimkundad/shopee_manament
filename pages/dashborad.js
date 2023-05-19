@@ -20,6 +20,7 @@ import faker from "faker";
 import Chart from "chart.js/auto";
 import ModalLogin from "@/components/ModalLogin";
 import axios from "axios";
+import DateRangePicker from "@/components/DateRangePicker";
 
 export default function DashBoard() {
   const [dataTable, setDataTable] = useState([]);
@@ -32,11 +33,28 @@ export default function DashBoard() {
   const [totalSales, setTotalSales] = useState();
   const [totalDelivery, setTotalDelivery] = useState(null);
   const [totalPayment, setTotalPayment] = useState(null);
+
+  const [startDatePie, setStartDatePie] = useState(0);
+  const [endDatePie, setEndDatePie] = useState(9999999999);
+  const getDateRangePie = (start, end) => {
+    setStartDatePie(start.unix());
+    setEndDatePie(end.unix());
+  };
+  const [startDateBar, setStartDateBar] = useState(0);
+  const [endDateBar, setEndDateBar] = useState(9999999999);
+  const getDateRangeBar = (start, end) => {
+    setStartDateBar(start.unix());
+    setEndDateBar(end.unix());
+  };
   useEffect(() => {
     async function fecthdata() {
       const formdata = new FormData();
       let user_id = 3; // ถ้ามี login เปลี่ยนเป็น uid ของคน login
       formdata.append("uid", user_id);
+      formdata.append("startDatePie", startDatePie);
+      formdata.append("endDatePie", endDatePie);
+      formdata.append("startDateBar", startDateBar);
+      formdata.append("endDateBar", endDateBar);
       const res = await axios.post(
         `https://api.sellpang.com/api/dashboard`,
         formdata
@@ -54,6 +72,32 @@ export default function DashBoard() {
     }
     fecthdata();
   }, []);
+  useEffect(() => {
+    async function fecthdata() {
+      const formdata = new FormData();
+      let user_id = 3; // ถ้ามี login เปลี่ยนเป็น uid ของคน login
+      formdata.append("uid", user_id);
+      formdata.append("startDatePie", startDatePie);
+      formdata.append("endDatePie", endDatePie);
+      formdata.append("startDateBar", startDateBar);
+      formdata.append("endDateBar", endDateBar);
+      const res = await axios.post(
+        `https://api.sellpang.com/api/dashboard`,
+        formdata
+      );
+      setDataTable(res.data.data_table);
+      setDataPieProducts(res.data.data_chart_pie_products);
+      setDataPieShops(res.data.data_chart_pie_shops);
+      setDataLine(res.data.data_chart_line);
+      setDataBars(res.data.data_chart_bar);
+      setAllStock(res.data.all_stock[0].allStock);
+      setTotalSales(res.data.total_sales[0].total_sales);
+      setTotalDelivery(res.data.total_delivery[0]);
+      setTotalPayment(res.data.total_payment[0]);
+      setDataShopBars(res.data.data_shop_bar);
+    }
+    fecthdata();
+  }, [startDateBar, startDatePie]);
   ChartJS.register(ArcElement, Tooltip, Legend);
   const months = [
     "January",
@@ -364,7 +408,6 @@ export default function DashBoard() {
     setDataBar(newDataBar);
   }, [dataBars]);
 
-  console.log(dataShopBars);
   const divRef = useRef(null);
   const [divHeight, setDivHeight] = useState(null);
 
@@ -376,7 +419,22 @@ export default function DashBoard() {
 
   return (
     <Box bg="gray.100">
-      <Box>test</Box>
+      <Box textAlign="-webkit-right">
+        <Box
+          border="1px solid"
+          borderRadius="md"
+          fontSize="21px"
+          borderColor="gray.500"
+          w="150px"
+          bg="white"
+        >
+          <DateRangePicker
+            type="dashboard"
+            id="chartPie"
+            getDate={getDateRangePie}
+          />
+        </Box>
+      </Box>
       <Grid templateColumns="repeat(2, 1fr)" gap={6}>
         <Box bg="white" borderRadius="xl">
           <Text fontSize="28px" p="15px" textAlign="center" fontWeight="bold">
@@ -548,9 +606,35 @@ export default function DashBoard() {
           p="15px"
           bg="white"
           borderRadius="xl"
+          justifyContent="center"
           ref={divRef}
         >
-          ยอดขายร้านค้า
+          <Flex justifyContent="space-between" alignItems="center">
+            <Text
+              pl="17%"
+              fontSize="28px"
+              textAlign="center"
+              fontWeight="bold"
+              flexGrow={1}
+            >
+              ยอดขายร้านค้า
+            </Text>
+            <Box
+              border="1px solid"
+              borderRadius="md"
+              fontSize="21px"
+              borderColor="gray.500"
+              w="150px"
+              bg="white"
+            >
+              <DateRangePicker
+                type="dashboard"
+                id="chartBar"
+                getDate={getDateRangeBar}
+              />
+            </Box>
+          </Flex>
+
           {dataBar ? <Bar options={optionsBar} data={dataBar} /> : null}
           <Box p="25px">
             <Grid templateColumns="repeat(2, 1fr)" gap={0}>

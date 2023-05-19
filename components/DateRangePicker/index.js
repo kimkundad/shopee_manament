@@ -13,50 +13,82 @@ import {
 } from "@chakra-ui/react";
 import classNames from "classnames";
 
-const DateRangePicker = ({ getDate }) => {
-  const [label, setLabel] = useState("เลือกวันที่");
+const DateRangePicker = ({ getDate, id, type }) => {
   useEffect(() => {
-    const start = moment().subtract(29, "days");
-    const end = moment();
+    if (type == "dashboard") {
+      const start = moment().startOf("day");
+      const end = moment().endOf("day");
 
-    const cb = (start, end, label) => {
-      $("#reportrange span").html(label);
-      getDate(start, end);
-      setLabel(label);
-    };
+      const cb = (start, end, label) => {
+        $(`#reportrange${id} span`).html(label);
+        getDate(start.startOf("day"), end.endOf("day"),id);
+      };
 
-    $("#reportrange").daterangepicker(
-      {
-        startDate: start,
-        endDate: end,
-        ranges: {
-          วันนี้: [moment(), moment()],
-          เมื่อวาน: [
-            moment().subtract(1, "days"),
-            moment().subtract(1, "days"),
-          ],
-          "7 วันก่อน": [moment().subtract(6, "days"), moment()],
-          "30 วันก่อน": [moment().subtract(29, "days"), moment()],
-          เดือนนี้: [moment().startOf("month"), moment().endOf("month")],
-          เดือนที่แล้ว: [
-            moment().subtract(1, "month").startOf("month"),
-            moment().subtract(1, "month").endOf("month"),
-          ],
-          ปีนี้: [moment().startOf("year"), moment().endOf("year")],
+      $(`#reportrange${id}`).daterangepicker(
+        {
+          startDate: start,
+          endDate: end,
+          ranges: {
+            รายวัน: [moment(), moment()],
+            รายสัปดาห์: [moment().subtract(6, "days"), moment()],
+            รายเดือน: [moment().startOf("month"), moment().endOf("month")],
+            รายปี: [moment().startOf("year"), moment().endOf("year")],
+          },
+          autoApply: true,
+          autoClose: true,
         },
-        autoApply: true,
-        autoClose: true,
-      },
-      cb
-    );
+        cb
+      );
 
-    cb(start, end, "วันนี้");
-    $("#reportrange span").html("เลือกวันที่");
+      cb(start, end, "วันนี้");
+      $(`#reportrange${id} span`).html("รายวัน");
+    } else {
+      const start = moment().startOf("day");
+      const end = moment().endOf("day");
+
+      const cb = (start, end, label) => {
+        $(`#reportrange${id} span`).html(label);
+        getDate(start.startOf("day"), end.endOf("day"));
+      };
+
+      $(`#reportrange${id}`).daterangepicker(
+        {
+          startDate: start,
+          endDate: end,
+          ranges: {
+            วันนี้: [moment(), moment()],
+            เมื่อวาน: [
+              moment().subtract(1, "days"),
+              moment().subtract(1, "days"),
+            ],
+            "7 วันก่อน": [moment().subtract(6, "days"), moment()],
+            "30 วันก่อน": [moment().subtract(29, "days"), moment()],
+            เดือนนี้: [moment().startOf("month"), moment().endOf("month")],
+            เดือนที่แล้ว: [
+              moment().subtract(1, "month").startOf("month"),
+              moment().subtract(1, "month").endOf("month"),
+            ],
+            ปีนี้: [moment().startOf("year"), moment().endOf("year")],
+          },
+          autoApply: true,
+          autoClose: true,
+        },
+        cb
+      );
+
+      cb(start, end, "วันนี้");
+      $(`#reportrange${id} span`).html("เลือกวันที่");
+    }
   }, []);
 
   return (
-    <Flex id="reportrange" h="100%" alignItems="center" pl="15px">
-      <Image src="/images/calendar.png" h="20px" w="20px" />
+    <Flex id={`reportrange${id}`} h="100%" alignItems="center" pl="15px">
+      <Image
+        src="/images/calendar.png"
+        h="20px"
+        w="20px"
+        display={type == "dashboard" ? "none" : "block"}
+      />
       <span
         className={classNames({
           "pl-4": true,
