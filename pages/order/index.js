@@ -583,7 +583,7 @@ export default function Order() {
               order.orderId.toString(),
               product.nameProduct,
               product.num.toString(),
-              product.priceProduct.toString(),
+              product.price.toString(),
             ];
             x = showListOrderPDF ? 10 : 5;
             for (let j = 0; j < row.length; j++) {
@@ -783,7 +783,7 @@ export default function Order() {
             order.orderId.toString(),
             product.nameProduct,
             product.num.toString(),
-            product.priceProduct.toString(),
+            product.price.toString(),
           ];
           x = showListOrderPDF ? 10 : 5;
           for (let j = 0; j < row.length; j++) {
@@ -1916,13 +1916,14 @@ export default function Order() {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
                       };
-                      if (detail.option1 === 0 && detail.option2 === 0) {
-                        amountProduct = detail.priceProduct;
-                      } else if (detail.option1 !== 0 && detail.option2 === 0) {
-                        amountProduct = detail.priceProductOption1;
-                      } else if (detail.option1 !== 0 && detail.option2 !== 0) {
-                        amountProduct = detail.priceProductOption2;
-                      }
+                      // if (detail.option1 === 0 && detail.option2 === 0) {
+                      //   amountProduct = detail.priceProduct;
+                      // } else if (detail.option1 !== 0 && detail.option2 === 0) {
+                      //   amountProduct = detail.priceProductOption1;
+                      // } else if (detail.option1 !== 0 && detail.option2 !== 0) {
+                      //   amountProduct = detail.priceProductOption2;
+                      // }
+                      amountProduct = detail.price;
 
                       const formattedPriceProduct =
                         amountProduct.toLocaleString(
