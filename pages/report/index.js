@@ -30,6 +30,8 @@ import DBadmanXBold from "@/components/DBadmanXBold";
 import autoTable from "jspdf-autotable";
 import THSarabunNew from "@/components/THSarabunNew";
 import THSarabunNewBold from "@/components/THSarabunNewBold";
+import DateRangePicker from "@/components/DateRangePicker";
+
 function index() {
   const [reports, setReports] = useState([]);
   const [loadingImg, setLoadingImg] = useState(true);
@@ -84,16 +86,21 @@ function index() {
     endDate: new Date(2100, 4, 9),
     key: "selection",
   });
+
+  const [startDate,setStartDate] = useState(0)
+  const [endDate,setEndDate] = useState(9999999999)
+  const getDateRange = (start,end) => {
+    setStartDate(start.unix())
+    setEndDate(end.unix())
+
+  }
+  console.log(startDate);
   useEffect(() => {
     async function fecthdata() {
-      selectedRange.startDate.setHours(0, 0, 0, 0);
-      selectedRange.endDate.setHours(23, 59, 59, 999);
-      const startDateTimestamp = selectedRange.startDate.getTime();
-      const endDateTimestamp = selectedRange.endDate.getTime();
       const formdata = new FormData();
       formdata.append("itemsPerPage", itemsPerPage);
-      formdata.append("startDate", startDateTimestamp);
-      formdata.append("endDate", endDateTimestamp);
+      formdata.append("startDate", startDate);
+      formdata.append("endDate", endDate);
       formdata.append("search", search);
       const res = await axios.post(
         `https://api.sellpang.com/api/getReports`,
@@ -114,18 +121,14 @@ function index() {
       setSumOrders(resTotal?.data?.total?.total_num);
     }
     fecthdata();
-  }, []);
+  }, [startDate]);
 
   useEffect(() => {
     async function fecthdata() {
-      selectedRange.startDate.setHours(0, 0, 0, 0);
-      selectedRange.endDate.setHours(23, 59, 59, 999);
-      const startDateTimestamp = selectedRange.startDate.getTime();
-      const endDateTimestamp = selectedRange.endDate.getTime();
       const formdata = new FormData();
       formdata.append("itemsPerPage", itemsPerPage);
-      formdata.append("startDate", startDateTimestamp);
-      formdata.append("endDate", endDateTimestamp);
+      formdata.append("startDate", startDate);
+      formdata.append("endDate", endDate);
       formdata.append("search", search);
       const res = await axios.post(
         `https://api.sellpang.com/api/getReports?page=${currentPage}`,
@@ -140,7 +143,7 @@ function index() {
       }
     }
     fecthdata();
-  }, [currentPage, itemsPerPage, search]);
+  }, [currentPage, itemsPerPage, search,startDate]);
 
   const handleSelectChange = (event) => {
     setItemPerpages(event.target.value);
@@ -277,7 +280,7 @@ function index() {
                 item.province,
                 item.tel,
                 item.num,
-                item.price_type_1 * item.num,
+                item.price * item.num,
               ]
             : item.type == 2
             ? [
@@ -290,7 +293,7 @@ function index() {
                 item.province,
                 item.tel,
                 item.num,
-                item.price_type_2 * item.num,
+                item.price * item.num,
               ]
             : [
                 item.created_at,
@@ -302,7 +305,7 @@ function index() {
                 item.province,
                 item.tel,
                 item.num,
-                item.price_type_3 * item.num,
+                item.price * item.num,
               ],
         ];
       });
@@ -362,10 +365,9 @@ function index() {
         });
         yPos += rowHeight; // Move to the next row position
       });
-      if(i !== totalPages){
+      if (i !== totalPages) {
         doc.addPage();
       }
-      
     }
 
     const pdfBlob = doc.output("blob");
@@ -383,7 +385,6 @@ function index() {
     URL.revokeObjectURL(url);
   };
 
-  const [showDateRangePicker, setShowDateRangePicker] = useState(false);
   return (
     <Box w="100%">
       <Flex justifyContent="center" alignItems="center">
@@ -409,32 +410,7 @@ function index() {
           </InputGroup>
         </Box>
         <Box pl="10px">
-          <InputGroup>
-            <InputLeftElement pointerEvents="none">
-              <Image src="/images/calendar.png" h="20px" w="20px" />
-            </InputLeftElement>
-            <Input
-              placeholder="เลือกวันที่"
-              onFocus={() => setShowDateRangePicker(true)}
-              readOnly
-              type="text"
-              borderRadius="3xl"
-              fontSize="21px"
-              borderColor="gray.500"
-            />
-          </InputGroup>
-          {showDateRangePicker && (
-            <div style={{ position: "absolute", border: "1px solid" }}>
-              {/* <DateRangePicker
-                ranges={[selectedRange]}
-                onChange={(ranges) => {
-                  setSelectedRange(ranges.selection);
-                  setShowDateRangePicker(false);
-                }}
-                shortcuts={presets}
-              /> */}
-            </div>
-          )}
+          <DateRangePicker getDate={getDateRange}/>
         </Box>
         <Spacer />
         <Box borderWidth="1px" borderColor="red" borderRadius="md">
@@ -550,13 +526,7 @@ function index() {
                     <Td textAlign="end">{item.num}</Td>
                   ) : null}
                   {selectedColumns[10] ? (
-                    <Td textAlign="end">
-                      {item.type == 1
-                        ? item.price_type_1
-                        : item.type == 2
-                        ? item.price_type_2
-                        : item.price_type_3}
-                    </Td>
+                    <Td textAlign="end">{item.price * item.num}</Td>
                   ) : null}
                 </Tr>
               );

@@ -1,7 +1,7 @@
 import React from "react";
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import classNames from "classnames";
-import { Flex, Box, Image } from "@chakra-ui/react";
+import { Link, Box, Image } from "@chakra-ui/react";
 type Props = {
   onMenuButtonClick(): void;
 };
