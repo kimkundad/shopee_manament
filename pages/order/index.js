@@ -253,6 +253,8 @@ export default function Order() {
     const formData = new FormData();
     formData.append("navbarTab", navbarTab);
     formData.append("numShowItems", numShowItems);
+    formData.append("search", searchId);
+    formData.append("searchDate", searchDate);
     const response = await axios.post(
       `https://api.sellpang.com/api/getOrders`,
       formData
@@ -283,9 +285,12 @@ export default function Order() {
 
   useEffect(() => {
     async function fecthdata() {
+      console.log('searchDate', searchDate)
       const formData = new FormData();
       formData.append("navbarTab", navbarTab);
       formData.append("numShowItems", numShowItems);
+      formData.append("search", searchId);
+      formData.append("searchDate", searchDate);
       const response = await axios.post(
         `https://api.sellpang.com/api/getOrders?page=${currentPage}`,
         formData
@@ -299,7 +304,7 @@ export default function Order() {
       }
     }
     fecthdata();
-  }, [currentPage, numShowItems]);
+  }, [currentPage, numShowItems, searchId, searchDate]);
 
   const handleSelectChange = (event) => {
     setNumShowItems(event.target.value);
@@ -578,7 +583,7 @@ export default function Order() {
               order.orderId.toString(),
               product.nameProduct,
               product.num.toString(),
-              product.priceProduct.toString(),
+              product.price.toString(),
             ];
             x = showListOrderPDF ? 10 : 5;
             for (let j = 0; j < row.length; j++) {
@@ -778,7 +783,7 @@ export default function Order() {
             order.orderId.toString(),
             product.nameProduct,
             product.num.toString(),
-            product.priceProduct.toString(),
+            product.price.toString(),
           ];
           x = showListOrderPDF ? 10 : 5;
           for (let j = 0; j < row.length; j++) {
@@ -851,20 +856,44 @@ export default function Order() {
     setSelectedOption(event.target.value);
   };
 
-  const handleInsertTracking = async () => {
+  const handleInsertTracking = async (typeExpress) => {
     const formData = new FormData();
     formData.append(`orderId`, idOrder);
     formData.append(`tracking`, tracking);
     formData.append(`shipping`, selectedOption);
-    const response = await axios.post(
-      "https://api.sellpang.com/api/addTrackingOrder",
-      formData
-    );
-    if (response.data.success) {
-      fetchData();
-      ModalInputTax.onClose();
-      setTracking("");
-      setSelectedOption("");
+    if (typeExpress === "thaipost") {
+      const response = await axios.post(
+        "https://api.sellpang.com/api/addTrackingOrder",
+        formData
+      );
+      if (response.data.success) {
+        fetchData();
+        ModalInputTax.onClose();
+        setTracking("");
+        setSelectedOption("");
+      }
+    } else if (typeExpress === "kerry") {
+      const response = await axios.post(
+        "https://api.sellpang.com/api/addTrackingOrderKerry",
+        formData
+      );
+      if (response.data.success) {
+        fetchData();
+        ModalInputTax.onClose();
+        setTracking("");
+        setSelectedOption("");
+      }
+    } else if (typeExpress === "flash") {
+      const response = await axios.post(
+        "https://api.sellpang.com/api/addTrackingOrderFlash",
+        formData
+      );
+      if (response.data.success) {
+        fetchData();
+        ModalInputTax.onClose();
+        setTracking("");
+        setSelectedOption("");
+      }
     }
   };
 
@@ -1240,25 +1269,25 @@ export default function Order() {
               </Thead>
               <Tbody>
                 {orders
-                  .filter((order) => {
-                    if (searchId !== "") {
-                      return (
-                        (order.status.includes(navbarTab) &&
-                          order.orderId.toString().includes(searchId)) ||
-                        order.receiverName.toString().includes(searchId) ||
-                        order.province.toString().includes(searchId) ||
-                        order.phoneNumber.toString().includes(searchId) ||
-                        order.amount.toString().includes(searchId)
-                      );
-                    } else if (searchDate !== "") {
-                      return (
-                        order.status.includes(navbarTab) &&
-                        order.createAt.includes(searchDate)
-                      );
-                    } else {
-                      return order.status.includes(navbarTab);
-                    }
-                  })
+                  // .filter((order) => {
+                  //   if (searchId !== "") {
+                  //     return (
+                  //       (order.status.includes(navbarTab) &&
+                  //         order.orderId.toString().includes(searchId)) ||
+                  //       order.receiverName.toString().includes(searchId) ||
+                  //       order.province.toString().includes(searchId) ||
+                  //       order.phoneNumber.toString().includes(searchId) ||
+                  //       order.amount.toString().includes(searchId)
+                  //     );
+                  //   } else if (searchDate !== "") {
+                  //     return (
+                  //       order.status.includes(navbarTab) &&
+                  //       order.createAt.includes(searchDate)
+                  //     );
+                  //   } else {
+                  //     return order.status.includes(navbarTab);
+                  //   }
+                  // })
                   .map((filteredOrder, index) => {
                     const optionsDate = {
                       day: "numeric",
@@ -1887,13 +1916,14 @@ export default function Order() {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
                       };
-                      if (detail.option1 === 0 && detail.option2 === 0) {
-                        amountProduct = detail.priceProduct;
-                      } else if (detail.option1 !== 0 && detail.option2 === 0) {
-                        amountProduct = detail.priceProductOption1;
-                      } else if (detail.option1 !== 0 && detail.option2 !== 0) {
-                        amountProduct = detail.priceProductOption2;
-                      }
+                      // if (detail.option1 === 0 && detail.option2 === 0) {
+                      //   amountProduct = detail.priceProduct;
+                      // } else if (detail.option1 !== 0 && detail.option2 === 0) {
+                      //   amountProduct = detail.priceProductOption1;
+                      // } else if (detail.option1 !== 0 && detail.option2 !== 0) {
+                      //   amountProduct = detail.priceProductOption2;
+                      // }
+                      amountProduct = detail.price;
 
                       const formattedPriceProduct =
                         amountProduct.toLocaleString(
@@ -2191,7 +2221,7 @@ export default function Order() {
               >
                 {optionsShipping.map((option) => (
                   <option key={option.value} value={option.value}>
-                      <Text>{option.label}</Text>
+                    <Text>{option.label}</Text>
                   </option>
                 ))}
               </Select>
@@ -2204,9 +2234,39 @@ export default function Order() {
           </ModalBody>
 
           <ModalFooter justifyContent={"center"}>
-            <Button colorScheme="green" mr={3} onClick={handleInsertTracking}>
-              บันทึก
-            </Button>
+            {selectedOption === "thaipost" && (
+              <Button
+                colorScheme="green"
+                mr={3}
+                onClick={() => {
+                  handleInsertTracking("thaipost");
+                }}
+              >
+                บันทึก
+              </Button>
+            )}
+            {selectedOption === "kerry" && (
+              <Button
+                colorScheme="green"
+                mr={3}
+                onClick={() => {
+                  handleInsertTracking("kerry");
+                }}
+              >
+                บันทึก
+              </Button>
+            )}
+            {selectedOption === "flash" && (
+              <Button
+                colorScheme="green"
+                mr={3}
+                onClick={() => {
+                  handleInsertTracking("flash");
+                }}
+              >
+                บันทึก
+              </Button>
+            )}
             <Button onClick={ModalInputTax.onClose}>ยกเลิก</Button>
           </ModalFooter>
         </ModalContent>
