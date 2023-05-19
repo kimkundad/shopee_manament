@@ -87,14 +87,12 @@ function index() {
     key: "selection",
   });
 
-  const [startDate,setStartDate] = useState(0)
-  const [endDate,setEndDate] = useState(9999999999)
-  const getDateRange = (start,end) => {
-    setStartDate(start.unix())
-    setEndDate(end.unix())
-
-  }
-  console.log(startDate);
+  const [startDate, setStartDate] = useState(0);
+  const [endDate, setEndDate] = useState(9999999999);
+  const getDateRange = (start, end) => {
+    setStartDate(start.unix());
+    setEndDate(end.unix());
+  };
   useEffect(() => {
     async function fecthdata() {
       const formdata = new FormData();
@@ -143,7 +141,7 @@ function index() {
       }
     }
     fecthdata();
-  }, [currentPage, itemsPerPage, search,startDate]);
+  }, [currentPage, itemsPerPage, search, startDate]);
 
   const handleSelectChange = (event) => {
     setItemPerpages(event.target.value);
@@ -409,8 +407,15 @@ function index() {
             />
           </InputGroup>
         </Box>
-        <Box pl="10px">
-          <DateRangePicker getDate={getDateRange}/>
+        <Box
+          ml="10px"
+          border="1px solid"
+          borderRadius="3xl"
+          fontSize="21px"
+          borderColor="gray.500"
+          w="12%"
+        >
+          <DateRangePicker getDate={getDateRange} />
         </Box>
         <Spacer />
         <Box borderWidth="1px" borderColor="red" borderRadius="md">
