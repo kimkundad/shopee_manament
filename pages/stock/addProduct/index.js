@@ -55,6 +55,7 @@ import {
 } from "@chakra-ui/icons";
 import { DeleteIcon } from "@chakra-ui/icons";
 import { useRouter } from "next/router";
+import { TagsInput } from "react-tag-input-component";
 /* import "antd/dist/antd.css"; */
 
 class PicturesWall extends React.Component {
@@ -181,6 +182,7 @@ function addProduct() {
   const [productID, setProductID] = useState("");
   const router = useRouter();
   const { type } = router.query;
+  const [selected, setSelected] = useState([]);
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -391,6 +393,24 @@ function addProduct() {
     setDataTable(dataTable);
     onCloseForm3();
   }
+
+  const insertValue = (newSelected) => {
+    setSelected(newSelected);
+    updateDataTable(newSelected);
+  };
+
+  const updateDataTable = (newSelected) => {
+    const newData = newSelected.map((item) => ({
+      nameOption: item,
+      priceOption: "",
+      stockOption: "",
+      skuOption: "",
+      indexImageOption: "",
+      statusOption: "",
+      subOption: []
+    }));
+    setDataTable(newData);
+  };
 
   const [nameSubOption, setNameSubOption] = useState(null);
   const [priceSubOption, setPriceSubOption] = useState(null);
@@ -1251,6 +1271,14 @@ function addProduct() {
                     )}
                   </Flex>
                 </Box>
+                <div>
+                  <TagsInput
+                    value={selected}
+                    onChange={insertValue}
+                    name="fruits"
+                    placeHolder="เพิ่มตัวเลือก"
+                  />
+                </div>
               </Box>
             </Box>
           </from>
