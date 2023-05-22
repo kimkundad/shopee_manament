@@ -1,7 +1,17 @@
 import React from "react";
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import classNames from "classnames";
-import { Link, Box, Image } from "@chakra-ui/react";
+import {
+  Flex,
+  Box,
+  Image,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuDivider,
+  Text,
+} from "@chakra-ui/react";
 type Props = {
   onMenuButtonClick(): void;
 };
@@ -43,7 +53,66 @@ const Navbar = (props: Props) => {
           />
         </div>
         <div className="px-2">
-          <Image src="/images/user.png" width="40px" height="40px" alt="user" />
+          <Menu>
+            <MenuButton
+              transition="all 0.2s"
+              borderRadius="50%"
+              borderWidth="1px"
+              _hover={{ bg: "gray.400" }}
+              _expanded={{ bg: "blue.400" }}
+              _focus={{ boxShadow: "outline" }}
+            >
+              <Image
+                src="/images/user.png"
+                width="40px"
+                height="40px"
+                alt="user"
+              />
+            </MenuButton>
+            <MenuList>
+              <MenuItem>
+                <Flex>
+                  <Image
+                    src="/images/user.png"
+                    width="40px"
+                    height="40px"
+                    alt="user"
+                  />
+                  <Box>
+                    <Text>ชื่อ นามสกุล</Text>
+                    <Text>id:jkhkljlk</Text>
+                  </Box>
+                </Flex>
+              </MenuItem>
+              <MenuDivider />
+              <MenuItem>
+                <Flex>
+                  <Text>โปรไฟล์ของฉัน</Text>
+                </Flex>
+              </MenuItem>
+              <MenuItem>
+                <Flex>
+                  <Text>ร้านค้าของฉัน</Text>
+                </Flex>
+              </MenuItem>
+              <MenuItem>
+                <Flex>
+                  <Text>คำสั่งซื้อ</Text>
+                </Flex>
+              </MenuItem>
+              <MenuItem>
+                <Flex>
+                  <Text>คลังสินค้า</Text>
+                </Flex>
+              </MenuItem>
+              <MenuDivider />
+              <MenuItem>
+                <Flex>
+                  <Text>ออกจากระบบ</Text>
+                </Flex>
+              </MenuItem>
+            </MenuList>
+          </Menu>
         </div>
       </div>
     </nav>

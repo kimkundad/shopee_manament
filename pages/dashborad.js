@@ -19,6 +19,7 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import faker from "faker";
 import Chart from "chart.js/auto";
 import ModalLogin from "@/components/ModalLogin";
+import moment from "moment";
 import axios from "axios";
 import DateRangePicker from "@/components/DateRangePicker";
 
@@ -34,14 +35,14 @@ export default function DashBoard() {
   const [totalDelivery, setTotalDelivery] = useState(null);
   const [totalPayment, setTotalPayment] = useState(null);
 
-  const [startDatePie, setStartDatePie] = useState(0);
-  const [endDatePie, setEndDatePie] = useState(9999999999);
+  const [startDatePie, setStartDatePie] = useState(moment().startOf("day").unix());
+  const [endDatePie, setEndDatePie] = useState(moment().endOf("day").unix());
   const getDateRangePie = (start, end) => {
     setStartDatePie(start.unix());
     setEndDatePie(end.unix());
   };
-  const [startDateBar, setStartDateBar] = useState(0);
-  const [endDateBar, setEndDateBar] = useState(9999999999);
+  const [startDateBar, setStartDateBar] = useState(moment().startOf("day").unix());
+  const [endDateBar, setEndDateBar] = useState(moment().endOf("day").unix());
   const getDateRangeBar = (start, end) => {
     setStartDateBar(start.unix());
     setEndDateBar(end.unix());
@@ -419,7 +420,7 @@ export default function DashBoard() {
 
   return (
     <Box bg="gray.100">
-      <Box textAlign="-webkit-right">
+      <Box textAlign="-webkit-right" mb="1.25rem">
         <Box
           border="1px solid"
           borderRadius="md"
@@ -684,7 +685,9 @@ export default function DashBoard() {
           bg="white"
           borderRadius="xl"
         >
-          สินค้า
+          <Text fontSize="28px" textAlign="center" fontWeight="bold">
+            สินค้า
+          </Text>
           <Box h="200px">
             {textCenterStock ? (
               <Doughnut
@@ -717,7 +720,10 @@ export default function DashBoard() {
           bg="white"
           borderRadius="xl"
         >
-          การจัดส่ง
+          <Text fontSize="28px" textAlign="center" fontWeight="bold">
+            การจัดส่ง
+          </Text>
+
           <Box h="200px">
             {textCenterDelivery ? (
               <Doughnut
@@ -752,7 +758,10 @@ export default function DashBoard() {
           bg="white"
           borderRadius="xl"
         >
-          การชำระเงิน
+          <Text fontSize="28px" textAlign="center" fontWeight="bold">
+            การชำระเงิน
+          </Text>
+
           <Box h="200px">
             {textCenterPayment ? (
               <Doughnut
