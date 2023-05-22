@@ -66,24 +66,25 @@ const Navbar = (props: Props) => {
               _focus={{ boxShadow: "outline" }}
             >
               <Image
-                src={`https://api.sellpang.com/images/shopee/avatar/${userInfo.data[0].avatar}`}
+                src={`https://api.sellpang.com/images/shopee/avatar/${userInfo.data[0]?.avatar}`}
                 width="40px"
                 height="40px"
                 alt="user"
+                borderRadius="50%"
               />
             </MenuButton>
             <MenuList>
               <MenuItem>
                 <Flex>
                   <Image
-                    src="/images/user.png"
-                    width="40px"
-                    height="40px"
+                    src={`https://api.sellpang.com/images/shopee/avatar/${userInfo.data[0]?.avatar}`}
+                    width="50px"
+                    height="50px"
                     alt="user"
                   />
-                  <Box>
-                    <Text>ชื่อ นามสกุล</Text>
-                    <Text>id:jkhkljlk</Text>
+                  <Box pl="10px">
+                    <Text>{userInfo.data[0]?.name}</Text>
+                    <Text>id: {userInfo.data[0]?.id}</Text>
                   </Box>
                 </Flex>
               </MenuItem>

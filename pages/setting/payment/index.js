@@ -31,7 +31,7 @@ export default function Purchase() {
                 </Box>
             </Box>
 
-            <Box bg={'#f3f4f6'} pl={10} pt={2} pb={2}>
+            <Box bg={'#f3f4f6'} pl={10} pt={2} pb={2} borderTop="1px solid">
                 <HStack>
                     <Icon as={BsCashCoin} boxSize={8} />
                     <Text as='b' fontSize='lg'> ช่องทางการชำระเงิน</Text>

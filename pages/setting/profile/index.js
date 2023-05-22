@@ -49,11 +49,30 @@ import { BsArrowLeftCircle, BsPerson, BsCameraFill } from "react-icons/bs";
 import { FaRegSave } from "react-icons/fa";
 import { VscSave } from "react-icons/vsc";
 import { connect, useDispatch, useSelector } from "react-redux";
+import { createSlice } from '@reduxjs/toolkit';
+
 export default function Profile() {
   const userInfo = useSelector((App) => App.userInfo);
   const [file, setFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState(userInfo.data[0].avatar);
-
+  const [imagePreview, setImagePreview] = useState(null);
+  const dispatch = useDispatch()
+  const initialState = {
+    isLoading: false,
+    data:null,
+    dataBiller:null,
+    isError:false,
+    errorData: null,
+};
+  const slice = createSlice({
+    name: 'userInfo',
+    initialState,
+    reducers: {
+        getUserSuccess(state,action){
+            state.isLoading = false;
+            state.data = action.payload;
+        },
+    }
+});
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     setFile(file);
@@ -67,13 +86,16 @@ export default function Profile() {
 
     async function update() {
       const formdata = new FormData();
-      formdata.append("user_id", userInfo.data[0].id);
+      formdata.append("user_id", userInfo.data[0]?.id);
       formdata.append("avatar", file);
       const res = await axios.post(
         `https://api.sellpang.com/api/editAvatar/`,
         formdata
       );
+      dispatch(slice.actions.getUserSuccess([res.data.user]))
+      setImagePreview(res.data.user.avatar)
     }
+    
     update();
   };
 
@@ -96,6 +118,13 @@ export default function Profile() {
 
   useEffect(() => {
     async function fecthdata() {
+      const formdataUser = new FormData();
+      formdataUser.append("user_id", userInfo.data[0].id);
+      const user = await axios.post(
+        `https://api.sellpang.com/api/getUser`,
+        formdataUser
+      );
+      setImagePreview(user.data.user.avatar)
       const formdata = new FormData();
       formdata.append("user_code", 8863299);
       const res = await axios.post(
@@ -127,22 +156,22 @@ export default function Profile() {
   const updateOwnerShop = async () => {
     event.preventDefault();
     const formdata = new FormData();
-    formdata.append("fname", fname == null? " ":fname);
-    formdata.append("lname", lname == null? " ":lname);
-    formdata.append("gender", gender == null? " ":gender);
-    formdata.append("address", address == null? " ":address);
-    formdata.append("sub_district", subDistrict == null? " ":subDistrict);
-    formdata.append("district", district == null? " ": district);
-    formdata.append("county", county == null? " ": county);
-    formdata.append("zip_code", zipCode == null? " ": zipCode);
-    formdata.append("phone", phone == null? " ": phone);
-    formdata.append("email", email == null? " ": email);
-    formdata.append("facebook", facebook == null? " ": facebook);
-    formdata.append("line", line == null? " ": line);
-    formdata.append("instagram", instagram == null? " ": instagram);
-    formdata.append("twitter", twitter == null? " ": twitter);
-    formdata.append("tiktok", tiktok == null? " ": tiktok);
-    formdata.append("youtube", youtube == null? " ": youtube);
+    formdata.append("fname", fname == null ? " " : fname);
+    formdata.append("lname", lname == null ? " " : lname);
+    formdata.append("gender", gender == null ? " " : gender);
+    formdata.append("address", address == null ? " " : address);
+    formdata.append("sub_district", subDistrict == null ? " " : subDistrict);
+    formdata.append("district", district == null ? " " : district);
+    formdata.append("county", county == null ? " " : county);
+    formdata.append("zip_code", zipCode == null ? " " : zipCode);
+    formdata.append("phone", phone == null ? " " : phone);
+    formdata.append("email", email == null ? " " : email);
+    formdata.append("facebook", facebook == null ? " " : facebook);
+    formdata.append("line", line == null ? " " : line);
+    formdata.append("instagram", instagram == null ? " " : instagram);
+    formdata.append("twitter", twitter == null ? " " : twitter);
+    formdata.append("tiktok", tiktok == null ? " " : tiktok);
+    formdata.append("youtube", youtube == null ? " " : youtube);
     formdata.append("user_code", 8863299);
     formdata.append("user_id", 0);
     const res = await axios.post(
@@ -171,7 +200,7 @@ export default function Profile() {
         </Box>
       </Box>
 
-      <Box bg={"#f3f4f6"} pl={10} pt={2} pb={2}>
+      <Box bg={"#f3f4f6"} pl={10} pt={2} pb={2} borderTop="1px solid">
         <HStack>
           <Icon as={BsPerson} boxSize={8} />
           <Text pt="1" pl="2" as="b" fontSize="21">
@@ -194,10 +223,12 @@ export default function Profile() {
                     left={"40px"}
                     name="Segun Adebayo"
                     src={
-                      imagePreview == null ? "/images/user.png" : `https://api.sellpang.com/images/shopee/avatar/${imagePreview}`
+                      imagePreview == null
+                        ? "/images/user.png"
+                        : `https://api.sellpang.com/images/shopee/avatar/${imagePreview}`
                     }
-                    // src="https://bit.ly/sage-adebayo"
                     alt="demo"
+                    style={{ width: "180px", height: "180px" }}
                   >
                     <AvatarBadge
                       boxSize={10}
@@ -280,7 +311,11 @@ export default function Profile() {
                   <FormLabel mt={2}>เพศ : </FormLabel>
                 </GridItem>
                 <GridItem colSpan={6}>
-                  <RadioGroup defaultValue="1" onChange={setGender} value={gender}>
+                  <RadioGroup
+                    defaultValue="1"
+                    onChange={setGender}
+                    value={gender}
+                  >
                     <Stack spacing={5} direction="row">
                       <Radio colorScheme="green" value="ชาย">
                         ชาย
