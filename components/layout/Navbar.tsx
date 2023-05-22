@@ -12,10 +12,13 @@ import {
   MenuDivider,
   Text,
 } from "@chakra-ui/react";
+import Link from "next/link";
+import { connect, useDispatch, useSelector } from "react-redux";
 type Props = {
   onMenuButtonClick(): void;
 };
 const Navbar = (props: Props) => {
+  const userInfo = useSelector((App) => App.userInfo);
   return (
     <nav
       className={classNames({
@@ -63,7 +66,7 @@ const Navbar = (props: Props) => {
               _focus={{ boxShadow: "outline" }}
             >
               <Image
-                src="/images/user.png"
+                src={`https://api.sellpang.com/images/shopee/avatar/${userInfo.data[0].avatar}`}
                 width="40px"
                 height="40px"
                 alt="user"
@@ -86,24 +89,17 @@ const Navbar = (props: Props) => {
               </MenuItem>
               <MenuDivider />
               <MenuItem>
-                <Flex>
-                  <Text>โปรไฟล์ของฉัน</Text>
-                </Flex>
-              </MenuItem>
-              <MenuItem>
-                <Flex>
-                  <Text>ร้านค้าของฉัน</Text>
-                </Flex>
-              </MenuItem>
-              <MenuItem>
-                <Flex>
-                  <Text>คำสั่งซื้อ</Text>
-                </Flex>
-              </MenuItem>
-              <MenuItem>
-                <Flex>
-                  <Text>คลังสินค้า</Text>
-                </Flex>
+                <Link href="/setting/profile" w="100%">
+                  <Flex>
+                    <Image
+                      src="/images/user_profile.png"
+                      alt=""
+                      w="20px"
+                      h="20px"
+                    />
+                    <Text pl="5px">โปรไฟล์ของฉัน</Text>
+                  </Flex>
+                </Link>
               </MenuItem>
               <MenuDivider />
               <MenuItem>

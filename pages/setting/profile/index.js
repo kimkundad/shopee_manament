@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import ButtonBack from "@/components/button/ButtonBack";
@@ -44,13 +44,15 @@ import {
   ArrowRightIcon,
   SearchIcon,
 } from "@chakra-ui/icons";
+import axios from "axios";
 import { BsArrowLeftCircle, BsPerson, BsCameraFill } from "react-icons/bs";
 import { FaRegSave } from "react-icons/fa";
 import { VscSave } from "react-icons/vsc";
-
+import { connect, useDispatch, useSelector } from "react-redux";
 export default function Profile() {
+  const userInfo = useSelector((App) => App.userInfo);
   const [file, setFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
+  const [imagePreview, setImagePreview] = useState(userInfo.data[0].avatar);
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -62,6 +64,92 @@ export default function Profile() {
       setImagePreview(image);
     });
     reader.readAsDataURL(file);
+
+    async function update() {
+      const formdata = new FormData();
+      formdata.append("user_id", userInfo.data[0].id);
+      formdata.append("avatar", file);
+      const res = await axios.post(
+        `https://api.sellpang.com/api/editAvatar/`,
+        formdata
+      );
+    }
+    update();
+  };
+
+  const [fname, setFname] = useState(null);
+  const [lname, setLname] = useState(null);
+  const [gender, setGender] = useState("ชาย");
+  const [address, setAddress] = useState(null);
+  const [subDistrict, setSubDistrict] = useState(null);
+  const [district, setDistrict] = useState(null);
+  const [county, setCounty] = useState(null);
+  const [zipCode, setZipCode] = useState(null);
+  const [phone, setPhone] = useState(null);
+  const [email, setEmail] = useState(null);
+  const [facebook, setFacebook] = useState(null);
+  const [line, setLine] = useState(null);
+  const [instagram, setInstagram] = useState(null);
+  const [twitter, setTwitter] = useState(null);
+  const [tiktok, setTiktok] = useState(null);
+  const [youtube, setYoutube] = useState(null);
+
+  useEffect(() => {
+    async function fecthdata() {
+      const formdata = new FormData();
+      formdata.append("user_code", 8863299);
+      const res = await axios.post(
+        `https://api.sellpang.com/api/getOwnershops`,
+        formdata
+      );
+      if (res.data.owner_shop) {
+        setFname(res.data.owner_shop?.fname);
+        setLname(res.data.owner_shop?.lname);
+        setGender(res.data.owner_shop?.gender);
+        setAddress(res.data.owner_shop?.address);
+        setSubDistrict(res.data.owner_shop?.sub_district);
+        setDistrict(res.data.owner_shop?.district);
+        setCounty(res.data.owner_shop?.county);
+        setZipCode(res.data.owner_shop?.zip_code);
+        setPhone(res.data.owner_shop?.phone);
+        setEmail(res.data.owner_shop?.email);
+        setFacebook(res.data.owner_shop?.facebook);
+        setLine(res.data.owner_shop?.line);
+        setInstagram(res.data.owner_shop?.instagram);
+        setTwitter(res.data.owner_shop?.twitter);
+        setTiktok(res.data.owner_shop?.tiktok);
+        setYoutube(res.data.owner_shop?.youtube);
+      }
+    }
+    fecthdata();
+  }, []);
+
+  const updateOwnerShop = async () => {
+    event.preventDefault();
+    const formdata = new FormData();
+    formdata.append("fname", fname == null? " ":fname);
+    formdata.append("lname", lname == null? " ":lname);
+    formdata.append("gender", gender == null? " ":gender);
+    formdata.append("address", address == null? " ":address);
+    formdata.append("sub_district", subDistrict == null? " ":subDistrict);
+    formdata.append("district", district == null? " ": district);
+    formdata.append("county", county == null? " ": county);
+    formdata.append("zip_code", zipCode == null? " ": zipCode);
+    formdata.append("phone", phone == null? " ": phone);
+    formdata.append("email", email == null? " ": email);
+    formdata.append("facebook", facebook == null? " ": facebook);
+    formdata.append("line", line == null? " ": line);
+    formdata.append("instagram", instagram == null? " ": instagram);
+    formdata.append("twitter", twitter == null? " ": twitter);
+    formdata.append("tiktok", tiktok == null? " ": tiktok);
+    formdata.append("youtube", youtube == null? " ": youtube);
+    formdata.append("user_code", 8863299);
+    formdata.append("user_id", 0);
+    const res = await axios.post(
+      `https://api.sellpang.com/api/updateOwnerShop`,
+      formdata
+    );
+    console.log(res);
   };
 
   return (
@@ -94,18 +182,20 @@ export default function Profile() {
       </Box>
 
       <Box p={10}>
-        <form onSubmit={""}>
+        <form onSubmit={updateOwnerShop}>
           <SimpleGrid minChildWidth="300px" spacing="40px">
             <Box>
               <Grid templateColumns="repeat(8, 1fr)" gap={6}>
                 <GridItem colSpan={8} align={"center"}>
                   <Avatar
                     // size="2xl"
-                    width={'180px'}
-                    height={'180px'}
-                    left={'40px'}
+                    width={"180px"}
+                    height={"180px"}
+                    left={"40px"}
                     name="Segun Adebayo"
-                    src={imagePreview == null ? "/images/user.png" : imagePreview}
+                    src={
+                      imagePreview == null ? "/images/user.png" : `https://api.sellpang.com/images/shopee/avatar/${imagePreview}`
+                    }
                     // src="https://bit.ly/sage-adebayo"
                     alt="demo"
                   >
@@ -115,7 +205,7 @@ export default function Profile() {
                       bg="white"
                       borderWidth={2}
                       right={"55px"}
-                      top={'50px'}
+                      top={"50px"}
                       position="relative"
                       padding={2}
                     >
@@ -161,14 +251,24 @@ export default function Profile() {
                   <FormLabel m={0}>ชื่อจริง : </FormLabel>
                 </GridItem>
                 <GridItem colSpan={6}>
-                  <Input placeholder="ชื่อจริง" />
+                  <Input
+                    placeholder="ชื่อจริง"
+                    id="fname"
+                    value={fname}
+                    onChange={(e) => setFname(e.target.value)}
+                  />
                 </GridItem>
 
                 <GridItem colSpan={2} display={"flex"} justifyContent={"right"}>
                   <FormLabel m={0}>นามสกุล : </FormLabel>
                 </GridItem>
                 <GridItem colSpan={6}>
-                  <Input placeholder="นามสกุล" />
+                  <Input
+                    placeholder="นามสกุล"
+                    id="lname"
+                    value={lname}
+                    onChange={(e) => setLname(e.target.value)}
+                  />
                 </GridItem>
 
                 <GridItem
@@ -180,18 +280,18 @@ export default function Profile() {
                   <FormLabel mt={2}>เพศ : </FormLabel>
                 </GridItem>
                 <GridItem colSpan={6}>
-                  <RadioGroup defaultValue="1">
+                  <RadioGroup defaultValue="1" onChange={setGender} value={gender}>
                     <Stack spacing={5} direction="row">
-                      <Radio colorScheme="green" value="1">
+                      <Radio colorScheme="green" value="ชาย">
                         ชาย
                       </Radio>
-                      <Radio colorScheme="green" value="2">
+                      <Radio colorScheme="green" value="หญิง">
                         หญิง
                       </Radio>
-                      <Radio colorScheme="green" value="3">
+                      <Radio colorScheme="green" value="อื่นๆ">
                         อื่นๆ
                       </Radio>
-                      <Radio colorScheme="green" value="4">
+                      <Radio colorScheme="green" value="ไม่ระบุ">
                         ไม่ระบุ
                       </Radio>
                     </Stack>
@@ -207,35 +307,60 @@ export default function Profile() {
                   <FormLabel mt={2}>ที่อยู่ : </FormLabel>
                 </GridItem>
                 <GridItem colSpan={6}>
-                  <Textarea placeholder="เลขที่บ้าน ถนน ซอย" />
+                  <Textarea
+                    placeholder="เลขที่บ้าน ถนน ซอย"
+                    id="address"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                  />
                 </GridItem>
 
                 <GridItem colSpan={2} display={"flex"} justifyContent={"right"}>
                   <FormLabel m={0}>ตำบล : </FormLabel>
                 </GridItem>
                 <GridItem colSpan={6}>
-                  <Input placeholder="ตำบล" />
+                  <Input
+                    placeholder="ตำบล"
+                    id="sub_district"
+                    value={subDistrict}
+                    onChange={(e) => setSubDistrict(e.target.value)}
+                  />
                 </GridItem>
 
                 <GridItem colSpan={2} display={"flex"} justifyContent={"right"}>
                   <FormLabel m={0}>อำเภอ : </FormLabel>
                 </GridItem>
                 <GridItem colSpan={6}>
-                  <Input placeholder="อำเภอ" />
+                  <Input
+                    placeholder="อำเภอ"
+                    id="district"
+                    value={district}
+                    onChange={(e) => setDistrict(e.target.value)}
+                  />
                 </GridItem>
 
                 <GridItem colSpan={2} display={"flex"} justifyContent={"right"}>
                   <FormLabel m={0}>จังหวัด : </FormLabel>
                 </GridItem>
                 <GridItem colSpan={6}>
-                  <Input placeholder="จังหวัด" />
+                  <Input
+                    placeholder="จังหวัด"
+                    id="county"
+                    value={county}
+                    onChange={(e) => setCounty(e.target.value)}
+                  />
                 </GridItem>
 
                 <GridItem colSpan={2} display={"flex"} justifyContent={"right"}>
                   <FormLabel m={0}>ไปรษณีย์ : </FormLabel>
                 </GridItem>
                 <GridItem colSpan={6}>
-                  <Input placeholder="ไปรษณีย์" />
+                  <Input
+                    placeholder="ไปรษณีย์"
+                    id="zip_code"
+                    value={zipCode}
+                    onChange={(e) => setZipCode(e.target.value)}
+                  />
                 </GridItem>
 
                 {/* <GridItem colSpan={2} display={"flex"} justifyContent={"right"}>
@@ -256,14 +381,24 @@ export default function Profile() {
                   <FormLabel m={0}>เบอร์โทร : </FormLabel>
                 </GridItem>
                 <GridItem colSpan={6}>
-                  <Input placeholder="xxx-xxxx-xxx" />
+                  <Input
+                    placeholder="xxx-xxxx-xxx"
+                    id="phone"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                  />
                 </GridItem>
 
                 <GridItem colSpan={2} display={"flex"} justifyContent={"right"}>
                   <FormLabel m={0}>อีเมลล์ : </FormLabel>
                 </GridItem>
                 <GridItem colSpan={6}>
-                  <Input placeholder="Christian_N@gmail.com" />
+                  <Input
+                    placeholder="Christian_N@gmail.com"
+                    id="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
                 </GridItem>
 
                 <GridItem colSpan={2} display={"flex"} justifyContent={"right"}>
@@ -277,7 +412,12 @@ export default function Profile() {
                   </FormLabel>
                 </GridItem>
                 <GridItem colSpan={6}>
-                  <Input placeholder="facebook" />
+                  <Input
+                    placeholder="facebook"
+                    id="facebook"
+                    value={facebook}
+                    onChange={(e) => setFacebook(e.target.value)}
+                  />
                 </GridItem>
 
                 <GridItem colSpan={2} display={"flex"} justifyContent={"right"}>
@@ -291,7 +431,12 @@ export default function Profile() {
                   </FormLabel>
                 </GridItem>
                 <GridItem colSpan={6}>
-                  <Input placeholder="LINE" />
+                  <Input
+                    placeholder="LINE"
+                    id="line"
+                    value={line}
+                    onChange={(e) => setLine(e.target.value)}
+                  />
                 </GridItem>
 
                 <GridItem colSpan={2} display={"flex"} justifyContent={"right"}>
@@ -305,7 +450,12 @@ export default function Profile() {
                   </FormLabel>
                 </GridItem>
                 <GridItem colSpan={6}>
-                  <Input placeholder="Instagram" />
+                  <Input
+                    placeholder="Instagram"
+                    id="instagram"
+                    value={instagram}
+                    onChange={(e) => setInstagram(e.target.value)}
+                  />
                 </GridItem>
 
                 <GridItem colSpan={2} display={"flex"} justifyContent={"right"}>
@@ -319,7 +469,12 @@ export default function Profile() {
                   </FormLabel>
                 </GridItem>
                 <GridItem colSpan={6}>
-                  <Input placeholder="Twitter" />
+                  <Input
+                    placeholder="Twitter"
+                    id="twitter"
+                    value={twitter}
+                    onChange={(e) => setTwitter(e.target.value)}
+                  />
                 </GridItem>
 
                 <GridItem colSpan={2} display={"flex"} justifyContent={"right"}>
@@ -333,7 +488,12 @@ export default function Profile() {
                   </FormLabel>
                 </GridItem>
                 <GridItem colSpan={6}>
-                  <Input placeholder="Tik-Tok" />
+                  <Input
+                    placeholder="Tik-Tok"
+                    id="tiktok"
+                    value={tiktok}
+                    onChange={(e) => setTiktok(e.target.value)}
+                  />
                 </GridItem>
 
                 <GridItem colSpan={2} display={"flex"} justifyContent={"right"}>
@@ -347,7 +507,12 @@ export default function Profile() {
                   </FormLabel>
                 </GridItem>
                 <GridItem colSpan={6}>
-                  <Input placeholder="Youtube" />
+                  <Input
+                    placeholder="Youtube"
+                    id="youtube"
+                    value={youtube}
+                    onChange={(e) => setYoutube(e.target.value)}
+                  />
                 </GridItem>
               </Grid>
             </Box>
@@ -356,7 +521,7 @@ export default function Profile() {
             <ButtonGroup gap="4">
               <Button colorScheme="gray">ยกเลิก</Button>
               <Button
-                onClick={null}
+                type="submit"
                 leftIcon={<VscSave />}
                 background="#f84c01"
                 color="white"

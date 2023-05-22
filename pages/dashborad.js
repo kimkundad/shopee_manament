@@ -50,7 +50,7 @@ export default function DashBoard() {
   useEffect(() => {
     async function fecthdata() {
       const formdata = new FormData();
-      let user_id = 3; // ถ้ามี login เปลี่ยนเป็น uid ของคน login
+      let user_id = 8863299; // ถ้ามี login เปลี่ยนเป็น user_code ของคน login
       formdata.append("uid", user_id);
       formdata.append("startDatePie", startDatePie);
       formdata.append("endDatePie", endDatePie);
@@ -76,7 +76,7 @@ export default function DashBoard() {
   useEffect(() => {
     async function fecthdata() {
       const formdata = new FormData();
-      let user_id = 3; // ถ้ามี login เปลี่ยนเป็น uid ของคน login
+      let user_id = 8863299; // ถ้ามี login เปลี่ยนเป็น uid ของคน login
       formdata.append("uid", user_id);
       formdata.append("startDatePie", startDatePie);
       formdata.append("endDatePie", endDatePie);

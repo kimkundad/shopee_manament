@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import Chart from 'chart.js';
-import 'chartjs-plugin-piechart-outlabels';
+
 
 const ChartPage = () => {
   useEffect(() => {
