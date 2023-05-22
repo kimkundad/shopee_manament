@@ -31,19 +31,27 @@ import {
   Td,
   TableCaption,
   TableContainer,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuItemOption,
+  MenuGroup,
+  MenuOptionGroup,
+  MenuDivider,
 } from "@chakra-ui/react";
 import ListCheck from "@/components/MenuList";
 // import { Table, useAsyncList, useCollator } from "@nextui-org/react";
 import Link from "next/link";
 import axios from "axios";
+import { ChevronDownIcon } from "@chakra-ui/icons";
+
 export default function stock() {
   const [products, setProducts] = useState(null);
 
   async function fetchAllProduct() {
     let checkAll = true;
-    const res = await axios.get(
-      "https://api.sellpang.com/api/getAllProduct"
-    );
+    const res = await axios.get("https://api.sellpang.com/api/getAllProduct");
     setProducts(res.data);
     if (res.data.product.length > 0) {
       res.data.product.map((products) => {
@@ -281,7 +289,47 @@ export default function stock() {
           </Box>
           <Spacer />
           <Box borderWidth="1px" borderColor="red" borderRadius="md">
-            <Link href="/stock/addProduct">
+            <Menu>
+              <MenuButton
+                as={Button}
+                bgColor="red"
+                color="white"
+                fontSize="20px"
+                leftIcon={
+                  <Image src="/images/pluswhite.png" h="15px" w="15px" />
+                }
+                rightIcon={<ChevronDownIcon />}
+              >
+                เพิ่มสินค้า
+              </MenuButton>
+              <MenuList>
+                <Link href="/stock/addProduct?type=single">
+                  <MenuItem minH="48px">
+                    <Image
+                      boxSize="1.5rem"
+                      borderRadius="full"
+                      src="/images/productsingle.png"
+                      alt="Fluffybuns the destroyer"
+                      mr="12px"
+                    />
+                    <span>สินค้ามาตรฐาน</span>
+                  </MenuItem>
+                </Link>
+                <Link href="/stock/addProduct?type=multi">
+                  <MenuItem minH="40px">
+                    <Image
+                      boxSize="1.5rem"
+                      borderRadius="full"
+                      src="/images/productmulti.png"
+                      alt="Simon the pensive"
+                      mr="12px"
+                    />
+                    <span>สินค้ามีตัวเลือก</span>
+                  </MenuItem>
+                </Link>
+              </MenuList>
+            </Menu>
+            {/* <Link href="/stock/addProduct">
               <Button
                 fontSize="21px"
                 leftIcon={
@@ -294,7 +342,7 @@ export default function stock() {
               >
                 เพิ่มสินค้า
               </Button>
-            </Link>
+            </Link> */}
           </Box>
 
           <Box ml="5px" border="1px" borderColor="red" borderRadius="md">
@@ -357,7 +405,7 @@ export default function stock() {
             <Tbody>
               {currentItems.map((item, index) => {
                 return (
-                  <Tr>
+                  <Tr key={index}>
                     {selectedColumns[0] ? (
                       <Td>
                         <Center>
@@ -573,7 +621,7 @@ export default function stock() {
             })}
           </Table.Body>
         </Table> */}
-        <Flex padding={'0rem 1rem 1rem 1rem'}>
+        <Flex padding={"0rem 1rem 1rem 1rem"}>
           <Wrap alignSelf="center" fontSize="21px">
             <WrapItem>
               <Text>แสดงผล : </Text>

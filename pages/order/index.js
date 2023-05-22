@@ -285,7 +285,7 @@ export default function Order() {
 
   useEffect(() => {
     async function fecthdata() {
-      console.log('searchDate', searchDate)
+      console.log("searchDate", searchDate);
       const formData = new FormData();
       formData.append("navbarTab", navbarTab);
       formData.append("numShowItems", numShowItems);
@@ -1209,7 +1209,7 @@ export default function Order() {
       {/* End Navbar */}
 
       {/* Start Table */}
-      <Box p={"0rem 1rem 0rem 1rem"} minHeight={800}>
+      <Box p={"0rem 1rem 0.5rem 1rem"}>
         <Flex justifyContent={"space-between"}>
           <TableContainer fontSize="17" width={"100%"}>
             <Table
@@ -1240,8 +1240,12 @@ export default function Order() {
                               {navbarTab === "ยกเลิก" && (
                                 <Text>วันที่ยกเลิก</Text>
                               )}
+                              {navbarTab === "จัดส่งสำเร็จ" && (
+                                <Text>วันที่จัดส่ง</Text>
+                              )}
                               {navbarTab !== "ยกเลิก" &&
-                                navbarTab !== "ตีกลับ" && (
+                                navbarTab !== "ตีกลับ" &&
+                                navbarTab !== "จัดส่งสำเร็จ" && (
                                   <Text>{item.label}</Text>
                                 )}
                             </>
@@ -1499,26 +1503,27 @@ export default function Order() {
                                     </Box>
                                   )}
                                   {navbarTab == "จัดส่งสำเร็จ" && (
-                                    <IconButton
-                                      icon={
-                                        <Image
-                                          src={"/images/ส่งสำเร็จ 1.png"}
-                                          width={"14px"}
-                                        />
-                                      }
-                                      size="xs"
-                                      color={"#f84c01"}
-                                      borderColor={"#f84c01"}
-                                      aria-label="Edit"
-                                      variant="outline"
-                                      onClick={() => {
-                                        handleSetStatusOrder(
-                                          index,
-                                          filteredOrder.ID,
-                                          "ส่งสำเร็จ"
-                                        );
-                                      }}
-                                    />
+                                    // <IconButton
+                                    //   icon={
+                                    //     <Image
+                                    //       src={"/images/ส่งสำเร็จ 1.png"}
+                                    //       width={"14px"}
+                                    //     />
+                                    //   }
+                                    //   size="xs"
+                                    //   color={"#f84c01"}
+                                    //   borderColor={"#f84c01"}
+                                    //   aria-label="Edit"
+                                    //   variant="outline"
+                                    //   onClick={() => {
+                                    //     handleSetStatusOrder(
+                                    //       index,
+                                    //       filteredOrder.ID,
+                                    //       "ส่งสำเร็จ"
+                                    //     );
+                                    //   }}
+                                    // />
+                                    <Text>{filteredOrder.updateAt}</Text>
                                   )}
                                   {navbarTab == "ส่งสำเร็จ" && (
                                     <IconButton
@@ -1543,7 +1548,8 @@ export default function Order() {
                                     />
                                   )}
                                   {navbarTab != "ตีกลับ" &&
-                                  navbarTab != "ยกเลิก" ? (
+                                  navbarTab != "ยกเลิก" &&
+                                  navbarTab != "จัดส่งสำเร็จ" ? (
                                     <IconButton
                                       icon={<BsXCircleFill />}
                                       size="xs"
@@ -2054,24 +2060,27 @@ export default function Order() {
               </TableContainer>
             </Box>
           </ModalBody>
-          <ModalFooter alignItems={"center"} justifyContent={"center"}>
-            <Button
-              mr={2}
-              onClick={modalConfirmSetStatusSingle.onOpen}
-              bgColor={"green"}
-              color={"white"}
-            >
-              ยืนยันคำสั่งซื้อ
-            </Button>
-            <Button
-              onClick={modalCancelSetStatusSingle.onOpen}
-              mr={2}
-              bgColor={"red"}
-              color={"white"}
-            >
-              ยกเลิกคำสั่งซื้อ
-            </Button>
-            <Button onClick={modalDetailOrder.onClose}>ยกเลิก</Button>
+          <ModalFooter alignItems={"center"} justifyContent={"space-between"}>
+            <Box>
+              <Button
+                onClick={modalCancelSetStatusSingle.onOpen}
+                mr={2}
+                bgColor={"red"}
+                color={"white"}
+              >
+                ยกเลิกคำสั่งซื้อ
+              </Button>
+            </Box>
+            <Box>
+              <Button mr={2} onClick={modalDetailOrder.onClose}>ยกเลิก</Button>
+              <Button
+                onClick={modalConfirmSetStatusSingle.onOpen}
+                bgColor={"green"}
+                color={"white"}
+              >
+                ยืนยันคำสั่งซื้อ
+              </Button>
+            </Box>
           </ModalFooter>
         </ModalContent>
       </Modal>

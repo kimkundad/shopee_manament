@@ -54,6 +54,7 @@ import {
   EditIcon,
 } from "@chakra-ui/icons";
 import { DeleteIcon } from "@chakra-ui/icons";
+import { useRouter } from "next/router";
 /* import "antd/dist/antd.css"; */
 
 class PicturesWall extends React.Component {
@@ -178,6 +179,8 @@ function addProduct() {
   const [btnCheckSaveStep1, setBtnCheckSaveStep1] = useState(false);
   const [subProductImg, setSubProductImg] = useState([]);
   const [productID, setProductID] = useState("");
+  const router = useRouter();
+  const { type } = router.query;
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -656,7 +659,9 @@ function addProduct() {
               <Flex alignItems="center">
                 <Image src="/images/addProduct.png" alt="" h="40px" w="40px" />
                 <Text pl="10px" fontSize="40px" fontWeight="bold" color="black">
-                  เพิ่มสินค้า
+                  {type === "single"
+                    ? "เพิ่มสินค้ามาตรฐาน"
+                    : "เพิ่มสินค้ามีตัวเลือก"}
                 </Text>
               </Flex>
               <Spacer />
@@ -664,47 +669,49 @@ function addProduct() {
                 <Image src="/images/close.png" alt="" h="20px" w="20px" />
               </Link>
             </Flex>
-            <Wrap spacing="100px" justify="center">
-              <WrapItem>
-                <Center>
-                  <Box>
-                    <Button
-                      id="0"
-                      bg={"red"}
-                      color={"white"}
-                      border="2px solid red"
-                      fontSize="24px"
-                      borderRadius="3xl"
-                      w="150px"
-                      _hover={{}}
-                      onClick={handelButton}
-                    >
-                      สร้างสินค้า
-                    </Button>
-                  </Box>
-                </Center>
-              </WrapItem>
-              <WrapItem>
-                <Center>
-                  <Box>
-                    <Button
-                      id="1"
-                      bg={"white"}
-                      color={"red"}
-                      border="2px solid red"
-                      fontSize="24px"
-                      borderRadius="3xl"
-                      w="175px"
-                      _hover={{}}
-                      onClick={handelButton}
-                      isDisabled={true}
-                    >
-                      สร้างตัวเลือกสินค้า
-                    </Button>
-                  </Box>
-                </Center>
-              </WrapItem>
-            </Wrap>
+            {type === "multi" && (
+              <Wrap spacing="100px" justify="center">
+                <WrapItem>
+                  <Center>
+                    <Box>
+                      <Button
+                        id="0"
+                        bg={"red"}
+                        color={"white"}
+                        border="2px solid red"
+                        fontSize="24px"
+                        borderRadius="3xl"
+                        w="150px"
+                        _hover={{}}
+                        onClick={hideAdditionOption}
+                      >
+                        สร้างสินค้า
+                      </Button>
+                    </Box>
+                  </Center>
+                </WrapItem>
+                <WrapItem>
+                  <Center>
+                    <Box>
+                      <Button
+                        id="1"
+                        bg={"white"}
+                        color={"red"}
+                        border="2px solid red"
+                        fontSize="24px"
+                        borderRadius="3xl"
+                        w="175px"
+                        _hover={{}}
+                        onClick={additionOption}
+                        // isDisabled={true}
+                      >
+                        สร้างตัวเลือกสินค้า
+                      </Button>
+                    </Box>
+                  </Center>
+                </WrapItem>
+              </Wrap>
+            )}
           </Box>
 
           <from>
@@ -1200,45 +1207,48 @@ function addProduct() {
                   </HStack>
                 </Box>
                 <Box>
-                  <Flex justifyContent="center" pt="10px">
+                  {/* <Flex justifyContent="center" pt="10px">
                     <Text color={"red"}>
                       *เงื่อนไข : แม่ค้าต้องทำการเพิ่มสินค้าให้เรียบร้อยก่อน
                       จึงจะสามารถเพิ่มตัวเลือกให้กับสินค้าของท่านได้
                     </Text>
-                  </Flex>
-                  <Flex justifyContent="center">
+                  </Flex> */}
+                  <Flex justifyContent="center" pt={5}>
                     {/* <Button>ยกเลิก</Button> */}
-                    <Button
-                      ml="10px"
-                      type="submit"
-                      bg="red"
-                      color="white"
-                      padding={"1rem 2rem"}
-                      fontSize={"20px"}
-                      leftIcon={
-                        <Image src="/images/save.png" alt="" h="20px" />
-                      }
-                      _hover={{}}
-                      onClick={comfirmSave}
-                      isDisabled={btnCheckSaveStep1}
-                    >
-                      บันทึก
-                    </Button>
-                    <Button
-                      ml="10px"
-                      type="submit"
-                      bg="white"
-                      color="red"
-                      border={"2px solid red"}
-                      padding={"1rem 2rem"}
-                      fontSize={"20px"}
-                      _hover={{}}
-                      onClick={additionOption}
-                      isDisabled={btnCheckSaveStep1 == true ? false : true}
-                      // onClick={comfirmSave}
-                    >
-                      เพิ่มตัวเลือก
-                    </Button>
+                    {type === "single" ? (
+                      <Button
+                        ml="10px"
+                        type="submit"
+                        bg="red"
+                        color="white"
+                        padding={"1rem 2rem"}
+                        fontSize={"20px"}
+                        leftIcon={
+                          <Image src="/images/save.png" alt="" h="20px" />
+                        }
+                        _hover={{}}
+                        onClick={comfirmSave}
+                        isDisabled={btnCheckSaveStep1}
+                      >
+                        บันทึก
+                      </Button>
+                    ) : (
+                      <Button
+                        ml="10px"
+                        type="submit"
+                        bg="white"
+                        color="red"
+                        border={"2px solid red"}
+                        padding={"1rem 2rem"}
+                        fontSize={"20px"}
+                        _hover={{}}
+                        onClick={additionOption}
+                        // isDisabled={btnCheckSaveStep1 == true ? false : true}
+                        // onClick={comfirmSave}
+                      >
+                        เพิ่มตัวเลือก
+                      </Button>
+                    )}
                   </Flex>
                 </Box>
               </Box>
@@ -1284,8 +1294,8 @@ function addProduct() {
                       borderRadius="3xl"
                       w="150px"
                       _hover={{}}
-                      onClick={handelButton}
-                      isDisabled={true}
+                      onClick={hideAdditionOption}
+                      // isDisabled={true}
                     >
                       สร้างสินค้า
                     </Button>
