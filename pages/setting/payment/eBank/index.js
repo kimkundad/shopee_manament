@@ -56,6 +56,7 @@ import { FaRegSave } from "react-icons/fa";
 import { VscSave } from "react-icons/vsc";
 import axios from "axios";
 import { connect, useDispatch, useSelector } from "react-redux";
+import { event } from "jquery";
 export default function Purchase() {
   const [banks, setBanks] = useState(null);
   const userInfo = useSelector((App) => App.userInfo);
@@ -64,6 +65,7 @@ export default function Purchase() {
       async function fetchData() {
         const formdataBank = new FormData();
         formdataBank.append("user_id", userInfo.data[0]?.id);
+        formdataBank.append("type","setting")
         const bank = await axios.post(
           `https://api.sellpang.com/api/getBank`,
           formdataBank
@@ -75,6 +77,23 @@ export default function Purchase() {
       fetchData();
     }
   }, []);
+
+  const setActive = async (event) => {
+    const formdata = new FormData();
+    let check = 0;
+    if(event.target.checked){
+      check = 1;
+    }else{
+      check = 0;
+    }
+    formdata.append("user_id", userInfo.data[0]?.id);
+    formdata.append("bankacc_id",event.target.id);
+    formdata.append("checked",check)
+    const res = await axios.post(
+      `https://api.sellpang.com/api/activeBankAcc`,formdata
+    )
+    setBanks(res.data.banks);
+  };
 
   return (
     <>
@@ -112,12 +131,13 @@ export default function Purchase() {
       <Grid templateColumns="repeat(3, 1fr)" gap={20} p="30px" mx="30px">
         {banks?.map((item, index) => {
           return (
-            <GridItem>
+            <GridItem key={index}>
               <Box
                 p={4}
                 borderWidth="2px"
                 borderColor={"gray.500"}
                 borderRadius="lg"
+                /* _hover={{ backgroundColor: "blue.500", color: "white" }} */
               >
                 <HStack justifyContent={"center"}>
                   <Box>
@@ -138,10 +158,12 @@ export default function Purchase() {
                   <Spacer />
                   <Box alignSelf="start">
                     <Switch
-                      size="sm"
+                      id={item.id}
+                      onChange={setActive}
+                      size="md"
                       justify={"right"}
                       colorScheme={"green"}
-                      isChecked={item.is_active ? true : false}
+                      isChecked={item.is_active == 1 ? true : false}
                     />
                   </Box>
                 </HStack>
