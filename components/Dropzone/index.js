@@ -4,7 +4,6 @@ import {
   Box,
   Text,
   Flex,
-  Imaage,
   Image,
   Input,
   Card,
@@ -96,9 +95,10 @@ function Dropzone({ setImage }) {
   return (
     <Box className="container">
       {files.length == 0 ? (
-        <Box {...getRootProps({ className: style.dropzone })} borderRadius="xl">
+        <Box {...getRootProps({ className: style.dropzone })} borderRadius="xl" bg="gray.200">
           <Input {...getInputProps()} />
-          <Text>กดเพื่ออัพโหลดรูป</Text>
+          <Image src="/images/new.png" alt="" h="80px" w="100px"/>
+          <Text>คลิกเพื่อเพิ่มรูปภาพ ({files.length}/1)</Text>
         </Box>
       ) : (
         <Card p="0px">

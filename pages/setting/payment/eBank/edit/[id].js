@@ -60,7 +60,7 @@ import Upload from "@/components/Dropzone";
 import { connect, useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { useRouter } from "next/router";
-export default function EbankAdd() {
+export default function EbankEdit() {
   const router = useRouter();
   const [image, setImage] = useState(null);
   const [bankaccountName, setBankaccountName] = useState(null);
@@ -69,7 +69,7 @@ export default function EbankAdd() {
   const [bankId, setBankId] = useState(null);
   const [typeDeposit, setTypeDeposit] = useState(null);
   const userInfo = useSelector((App) => App.userInfo);
-
+  const accId = router.query.id;
   const { isOpen, onOpen, onClose } = useDisclosure([]);
 
   const [banks, setBanks] = useState([]);
@@ -77,10 +77,23 @@ export default function EbankAdd() {
     async function fetchData() {
       const res = await axios.get(`https://api.sellpang.com/api/allBanks`);
       setBanks(res.data.banks);
+
+      const formdata = new FormData();
+      formdata.append("id",accId);
+      formdata.append("uid",userInfo.data[0]?.id);
+      const bank = await axios.post(
+        `https://api.sellpang.com/api/getBank`,
+        formdata
+      );
+      setBankaccountName(bank?.data?.banks?.bankaccount_name);
+      setBankaccountNumber(bank?.data?.banks?.bankaccount_number);
+      setBranch(bank?.data?.banks?.branch);
+      setTypeDeposit(bank?.data?.banks?.type_deposit);
+      setBankId(bank?.data?.banks?.bank_id);
     }
     fetchData();
-  }, []);
-  const addNewBankAccount = async () => {
+  }, [accId]);
+  const updateBankAccount = async () => {
     const formdata = new FormData();
     formdata.append("uid", userInfo.data[0]?.id);
     formdata.append("bank_id", bankId);
@@ -89,7 +102,6 @@ export default function EbankAdd() {
     formdata.append("file", image[0]);
     formdata.append("type_deposit", typeDeposit);
     formdata.append("branch", branch);
-    formdata.append("type_account",'eBank')
     const res = await axios.post(
       `https://api.sellpang.com/api/addBankAccount`,
       formdata
@@ -136,7 +148,7 @@ export default function EbankAdd() {
         </HStack>
       </Box>
 
-      <Box p={10} minHeight={400}>
+      <Box p={10}>
         <VStack>
           <Container maxW="lg">
             <HStack>
@@ -155,20 +167,6 @@ export default function EbankAdd() {
                   }}
                 >
                   บัญชีธนาคาร
-                </Button>
-              </Box>
-              <Spacer />
-              <Box>
-                <Button
-                  borderRadius="3xl"
-                  borderWidth="2px"
-                  borderColor="gray.400"
-                  fontSize="17"
-                  color="gray.400"
-                  bg="none"
-                  w="40"
-                >
-                  QR PromptPay
                 </Button>
               </Box>
             </HStack>
@@ -192,6 +190,7 @@ export default function EbankAdd() {
                     fontSize="17"
                     placeholder="-- กรุณาเลือกธนาคาร --"
                     onChange={(e) => setBankId(e.target.value)}
+                    value={bankId}
                   >
                     {banks?.map((item, index) => {
                       return (
@@ -220,6 +219,7 @@ export default function EbankAdd() {
                     fontSize="17"
                     placeholder="ระบุชื่อบัญชี"
                     onChange={(e) => setBankaccountName(e.target.value)}
+                    value={bankaccountName}
                   />
                 </Box>
               </HStack>
@@ -240,6 +240,7 @@ export default function EbankAdd() {
                     fontSize="17"
                     placeholder="ระบุเลขที่บัญชี"
                     onChange={(e) => setBankaccountNumber(e.target.value)}
+                    value={bankaccountNumber}
                   />
                 </Box>
               </HStack>
@@ -260,6 +261,7 @@ export default function EbankAdd() {
                     fontSize="17"
                     placeholder="ระบุสาขา"
                     onChange={(e) => setBranch(e.target.value)}
+                    value={branch}
                   />
                 </Box>
               </HStack>
@@ -279,6 +281,7 @@ export default function EbankAdd() {
                     fontSize="17"
                     placeholder="-- กรุณาเลือกชนิดบัญชี --"
                     onChange={(e) => setTypeDeposit(e.target.value)}
+                    value={typeDeposit}
                   >
                     <option value="เงินฝากออมทรัพย์">เงินฝากออมทรัพย์</option>
                     <option value="เงินฝากประจำ">เงินฝากประจำ</option>
@@ -314,7 +317,7 @@ export default function EbankAdd() {
               leftIcon={<VscSave />}
               background="#f84c01"
               color="white"
-              onClick={addNewBankAccount}
+              onClick={updateBankAccount}
             >
               บันทึก
             </Button>

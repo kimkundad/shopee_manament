@@ -27,14 +27,15 @@ import {
   GridItem,
   Switch,
   VStack,
-  InputRightElement,
+  ModalCloseButton,
   Textarea,
-  ButtonGroup,
-  RadioGroup,
-  Radio,
-  StackDivider,
-  SkeletonCircle,
-  AbsoluteCenter,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  useDisclosure,
 } from "@chakra-ui/react";
 import {
   AddIcon,
@@ -57,20 +58,22 @@ import { VscSave } from "react-icons/vsc";
 import axios from "axios";
 import { connect, useDispatch, useSelector } from "react-redux";
 import { event } from "jquery";
+import { useRouter } from "next/router";
 export default function Purchase() {
   const [banks, setBanks] = useState(null);
   const userInfo = useSelector((App) => App.userInfo);
+  const router = useRouter();
+
   useEffect(() => {
     if (banks == null) {
       async function fetchData() {
         const formdataBank = new FormData();
         formdataBank.append("user_id", userInfo.data[0]?.id);
-        formdataBank.append("type","setting")
+        formdataBank.append("type", "setting");
         const bank = await axios.post(
           `https://api.sellpang.com/api/getBank`,
           formdataBank
         );
-        console.log(bank);
         setBanks(bank.data.banks);
       }
 
@@ -78,22 +81,41 @@ export default function Purchase() {
     }
   }, []);
 
+  const { isOpen, onOpen, onClose } = useDisclosure([]);
+
   const setActive = async (event) => {
     const formdata = new FormData();
     let check = 0;
-    if(event.target.checked){
+    if (event.target.checked) {
       check = 1;
-    }else{
+    } else {
       check = 0;
     }
     formdata.append("user_id", userInfo.data[0]?.id);
-    formdata.append("bankacc_id",event.target.id);
-    formdata.append("checked",check)
+    formdata.append("bankacc_id", event.target.id);
+    formdata.append("checked", check);
     const res = await axios.post(
-      `https://api.sellpang.com/api/activeBankAcc`,formdata
-    )
+      `https://api.sellpang.com/api/activeBankAcc`,
+      formdata
+    );
     setBanks(res.data.banks);
   };
+
+  const [accId, setAccId] = useState();
+  const deleteAccount = async () => {
+    const formdata = new FormData();
+    formdata.append("accId", accId);
+    formdata.append("user_id", userInfo.data[0]?.id);
+    const res = await axios.post(
+      `https://api.sellpang.com/api/delBankAcc`,
+      formdata
+    );
+    setBanks(res.data.banks);
+  };
+
+  const edit = (id) => {
+    router.push(`/setting/payment/eBank/edit/${id}`)
+  }
 
   return (
     <>
@@ -128,10 +150,14 @@ export default function Purchase() {
           </Text>
         </HStack>
       </Box>
-      <Grid templateColumns="repeat(3, 1fr)" gap={20} p="30px" mx="30px">
+      <Grid
+        templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }}
+        gap={10}
+        p="30px"
+      >
         {banks?.map((item, index) => {
           return (
-            <GridItem key={index}>
+            <GridItem key={index} w="450px">
               <Box
                 p={4}
                 borderWidth="2px"
@@ -158,13 +184,37 @@ export default function Purchase() {
                   <Spacer />
                   <Box alignSelf="start">
                     <Switch
+                      colorScheme="brand"
                       id={item.id}
                       onChange={setActive}
                       size="md"
                       justify={"right"}
-                      colorScheme={"green"}
                       isChecked={item.is_active == 1 ? true : false}
                     />
+                  </Box>
+                </HStack>
+                <HStack justifyContent="center" pt="15px">
+                  <Box w="20%">
+                    <Button
+                      w="100%"
+                      onClick={() => {
+                        setAccId(item.id);
+                        onOpen();
+                      }}
+                    >
+                      <Image src="/images/binshop.png" w="15px" h="15px" />
+                      <Text pl="10px" fontSize="18px">
+                        ลบ
+                      </Text>
+                    </Button>
+                  </Box>
+                  <Box w="20%">
+                    <Button w="100%" bg="red" color="white" onClick={() => edit(item.id)}>
+                      <Image src="/images/editshop.png" w="15px" h="15px" />
+                      <Text pl="10px" fontSize="18px">
+                        แก้ไข
+                      </Text>
+                    </Button>
                   </Box>
                 </HStack>
               </Box>
@@ -173,7 +223,7 @@ export default function Purchase() {
         })}
       </Grid>
 
-      <Box p={10} minHeight={400}>
+      <Box p={10} /* minHeight={400} */>
         <Flex></Flex>
 
         <Center mt={10}>
@@ -193,6 +243,49 @@ export default function Purchase() {
           </Link>
         </Center>
       </Box>
+
+      <Modal onClose={onClose} size="md" isOpen={isOpen} isCentered>
+        <ModalOverlay />
+        <ModalContent alignSelf="center" py="20px">
+          <ModalBody alignSelf="center">
+            <ModalCloseButton />
+            <Box textAlign="center">
+              <Image src="/images/binred.png" alt="" h="200px" mx="auto" />
+              <Text fontWeight="bold" fontSize="35px" pt="10px">
+                ยืนยันการลบบัญชี
+              </Text>
+            </Box>
+          </ModalBody>
+          <ModalFooter alignSelf="center">
+            <HStack justifyContent="center" pt="15px">
+              <Box borderRadius="md" border="1px solid">
+                <Button
+                  w="100%"
+                  onClick={() => {
+                    onClose();
+                  }}
+                >
+                  <Text fontSize="18px">ยกเลิก</Text>
+                </Button>
+              </Box>
+              <Spacer />
+              <Box>
+                <Button
+                  w="100%"
+                  bg="red"
+                  color="white"
+                  onClick={() => {
+                    onClose();
+                    deleteAccount();
+                  }}
+                >
+                  <Text fontSize="18px">ยืนยัน</Text>
+                </Button>
+              </Box>
+            </HStack>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   );
 }
