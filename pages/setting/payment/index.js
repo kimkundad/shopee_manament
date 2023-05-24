@@ -46,7 +46,6 @@ export default function Purchase() {
     } else {
       check = 0;
     }
-    console.log(event.target.checked,check);
     formdata.append("user_id", userInfo.data[0]?.id);
     formdata.append("bankacc_id", activeCOD?.id);
     formdata.append("checked", check);

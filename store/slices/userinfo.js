@@ -82,6 +82,8 @@ export const getUserInfo = (router) => async (dispatch, getState) => {
      })
 
 }
-
+export const clearUserInfo = (router) => async dispatch => {
+    dispatch(slice.actions.userReset())
+}
 
 export default slice;

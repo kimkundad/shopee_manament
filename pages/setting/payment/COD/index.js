@@ -89,7 +89,7 @@ export default function EbankAdd() {
     formdata.append("file", image[0]);
     formdata.append("type_deposit", typeDeposit);
     formdata.append("branch", branch);
-    formdata.append("type_account",'COD')
+    formdata.append("type_account", "COD");
     const res = await axios.post(
       `https://api.sellpang.com/api/addBankAccount`,
       formdata
@@ -106,7 +106,7 @@ export default function EbankAdd() {
     <>
       <Box p={5}>
         <Box>
-          <ButtonBack />
+        <ButtonBack />
         </Box>
         <Box>
           <Center>

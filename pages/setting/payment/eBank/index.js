@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import ButtonBack from "@/components/button/ButtonBack";
 import {
   Box,
   Text,
@@ -117,11 +116,25 @@ export default function Purchase() {
     router.push(`/setting/payment/eBank/edit/${id}`)
   }
 
+  const buttonBack = () => {
+    router.push("/setting/payment")
+  }
   return (
     <>
       <Box p={5}>
         <Box>
-          <ButtonBack />
+        <Button
+            size="sm"
+            onClick={() => buttonBack()}
+            leftIcon={<BsArrowLeftCircle />}
+            borderRadius="20"
+            background="#f84c01"
+            color="white"
+            fontWeight="none"
+            fontSize="20px"
+          >
+            ย้อนกลับ
+          </Button>
         </Box>
         <Box>
           <Center>

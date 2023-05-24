@@ -8,6 +8,7 @@ import { Provider } from "react-redux";
 import { store, persistor } from "@/store/config";
 import { PersistGate } from "redux-persist/integration/react";
 import { useRouter } from "next/router";
+import { connect, useDispatch, useSelector } from "react-redux";
 const theme = extendTheme({
   colors: {
     brand: {
@@ -20,6 +21,7 @@ const theme = extendTheme({
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const currentPath = router.asPath;
+
   return (
     <Fragment>
       <Provider store={store}>

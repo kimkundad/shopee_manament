@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import classNames from "classnames";
 import {
@@ -11,15 +11,36 @@ import {
   MenuItem,
   MenuDivider,
   Text,
+  Button,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { connect, useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+import { useRouter } from "next/router";
+import { getUserLogout } from "@/store/slices/authen";
+import { newOrder } from "@/hooks/notification";
 type Props = {
   onMenuButtonClick(): void;
 };
 const Navbar = (props: Props) => {
   const userInfo = useSelector((App) => App.userInfo);
-  return (
+  const userAuthen = useSelector((App) => App.authen);
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const logout = () => {
+    dispatch(getUserLogout());
+    router.push("/");
+  };
+
+  const { data: count } = newOrder(userInfo.data[0]?.code_user);
+  console.log(count);
+
+  useEffect(() => {
+    if (userAuthen?.token == null) {
+      router.push("/");
+    }
+  }, []);
+  return userAuthen?.token !== null ? (
     <nav
       className={classNames({
         "bg-white text-zinc-500": true, // colors
@@ -54,6 +75,9 @@ const Navbar = (props: Props) => {
             height="36px"
             alt="notification"
           />
+          <Box pos="absolute" top="14px" right="72px" borderRadius="50%" border="1px solid" w="20px" h="20px" textAlign="center" bg="green">
+            {/* <Text>{count.count}</Text> */}
+          </Box>
         </div>
         <div className="px-2">
           <Menu>
@@ -105,7 +129,7 @@ const Navbar = (props: Props) => {
               <MenuDivider />
               <MenuItem>
                 <Flex>
-                  <Text>ออกจากระบบ</Text>
+                  <Button onClick={logout}>ออกจากระบบ</Button>
                 </Flex>
               </MenuItem>
             </MenuList>
@@ -113,7 +137,7 @@ const Navbar = (props: Props) => {
         </div>
       </div>
     </nav>
-  );
+  ) : null;
 };
 
 export default Navbar;

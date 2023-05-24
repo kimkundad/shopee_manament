@@ -84,7 +84,7 @@ function Dropzone({ setImage }) {
 
   const deleteImage = () => {
     setFiles([]);
-    setImage(null);
+    setImage([]);
   };
 
   useEffect(() => {

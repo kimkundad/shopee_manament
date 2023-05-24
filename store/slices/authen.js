@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import axios from 'axios'
 import Router from "next/router";
-import { getUserInfo } from '@/store/slices/userinfo'
+import { getUserInfo,clearUserInfo } from '@/store/slices/userinfo'
 import { setCookie } from 'cookies-next';
 import Swal from 'sweetalert2'
 
@@ -90,8 +90,9 @@ export const getUserAuthen = (user, router) => async dispatch => {
      })
 }
 
-export const getUserLogout = (router) => async dispatch => {
-    Router.push('/')
+export const getUserLogout = () => async dispatch => {
+    dispatch(slice.actions.authenReset())
+    dispatch(clearUserInfo())
 }
 
 

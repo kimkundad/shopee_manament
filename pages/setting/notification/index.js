@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState,useEffect } from "react";
 import Image from 'next/image';
 import Link from 'next/link'
 import ButtonBack from '@/components/button/ButtonBack'
@@ -8,11 +8,40 @@ import {
 } from "@chakra-ui/react"
 import { Icon } from '@chakra-ui/icons';
 import { BsArrowLeftCircle, BsBell } from "react-icons/bs";
-
-
+import { connect, useDispatch, useSelector } from "react-redux";
+import axios from "axios";
 export default function Notification() {
+    const userInfo = useSelector((App) => App.userInfo);
+    const [active ,setActive] = useState();
 
+    useEffect(() => {
+        async function fecthdata(){
+            const formdata = new FormData();
+            formdata.append("user_code",userInfo.data[0]?.code_user);
+            const res = await axios.post(
+                `https://api.sellpang.com/api/getOwnerSetting`,
+                formdata
+            )
+            setActive(JSON.parse(res.data.setting.setting));
+        }
+        fecthdata();
+    },[])
 
+    const activeNoti = (event) => {
+        let objs = {"notification": event.target.checked}
+        let setting = JSON.stringify(objs)
+        async function fecthdata(){
+            const formdata = new FormData();
+            formdata.append("user_code",userInfo.data[0]?.code_user);
+            formdata.append("setting",setting);
+            const res = await axios.post(
+                `https://api.sellpang.com/api/setNotification`,
+                formdata
+            )
+            setActive(JSON.parse(res.data.setting.setting));
+        }
+        fecthdata();
+    }
     return (
         <>
 
@@ -53,7 +82,7 @@ export default function Notification() {
                             </Box>
                             <Spacer />
                             <Box>
-                                <Switch size='lg' colorScheme='green' />
+                                <Switch size='lg' colorScheme='green' isChecked={active?.notification} onChange={(e) => activeNoti(e)}/>
                             </Box>
                         </Flex>
                     </Box>

@@ -62,7 +62,7 @@ import axios from "axios";
 import { useRouter } from "next/router";
 export default function EbankAdd() {
   const router = useRouter();
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState([]);
   const [bankaccountName, setBankaccountName] = useState(null);
   const [bankaccountNumber, setBankaccountNumber] = useState(null);
   const [branch, setBranch] = useState(null);
@@ -86,10 +86,12 @@ export default function EbankAdd() {
     formdata.append("bank_id", bankId);
     formdata.append("bankaccount_name", bankaccountName);
     formdata.append("bankaccount_number", bankaccountNumber);
-    formdata.append("file", image[0]);
+    if (image[0]?.name !== undefined) {
+      formdata.append("file", image[0]);
+    }
     formdata.append("type_deposit", typeDeposit);
     formdata.append("branch", branch);
-    formdata.append("type_account",'eBank')
+    formdata.append("type_account", "eBank");
     const res = await axios.post(
       `https://api.sellpang.com/api/addBankAccount`,
       formdata
@@ -102,11 +104,26 @@ export default function EbankAdd() {
       }, 1000);
     }
   };
+
+  const buttonBack = () => {
+    router.push("/setting/payment/eBank")
+  }
   return (
     <>
       <Box p={5}>
         <Box>
-          <ButtonBack />
+          <Button
+            size="sm"
+            onClick={() => buttonBack()}
+            leftIcon={<BsArrowLeftCircle />}
+            borderRadius="20"
+            background="#f84c01"
+            color="white"
+            fontWeight="none"
+            fontSize="20px"
+          >
+            ย้อนกลับ
+          </Button>
         </Box>
         <Box>
           <Center>

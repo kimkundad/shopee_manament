@@ -24,7 +24,7 @@ import {
   Lorem,
   LinkBox,
   Grid,
-  GridItem,
+  CardHeader,
   Switch,
   VStack,
   InputRightElement,
@@ -37,6 +37,7 @@ import {
   ModalFooter,
   ModalBody,
   Container,
+  Card,
 } from "@chakra-ui/react";
 import {
   AddIcon,
@@ -79,8 +80,8 @@ export default function EbankEdit() {
       setBanks(res.data.banks);
 
       const formdata = new FormData();
-      formdata.append("id",accId);
-      formdata.append("uid",userInfo.data[0]?.id);
+      formdata.append("id", accId);
+      formdata.append("uid", userInfo.data[0]?.id);
       const bank = await axios.post(
         `https://api.sellpang.com/api/getBank`,
         formdata
@@ -90,20 +91,24 @@ export default function EbankEdit() {
       setBranch(bank?.data?.banks?.branch);
       setTypeDeposit(bank?.data?.banks?.type_deposit);
       setBankId(bank?.data?.banks?.bank_id);
+      setImage(bank?.data?.banks?.QR_code);
     }
     fetchData();
   }, [accId]);
   const updateBankAccount = async () => {
     const formdata = new FormData();
     formdata.append("uid", userInfo.data[0]?.id);
+    formdata.append("bId", accId);
     formdata.append("bank_id", bankId);
     formdata.append("bankaccount_name", bankaccountName);
     formdata.append("bankaccount_number", bankaccountNumber);
-    formdata.append("file", image[0]);
+    if (Array.isArray(image) && image[0]?.name !== undefined) {
+      formdata.append("file", image[0]);
+    }
     formdata.append("type_deposit", typeDeposit);
     formdata.append("branch", branch);
     const res = await axios.post(
-      `https://api.sellpang.com/api/addBankAccount`,
+      `https://api.sellpang.com/api/updateBankaccount`,
       formdata
     );
 
@@ -114,11 +119,29 @@ export default function EbankEdit() {
       }, 1000);
     }
   };
+
+  const deleteImage = () => {
+    setImage([]);
+  };
+  const buttonBack = () => {
+    router.push("/setting/payment/eBank");
+  };
   return (
     <>
       <Box p={5}>
         <Box>
-          <ButtonBack />
+          <Button
+            size="sm"
+            onClick={() => buttonBack()}
+            leftIcon={<BsArrowLeftCircle />}
+            borderRadius="20"
+            background="#f84c01"
+            color="white"
+            fontWeight="none"
+            fontSize="20px"
+          >
+            ย้อนกลับ
+          </Button>
         </Box>
         <Box>
           <Center>
@@ -303,7 +326,29 @@ export default function EbankEdit() {
                   </FormLabel>
                 </Box>
                 <Box w="75%">
-                  <Upload setImage={setImage} />
+                  {Array.isArray(image) || image == null ? (
+                    <Upload setImage={setImage} />
+                  ) : (
+                    <Card p="0px">
+                      <CardHeader>
+                        <Box
+                          pos="absolute"
+                          top="10px"
+                          right="10px"
+                          onClick={deleteImage}
+                        >
+                          <Image src="/images/delete.png" h="30px" w="30px" />
+                        </Box>
+                        <Box w="100%" h="100%">
+                          <Box>
+                            <Image
+                              src={`https://api.sellpang.com/images/shopee/QR_code/${image}`}
+                            />
+                          </Box>
+                        </Box>
+                      </CardHeader>
+                    </Card>
+                  )}
                 </Box>
               </HStack>
             </FormControl>
