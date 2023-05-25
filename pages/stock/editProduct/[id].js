@@ -1678,17 +1678,17 @@ function UseEditProduct() {
                             </Td>
                             <Td border="1px solid">
                               <Input
-                                value={subItem.sku}
+                                value={subItem.stock}
                                 onChange={(e) =>
-                                  editDataTable(e, index, subIndex, "sku")
+                                  editDataTable(e, index, subIndex, "stock")
                                 }
                               />
                             </Td>
                             <Td border="1px solid">
                               <Input
-                                value={subItem.stock}
+                                value={subItem.sku}
                                 onChange={(e) =>
-                                  editDataTable(e, index, subIndex, "stock")
+                                  editDataTable(e, index, subIndex, "sku")
                                 }
                               />
                             </Td>

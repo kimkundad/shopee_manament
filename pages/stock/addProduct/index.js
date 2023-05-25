@@ -58,80 +58,80 @@ import { useRouter } from "next/router";
 import { TagsInput } from "react-tag-input-component";
 /* import "antd/dist/antd.css"; */
 
-class PicturesWall extends React.Component {
-  state = {
-    fileList: [],
-  };
-  handleChange = ({ fileList }) => {
-    this.props.setFileImage(fileList);
-    this.setState({ fileList });
-  };
+// class PicturesWall extends React.Component {
+//   state = {
+//     fileList: [],
+//   };
+//   handleChange = ({ fileList }) => {
+//     this.props.setFileImage(fileList);
+//     this.setState({ fileList });
+//   };
 
-  render() {
-    const { fileList } = this.state;
-    const uploadButton = (
-      <div>
-        <PlusOutlined />
-        <div style={{ marginTop: 8 }}>เพิ่มรูปภาพ ({fileList.length}/1)</div>
-      </div>
-    );
-    return (
-      <>
-        <Upload
-          listType="picture-card"
-          fileList={fileList}
-          onChange={this.handleChange}
-        >
-          {fileList.length >= 1 ? null : uploadButton}
-        </Upload>
-      </>
-    );
-  }
-}
-class VideoPlayer extends React.Component {
-  render() {
-    return (
-      <video controls>
-        <source src={this.props.videoSrc} type="video/mp4" />
-      </video>
-    );
-  }
-}
+//   render() {
+//     const { fileList } = this.state;
+//     const uploadButton = (
+//       <div>
+//         <PlusOutlined />
+//         <div style={{ marginTop: 8 }}>เพิ่มรูปภาพ ({fileList.length}/1)</div>
+//       </div>
+//     );
+//     return (
+//       <>
+//         <Upload
+//           listType="picture-card"
+//           fileList={fileList}
+//           onChange={this.handleChange}
+//         >
+//           {fileList.length >= 1 ? null : uploadButton}
+//         </Upload>
+//       </>
+//     );
+//   }
+// }
+// class VideoPlayer extends React.Component {
+//   render() {
+//     return (
+//       <video controls>
+//         <source src={this.props.videoSrc} type="video/mp4" />
+//       </video>
+//     );
+//   }
+// }
 
-class VideoWall extends React.Component {
-  state = {
-    fileList: [],
-  };
+// class VideoWall extends React.Component {
+//   state = {
+//     fileList: [],
+//   };
 
-  handleChange = ({ fileList }) => {
-    this.props.setFileVideo(fileList);
-    this.setState({ fileList });
-  };
+//   handleChange = ({ fileList }) => {
+//     this.props.setFileVideo(fileList);
+//     this.setState({ fileList });
+//   };
 
-  render() {
-    const { fileList } = this.state;
-    const uploadButton = (
-      <div>
-        <PlusOutlined />
-        <div style={{ marginTop: 8 }}>เพิ่มรูปภาพ ({fileList.length}/9)</div>
-      </div>
-    );
-    return (
-      <>
-        <Upload
-          listType="picture-card"
-          fileList={fileList}
-          onChange={this.handleChange}
-        >
-          {fileList.length >= 9 ? null : uploadButton}
-        </Upload>
-        {/* {fileList.map((file) => (
-          <VideoPlayer key={file.uid} videoSrc={file.url} />
-        ))} */}
-      </>
-    );
-  }
-}
+//   render() {
+//     const { fileList } = this.state;
+//     const uploadButton = (
+//       <div>
+//         <PlusOutlined />
+//         <div style={{ marginTop: 8 }}>เพิ่มรูปภาพ ({fileList.length}/9)</div>
+//       </div>
+//     );
+//     return (
+//       <>
+//         <Upload
+//           listType="picture-card"
+//           fileList={fileList}
+//           onChange={this.handleChange}
+//         >
+//           {fileList.length >= 9 ? null : uploadButton}
+//         </Upload>
+//         {/* {fileList.map((file) => (
+//           <VideoPlayer key={file.uid} videoSrc={file.url} />
+//         ))} */}
+//       </>
+//     );
+//   }
+// }
 function addProduct() {
   const [name_product, setName_product] = useState("");
   const [detail_product, setDetail_product] = useState("");
@@ -183,6 +183,7 @@ function addProduct() {
   const router = useRouter();
   const { type } = router.query;
   const [selected, setSelected] = useState([]);
+  const [selected2, setSelected2] = useState([]);
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -256,24 +257,13 @@ function addProduct() {
     onClose: onCloseForm4,
   } = useDisclosure();
   const comfirmSave = (event) => {
-    // console.log("images", images);
     console.log("files", files);
-    // console.log("imagesSub", imagesSub);
     console.log("filesSub", filesSub);
-    // console.log("option", option);
-    // console.log("Suboption", subOption);
-    // console.log("dataTable", dataTable);
     event.preventDefault();
     onOpenForm1();
   };
 
   const comfirmSaveOption = (event) => {
-    // console.log("images", images);
-    // console.log("files", files);
-    // console.log("imagesSub", imagesSub);
-    // console.log("filesSub", filesSub);
-    // console.log("option", option);
-    // console.log("Suboption", subOption);
     console.log("dataTable", dataTable);
     event.preventDefault();
     modalSaveOption.onOpen();
@@ -330,13 +320,36 @@ function addProduct() {
 
   const saveSubOptionSuccess = async () => {
     const formData = new FormData();
-    formData.append("productID", productID);
+    // formData.append("productID", productID);
+    formData.append("name_product", name_product);
+    formData.append("detail_product", detail_product);
+    formData.append("price", price);
+    formData.append("price_sales", price_sales);
+    formData.append("cost", cost);
+    formData.append("stock", stock);
+    formData.append("weight", weight);
+    formData.append("width_product", width);
+    formData.append("length_product", length);
+    formData.append("height_product", height);
+    formData.append("sku", sku);
+    formData.append("category", categoryId);
+    files.forEach((file, index) => {
+      formData.append(`file[${index}]`, file);
+    });
+    filesSub.forEach((file, index) => {
+      formData.append(`image[${index}]`, file);
+    });
     formData.append("option1", option);
     formData.append("option2", subOption);
     formData.append("dataOption", JSON.stringify(dataTable));
+    dataTable.forEach((item, index) => {
+      formData.append(`fileOption[${index}]`, item.indexImageOption[0]);
+      // เพิ่มข้อมูลอื่น ๆ ตามต้องการ
+    });
     const response = await axios.post(
       "https://api.sellpang.com/api/addOptionProduct",
-      formData
+      formData,
+      { headers: { "Content-Type": "multipart/form-data" } }
     );
     if (response.data.success) {
       modalSaveOption.onClose();
@@ -345,12 +358,6 @@ function addProduct() {
   };
 
   const [category, setCategory] = useState([]);
-  // function fetchData() {
-  //   const res = axios.get(
-  //     "https://api.sellpang.com/api/get_category_all"
-  //   );
-  //   setCategory(res.data.category);
-  // }
   const fetchData = async () => {
     axios
       .get("https://api.sellpang.com/api/get_category_all")
@@ -395,21 +402,127 @@ function addProduct() {
   }
 
   const insertValue = (newSelected) => {
+    if (isTextRemoved(newSelected, selected)) {
+      handleTextRemoval(newSelected);
+      return;
+    }
+
     setSelected(newSelected);
     updateDataTable(newSelected);
   };
 
+  const isTextRemoved = (newSelected, oldSelected) => {
+    return oldSelected.length > newSelected.length;
+  };
+
+  const handleTextRemoval = (newSelected) => {
+    setDataTable((prevData) => {
+      const newData = prevData.filter((item) =>
+        newSelected.includes(item.nameOption)
+      );
+      return newData;
+    });
+  };
+
   const updateDataTable = (newSelected) => {
-    const newData = newSelected.map((item) => ({
-      nameOption: item,
-      priceOption: "",
-      stockOption: "",
-      skuOption: "",
-      indexImageOption: "",
-      statusOption: "",
-      subOption: []
-    }));
-    setDataTable(newData);
+    setDataTable((prevData) => {
+      let newData = [...prevData]; // Create a copy of the existing data
+
+      if (newData.length === 0) {
+        // If the data is empty, create a new array with the new object
+        newData = newSelected.map((item) => ({
+          nameOption: item,
+          priceOption: "0",
+          stockOption: "0",
+          skuOption: "0",
+          indexImageOption: [],
+          imagePreviewOption: "",
+          statusOption: true,
+          subOption: [],
+        }));
+      } else {
+        // If the data already has values, push the new object or array
+        if (selected2.length > 0) {
+          const data = selected2.map((sel) => ({
+            nameSubOption: sel,
+            priceSubOption: "0",
+            stockSubOption: "0",
+            skuSubOption: "0",
+            statusSubOption: true,
+          }));
+          const newObj = {
+            nameOption: newSelected[newSelected.length - 1],
+            priceOption: "0",
+            stockOption: "0",
+            skuOption: "0",
+            indexImageOption: [],
+            imagePreviewOption: "",
+            statusOption: true,
+            subOption: data,
+          };
+          newData.push(newObj);
+        } else {
+          const newObj = {
+            nameOption: newSelected[newSelected.length - 1],
+            priceOption: "0",
+            stockOption: "0",
+            skuOption: "0",
+            indexImageOption: [],
+            imagePreviewOption: "",
+            statusOption: true,
+            subOption: [],
+          };
+          newData.push(newObj);
+        }
+      }
+
+      return newData; // Return the updated data
+    });
+  };
+
+  const handleTextRemoval2 = (removedText) => {
+    setDataTable((prevData) => {
+      const newData = prevData.map((item) => {
+        const filteredSubOption = item.subOption.filter(
+          (subItem) => subItem.nameSubOption !== removedText
+        );
+        return { ...item, subOption: filteredSubOption };
+      });
+      return newData;
+    });
+  };
+
+  const insertValue2 = (newSelected) => {
+    if (isTextRemoved2(newSelected, selected2)) {
+      const removedText = findRemovedText(newSelected, selected2);
+      handleTextRemoval2(removedText);
+      return;
+    }
+
+    setSelected2(newSelected);
+    updateDataTable2(newSelected);
+  };
+
+  const isTextRemoved2 = (newSelected, oldSelected) => {
+    return oldSelected.length > newSelected.length;
+  };
+
+  const findRemovedText = (newSelected, oldSelected) => {
+    return oldSelected.find((text) => !newSelected.includes(text));
+  };
+
+  const updateDataTable2 = (newSelected) => {
+    const newData = {
+      nameSubOption: newSelected[newSelected.length - 1],
+      priceSubOption: "0",
+      stockSubOption: "0",
+      skuSubOption: "0",
+      statusSubOption: true,
+    };
+    dataTable.forEach((datatable) => {
+      datatable.subOption.push(newData);
+    });
+    setDataTable(dataTable);
   };
 
   const [nameSubOption, setNameSubOption] = useState(null);
@@ -494,7 +607,8 @@ function addProduct() {
       }
     } else {
       if (id == "statusSubOption") {
-        if (newArr[index].statusSubOption == true) {
+        console.log("namefield", id);
+        if (newArr[index].subOption[subIndex].statusSubOption == true) {
           newArr[index].subOption[subIndex] = {
             ...newArr[index].subOption[subIndex],
             [id]: false,
@@ -512,10 +626,8 @@ function addProduct() {
         };
       }
     }
-
     setDataTable(newArr);
   };
-
   //------------------- function เพิ่มหมวดหมู่ -----------------
   // ตัวแปรเพิ่ม tag input กรอกข้อมูล หมวดหมู่
   const [tags, setTags] = useState([]);
@@ -641,10 +753,6 @@ function addProduct() {
     const data = {
       category: tags2,
     };
-    // const formData = new FormData();
-    // tags2.forEach((category, index) => {
-    //   formData.append(`category[${index}]`, category);
-    // });
 
     axios
       .post("https://api.sellpang.com/api/EditCategory", data)
@@ -656,6 +764,38 @@ function addProduct() {
           setTags2([]);
         }
       });
+  };
+
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+
+  const handleImageSelect = (event, index) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      const imageDataURL = event.target.result;
+
+      setDataTable((prevData) => {
+        const newData = [...prevData];
+        newData[index].indexImageOption = [file];
+        newData[index].imagePreviewOption = imageDataURL;
+        return newData;
+      });
+    };
+
+    if (file) {
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const deleteImage = (optionIndex) => {
+    setDataTable((prevData) => {
+      const newData = [...prevData];
+      newData[optionIndex].indexImageOption = [];
+      newData[optionIndex].imagePreviewOption = "";
+      return newData;
+    });
   };
   return (
     <>
@@ -904,77 +1044,8 @@ function addProduct() {
                             </Box>
                           )}
                         </HStack>
-                        {/* <PicturesWall setFileImage={handleSetFileImage} /> */}
                       </Box>
                     </GridItem>
-                    {/* <GridItem colSpan={1} justifySelf="end">
-                      <Box pr="5px">
-                        <Text>รูปภาพประกอบสินค้า : </Text>
-                      </Box>
-                    </GridItem> */}
-                    {/* <VideoWall setFileVideo={handleSetFileVideo} /> */}
-                    {/* <GridItem colSpan={2}>
-                      <HStack alignItems="flex-start" spacing={4}>
-                        {images.map((img, idx) => (
-                          <Box
-                            key={idx}
-                            position="relative"
-                            w="200px"
-                            h="150px"
-                            border="1px dashed #d9d9d9"
-                            bgColor={"whitesmoke"}
-                            borderRadius="md"
-                            bgImage={`url(${img})`}
-                            bgSize="contain"
-                            bgPosition="center"
-                            bgRepeat="no-repeat"
-                          >
-                            <IconButton
-                              position="absolute"
-                              top="4px"
-                              right="4px"
-                              icon={<DeleteIcon />}
-                              colorScheme="red"
-                              onClick={() => handleDeleteImage(idx)}
-                            />
-                          </Box>
-                        ))}
-                        {images.length < imageCount && (
-                          <Box
-                            w="200px"
-                            h="150px"
-                            border="1px dashed #d9d9d9"
-                            borderRadius="md"
-                            bgColor={"whitesmoke"}
-                          >
-                            <label htmlFor="upload">
-                              <Box
-                                width="100%"
-                                height="100%"
-                                display="flex"
-                                alignItems="center"
-                                justifyContent="center"
-                                cursor="pointer"
-                              >
-                                <Text fontSize="lg" color="black">
-                                  เพิ่มรูปภาพ
-                                </Text>
-                                <Text ml={2} fontSize="lg">
-                                  ({`${images.length}/${imageCount}`})
-                                </Text>
-                                <Input
-                                  type="file"
-                                  accept="image/*"
-                                  onChange={handleImageUpload}
-                                  id="upload"
-                                  display="none"
-                                />
-                              </Box>
-                            </label>
-                          </Box>
-                        )}
-                      </HStack>
-                    </GridItem> */}
                   </Grid>
                 </GridItem>
                 <GridItem fontSize="25px" width="100%">
@@ -1047,9 +1118,6 @@ function addProduct() {
                           }
                         />
                         <InputRightAddon children="%" />
-                        {/* <InputRightElement>
-                          <Text fontSize={'xl'}>%</Text>
-                        </InputRightElement> */}
                       </InputGroup>
                     </GridItem>
                     <GridItem colSpan={1} justifySelf="end">
@@ -1112,45 +1180,6 @@ function addProduct() {
                         />
                         <InputRightAddon children="Cm." />
                       </InputGroup>
-                      {/* {buttonActive[0] ? (
-                        <Flex justifyContent="center" pt="10px">
-                          <Button>ยกเลิก</Button>
-                          <Button
-                            ml="10px"
-                            type="submit"
-                            bg="red"
-                            color="white"
-                            leftIcon={
-                              <Image src="/images/save.png" alt="" h="25px" />
-                            }
-                            _hover={{}}
-                            onClick={comfirmSave}
-                          >
-                            บันทึก
-                          </Button>
-                        </Flex>
-                      ) : (
-                        <Flex justifyContent="center" pt="10px">
-                          <Button
-                            type="submit"
-                            bg="red"
-                            leftIcon={
-                              <Image
-                                src="/images/pluswhite.png"
-                                alt=""
-                                h="15px"
-                              />
-                            }
-                            _hover={{}}
-                            color="white"
-                            h="35px"
-                            fontSize="21px"
-                            onClick={additionOption}
-                          >
-                            เพิ่มตัวเลือกสินค้า
-                          </Button>
-                        </Flex>
-                      )} */}
                     </GridItem>
                   </Grid>
                 </GridItem>
@@ -1227,12 +1256,6 @@ function addProduct() {
                   </HStack>
                 </Box>
                 <Box>
-                  {/* <Flex justifyContent="center" pt="10px">
-                    <Text color={"red"}>
-                      *เงื่อนไข : แม่ค้าต้องทำการเพิ่มสินค้าให้เรียบร้อยก่อน
-                      จึงจะสามารถเพิ่มตัวเลือกให้กับสินค้าของท่านได้
-                    </Text>
-                  </Flex> */}
                   <Flex justifyContent="center" pt={5}>
                     {/* <Button>ยกเลิก</Button> */}
                     {type === "single" ? (
@@ -1263,22 +1286,12 @@ function addProduct() {
                         fontSize={"20px"}
                         _hover={{}}
                         onClick={additionOption}
-                        // isDisabled={btnCheckSaveStep1 == true ? false : true}
-                        // onClick={comfirmSave}
                       >
                         เพิ่มตัวเลือก
                       </Button>
                     )}
                   </Flex>
                 </Box>
-                <div>
-                  <TagsInput
-                    value={selected}
-                    onChange={insertValue}
-                    name="fruits"
-                    placeHolder="เพิ่มตัวเลือก"
-                  />
-                </div>
               </Box>
             </Box>
           </from>
@@ -1396,7 +1409,7 @@ function addProduct() {
                 </Flex>
               );
             })}
-            <Box pl="116px" pt="15px">
+            {/* <Box pl="116px" pt="15px">
               <Button
                 border="2px solid black"
                 bg="white"
@@ -1407,6 +1420,85 @@ function addProduct() {
               >
                 เพิ่มรูปแบบ ({div.length}/2)
               </Button>
+            </Box> */}
+            <Box px="10%" mt={10}>
+              <Flex>
+                <Box>
+                  <Text fontSize="24px" px="15px" whiteSpace="nowrap">
+                    รูปแบบที่ 1 :
+                  </Text>
+                </Box>
+                <Box ml={5} width={"50%"}>
+                  <Input
+                    onChange={(e) => setOption(e.target.value)}
+                    placeholder="เช่น สี ขนาด ไซด์"
+                    required
+                  />
+                </Box>
+                <Box ml={5} width={"100%"}>
+                  <TagsInput
+                    value={selected}
+                    onChange={insertValue}
+                    name="fruits"
+                    placeHolder="เพิ่มตัวเลือก"
+                    disabled={
+                      option === "ตัวเลือกที่ 1" || option === "" ? true : false
+                    }
+                  />
+                </Box>
+              </Flex>
+              {/* <Flex pt="10px" justifyContent="center">
+                <Text fontSize="24px" px="15px" whiteSpace="nowrap">
+                  รูปแบบที่ 1 :
+                </Text>
+                <Box width="-webkit-fill-available">
+                  <Flex>
+                    <Input
+                      width={'50%'}
+                      onChange={(e) => setOption(e.target.value)}
+                      placeholder="เช่น สี ขนาด ไซด์"
+                      required
+                    />
+                    <TagsInput
+                      ml={2}
+                      width={'50%'}
+                      value={selected}
+                      onChange={insertValue}
+                      name="fruits"
+                      placeHolder="เพิ่มตัวเลือก"
+                    />
+                  </Flex>
+                </Box>
+              </Flex> */}
+            </Box>
+            <Box px="10%" mt={5}>
+              <Flex>
+                <Box>
+                  <Text fontSize="24px" px="15px" whiteSpace="nowrap">
+                    รูปแบบที่ 2 :
+                  </Text>
+                </Box>
+                <Box ml={5} width={"50%"}>
+                  <Input
+                    onChange={(e) => setSubOption(e.target.value)}
+                    placeholder="เช่น สี ขนาด ไซด์"
+                    required
+                  />
+                </Box>
+                <Box ml={5} width={"100%"}>
+                  <TagsInput
+                    value={selected2}
+                    onChange={insertValue2}
+                    name="fruits"
+                    placeHolder="เพิ่มตัวเลือก"
+                    disabled={
+                      subOption === "ตัวเลือกที่ 2" || subOption === ""
+                        ? true
+                        : false
+                    }
+                  />
+                </Box>
+              </Flex>
             </Box>
             <Box pl="115px" pt="15px">
               <Table minWidth="100%" border="1px solid" textAlign="center">
@@ -1448,9 +1540,73 @@ function addProduct() {
                           }
                         >
                           {item.nameOption}
-                          <Image
-                            src={fileImage[item.indexImageOption]?.thumbUrl}
-                          />
+                          <Box
+                            position="relative"
+                            display="inline-block"
+                            width="100px"
+                            height="100px"
+                            border="1px solid"
+                            borderColor="gray.200"
+                            borderRadius="md"
+                            overflow="hidden"
+                            bg="whitesmoke"
+                          >
+                            {item.indexImageOption.length > 0 ? (
+                              <React.Fragment>
+                                <img
+                                  src={item.imagePreviewOption}
+                                  alt="Preview"
+                                  style={{
+                                    width: "100%",
+                                    height: "100%",
+                                    objectFit: "cover",
+                                  }}
+                                />
+                                <IconButton
+                                  position="absolute"
+                                  top="4px"
+                                  right="4px"
+                                  icon={<DeleteIcon />}
+                                  colorScheme="red"
+                                  size="sm"
+                                  variant="ghost"
+                                  zIndex="2"
+                                  onClick={() => deleteImage(index)}
+                                />
+                              </React.Fragment>
+                            ) : (
+                              <React.Fragment>
+                                <Box
+                                  display="flex"
+                                  justifyContent="center"
+                                  alignItems="center"
+                                  width="100%"
+                                  height="100%"
+                                >
+                                  เพิ่มรูปภาพ {item.indexImageOption.length}/1
+                                </Box>
+                                <Box
+                                  position="absolute"
+                                  top="0"
+                                  left="0"
+                                  width="100%"
+                                  height="100%"
+                                  opacity="0"
+                                  cursor="pointer"
+                                  zIndex="1"
+                                >
+                                  <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) =>
+                                      handleImageSelect(e, index)
+                                    }
+                                    style={{ width: "100%", height: "100%" }}
+                                  />
+                                </Box>
+                              </React.Fragment>
+                            )}
+                          </Box>
                         </Td>
                         <Td border="1px solid">
                           {item?.subOption?.length > 0 ? (
@@ -1576,6 +1732,7 @@ function addProduct() {
                             </Td>
                             <Td border="1px solid">
                               <Input
+                                type="number"
                                 value={subItem.priceSubOption}
                                 onChange={(e) =>
                                   editDataTable(
@@ -1589,19 +1746,7 @@ function addProduct() {
                             </Td>
                             <Td border="1px solid">
                               <Input
-                                value={subItem.skuSubOption}
-                                onChange={(e) =>
-                                  editDataTable(
-                                    e,
-                                    index,
-                                    subIndex,
-                                    "skuSubOption"
-                                  )
-                                }
-                              />
-                            </Td>
-                            <Td border="1px solid">
-                              <Input
+                                type="number"
                                 value={subItem.stockSubOption}
                                 onChange={(e) =>
                                   editDataTable(
@@ -1609,6 +1754,19 @@ function addProduct() {
                                     index,
                                     subIndex,
                                     "stockSubOption"
+                                  )
+                                }
+                              />
+                            </Td>
+                            <Td border="1px solid">
+                              <Input
+                                value={subItem.skuSubOption}
+                                onChange={(e) =>
+                                  editDataTable(
+                                    e,
+                                    index,
+                                    subIndex,
+                                    "skuSubOption"
                                   )
                                 }
                               />
@@ -1841,8 +1999,8 @@ function addProduct() {
           </ModalBody>
           <ModalFooter justifyContent="center">
             <Flex>
-              <Button bg="white">ยกเลิก</Button>
               <Button
+                mr={2}
                 bg="red"
                 type="submit"
                 color="white"
@@ -1850,6 +2008,7 @@ function addProduct() {
               >
                 ยืนยัน
               </Button>
+              <Button onClick={onCloseForm1}>ยกเลิก</Button>
             </Flex>
           </ModalFooter>
         </ModalContent>
