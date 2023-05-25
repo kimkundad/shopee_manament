@@ -113,11 +113,11 @@ export default function Purchase() {
   };
 
   const edit = (id) => {
-    router.push(`/setting/payment/eBank/edit/${id}`)
+    router.push({pathname:`/setting/payment/eBank/edit/${id}`})
   }
 
   const buttonBack = () => {
-    router.push("/setting/payment")
+    router.push({pathname:"/setting/payment"})
   }
   return (
     <>
