@@ -77,7 +77,7 @@ const DateRangePicker = ({ getDate, id, type }) => {
       );
 
       cb(start, end, "วันนี้");
-      $(`#reportrange${id} span`).html("เลือกวันที่");
+      $(`#reportrange${id} span`).html("วันนี้");
     }
   }, []);
 

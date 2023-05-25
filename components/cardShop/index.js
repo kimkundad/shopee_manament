@@ -160,7 +160,7 @@ function index(product) {
 
   return (
     <>
-      <Grid templateColumns="repeat(3, 1fr)" gap={2}>
+      <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap={2}>
         {product.Shops.map((shops) => {
           const isBookmarked = bookmarks[shops.id] || false; // ตัวแปรไว้ใช้ bookmark แต่ละ ShopID
           const dateCreate = new Date(shops.created_at); // format วันที่ที่ส้ราง เอาแค่ วัน เดือน ปั

@@ -27,7 +27,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <ChakraProvider theme={theme}>
-            {currentPath == "/" ? (
+            {currentPath == "/" /* || currentPath == "/test" */ ? (
               <Component {...pageProps} />
             ) : (
               <Layout>

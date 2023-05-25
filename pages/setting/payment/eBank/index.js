@@ -113,17 +113,17 @@ export default function Purchase() {
   };
 
   const edit = (id) => {
-    router.push({pathname:`/setting/payment/eBank/edit/${id}`})
-  }
+    router.push({ pathname: `/setting/payment/eBank/edit/${id}` });
+  };
 
   const buttonBack = () => {
-    router.push({pathname:"/setting/payment"})
-  }
+    router.push({ pathname: "/setting/payment" });
+  };
   return (
     <>
       <Box p={5}>
         <Box>
-        <Button
+          <Button
             size="sm"
             onClick={() => buttonBack()}
             leftIcon={<BsArrowLeftCircle />}
@@ -222,7 +222,12 @@ export default function Purchase() {
                     </Button>
                   </Box>
                   <Box w="20%">
-                    <Button w="100%" bg="red" color="white" onClick={() => edit(item.id)}>
+                    <Button
+                      w="100%"
+                      bg="red"
+                      color="white"
+                      onClick={() => edit(item.id)}
+                    >
                       <Image src="/images/editshop.png" w="15px" h="15px" />
                       <Text pl="10px" fontSize="18px">
                         แก้ไข
@@ -256,49 +261,49 @@ export default function Purchase() {
           </Link>
         </Center>
       </Box>
-
       <Modal onClose={onClose} size="md" isOpen={isOpen} isCentered>
-        <ModalOverlay />
-        <ModalContent alignSelf="center" py="20px">
-          <ModalBody alignSelf="center">
-            <ModalCloseButton />
-            <Box textAlign="center">
-              <Image src="/images/binred.png" alt="" h="200px" mx="auto" />
-              <Text fontWeight="bold" fontSize="35px" pt="10px">
-                ยืนยันการลบบัญชี
-              </Text>
-            </Box>
-          </ModalBody>
-          <ModalFooter alignSelf="center">
-            <HStack justifyContent="center" pt="15px">
-              <Box borderRadius="md" border="1px solid">
-                <Button
-                  w="100%"
-                  onClick={() => {
-                    onClose();
-                  }}
-                >
-                  <Text fontSize="18px">ยกเลิก</Text>
-                </Button>
+          <ModalOverlay />
+          <ModalContent alignSelf="center" py="20px">
+            <ModalBody alignSelf="center">
+              <ModalCloseButton />
+              <Box textAlign="center">
+                <Image src="/images/binred.png" alt="" h="200px" mx="auto" />
+                <Text fontWeight="bold" fontSize="35px" pt="10px">
+                  ยืนยันการลบบัญชี
+                </Text>
               </Box>
-              <Spacer />
-              <Box>
-                <Button
-                  w="100%"
-                  bg="red"
-                  color="white"
-                  onClick={() => {
-                    onClose();
-                    deleteAccount();
-                  }}
-                >
-                  <Text fontSize="18px">ยืนยัน</Text>
-                </Button>
-              </Box>
-            </HStack>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+            </ModalBody>
+            <ModalFooter alignSelf="center">
+              <HStack justifyContent="center" pt="15px">
+                <Box borderRadius="md" border="1px solid">
+                  <Button
+                    w="100%"
+                    onClick={() => {
+                      onClose();
+                    }}
+                  >
+                    <Text fontSize="18px">ยกเลิก</Text>
+                  </Button>
+                </Box>
+                <Spacer />
+                <Box>
+                  <Button
+                    w="100%"
+                    bg="red"
+                    color="white"
+                    onClick={() => {
+                      onClose();
+                      deleteAccount();
+                    }}
+                  >
+                    <Text fontSize="18px">ยืนยัน</Text>
+                  </Button>
+                </Box>
+              </HStack>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
     </>
+    
   );
 }

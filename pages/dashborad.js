@@ -436,7 +436,7 @@ export default function DashBoard() {
           />
         </Box>
       </Box>
-      <Grid templateColumns="repeat(2, 1fr)" gap={6}>
+      <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={6}>
         <Box bg="white" borderRadius="xl">
           <Text fontSize="28px" p="15px" textAlign="center" fontWeight="bold">
             สินค้าขายดี
@@ -537,7 +537,8 @@ export default function DashBoard() {
         w="100%"
         h="500px"
         borderRadius="xl"
-        p="60px"
+        py="60px"
+        px="10px"
         my="20px"
       >
         <Text fontSize="28px" fontWeight="bold">
@@ -545,13 +546,13 @@ export default function DashBoard() {
         </Text>
         <Line data={dataLine} options={optionsLine} h="100%" />
       </Box>
-      <Grid templateColumns="repeat(2, 1fr)" gap={6} mb="20px">
+      <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={6} mb="20px">
         {divHeight ? (
           <GridItem
             textAlign="-webkit-center"
             w="100%"
             h={`${divHeight}px`}
-            p="15px"
+            p="10px"
             bg="white"
             overflow="auto"
             borderRadius="xl"
@@ -676,7 +677,7 @@ export default function DashBoard() {
           </Box>
         </GridItem>
       </Grid>
-      <Grid templateColumns="repeat(3, 1fr)" gap={6}>
+      <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap={6}>
         <GridItem
           textAlign="-webkit-center"
           w="100%"

@@ -31,7 +31,7 @@ import autoTable from "jspdf-autotable";
 import THSarabunNew from "@/components/THSarabunNew";
 import THSarabunNewBold from "@/components/THSarabunNewBold";
 import DateRangePicker from "@/components/DateRangePicker";
-
+import moment from 'moment';
 function index() {
   const [reports, setReports] = useState([]);
   const [loadingImg, setLoadingImg] = useState(true);
@@ -82,13 +82,13 @@ function index() {
   const [sumOrders, setSumOrders] = useState(0);
 
   const [selectedRange, setSelectedRange] = useState({
-    startDate: new Date(2000, 4, 9),
-    endDate: new Date(2100, 4, 9),
+    startDate: moment('2000-01-01'),
+    endDate: moment('2100-12-31'),
     key: "selection",
   });
 
-  const [startDate, setStartDate] = useState(0);
-  const [endDate, setEndDate] = useState(9999999999);
+  const [startDate, setStartDate] = useState(moment().startOf("day").unix());
+  const [endDate, setEndDate] = useState(moment().endOf("day").unix());
   const getDateRange = (start, end) => {
     setStartDate(start.unix());
     setEndDate(end.unix());
@@ -186,10 +186,8 @@ function index() {
   const doc = new jsPDF();
   const printPDF = async () => {
     for (let i = 1; i <= totalPages; i++) {
-      selectedRange.startDate.setHours(0, 0, 0, 0);
-      selectedRange.endDate.setHours(23, 59, 59, 999);
-      const startDateTimestamp = selectedRange.startDate.getTime();
-      const endDateTimestamp = selectedRange.endDate.getTime();
+      const startDateTimestamp = selectedRange.startDate.unix();
+      const endDateTimestamp = selectedRange.endDate.unix();
       const formdata = new FormData();
       formdata.append("itemsPerPage", itemsPerPage);
       formdata.append("startDate", startDateTimestamp);

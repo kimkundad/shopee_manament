@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import classNames from "classnames";
 import {
@@ -47,6 +47,11 @@ const Navbar = (props: Props) => {
     router.push({pathname:"/"});
     dispatch(getUserLogout());
   };
+
+  const [notification,setNotification] = useState([]);
+  const getNoti = async () => {
+    const res = await axios.get(`https://api.sellpang.com/api/newNoti/${userInfo.data !== null ? userInfo.data[0]?.code_user : null}`)
+  }
 
   return userAuthen?.token !== null ? (
     <nav
@@ -102,6 +107,7 @@ const Navbar = (props: Props) => {
               </Box>
             </MenuButton>
             <MenuList>
+              
               <MenuItem>
                 <Flex>
                   <Image
@@ -117,6 +123,7 @@ const Navbar = (props: Props) => {
                   </Box>
                 </Flex>
               </MenuItem>
+              <MenuDivider />
             </MenuList>
           </Menu>
         </div>

@@ -1,50 +1,71 @@
-import React, { useEffect } from 'react';
-import Chart from 'chart.js';
+import React, { useEffect, useState, useLayoutEffect, useRef } from "react";
+import moment from "moment";
+import DateRangePicker from "@/components/DateRangePicker";
+import {
+  Flex,
+  Text,
+  Image,
+  Box,
+  useDisclosure,
+  Button,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+} from "@chakra-ui/react";
 
+export default function test() {
+  const { isOpen, onOpen, onClose } = useDisclosure([]);
+  const [startDatePie, setStartDatePie] = useState(
+    moment().startOf("day").unix()
+  );
+  const [endDatePie, setEndDatePie] = useState(moment().endOf("day").unix());
+  const getDateRangePie = (start, end) => {
+    setStartDatePie(start.unix());
+    setEndDatePie(end.unix());
+  };
 
-const ChartPage = () => {
-  useEffect(() => {
-    // Chart configuration object
-    const chartConfig = {
-      type: 'outlabeledPie',
-      data: {
-        labels: ['ONE', 'TWO', 'THREE', 'FOUR', 'FIVE'],
-        datasets: [
-          {
-            backgroundColor: [
-              '#FF3784',
-              '#36A2EB',
-              '#4BC0C0',
-              '#F77825',
-              '#9966FF',
-            ],
-            data: [1, 2, 3, 4, 5],
-          },
-        ],
-      },
-      options: {
-        plugins: {
-          legend: false,
-          outlabels: {
-            text: '%l %p',
-            color: 'white',
-            stretch: 35,
-            font: {
-              resizable: true,
-              minSize: 12,
-              maxSize: 18,
-            },
-          },
-        },
-      },
-    };
+  const click = () => {
+    onOpen();
+  }
+  return (
+    <Flex justifyContent="end" mb="1.25rem">
+        <Box
+          border="1px solid"
+          borderRadius="md"
+          fontSize="21px"
+          borderColor="gray.500"
+          w="150px"
+          bg="white"
+        >
+          <DateRangePicker
+            type="dashboard"
+            id="chartPie"
+            getDate={getDateRangePie}
+          />
+        </Box>
+        <Box w="500px">
 
-    // Chart rendering logic
-    const ctx = document.getElementById('myChart').getContext('2d');
-    new Chart(ctx, chartConfig);
-  }, []);
-
-  return <canvas id="myChart" width="400" height="400"></canvas>;
-};
-
-export default ChartPage;
+        </Box>
+          
+        <Button onClick={click}>
+          open
+        </Button>
+        <Modal onClose={onClose} size="xs" isOpen={isOpen}>
+        <ModalOverlay />
+        <ModalContent alignSelf="center" py="20px">
+          <ModalBody alignSelf="center">
+            <Box textAlign="center">
+              <Image src="/images/check3.png" alt="" h="70px" mx="auto" />
+              <Text fontWeight="bold" fontSize="24">
+                เพิ่มบัญชีธนาคารสำเร็จ
+              </Text>
+            </Box>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+      </Flex>
+  );
+}
