@@ -100,13 +100,13 @@ export default function EbankAdd() {
     if (res.data.status == "success") {
       onOpen();
       setTimeout(() => {
-        router.push("/setting/payment/eBank"); // Replace with your desired redirect path
+        router.push({pathname:"/setting/payment/eBank"}); // Replace with your desired redirect path
       }, 1000);
     }
   };
 
   const buttonBack = () => {
-    router.push("/setting/payment/eBank")
+    router.push({pathname:"/setting/payment/eBank"})
   }
   return (
     <>
