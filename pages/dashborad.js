@@ -34,14 +34,18 @@ export default function DashBoard() {
   const [totalSales, setTotalSales] = useState();
   const [totalDelivery, setTotalDelivery] = useState(null);
   const [totalPayment, setTotalPayment] = useState(null);
-
-  const [startDatePie, setStartDatePie] = useState(moment().startOf("day").unix());
-  const [endDatePie, setEndDatePie] = useState(moment().endOf("day").unix());
+  const chartRefProduct = useRef(null);
+  const [startDatePie, setStartDatePie] = useState(
+    moment().startOf("month").unix()
+  );
+  const [endDatePie, setEndDatePie] = useState(moment().endOf("month").unix());
   const getDateRangePie = (start, end) => {
     setStartDatePie(start.unix());
     setEndDatePie(end.unix());
   };
-  const [startDateBar, setStartDateBar] = useState(moment().startOf("day").unix());
+  const [startDateBar, setStartDateBar] = useState(
+    moment().startOf("day").unix()
+  );
   const [endDateBar, setEndDateBar] = useState(moment().endOf("day").unix());
   const getDateRangeBar = (start, end) => {
     setStartDateBar(start.unix());
@@ -192,9 +196,18 @@ export default function DashBoard() {
     cutout: "63%",
   };
 
+  const color = [
+    "rgba(0, 9, 255)",
+    "rgb(255, 99, 132)",
+    "rgba(245, 170, 39, 1)",
+    "rgba(245, 217, 39, 1)",
+    "rgba(39, 200, 245, 1)",
+  ];
+
   const [textCenterStock, setTextCenterStock] = useState(false);
   const [textCenterDelivery, setTextCenterDelivery] = useState(false);
   const [textCenterPayment, setTextCenterPayment] = useState(false);
+
   useEffect(() => {
     if (allStock !== null && totalDelivery !== null) {
       const stock = {
@@ -270,13 +283,6 @@ export default function DashBoard() {
     }
   }, [allStock, totalDelivery]);
 
-  const color = [
-    "rgba(0, 9, 255)",
-    "rgb(255, 99, 132)",
-    "rgba(245, 170, 39, 1)",
-    "rgba(245, 217, 39, 1)",
-    "rgba(39, 200, 245, 1)",
-  ];
   const dataPieProduct = {
     labels: [],
     datasets: [
@@ -344,7 +350,6 @@ export default function DashBoard() {
       },
     },
   };
-
   const optionsBar = {
     plugins: {
       title: {
@@ -418,6 +423,97 @@ export default function DashBoard() {
     }
   }, [dataBar]);
 
+  useEffect(() => {
+    const data = {
+      labels: dataPieProducts.map((element) => element.name_product),
+      datasets: [
+        {
+          label: "My First Dataset",
+          data: dataPieProducts.map((element) => parseInt(element.total_num)),
+          backgroundColor: color,
+          borderColor: color,
+          borderWidth: 1,
+        },
+      ],
+    };
+
+    const pieLabelLine = {
+      id: "pieLabelLine",
+      afterDraw(chart, args, options) {
+        const {
+          ctx,
+          chartArea: { top, bottom, left, right, width, height },
+        } = chart;
+
+        chart.data.datasets.forEach((dataset, i) => {
+          chart.getDatasetMeta(i).data.forEach((datapoint, index) => {
+            const { x, y, startAngle, endAngle } = datapoint.getProps([
+              "x",
+              "y",
+              "startAngle",
+              "endAngle",
+            ]);
+
+            const radius = datapoint.outerRadius;
+            const midAngle = (startAngle + endAngle) / 2;
+            const x1 = Math.cos(midAngle) * radius + datapoint.x;
+            const y1 = Math.sin(midAngle) * radius + datapoint.y;
+
+            const xLine = x1 >= width / 2 ? x1 + 15 : x1 - 15;
+            const yLine = y1 >= height / 2 ? y1 + 15 : y1 - 15;
+            const extraLine = x1 >= width / 2 ? 15 : -15;
+
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(xLine, yLine);
+            ctx.lineTo(xLine + extraLine, yLine);
+            ctx.strokeStyle = dataset.borderColor[index];
+            ctx.stroke();
+
+            const textWidth = ctx.measureText(chart.data.labels[index]).width;
+            ctx.font = "15px Arial";
+
+            const textXPosition = x1 >= width / 2 ? "left" : "right";
+            const plushFivePx = x1 >= width / 2 ? 5 : -5;
+            ctx.textAlign = textXPosition;
+            ctx.textBaseline = "middle";
+            ctx.fillStyle = dataset.borderColor[index];
+            ctx.fillText(
+              chart.data.labels[index],
+              xLine + extraLine + plushFivePx,
+              yLine
+            );
+          });
+        });
+      },
+    };
+
+    const config = {
+      type: "pie",
+      data,
+      options: {
+        layout:{
+          padding: 20
+        },
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false,
+          },
+        },
+      },
+      plugins: [pieLabelLine],
+    };
+
+    const chart = new Chart(chartRefProduct.current, config);
+
+    // Clean up the chart when the component unmounts
+    return () => {
+      chart.destroy();
+    };
+  }, [dataPieProducts]);
+
+  // Clean up the chart when the component unmounts
   return (
     <Box bg="gray.100">
       <Box textAlign="-webkit-right" mb="1.25rem">
@@ -441,8 +537,14 @@ export default function DashBoard() {
           <Text fontSize="28px" p="15px" textAlign="center" fontWeight="bold">
             สินค้าขายดี
           </Text>
-          <Box textAlign="-webkit-center" w="100%" height="300px">
-            <Pie data={dataPieProduct} options={optionsPie} />
+          <Box textAlign="-webkit-center" w="100%" height="300px" py="30px">
+            {/* <Pie
+              id="pieProduct"
+              data={dataPieProduct}
+              options={optionsPie}
+              plugins={pie}
+            /> */}
+            <canvas ref={chartRefProduct}></canvas>
           </Box>
           <Box p="25px" pb="0px">
             <Grid templateColumns="repeat(2, 1fr)" gap={0}>
@@ -546,7 +648,11 @@ export default function DashBoard() {
         </Text>
         <Line data={dataLine} options={optionsLine} h="100%" />
       </Box>
-      <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={6} mb="20px">
+      <Grid
+        templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
+        gap={6}
+        mb="20px"
+      >
         {divHeight ? (
           <GridItem
             textAlign="-webkit-center"

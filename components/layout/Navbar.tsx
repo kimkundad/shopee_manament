@@ -31,27 +31,32 @@ const Navbar = (props: Props) => {
   const { data: count } = newOrder(
     userInfo.data !== null ? userInfo.data[0]?.code_user : null
   );
-  console.log(count);
 
   useEffect(() => {
     if (userAuthen?.token == null) {
-      router.push({pathname:"/"});
+      router.push({ pathname: "/" });
     }
   }, []);
 
   const editProfile = () => {
-    router.push({pathname:"/setting/profile"});
+    router.push({ pathname: "/setting/profile" });
   };
 
   const logout = () => {
-    router.push({pathname:"/"});
+    router.push({ pathname: "/" });
     dispatch(getUserLogout());
   };
 
-  const [notification,setNotification] = useState([]);
+  const [notification, setNotification] = useState([]);
   const getNoti = async () => {
-    const res = await axios.get(`https://api.sellpang.com/api/newNoti/${userInfo.data !== null ? userInfo.data[0]?.code_user : null}`)
-  }
+    const res = await axios.get(
+      `https://api.sellpang.com/api/getNoti/${
+        userInfo.data !== null ? userInfo.data[0]?.code_user : null
+      }`
+    );
+    
+    setNotification(res.data.noti);
+  };
 
   return userAuthen?.token !== null ? (
     <nav
@@ -83,9 +88,7 @@ const Navbar = (props: Props) => {
         </div>
         <div className="px-2">
           <Menu>
-            <MenuButton
-              transition="all 0.2s"
-            >
+            <MenuButton transition="all 0.2s" onClick={getNoti}>
               <Image
                 src="/images/แจ้งเตือน.png"
                 width="36px"
@@ -107,23 +110,13 @@ const Navbar = (props: Props) => {
               </Box>
             </MenuButton>
             <MenuList>
-              
-              <MenuItem>
-                <Flex>
-                  <Image
-                    src={`https://api.sellpang.com/images/shopee/avatar/${userInfo.data[0]?.avatar}`}
-                    width="50px"
-                    height="50px"
-                    alt="user"
-                    borderRadius="50%"
-                  />
-                  <Box pl="10px">
-                    <Text>{userInfo.data[0]?.name}</Text>
-                    <Text>id: {userInfo.data[0]?.code_user}</Text>
-                  </Box>
-                </Flex>
-              </MenuItem>
-              <MenuDivider />
+              {notification?.map((item, index) => {
+                return (
+                  <MenuItem>
+                    <Flex><Text>{item.type_noti == "new_order" ? "มีคำสั่งซื้อใหม่":null}</Text></Flex>
+                  </MenuItem>
+                );
+              })}
             </MenuList>
           </Menu>
         </div>
