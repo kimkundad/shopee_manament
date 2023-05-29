@@ -54,10 +54,25 @@ const Navbar = (props: Props) => {
         userInfo.data !== null ? userInfo.data[0]?.code_user : null
       }`
     );
-    
+
     setNotification(res.data.noti);
   };
 
+  const readNoti = async (type) => {
+    const formdata = new FormData();
+    formdata.append(
+      "user_code",
+      userInfo.data !== null ? userInfo.data[0]?.code_user : null
+    );
+    formdata.append("type_noti", type);
+    const res = await axios.post(
+      `https://api.sellpang.com/api/readNoti`,
+      formdata
+    );
+    if(type == "new_order"){
+      router.push('/order')
+    }
+  };
   return userAuthen?.token !== null ? (
     <nav
       className={classNames({
@@ -95,25 +110,40 @@ const Navbar = (props: Props) => {
                 height="36px"
                 alt="notification"
               />
-              <Box
-                pos="absolute"
-                top="14px"
-                right="72px"
-                borderRadius="50%"
-                border="1px solid"
-                w="20px"
-                h="20px"
-                textAlign="center"
-                bg="green"
-              >
-                {/* <Text>{count.count}</Text> */}
-              </Box>
+              {count?.count > 0 ? (
+                <Box
+                  pos="absolute"
+                  top="14px"
+                  right="72px"
+                  borderRadius="50%"
+                  border="1px solid"
+                  w="20px"
+                  h="20px"
+                  textAlign="center"
+                  bg="red"
+                  borderColor="red"
+                >
+                  <Text color="white">{count?.count}</Text>
+                </Box>
+              ) : null}
             </MenuButton>
             <MenuList>
               {notification?.map((item, index) => {
                 return (
-                  <MenuItem>
-                    <Flex><Text>{item.type_noti == "new_order" ? "มีคำสั่งซื้อใหม่":null}</Text></Flex>
+                  <MenuItem onClick={(e) => readNoti(item.type_noti)}>
+                    <Flex alignItems="center">
+                      <Image src="/images/cart.png" w="30px" h="30px" />
+                      <Box pl="10px">
+                        <Text fontWeight={item.is_seen == 0 ? "bold" : "none"}>
+                          {item.type_noti == "new_order"
+                            ? "มีคำสั่งซื้อใหม่"
+                            : null}
+                        </Text>
+                        <Text fontWeight={item.is_seen == 0 ? "bold" : "none"}>
+                          หมายเลขคำสั่งซื้อ : {item.invoice_id}
+                        </Text>
+                      </Box>
+                    </Flex>
                   </MenuItem>
                 );
               })}

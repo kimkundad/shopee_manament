@@ -393,7 +393,6 @@ export default function DashBoard() {
       labels: dataPieProducts.map((element) => element.name_product),
       datasets: [
         {
-          label: "My First Dataset",
           data: dataPieProducts.map((element) => parseInt(element.total_num)),
           backgroundColor: color,
           borderColor: color,
@@ -410,6 +409,10 @@ export default function DashBoard() {
           chartArea: { top, bottom, left, right, width, height },
         } = chart;
 
+        const total = chart.data.datasets[0].data.reduce(
+          (sum, value) => sum + value,
+          0
+        );
         chart.data.datasets.forEach((dataset, i) => {
           chart.getDatasetMeta(i).data.forEach((datapoint, index) => {
             const { x, y, startAngle, endAngle } = datapoint.getProps([
@@ -424,9 +427,9 @@ export default function DashBoard() {
             const x1 = Math.cos(midAngle) * radius + datapoint.x;
             const y1 = Math.sin(midAngle) * radius + datapoint.y;
 
-            const xLine = x1 >= width / 2 ? x1 + 15 : x1 - 15;
-            const yLine = y1 >= height / 2 ? y1 + 15 : y1 - 15;
-            const extraLine = x1 >= width / 2 ? 15 : -15;
+            const xLine = x1 >= width / 2 ? x1 + 30 : x1 - 30;
+            const yLine = y1 >= height / 2 ? y1 + 30 : y1 - 30;
+            const extraLine = x1 >= width / 2 ? 30 : -30;
 
             ctx.beginPath();
             ctx.moveTo(x1, y1);
@@ -438,6 +441,11 @@ export default function DashBoard() {
             const textWidth = ctx.measureText(chart.data.labels[index]).width;
             ctx.font = "15px Arial";
 
+            const percentData = (
+              (chart.data.datasets[0].data[index] / total) *
+              100
+            ).toFixed(2);
+
             const textXPosition = x1 >= width / 2 ? "left" : "right";
             const plushFivePx = x1 >= width / 2 ? 5 : -5;
             ctx.textAlign = textXPosition;
@@ -446,7 +454,14 @@ export default function DashBoard() {
             ctx.fillText(
               chart.data.labels[index],
               xLine + extraLine + plushFivePx,
-              yLine
+              yLine -10
+            );
+            const center =
+              textXPosition == "right" ? extraLine * 1.5 : extraLine / 1.5;
+            ctx.fillText(
+              percentData + "%",
+              xLine + center + plushFivePx + 10,
+              yLine + 10
             );
           });
         });
@@ -457,10 +472,11 @@ export default function DashBoard() {
       type: "pie",
       data,
       options: {
-        layout:{
-          padding: 20
+        layout: {
+          padding: 50,
         },
         maintainAspectRatio: false,
+        aspectRatio: 1,
         plugins: {
           legend: {
             display: false,
@@ -473,16 +489,14 @@ export default function DashBoard() {
     // Clean up the chart when the component unmounts
     return () => {
       chart.destroy();
-      
     };
-  }, [dataPieProducts,dataPieShops]);
+  }, [dataPieProducts, dataPieShops]);
 
   useEffect(() => {
     const data = {
       labels: dataPieShops?.map((element) => element.name_shop),
       datasets: [
         {
-          label: "My First Dataset",
           data: dataPieShops?.map((element) => parseInt(element.total_num)),
           backgroundColor: color,
           borderColor: color,
@@ -499,6 +513,11 @@ export default function DashBoard() {
           chartArea: { top, bottom, left, right, width, height },
         } = chart;
 
+        const total = chart.data.datasets[0].data.reduce(
+          (sum, value) => sum + value,
+          0
+        );
+
         chart.data.datasets.forEach((dataset, i) => {
           chart.getDatasetMeta(i).data.forEach((datapoint, index) => {
             const { x, y, startAngle, endAngle } = datapoint.getProps([
@@ -507,15 +526,14 @@ export default function DashBoard() {
               "startAngle",
               "endAngle",
             ]);
-
             const radius = datapoint.outerRadius;
             const midAngle = (startAngle + endAngle) / 2;
             const x1 = Math.cos(midAngle) * radius + datapoint.x;
             const y1 = Math.sin(midAngle) * radius + datapoint.y;
 
-            const xLine = x1 >= width / 2 ? x1 + 15 : x1 - 15;
-            const yLine = y1 >= height / 2 ? y1 + 15 : y1 - 15;
-            const extraLine = x1 >= width / 2 ? 15 : -15;
+            const xLine = x1 >= width / 2 ? x1 + 30 : x1 - 30;
+            const yLine = y1 >= height / 2 ? y1 + 30 : y1 - 30;
+            const extraLine = x1 >= width / 2 ? 30 : -30;
 
             ctx.beginPath();
             ctx.moveTo(x1, y1);
@@ -527,6 +545,11 @@ export default function DashBoard() {
             const textWidth = ctx.measureText(chart.data.labels[index]).width;
             ctx.font = "15px Arial";
 
+            const percentData = (
+              (chart.data.datasets[0].data[index] / total) *
+              100
+            ).toFixed(2);
+
             const textXPosition = x1 >= width / 2 ? "left" : "right";
             const plushFivePx = x1 >= width / 2 ? 5 : -5;
             ctx.textAlign = textXPosition;
@@ -535,7 +558,14 @@ export default function DashBoard() {
             ctx.fillText(
               chart.data.labels[index],
               xLine + extraLine + plushFivePx,
-              yLine
+              yLine -10
+            );
+            const center =
+              textXPosition == "right" ? extraLine * 1.3 : extraLine / 1.5;
+            ctx.fillText(
+              percentData + "%",
+              xLine + center + plushFivePx + 10,
+              yLine + 10
             );
           });
         });
@@ -545,8 +575,8 @@ export default function DashBoard() {
       type: "pie",
       data,
       options: {
-        layout:{
-          padding: 20
+        layout: {
+          padding: 50,
         },
         maintainAspectRatio: false,
         plugins: {
@@ -588,7 +618,7 @@ export default function DashBoard() {
           <Text fontSize="28px" p="15px" textAlign="center" fontWeight="bold">
             สินค้าขายดี
           </Text>
-          <Box textAlign="-webkit-center" w="100%" height="300px" py="30px">
+          <Box textAlign="-webkit-center" w="100%" height="350px" py="15px">
             {/* <Pie
               id="pieProduct"
               data={dataPieProduct}
@@ -641,7 +671,7 @@ export default function DashBoard() {
               ร้านค้าขายดี
             </Text>
           </Box>
-          <Box textAlign="-webkit-center" w="100%" h="300px">
+          <Box textAlign="-webkit-center" w="100%" h="350px" py="15px">
             {/* <Pie data={dataPieShop} options={optionsPie} /> */}
             <canvas ref={chartRefShops}></canvas>
           </Box>
