@@ -74,7 +74,7 @@ export const getUserAuthen = (user, router) => async dispatch => {
                 icon: 'success',
                 timer: 2000
               })
-            Router.push({pathname:"/dashborad"})
+            Router.push({pathname:"/dashboard"})
             
             //   dispatch(getUserTadd(router))
          

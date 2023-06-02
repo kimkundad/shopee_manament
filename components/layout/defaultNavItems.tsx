@@ -11,7 +11,7 @@ import Image from "next/image";
 export const defaultNavItems: NavItem[] = [
 	{
 		label: "Dashboard",
-		href: "/dashborad",
+		href: "/dashboard",
 		icon: (
 			<Image
 				src="/images/menu/dashboard.png"
