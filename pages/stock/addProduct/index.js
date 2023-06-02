@@ -404,6 +404,7 @@ function addProduct() {
   const insertValue = (newSelected) => {
     if (isTextRemoved(newSelected, selected)) {
       handleTextRemoval(newSelected);
+      setSelected(newSelected);
       return;
     }
 
@@ -496,6 +497,7 @@ function addProduct() {
     if (isTextRemoved2(newSelected, selected2)) {
       const removedText = findRemovedText(newSelected, selected2);
       handleTextRemoval2(removedText);
+      setSelected2(newSelected);
       return;
     }
 

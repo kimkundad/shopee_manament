@@ -52,6 +52,8 @@ import {
   EditIcon,
 } from "@chakra-ui/icons";
 import { DeleteIcon } from "@chakra-ui/icons";
+import { TagsInput } from "react-tag-input-component";
+import { useToast } from "@chakra-ui/react";
 class PicturesWall extends React.Component {
   state = {
     fileList: [],
@@ -176,6 +178,8 @@ function UseEditProduct() {
   const [imagesSub, setImagesSub] = useState([]);
   const [imageSubCount, setImageSubCount] = useState(5);
   const [filesSub, setFilesSub] = useState([]);
+  const [selected, setSelected] = useState([]);
+  const [selected2, setSelected2] = useState([]);
 
   const fetchDataCategory = async () => {
     axios
@@ -217,15 +221,26 @@ function UseEditProduct() {
         const imageUrls = product.data.product
           .filter((item) => item.img_product !== null)
           .map((fileName) => `${URLImage}${fileName.img_product}`);
-        const subImageUrls = product.data.product[0].allImage
-          .filter((_, index) => index !== 0)
-          .map((fileName) => ({
-            id: fileName.id,
-            url: `${URLImage}${fileName.image}`,
-          }));
-        // console.log("product", product);
+        // const subImageUrls = product.data.product[0].allImage
+        //   .filter((_, index) => index !== 0)
+        //   .map((fileName) => ({
+        //     id: fileName.id,
+        //     url: `${URLImage}${fileName.image}`,
+        //   }));
+        const filteredImages = product.data.product[0]?.filteredImages;
+        // console.log("filteredImages", filteredImages);
+        if (Array.isArray(filteredImages)) {
+          const subImageUrls = product.data.product[0].filteredImages.map(
+            (fileName) => ({
+              id: fileName.id,
+              url: `${URLImage}${fileName.image}`,
+            })
+          );
+          setImagesSub(subImageUrls);
+        }
+        console.log("product", product);
         setImages(imageUrls);
-        setImagesSub(subImageUrls);
+
         setProduct(product.data.product[0]);
         setName_product(product.data.product[0].name_product);
         setDetail_product(product.data.product[0].detail_product);
@@ -244,21 +259,47 @@ function UseEditProduct() {
         } else {
           setButtonActive([false, true]);
         }
-        let div = [];
+        // let div = [];
         if (product.data.product[0].option1 != null) {
           let option = product.data.product[0].option1;
           setOption(option);
-          div.push([true]);
+          // div.push([true]);
         }
         if (product.data.product[0].option2 != null) {
           let subOption = product.data.product[0].option2;
           setSubOption(subOption);
-          div.push([true]);
+          // div.push([true]);
         }
-        setDiv(div);
+        // setDiv(div);
         setDataTable(product.data.product[0].allOption1);
+        setDataTable((prevData) => {
+          const newData = prevData.map((item) => {
+            return {
+              ...item,
+              indexImageOption: [],
+              imagePreviewOption: "",
+            };
+          });
+          return newData;
+        });
         setImageData(newArr);
         setFileImage(newArr);
+        const allSupOption1 = product.data?.allSupOption;
+        if (allSupOption1) {
+          const productSubSelect = product.data.allSupOption.map(
+            (subselect) => `${subselect.sub_op_name}`
+          );
+          setSelected2(productSubSelect);
+        }
+        const allOption1 = product.data.product[0]?.allOption1;
+        if (allOption1) {
+          const productSelect = product.data.product[0].allOption1.map(
+            (select) => `${select.op_name}`
+          );
+          setSelected(productSelect);
+        }
+
+        // console.log("imageUrls", imageUrls);
       }
     }
 
@@ -280,6 +321,7 @@ function UseEditProduct() {
   const [fileImage, setFileImage] = useState([]);
   const [fileImageOption, setFileImageOption] = useState([]);
   const [valueSelect, setValueSelect] = useState(null);
+  const toast = useToast();
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -331,10 +373,17 @@ function UseEditProduct() {
         console.log(deleteImgSubProduct.data?.success);
       }
     }
+    console.log("index", index);
+    let real_index = "";
+    if (index !== 0) {
+      real_index = index - 1;
+    } else {
+      real_index = 0;
+    }
     const newTags = [...imagesSub];
     newTags.splice(index, 1);
     const newTags2 = [...filesSub];
-    newTags2.splice(index, 1);
+    newTags2.splice(real_index, 1);
     setImagesSub(newTags);
     setFilesSub(newTags2);
   };
@@ -378,7 +427,7 @@ function UseEditProduct() {
   } = useDisclosure();
   const comfirmSave = (event) => {
     // console.log("Images", images);
-    // console.log("filesSub", filesSub);
+    console.log("filesSub", filesSub);
     // console.log("imageData", imageData);
     event.preventDefault();
     onOpenForm1();
@@ -448,19 +497,19 @@ function UseEditProduct() {
   };
 
   const saveSubOptionSuccess = async () => {
-    // const formData = new FormData();
-    // formData.append("productID", productId);
-    // formData.append("option1", option);
-    // formData.append("option2", subOption);
+    const formData = new FormData();
+    formData.append("productID", productId);
+    formData.append("option1", option);
+    formData.append("option2", subOption);
+    formData.append("dataOption", JSON.stringify(dataTable));
+    dataTable.forEach((item, index) => {
+      formData.append(`fileOption[${index}]`, item.indexImageOption[0]);
+      // เพิ่มข้อมูลอื่น ๆ ตามต้องการ
+    });
     // formData.append("dataOption", dataTable);
     const response = await axios.post(
       "https://api.sellpang.com/api/editOptionProduct",
-      {
-        productID: productId,
-        option1: option,
-        option2: subOption,
-        dataOption: dataTable,
-      },
+      formData,
       {
         headers: {
           "Content-Type": "application/json",
@@ -498,6 +547,184 @@ function UseEditProduct() {
     setValueSelect(null);
     onCloseForm3();
   }
+
+  const insertValue = (newSelected) => {
+    if (isTextRemoved(newSelected, selected)) {
+      handleTextRemoval(newSelected);
+      setSelected(newSelected);
+      return;
+    }
+    setSelected(newSelected);
+    updateDataTable(newSelected);
+  };
+
+  const isTextRemoved = (newSelected, oldSelected) => {
+    return oldSelected.length > newSelected.length;
+  };
+
+  const handleTextRemoval = (newSelected) => {
+    setDataTable((prevData) => {
+      const newData = prevData.filter((item) =>
+        newSelected.includes(item.op_name)
+      );
+      return newData;
+    });
+    const removedText = findRemovedText(newSelected, selected);
+    if (dataTable) {
+      const productSelect = dataTable.map((select) => `${select.id}`);
+      const formData = new FormData();
+      productSelect.forEach((item, index) => {
+        formData.append(`productSelect[${index}]`, item);
+      });
+      formData.append("removedText", removedText);
+      axios
+        .post("https://api.sellpang.com/api/deleteOption", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        })
+        .then(function (response) {
+          if (response.data.success) {
+            toast({
+              position: "top-right",
+              title: "ลบข้อมูลสำเร็จ",
+              description: "คุณได้ลบข้อมูลัวเลือก " + removedText + " สำเร็จ",
+              status: "success",
+              duration: 5000,
+              isClosable: true,
+            });
+          }
+        });
+    }
+  };
+
+  const updateDataTable = (newSelected) => {
+    setDataTable((prevData) => {
+      let newData = [...prevData]; // Create a copy of the existing data
+
+      if (newData.length === 0) {
+        // If the data is empty, create a new array with the new object
+        newData = newSelected.map((item) => ({
+          op_name: item,
+          price: "0",
+          stock: "0",
+          sku: "0",
+          indexImageOption: [],
+          imagePreviewOption: "",
+          status: true,
+          allOption2: [],
+        }));
+      } else {
+        // If the data already has values, push the new object or array
+        if (selected2.length > 0) {
+          if (selected.length < newSelected.length) {
+            const data = selected2.map((sel) => ({
+              sub_op_name: sel,
+              price: "0",
+              stock: "0",
+              sku: "0",
+              status: true,
+            }));
+            const newObj = {
+              op_name: newSelected[newSelected.length - 1],
+              price: "0",
+              stock: "0",
+              sku: "0",
+              indexImageOption: [],
+              imagePreviewOption: "",
+              status: true,
+              allOption2: data,
+            };
+            newData.push(newObj);
+          }
+        } else {
+          const newObj = {
+            op_name: newSelected[newSelected.length - 1],
+            price: "0",
+            stock: "0",
+            sku: "0",
+            indexImageOption: [],
+            imagePreviewOption: "",
+            status: true,
+            allOption2: [],
+          };
+          newData.push(newObj);
+        }
+      }
+
+      return newData; // Return the updated data
+    });
+  };
+
+  const handleTextRemoval2 = (removedText) => {
+    setDataTable((prevData) => {
+      const newData = prevData.map((item) => {
+        const filteredSubOption = item.allOption2.filter(
+          (subItem) => subItem.sub_op_name !== removedText
+        );
+        return { ...item, allOption2: filteredSubOption };
+      });
+      return newData;
+    });
+    if (dataTable) {
+      const productSelect = dataTable.map((select) => `${select.id}`);
+      const formData = new FormData();
+      productSelect.forEach((item, index) => {
+        formData.append(`productSelect[${index}]`, item);
+      });
+      formData.append("removedText", removedText);
+      axios
+        .post("https://api.sellpang.com/api/deleteSubOption", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        })
+        .then(function (response) {
+          if (response.data.success) {
+            toast({
+              position: "top-right",
+              title: "ลบข้อมูลสำเร็จ",
+              description: "คุณได้ลบข้อมูลัวเลือกที่ 2 สำเร็จ",
+              status: "success",
+              duration: 5000,
+              isClosable: true,
+            });
+          }
+        });
+    }
+  };
+
+  const insertValue2 = (newSelected) => {
+    if (isTextRemoved2(newSelected, selected2)) {
+      const removedText = findRemovedText(newSelected, selected2);
+      handleTextRemoval2(removedText);
+      setSelected2(newSelected);
+      return;
+    }
+
+    setSelected2(newSelected);
+    updateDataTable2(newSelected);
+  };
+
+  const isTextRemoved2 = (newSelected, oldSelected) => {
+    return oldSelected.length > newSelected.length;
+  };
+
+  const findRemovedText = (newSelected, oldSelected) => {
+    return oldSelected.find((text) => !newSelected.includes(text));
+  };
+
+  const updateDataTable2 = (newSelected) => {
+    if (newSelected.length > selected2.length) {
+      const newData = {
+        sub_op_name: newSelected[newSelected.length - 1],
+        price: "0",
+        stock: "0",
+        sku: "0",
+        status: true,
+      };
+      dataTable.forEach((datatable) => {
+        datatable.allOption2.push(newData);
+      });
+      setDataTable(dataTable);
+    }
+  };
 
   const [nameSubOption, setNameSubOption] = useState(null);
   const [priceSubOption, setPriceSubOption] = useState(null);
@@ -784,6 +1011,66 @@ function UseEditProduct() {
     console.log("dataTable", dataTable);
     event.preventDefault();
     modalSaveOption.onOpen();
+  };
+
+  const handleImageSelect = (event, index) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      const imageDataURL = event.target.result;
+
+      setDataTable((prevData) => {
+        const newData = [...prevData];
+        newData[index].img_name = [file];
+        newData[index].indexImageOption = [file];
+        newData[index].imagePreviewOption = imageDataURL;
+        return newData;
+      });
+    };
+
+    if (file) {
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const deleteImage = (optionIndex) => {
+    setDataTable((prevData) => {
+      const newData = [...prevData];
+      newData[optionIndex].img_name = "";
+      newData[optionIndex].indexImageOption = [];
+      newData[optionIndex].imagePreviewOption = "";
+      return newData;
+    });
+  };
+
+  const handleImageSelect2 = (event, index) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      const imageDataURL = event.target.result;
+
+      setDataTable((prevData) => {
+        const newData = [...prevData];
+        newData[index].indexImageOption = [file];
+        newData[index].imagePreviewOption = imageDataURL;
+        return newData;
+      });
+    };
+
+    if (file) {
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const deleteImage2 = (optionIndex) => {
+    setDataTable((prevData) => {
+      const newData = [...prevData];
+      newData[optionIndex].indexImageOption = [];
+      newData[optionIndex].imagePreviewOption = "";
+      return newData;
+    });
   };
   return (
     <>
@@ -1472,7 +1759,65 @@ function UseEditProduct() {
                 </Flex>
               );
             })}
-            <Box pl="116px" pt="15px">
+            <Box px="10%" mt={5}>
+              <Flex>
+                <Box>
+                  <Text fontSize="24px" px="15px" whiteSpace="nowrap">
+                    รูปแบบที่ 1 :
+                  </Text>
+                </Box>
+                <Box ml={5} width={"50%"}>
+                  <Input
+                    value={option}
+                    onChange={(e) => setOption(e.target.value)}
+                    placeholder="เช่น สี ขนาด ไซด์"
+                    required
+                  />
+                </Box>
+                <Box ml={5} width={"100%"}>
+                  <TagsInput
+                    value={selected}
+                    onChange={insertValue}
+                    name="fruits"
+                    placeHolder="เพิ่มตัวเลือก"
+                    disabled={
+                      option === "ตัวเลือกที่ 1" || option === "" ? true : false
+                    }
+                  />
+                </Box>
+              </Flex>
+            </Box>
+            <Box px="10%" mt={5}>
+              <Flex>
+                <Box>
+                  <Text fontSize="24px" px="15px" whiteSpace="nowrap">
+                    รูปแบบที่ 2 :
+                  </Text>
+                </Box>
+                <Box ml={5} width={"50%"}>
+                  <Input
+                    value={subOption}
+                    onChange={(e) => setSubOption(e.target.value)}
+                    placeholder="เช่น สี ขนาด ไซด์"
+                    required
+                  />
+                </Box>
+                <Box ml={5} width={"100%"}>
+                  <TagsInput
+                    value={selected2}
+                    onChange={insertValue2}
+                    name="fruits"
+                    placeHolder="เพิ่มตัวเลือก"
+                    disabled={
+                      subOption === "ตัวเลือกที่ 1" || subOption === ""
+                        ? true
+                        : false
+                    }
+                  />
+                </Box>
+              </Flex>
+            </Box>
+            {/* <Box pl="116px" pt="15px">
               <Button
                 // border="2px solid black"
                 bg="#2778c4"
@@ -1484,7 +1829,7 @@ function UseEditProduct() {
               >
                 เพิ่มรูปแบบ ({div.length}/2)
               </Button>
-            </Box>
+            </Box> */}
             <Box pl="115px" pt="15px">
               <Table minWidth="100%" border="1px solid">
                 <Thead bg="gray.100">
@@ -1526,17 +1871,148 @@ function UseEditProduct() {
                           }
                         >
                           {item.op_name}
-                          <Image
-                            src={
-                              item.img_name
-                                ? `https://api.sellpang.com/images/shopee/products/${item.img_name}`
-                                : fileImage[item.indexImageOption]?.thumbUrl
-                                ? fileImage[item.indexImageOption]?.thumbUrl
-                                : fileImage[item.indexImageOption]?.url
-                            }
-                            h="70px"
-                            maxWidth="none"
-                          />
+                          {item.id ? (
+                            <Box
+                              position="relative"
+                              display="inline-block"
+                              width="100px"
+                              height="100px"
+                              border="1px solid"
+                              borderColor="gray.200"
+                              borderRadius="md"
+                              overflow="hidden"
+                              bg="whitesmoke"
+                            >
+                              {item.img_name ? (
+                                <React.Fragment>
+                                  <img
+                                    src={
+                                      !Array.isArray(item.img_name)
+                                        ? "https://api.sellpang.com/images/shopee/products/" +
+                                          item.img_name
+                                        : item.imagePreviewOption
+                                    }
+                                    alt="Preview"
+                                    style={{
+                                      width: "100%",
+                                      height: "100%",
+                                      objectFit: "cover",
+                                    }}
+                                  />
+                                  <IconButton
+                                    position="absolute"
+                                    top="4px"
+                                    right="4px"
+                                    icon={<DeleteIcon />}
+                                    colorScheme="red"
+                                    size="sm"
+                                    variant="ghost"
+                                    zIndex="2"
+                                    onClick={() => deleteImage(index)}
+                                  />
+                                </React.Fragment>
+                              ) : (
+                                <React.Fragment>
+                                  <Box
+                                    display="flex"
+                                    justifyContent="center"
+                                    alignItems="center"
+                                    width="100%"
+                                    height="100%"
+                                  >
+                                    เพิ่มรูปภาพ {item.indexImageOption.length}/1
+                                  </Box>
+                                  <Box
+                                    position="absolute"
+                                    top="0"
+                                    left="0"
+                                    width="100%"
+                                    height="100%"
+                                    opacity="0"
+                                    cursor="pointer"
+                                    zIndex="1"
+                                  >
+                                    <input
+                                      type="file"
+                                      accept="image/*"
+                                      onChange={(e) =>
+                                        handleImageSelect(e, index)
+                                      }
+                                      style={{ width: "100%", height: "100%" }}
+                                    />
+                                  </Box>
+                                </React.Fragment>
+                              )}
+                            </Box>
+                          ) : (
+                            <Box
+                              position="relative"
+                              display="inline-block"
+                              width="100px"
+                              height="100px"
+                              border="1px solid"
+                              borderColor="gray.200"
+                              borderRadius="md"
+                              overflow="hidden"
+                              bg="whitesmoke"
+                            >
+                              {item.indexImageOption.length > 0 ? (
+                                <React.Fragment>
+                                  <img
+                                    src={item.imagePreviewOption}
+                                    alt="Preview"
+                                    style={{
+                                      width: "100%",
+                                      height: "100%",
+                                      objectFit: "cover",
+                                    }}
+                                  />
+                                  <IconButton
+                                    position="absolute"
+                                    top="4px"
+                                    right="4px"
+                                    icon={<DeleteIcon />}
+                                    colorScheme="red"
+                                    size="sm"
+                                    variant="ghost"
+                                    zIndex="2"
+                                    onClick={() => deleteImage2(index)}
+                                  />
+                                </React.Fragment>
+                              ) : (
+                                <React.Fragment>
+                                  <Box
+                                    display="flex"
+                                    justifyContent="center"
+                                    alignItems="center"
+                                    width="100%"
+                                    height="100%"
+                                  >
+                                    เพิ่มรูปภาพ {item.indexImageOption.length}/1
+                                  </Box>
+                                  <Box
+                                    position="absolute"
+                                    top="0"
+                                    left="0"
+                                    width="100%"
+                                    height="100%"
+                                    opacity="0"
+                                    cursor="pointer"
+                                    zIndex="1"
+                                  >
+                                    <input
+                                      type="file"
+                                      accept="image/*"
+                                      onChange={(e) =>
+                                        handleImageSelect2(e, index)
+                                      }
+                                      style={{ width: "100%", height: "100%" }}
+                                    />
+                                  </Box>
+                                </React.Fragment>
+                              )}
+                            </Box>
+                          )}
                         </Td>
                         <Td border="1px solid">
                           {item?.allOption2?.length > 0 ? (
