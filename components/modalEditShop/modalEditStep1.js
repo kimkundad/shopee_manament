@@ -888,6 +888,10 @@ function modalEditStep1(props) {
                 </Thead>
                 <Tbody>
                   {Products.map((getPro, index) => {
+                    let nameProduct = getPro.name_product
+                    if(nameProduct.length > 20){
+                      nameProduct = nameProduct.substring(0,20) + '...'
+                    }
                     const isChecked = selectedProducts.includes(getPro.id);
                     return (
                       <Tr key={index}>
@@ -912,7 +916,7 @@ function modalEditStep1(props) {
                             height={"25px"}
                           />
                         </Td>
-                        <Td>{getPro.name_product}</Td>
+                        <Td>{nameProduct}</Td>
                         <Td>{getPro.price}</Td>
                         <Td>
                           <Flex alignItems={"center"}>
@@ -930,7 +934,7 @@ function modalEditStep1(props) {
                                 <NumberDecrementStepper />
                               </NumberInputStepper>
                             </NumberInput>
-                            / 1,500
+                            / {getPro.stock}
                           </Flex>
                         </Td>
                       </Tr>

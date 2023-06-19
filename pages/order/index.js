@@ -2072,7 +2072,9 @@ export default function Order() {
               </Button>
             </Box>
             <Box>
-              <Button mr={2} onClick={modalDetailOrder.onClose}>ยกเลิก</Button>
+              <Button mr={2} onClick={modalDetailOrder.onClose}>
+                ยกเลิก
+              </Button>
               <Button
                 onClick={modalConfirmSetStatusSingle.onOpen}
                 bgColor={"green"}
@@ -2170,26 +2172,29 @@ export default function Order() {
             </Box>
           </ModalBody>
 
-          <ModalFooter justifyContent={"center"}>
-            <Button
-              colorScheme="green"
-              mr={3}
-              onClick={() => {
-                handelLogSelect("พร้อมส่ง");
-              }}
-            >
-              ยืนยันการแพ็ค
-            </Button>
-            <Button
-              colorScheme="red"
-              mr={3}
-              onClick={() => {
-                handelLogSelect("ยกเลิก");
-              }}
-            >
-              ยกเลิกการแพ็ค
-            </Button>
-            <Button onClick={ModalConfirmSetStatus.onClose}>ยกเลิก</Button>
+          <ModalFooter justifyContent={"space-between"}>
+            <Box>
+              <Button
+                colorScheme="red"
+                mr={3}
+                onClick={() => {
+                  handelLogSelect("ยกเลิก");
+                }}
+              >
+                ยกเลิกการแพ็ค
+              </Button>
+            </Box>
+            <Box>
+              <Button onClick={ModalConfirmSetStatus.onClose} mr={3}>ยกเลิก</Button>
+              <Button
+                colorScheme="green"
+                onClick={() => {
+                  handelLogSelect("พร้อมส่ง");
+                }}
+              >
+                ยืนยันการแพ็ค
+              </Button>
+            </Box>
             {/* <Button onClick={modalSlipPayment.onClose}>Cancel</Button> */}
           </ModalFooter>
         </ModalContent>
@@ -2247,6 +2252,7 @@ export default function Order() {
               <Button
                 colorScheme="green"
                 mr={3}
+                p={5}
                 onClick={() => {
                   handleInsertTracking("thaipost");
                 }}
@@ -2258,6 +2264,7 @@ export default function Order() {
               <Button
                 colorScheme="green"
                 mr={3}
+                p={5}
                 onClick={() => {
                   handleInsertTracking("kerry");
                 }}
@@ -2269,6 +2276,7 @@ export default function Order() {
               <Button
                 colorScheme="green"
                 mr={3}
+                p={5}
                 onClick={() => {
                   handleInsertTracking("flash");
                 }}
@@ -2276,7 +2284,7 @@ export default function Order() {
                 บันทึก
               </Button>
             )}
-            <Button onClick={ModalInputTax.onClose}>ยกเลิก</Button>
+            <Button onClick={ModalInputTax.onClose} p={5}>ยกเลิก</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

@@ -283,7 +283,7 @@ export default function shop() {
   // สิ้นสุด modal แสดงว่าจะยืนยันการสร้างร้านค้าใช่หือไม่
 
   const handleConfirm = () => {
-    console.log('selectedProducts',selectedProducts)
+    console.log("selectedProducts", selectedProducts);
     modalSelectTheme.onClose();
     modalConfirm.onOpen();
   };
@@ -334,11 +334,11 @@ export default function shop() {
   };
 
   useEffect(() => {
-    Axios.get("https://api.sellpang.com/api/getAllProduct").then(
-      function (response) {
-        setProducts(response.data.product);
-      }
-    );
+    Axios.get("https://api.sellpang.com/api/getAllProduct").then(function (
+      response
+    ) {
+      setProducts(response.data.product);
+    });
   }, []);
   // สิ้นสุด ฟังก์ชัน เรียกข้อมูลร้านค้าใหม่ทั้งหมดที่ส่งมาจากหลังบ้าน
 
@@ -1105,47 +1105,53 @@ export default function shop() {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {getProducts.map((getPro, index) => (
-                    <Tr key={index}>
-                      <Td>
-                        <Checkbox
-                          isChecked={selectedProducts.includes(getPro.id)}
-                          onChange={() => handleCheckboxChange(getPro.id)}
-                        />
-                      </Td>
-                      <Td>{getPro.sku}</Td>
-                      <Td isNumeric>
-                        <Image
-                          src={
-                            "https://api.sellpang.com/images/shopee/products/" +
-                            getPro.img_product
-                          }
-                          height={"50px"}
-                        />
-                      </Td>
-                      <Td>{getPro.name_product}</Td>
-                      <Td>{getPro.price}</Td>
-                      <Td>
-                        <Flex alignItems={"center"}>
-                          <NumberInput
-                            defaultValue={getPro.stock}
-                            min={0}
-                            bgColor={"white"}
-                            borderRadius="10px"
-                            backgroundColor="white"
-                            width="90px"
-                          >
-                            <NumberInputField />
-                            <NumberInputStepper>
-                              <NumberIncrementStepper />
-                              <NumberDecrementStepper />
-                            </NumberInputStepper>
-                          </NumberInput>
-                          / 1,500
-                        </Flex>
-                      </Td>
-                    </Tr>
-                  ))}
+                  {getProducts.map((getPro, index) => {
+                    let nameProduct = getPro.name_product
+                    if(nameProduct.length > 20){
+                      nameProduct = nameProduct.substring(0, 20) + "..."
+                    }
+                    return (
+                      <Tr key={index}>
+                        <Td>
+                          <Checkbox
+                            isChecked={selectedProducts.includes(getPro.id)}
+                            onChange={() => handleCheckboxChange(getPro.id)}
+                          />
+                        </Td>
+                        <Td>{getPro.sku}</Td>
+                        <Td isNumeric>
+                          <Image
+                            src={
+                              "https://api.sellpang.com/images/shopee/products/" +
+                              getPro.img_product
+                            }
+                            height={"50px"}
+                          />
+                        </Td>
+                        <Td>{nameProduct}</Td>
+                        <Td>{getPro.price}</Td>
+                        <Td>
+                          <Flex alignItems={"center"}>
+                            <NumberInput
+                              defaultValue={getPro.stock}
+                              min={0}
+                              bgColor={"white"}
+                              borderRadius="10px"
+                              backgroundColor="white"
+                              width="90px"
+                            >
+                              <NumberInputField />
+                              <NumberInputStepper>
+                                <NumberIncrementStepper />
+                                <NumberDecrementStepper />
+                              </NumberInputStepper>
+                            </NumberInput>
+                            / {getPro.stock}
+                          </Flex>
+                        </Td>
+                      </Tr>
+                    );
+                  })}
                 </Tbody>
               </Table>
             </TableContainer>

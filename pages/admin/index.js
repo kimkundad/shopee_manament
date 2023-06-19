@@ -46,6 +46,7 @@ import {
 } from "@chakra-ui/icons";
 import Axios from "axios";
 import { Table } from "@nextui-org/react";
+import { connect, useDispatch, useSelector } from "react-redux";
 
 const colunmThTable = [
   {
@@ -72,6 +73,8 @@ const colunmThTable = [
 ];
 
 export default function AdminManagement() {
+  const userInfo = useSelector((App) => App.userInfo);
+  const userAuthen = useSelector((App) => App.authen);
   const modalAdd = useDisclosure();
   const modalEdit = useDisclosure();
   const modalCopy = useDisclosure();
@@ -114,6 +117,8 @@ export default function AdminManagement() {
   const [perReport, setPerReport] = useState(false);
   const [perAdminManage, setPerAdminManage] = useState(false);
   const [perSettings, setPerSettings] = useState(false);
+
+  console.log('userAuthen', userAuthen)
 
   // function set data craete sub admin
   const handleSwitchDashboardChange = () => {
@@ -166,9 +171,14 @@ export default function AdminManagement() {
   };
 
   const fetchAllUsers = async () => {
-    Axios.get("https://api.sellpang.com/api/getAllUsers").then(function (
+    Axios.get("https://api.sellpang.com/api/getAllUsers", {
+      headers: {
+        Authorization: `Bearer ${userAuthen.token}`,
+      },
+    }).then(function (
       response
     ) {
+      // console.log('response.data.users', response.data.userInfo);
       setAllUsers(response.data.users);
     });
   };
@@ -178,6 +188,7 @@ export default function AdminManagement() {
 
   const handleAddAdmin = () => {
     const data = {
+      owner_admin: userInfo.data[0].id,
       name_sub_admin: createNameSubAdmin,
       email_sub_admin: createEmailSubAdmin,
       password_sub_admin: createPasswordSubAdmin,

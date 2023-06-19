@@ -426,7 +426,7 @@ function UseEditProduct() {
     onClose: onCloseForm4,
   } = useDisclosure();
   const comfirmSave = (event) => {
-    // console.log("Images", images);
+    console.log("dataTable", dataTable);
     console.log("filesSub", filesSub);
     // console.log("imageData", imageData);
     event.preventDefault();
@@ -503,17 +503,17 @@ function UseEditProduct() {
     formData.append("option2", subOption);
     formData.append("dataOption", JSON.stringify(dataTable));
     dataTable.forEach((item, index) => {
-      formData.append(`fileOption[${index}]`, item.indexImageOption[0]);
-      // เพิ่มข้อมูลอื่น ๆ ตามต้องการ
+      if (item.indexImageOption && Array.isArray(item.indexImageOption) && item.indexImageOption.length > 0) {
+        formData.append(`fileOption[${index}]`, item.indexImageOption[0]);
+        // เพิ่มข้อมูลอื่น ๆ ตามต้องการ
+      }
     });
     // formData.append("dataOption", dataTable);
     const response = await axios.post(
       "https://api.sellpang.com/api/editOptionProduct",
       formData,
       {
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "multipart/form-data" }
       }
     );
     if (response.data.success) {
