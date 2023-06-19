@@ -313,7 +313,10 @@ export default function shop() {
     formData.append("themeShop", Theme);
 
     Axios.post("https://api.sellpang.com/api/createShop", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${userAuthen.token}`,
+      },
     }).then(function (response) {
       if (response.data.success) {
         modalConfirm.onClose();
@@ -1106,9 +1109,9 @@ export default function shop() {
                 </Thead>
                 <Tbody>
                   {getProducts.map((getPro, index) => {
-                    let nameProduct = getPro.name_product
-                    if(nameProduct.length > 20){
-                      nameProduct = nameProduct.substring(0, 20) + "..."
+                    let nameProduct = getPro.name_product;
+                    if (nameProduct.length > 20) {
+                      nameProduct = nameProduct.substring(0, 20) + "...";
                     }
                     return (
                       <Tr key={index}>

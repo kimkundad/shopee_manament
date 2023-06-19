@@ -50,8 +50,10 @@ import { FaRegSave } from "react-icons/fa";
 import { VscSave } from "react-icons/vsc";
 import { connect, useDispatch, useSelector } from "react-redux";
 import { createSlice } from '@reduxjs/toolkit';
+import { useToast } from '@chakra-ui/react'
 
 export default function Profile() {
+  const toast = useToast()
   const userInfo = useSelector((App) => App.userInfo);
   const [file, setFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
@@ -126,7 +128,7 @@ export default function Profile() {
       );
       setImagePreview(user.data.user.avatar)
       const formdata = new FormData();
-      formdata.append("user_code", 8863299);
+      formdata.append("user_code", userInfo.data[0].code_user);
       const res = await axios.post(
         `https://api.sellpang.com/api/getOwnershops`,
         formdata
@@ -178,6 +180,14 @@ export default function Profile() {
       `https://api.sellpang.com/api/updateOwnerShop`,
       formdata
     );
+    if(res.data.status){
+      toast({
+        title: `Updated profile successfully`,
+        position: 'top-right',
+        status: 'success',
+        isClosable: true,
+      })
+    }
     console.log(res);
   };
 
