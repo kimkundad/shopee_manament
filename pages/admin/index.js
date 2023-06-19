@@ -171,8 +171,11 @@ export default function AdminManagement() {
   };
 
   const fetchAllUsers = async () => {
-    Axios.get("https://api.sellpang.com/api/getAllUsers", {
+    const formData = new FormData();
+    formData.append("user_id", userInfo.data[0].id);
+    Axios.post("https://api.sellpang.com/api/getAllUsers", formData, {
       headers: {
+        "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${userAuthen.token}`,
       },
     }).then(function (

@@ -16,13 +16,24 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Table, useAsyncList, useCollator } from "@nextui-org/react";
 import Link from "next/link";
+import { connect, useDispatch, useSelector } from "react-redux";
 export default function index() {
   const [shops, setShops] = useState([]);
+  const userInfo = useSelector((App) => App.userInfo);
+  const userAuthen = useSelector((App) => App.authen);
 
   useEffect(() => {
     async function fecthdata() {
-      const res = await axios.get(
-        "https://api.sellpang.com/api/getAllShops"
+      const formData = new FormData();
+      formData.append("code_user", userInfo.data[0].code_user);
+      const res = await axios.post(
+        "https://api.sellpang.com/api/getAllShops",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
       setShops(res.data.shops);
     }
@@ -90,7 +101,10 @@ export default function index() {
           ร้านค้า ({totalItem})
         </Text>
         <Spacer />
-        <Input maxWidth="200px" onChange={(e) => setSearchShop(e.target.value)}/>
+        <Input
+          maxWidth="200px"
+          onChange={(e) => setSearchShop(e.target.value)}
+        />
       </Flex>
 
       <Table

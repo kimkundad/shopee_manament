@@ -45,13 +45,22 @@ import ListCheck from "@/components/MenuList";
 import Link from "next/link";
 import axios from "axios";
 import { ChevronDownIcon } from "@chakra-ui/icons";
+import { connect, useDispatch, useSelector } from "react-redux";
 
 export default function stock() {
   const [products, setProducts] = useState(null);
+  const userInfo = useSelector((App) => App.userInfo);
+  const userAuthen = useSelector((App) => App.authen);
 
   async function fetchAllProduct() {
     let checkAll = true;
-    const res = await axios.get("https://api.sellpang.com/api/getAllProduct");
+    const formData = new FormData();
+    formData.append("code_user", userInfo.data[0].code_user);
+    const res = await axios.post("https://api.sellpang.com/api/getAllProduct", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     setProducts(res.data);
     if (res.data.product.length > 0) {
       res.data.product.map((products) => {

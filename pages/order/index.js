@@ -1587,7 +1587,7 @@ export default function Order() {
                   </Th>
                   <Th textAlign={"center"}>{totalNum}</Th>
                   <Th textAlign={"center"} colSpan={1}>
-                    {totalAmount}
+                    {totalAmount.toFixed(2)}
                   </Th>
                   <Th colSpan={3}>{""}</Th>
                 </Tr>

@@ -56,6 +56,7 @@ import {
 import { DeleteIcon } from "@chakra-ui/icons";
 import { useRouter } from "next/router";
 import { TagsInput } from "react-tag-input-component";
+import { connect, useDispatch, useSelector } from "react-redux";
 /* import "antd/dist/antd.css"; */
 
 // class PicturesWall extends React.Component {
@@ -133,6 +134,8 @@ import { TagsInput } from "react-tag-input-component";
 //   }
 // }
 function addProduct() {
+  const userInfo = useSelector((App) => App.userInfo);
+  const userAuthen = useSelector((App) => App.authen);
   const [name_product, setName_product] = useState("");
   const [detail_product, setDetail_product] = useState("");
   const [price, setPrice] = useState("");
@@ -296,6 +299,7 @@ function addProduct() {
     formData.append("width_product", width);
     formData.append("length_product", length);
     formData.append("height_product", height);
+    formData.append("user_code", userInfo.data[0].code_user);
     formData.append("sku", sku);
     formData.append("category", categoryId);
     files.forEach((file, index) => {
@@ -331,6 +335,7 @@ function addProduct() {
     formData.append("width_product", width);
     formData.append("length_product", length);
     formData.append("height_product", height);
+    formData.append("user_code", userInfo.data[0].code_user);
     formData.append("sku", sku);
     formData.append("category", categoryId);
     files.forEach((file, index) => {

@@ -75,6 +75,7 @@ import {
   AddIcon,
   TriangleDownIcon,
 } from "@chakra-ui/icons";
+import { connect, useDispatch, useSelector } from "react-redux";
 
 // Import Swiper styles
 import "swiper/css";
@@ -155,6 +156,8 @@ class PicturesCoverShop extends React.Component {
 }
 
 export default function shop() {
+  const userInfo = useSelector((App) => App.userInfo);
+  const userAuthen = useSelector((App) => App.authen);
   const [getProducts, setProducts] = useState([]);
   const [getShops, setShops] = useState([]);
 
@@ -298,6 +301,7 @@ export default function shop() {
     const formData = new FormData();
     formData.append("nameShop", nameShop);
     formData.append("detailShop", detailShop);
+    formData.append("code_user", userInfo.data[0].code_user);
     fileImgShop.forEach((file, index) => {
       formData.append(`file[${index}]`, file.originFileObj);
     });
@@ -329,17 +333,25 @@ export default function shop() {
 
   // ฟังก์ชัน เรียกข้อมูลร้านค้าใหม่ทั้งหมดที่ส่งมาจากหลังบ้าน
   const fetchAllShops = async () => {
-    Axios.get("https://api.sellpang.com/api/getAllShops").then(function (
-      response
-    ) {
+    const formData = new FormData();
+    formData.append("code_user", userInfo.data[0].code_user);
+    Axios.post("https://api.sellpang.com/api/getAllShops", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }).then(function (response) {
       setShops(response.data.shops);
     });
   };
 
   useEffect(() => {
-    Axios.get("https://api.sellpang.com/api/getAllProduct").then(function (
-      response
-    ) {
+    const formData = new FormData();
+    formData.append("code_user", userInfo.data[0].code_user);
+    Axios.post("https://api.sellpang.com/api/getAllProduct", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }).then(function (response) {
       setProducts(response.data.product);
     });
   }, []);
