@@ -32,7 +32,11 @@ import THSarabunNew from "@/components/THSarabunNew";
 import THSarabunNewBold from "@/components/THSarabunNewBold";
 import DateRangePicker from "@/components/DateRangePicker";
 import moment from 'moment';
+import { connect, useDispatch, useSelector } from "react-redux";
+
 function index() {
+  const userInfo = useSelector((App) => App.userInfo);
+  const userAuthen = useSelector((App) => App.authen);
   const [reports, setReports] = useState([]);
   const [loadingImg, setLoadingImg] = useState(true);
   const [column, setColumn] = useState([
@@ -100,6 +104,7 @@ function index() {
       formdata.append("startDate", startDate);
       formdata.append("endDate", endDate);
       formdata.append("search", search);
+      formdata.append("user_code", userInfo.data[0].code_user);
       const res = await axios.post(
         `https://api.sellpang.com/api/getReports`,
         formdata
@@ -109,7 +114,7 @@ function index() {
       setTotalPages(res.data.reports.last_page);
 
       const formdataTotal = new FormData();
-      let user_id = 3; // ถ้ามี login เปลี่ยนเป็น uid ของคน login
+      let user_id = userInfo.data[0].id; // ถ้ามี login เปลี่ยนเป็น uid ของคน login
       formdataTotal.append("uid", user_id);
       const resTotal = await axios.post(
         `https://api.sellpang.com/api/totalOrders`,

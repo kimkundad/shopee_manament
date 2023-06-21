@@ -48,7 +48,7 @@ export default function Setting() {
                         </Flex>
                     </Box>
 
-                    <Box p='5' borderWidth='2px' borderColor='gray.500' borderRadius='lg'>
+                    {/* <Box p='5' borderWidth='2px' borderColor='gray.500' borderRadius='lg'>
                         <Flex color='gray.600'>
                             <HStack>
                                 <Icon as={BsShop} boxSize={8} />
@@ -61,7 +61,7 @@ export default function Setting() {
                                 </Link>
                             </Box>
                         </Flex>
-                    </Box>
+                    </Box> */}
 
                     <Box p='5' borderWidth='2px' borderColor='gray.500' borderRadius='lg'>
                         <Flex color='gray.600'>

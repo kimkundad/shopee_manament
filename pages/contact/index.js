@@ -34,7 +34,8 @@ export default function Contact() {
                         <Container p='4'>
                             <Flex>
                                 <Box p='4'>
-                                    <Icon as={BsGeoAltFill} boxSize={8} />
+                                    {/* <Icon as={BsGeoAltFill} boxSize={8} /> */}
+                                    <Image width={70} height={70} src={'/images/placeholder.png'} />
                                 </Box>
                                 <Box p='3'>
                                     <Text fontSize='17'>
@@ -44,7 +45,8 @@ export default function Contact() {
                             </Flex>
                             <Flex>
                                 <Box p='4'>
-                                    <Icon as={BsFillTelephoneFill} boxSize={8} />
+                                    {/* <Icon as={BsFillTelephoneFill} boxSize={8} /> */}
+                                    <Image width={30} height={30} src={'/images/telephone.png'} />
                                 </Box>
                                 <Box p='3' fontSize='17'>
                                     <Text>087-1352410 (คุณต๊อบ)</Text>
@@ -52,7 +54,8 @@ export default function Contact() {
                             </Flex>
                             <Flex>
                                 <Box p='4'>
-                                    <Icon as={BsMailbox2} boxSize={8} />
+                                    {/* <Icon as={BsMailbox2} boxSize={8} /> */}
+                                    <Image width={30} height={30} src={'/images/gmail.png'} />
                                 </Box>
                                 <Box p='3' fontSize='17'>
                                     <Text>Contact@gmail.com</Text>
@@ -60,7 +63,8 @@ export default function Contact() {
                             </Flex>
                             <Flex>
                                 <Box p='4'>
-                                    <Icon as={BsClockFill} boxSize={8} />
+                                    {/* <Icon as={BsClockFill} boxSize={8} /> */}
+                                    <Image width={30} height={30} src={'/images/clock.png'} />
                                 </Box>
                                 <Box p='3' fontSize='17'>
                                     <Text>เวลาทำการ 09.00 - 18.00 น. <br />ทุกวันจันทร์ - เสาร์</Text>
@@ -76,7 +80,7 @@ export default function Contact() {
                             </Flex>
                             <Flex justifyContent={'center'} align={'center'}>
                                 <Image width={32} height={32} src={'/images/social/line.png'} alt='Logo Line' />
-                                <Text as='b' ml='2' fontSize='21'>@LineID</Text>
+                                <Text as='b' ml='2' fontSize='30'>@sellpang</Text>
                             </Flex>
                         </Container>
 
@@ -87,43 +91,47 @@ export default function Contact() {
             </Box >
 
 
-            <Grid templateColumns='repeat(5, 1fr)' gap={6} mt='10' p='5' bg='orange.50' borderBottomRadius={10}>
-                <GridItem>
-                    <VStack p='4'>
-                        <Box><Text fontSize='6xl'>LOGO</Text></Box>
-                    </VStack>
-                </GridItem>
+            <Grid templateColumns='repeat(5, 1fr)' gap={6} p='5' bg='#fff0f0' borderBottomRadius={10}>
                 <GridItem>
                     <VStack p='4'>
                         <Box>
-                            <Text as='b' fontSize='17'>เกี่ยวกับเรา</Text>
-                            <Text fontSize='17'><Link href='/'>รู้จักกับ Testpang</Link></Text>
-                            <Text fontSize='17'><Link href='/'>เริ่มต้นกับ Testpang</Link></Text>
+                            <Text fontSize='6xl'>
+                                <Image width={150} height={150} src={'/images/logo sellpang.png'} alt='logo sellpang' />
+                            </Text>
                         </Box>
                     </VStack>
                 </GridItem>
                 <GridItem>
                     <VStack p='4'>
                         <Box>
-                            <Text as='b' fontSize='17'>ซัพพอร์ต</Text>
-                            <Text fontSize='17'><Link href='/'>บทความ</Link></Text>
-                            <Text fontSize='17'><Link href='/'>คำถามที่พบบ่อย</Link></Text>
+                            <Text as='b' fontSize='22'>เกี่ยวกับเรา</Text>
+                            <Text fontSize='20'><Link href='/'>รู้จักกับ Testpang</Link></Text>
+                            <Text fontSize='20'><Link href='/'>เริ่มต้นกับ Testpang</Link></Text>
                         </Box>
                     </VStack>
                 </GridItem>
                 <GridItem>
                     <VStack p='4'>
                         <Box>
-                            <Text as='b' fontSize='17'>บริษัท</Text>
-                            <Text fontSize='17'><Link href='/'>เงื่อนไขการใช้งาน</Link></Text>
-                            <Text fontSize='17'><Link href='/'>นโยบายความเป็นส่วนตัว</Link></Text>
+                            <Text as='b' fontSize='22'>ซัพพอร์ต</Text>
+                            <Text fontSize='20'><Link href='/'>บทความ</Link></Text>
+                            <Text fontSize='20'><Link href='/'>คำถามที่พบบ่อย</Link></Text>
+                        </Box>
+                    </VStack>
+                </GridItem>
+                <GridItem>
+                    <VStack p='4'>
+                        <Box>
+                            <Text as='b' fontSize='22'>บริษัท</Text>
+                            <Text fontSize='20'><Link href='/'>เงื่อนไขการใช้งาน</Link></Text>
+                            <Text fontSize='20'><Link href='/'>นโยบายความเป็นส่วนตัว</Link></Text>
                         </Box>
                     </VStack>
                 </GridItem>
                 <GridItem>
                     <VStack>
                         <Box>
-                            <Image width={300} height={300} src={'/images/apple-google.png'} alt='App Store and Google Play' />
+                            <Image width={200} height={200} src={'/images/apple-google.png'} alt='App Store and Google Play' />
                         </Box>
                     </VStack>
                 </GridItem>

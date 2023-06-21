@@ -345,7 +345,7 @@ export default function AdminManagement() {
   useEffect(() => {
     const fetchData = async () => {
       const response = await Axios.get(
-        `https://api.sellpang.com/api/getSearchDateSubAdmin?search=${searchDateSubAdmin}`
+        `https://api.sellpang.com/api/getSearchDateSubAdmin?search=${searchDateSubAdmin}&uid=${userInfo.data[0].id}`
       );
       setAllUsers(response.data.users);
     };
@@ -368,7 +368,7 @@ export default function AdminManagement() {
   useEffect(() => {
     const fetchData = async () => {
       const response = await Axios.get(
-        `https://api.sellpang.com/api/getSearchName?search=${searchName}`
+        `https://api.sellpang.com/api/getSearchName?search=${searchName}&uid=${userInfo.data[0].id}`
       );
       setAllUsers(response.data.users);
     };

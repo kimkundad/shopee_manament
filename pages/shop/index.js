@@ -390,7 +390,7 @@ export default function shop() {
   useEffect(() => {
     const fetchData = async () => {
       const response = await Axios.get(
-        `https://api.sellpang.com/api/getSearchShops?search=${query}`
+        `https://api.sellpang.com/api/getSearchShops?search=${query}&ucode=${userInfo.data[0].code_user}`
       );
       setShops(response.data.shops);
     };
@@ -403,7 +403,7 @@ export default function shop() {
   useEffect(() => {
     const fetchData = async () => {
       const response = await Axios.get(
-        `https://api.sellpang.com/api/getSearchDateShops?search=${searchDateShops}`
+        `https://api.sellpang.com/api/getSearchDateShops?search=${searchDateShops}&ucode=${userInfo.data[0].code_user}`
       );
       setShops(response.data.shops);
     };
@@ -423,7 +423,7 @@ export default function shop() {
   useEffect(() => {
     const fetchData = async () => {
       const response = await Axios.get(
-        `https://api.sellpang.com/api/getFilterShops?type=${filterShops}`
+        `https://api.sellpang.com/api/getFilterShops?type=${filterShops}&ucode=${userInfo.data[0].code_user}`
       );
       setShops(response.data.shops);
     };

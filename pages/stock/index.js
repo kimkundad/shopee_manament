@@ -127,7 +127,7 @@ export default function stock() {
   function handleAllSwitchChange() {
     async function fetchData() {
       const res = await axios.put(
-        `https://api.sellpang.com/api/setActiveAllProduct/?checked=${!isCheckedAll}`
+        `https://api.sellpang.com/api/setActiveAllProduct/?checked=${!isCheckedAll}&ucode=${userInfo.data[0].code_user}`
       );
       setProducts(res.data);
       setIsCheckedAll(!isCheckedAll);
@@ -138,7 +138,7 @@ export default function stock() {
   const handleActivateProduct = (event) => {
     async function fetchData() {
       const res = await axios.put(
-        `https://api.sellpang.com/api/setActiveProduct/?id=${event.target.id}&checked=${event.target.checked}`
+        `https://api.sellpang.com/api/setActiveProduct/?id=${event.target.id}&checked=${event.target.checked}&ucode=${userInfo.data[0].code_user}`
       );
       setProducts(res.data);
       setIsCheckedAll(
@@ -248,7 +248,7 @@ export default function stock() {
     const fetchData = async () => {
       let checkAll = true;
       const response = await axios.get(
-        `https://api.sellpang.com/api/getSearchProduct?search=${searchQuery}`
+        `https://api.sellpang.com/api/getSearchProduct?search=${searchQuery}&user_code=${userInfo.data[0].code_user}`
       );
       setProducts(response.data);
       if (response.data.product.length > 0) {

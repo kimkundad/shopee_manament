@@ -93,6 +93,7 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import THSarabunNew from "@/components/THSarabunNew";
 import THSarabunNewBold from "@/components/THSarabunNewBold";
+import { connect, useDispatch, useSelector } from "react-redux";
 
 function MenuCheckboxList(props) {
   const { values, onValueChange } = props;
@@ -161,6 +162,8 @@ function MenuCheckboxList(props) {
 }
 
 export default function Order() {
+  const userInfo = useSelector((App) => App.userInfo);
+  const userAuthen = useSelector((App) => App.authen);
   const labelLists = [
     { label: "เลือกทั้งหมด", isShow: true },
     { label: "เลขคำสั่งซื้อ", isShow: true },
@@ -229,6 +232,7 @@ export default function Order() {
   const [countRemand, setCountRemand] = useState("");
   const [countCancel, setCountCancel] = useState("");
   const [selectedOption, setSelectedOption] = useState("");
+  const [addressOwnerShop, setAddressOwnerShop] = useState([]);
 
   const optionsShipping = [
     {
@@ -255,6 +259,7 @@ export default function Order() {
     formData.append("numShowItems", numShowItems);
     formData.append("search", searchId);
     formData.append("searchDate", searchDate);
+    formData.append("user_code", userInfo.data[0].code_user);
     const response = await axios.post(
       `https://api.sellpang.com/api/getOrders`,
       formData
@@ -271,7 +276,13 @@ export default function Order() {
     setCountCancel(response.data.count_status7);
     setTotalAmount(response.data.total_Amount);
     setTotalNum(response.data.total_Num);
-    console.log(orders);
+    console.log('orders', response.data.orders.data);
+    const res = await axios.get(
+      `https://api.sellpang.com/api/getAddressOwnerShop/${userInfo.data[0].code_user}`
+    );
+    if(res.data.ownerShop){
+      setAddressOwnerShop(res.data.ownerShop)
+    }
   };
 
   useEffect(() => {
@@ -497,6 +508,7 @@ export default function Order() {
         }
 
         const addressReceiverName = `${order.address} ต.${order.sub_district} อ.${order.district} จ.${order.province} ${order.postcode}`;
+        const addressOwnerShopName = `${addressOwnerShop.address} ต.${addressOwnerShop.sub_district} อ.${addressOwnerShop.district} จ.${addressOwnerShop.county} ${addressOwnerShop.zip_code}`;
         // Add recipient's name, address and phone number
         doc.setFont("THSarabunNewBold", "bold");
         doc.setFontSize(20);
@@ -533,7 +545,7 @@ export default function Order() {
         doc.setFont("THSarabunNew", "normal");
         doc.setFontSize(16);
         doc.text(
-          "ชื่อ: " + order.receiverName,
+          "ชื่อ: " + addressOwnerShop.fname + " " + addressOwnerShop.lname,
           showListOrderPDF ? 190 : 140,
           y + 60,
           {
@@ -541,7 +553,7 @@ export default function Order() {
           }
         );
         doc.text(
-          "ที่อยู่: " + addressReceiverName,
+          "ที่อยู่: " + addressOwnerShopName,
           showListOrderPDF ? 190 : 140,
           y + 70,
           {
@@ -549,7 +561,7 @@ export default function Order() {
           }
         );
         doc.text(
-          "เบอร์โทรศัพท์: " + order.phoneNumber,
+          "เบอร์โทรศัพท์: " + addressOwnerShop.phone,
           showListOrderPDF ? 190 : 140,
           y + 80,
           {
@@ -697,6 +709,7 @@ export default function Order() {
       }
 
       const addressReceiverName = `${order.address} ต.${order.sub_district} อ.${order.district} จ.${order.province} ${order.postcode}`;
+      const addressOwnerShopName = `${addressOwnerShop.address} ต.${addressOwnerShop.sub_district} อ.${addressOwnerShop.district} จ.${addressOwnerShop.county} ${addressOwnerShop.zip_code}`;
       // Add recipient's name, address and phone number
       doc.setFont("THSarabunNewBold", "bold");
       doc.setFontSize(20);
@@ -733,7 +746,7 @@ export default function Order() {
       doc.setFont("THSarabunNew", "normal");
       doc.setFontSize(16);
       doc.text(
-        "ชื่อ: " + order.receiverName,
+        "ชื่อ: " + addressOwnerShop.fname + " " + addressOwnerShop.lname,
         showListOrderPDF ? 190 : 140,
         y + 60,
         {
@@ -741,7 +754,7 @@ export default function Order() {
         }
       );
       doc.text(
-        "ที่อยู่: " + addressReceiverName,
+        "ที่อยู่: " + addressOwnerShopName,
         showListOrderPDF ? 190 : 140,
         y + 70,
         {
@@ -749,7 +762,7 @@ export default function Order() {
         }
       );
       doc.text(
-        "เบอร์โทรศัพท์: " + order.phoneNumber,
+        "เบอร์โทรศัพท์: " + addressOwnerShop.phone,
         showListOrderPDF ? 190 : 140,
         y + 80,
         {
@@ -2185,7 +2198,9 @@ export default function Order() {
               </Button>
             </Box>
             <Box>
-              <Button onClick={ModalConfirmSetStatus.onClose} mr={3}>ยกเลิก</Button>
+              <Button onClick={ModalConfirmSetStatus.onClose} mr={3}>
+                ยกเลิก
+              </Button>
               <Button
                 colorScheme="green"
                 onClick={() => {
@@ -2284,7 +2299,9 @@ export default function Order() {
                 บันทึก
               </Button>
             )}
-            <Button onClick={ModalInputTax.onClose} p={5}>ยกเลิก</Button>
+            <Button onClick={ModalInputTax.onClose} p={5}>
+              ยกเลิก
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

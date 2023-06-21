@@ -52,9 +52,9 @@ const Navbar = (props: Props) => {
     const res = await axios.get(
       `https://api.sellpang.com/api/getNoti/${
         userInfo.data !== null ? userInfo.data[0]?.code_user : null
-      }`
+      }/${userInfo.data !== null ? userInfo.data[0]?.id : null}`
     );
-
+    console.log(res.data);
     setNotification(res.data.noti);
   };
 
@@ -69,8 +69,8 @@ const Navbar = (props: Props) => {
       `https://api.sellpang.com/api/readNoti`,
       formdata
     );
-    if(type == "new_order"){
-      router.push('/order')
+    if (type == "new_order") {
+      router.push("/order");
     }
   };
   return userAuthen?.token !== null ? (
@@ -94,12 +94,14 @@ const Navbar = (props: Props) => {
         })}
       >
         <div className="px-2">
-          <Image
-            src="/images/settings.png"
-            width="40px"
-            height="40px"
-            alt="setting"
-          />
+          <Link href="/setting">
+            <Image
+              src="/images/settings.png"
+              width="40px"
+              height="40px"
+              alt="setting"
+            />
+          </Link>
         </div>
         <div className="px-2">
           <Menu>
