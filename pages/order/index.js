@@ -302,6 +302,7 @@ export default function Order() {
       formData.append("numShowItems", numShowItems);
       formData.append("search", searchId);
       formData.append("searchDate", searchDate);
+      formData.append("user_code", userInfo.data[0].code_user);
       const response = await axios.post(
         `https://api.sellpang.com/api/getOrders?page=${currentPage}`,
         formData

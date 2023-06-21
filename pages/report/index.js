@@ -133,6 +133,7 @@ function index() {
       formdata.append("startDate", startDate);
       formdata.append("endDate", endDate);
       formdata.append("search", search);
+      formdata.append("user_code", userInfo.data[0].code_user);
       const res = await axios.post(
         `https://api.sellpang.com/api/getReports?page=${currentPage}`,
         formdata
@@ -198,6 +199,7 @@ function index() {
       formdata.append("startDate", startDateTimestamp);
       formdata.append("endDate", endDateTimestamp);
       formdata.append("search", search);
+      formdata.append("user_code", userInfo.data[0].code_user);
       const res = await axios.post(
         `https://api.sellpang.com/api/getReports?page=${i}`,
         formdata
