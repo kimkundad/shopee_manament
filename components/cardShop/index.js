@@ -93,7 +93,7 @@ function index(product) {
   const [copiedShopUrl, setCopiedShopUrl] = useState(null);
 
   const handleCopyClick = (shopUrl) => () => {
-    const currentUrl = window.location.origin;
+    const currentUrl = 'https://sellpang.com';
     const URLShop = `${currentUrl}/${shopUrl}`;
     navigator.clipboard.writeText(URLShop);
     setCopiedShopUrl(shopUrl);
@@ -254,7 +254,7 @@ function index(product) {
                     </Box>
                     <Box mt={"0.75rem"}>
                       <Flex justifyContent={"space-evenly"} alignItems={'center'}>
-                        <Input type="text" value={`${window.location.origin}/${shops.url_shop}`} mr={2} readOnly/>
+                        <Input type="text" value={`https://sellpang.com/${shops.url_shop}`} mr={2} readOnly/>
                         <Button
                           bgColor={"white"}
                           border={"2px solid red"}
