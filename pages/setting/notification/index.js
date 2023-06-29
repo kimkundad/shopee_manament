@@ -24,15 +24,15 @@ export default function Notification() {
 
   useEffect(() => {
     async function fecthdata() {
-      //   const formdata = new FormData();
-      //   formdata.append("user_code", userInfo.data[0]?.code_user);
-      const res = await axios.get(
-        `https://api.sellpang.com/api/getOwnerSetting`,
-        {
-          headers: {
-            Authorization: `Bearer ${userAuthen.token}`,
-          },
-        }
+        const formdata = new FormData();
+        formdata.append("user_id", userInfo?.data[0]?.id);
+      const res = await axios.post(
+        `http://127.0.0.1:8000/api/getOwnerSetting`, formdata
+        // {
+        //   headers: {
+        //     Authorization: `Bearer ${userAuthen.token}`,
+        //   },
+        // }
       );
       //   console.log(res.data);
       if (res.data.setting != null) {
@@ -48,9 +48,10 @@ export default function Notification() {
     async function fecthdata() {
       const formdata = new FormData();
       //   formdata.append("user_code", userInfo.data[0]?.code_user);
+      formdata.append("user_id", userInfo?.data[0]?.id);
       formdata.append("setting", setting);
       const res = await axios.post(
-        `https://api.sellpang.com/api/setNotification`,
+        `http://127.0.0.1:8000/api/setNotification`,
         formdata,
         {
           headers: {

@@ -95,7 +95,7 @@ export const defaultNavItems: NavItem[] = [
 		href: "/chats",
 		icon: (
 			<Image
-				src="/images/menu/คลังสินค้า.png"
+				src="/images/menu/Chats.png"
 				alt="My Image"
 				width={30}
 				height={30}
@@ -103,7 +103,7 @@ export const defaultNavItems: NavItem[] = [
 		),
 		iconcurrentpage: (
 			<Image
-				src="/images/menu/คลังสินค้า ขาว.png"
+				src="/images/menu/Chats.png"
 				alt="My Image"
 				width={30}
 				height={30}

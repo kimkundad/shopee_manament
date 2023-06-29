@@ -11,6 +11,8 @@ import {
   HStack,
   WrapItem,
   Select,
+  InputGroup,
+  InputLeftElement,
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -85,7 +87,7 @@ export default function index() {
   useEffect(() => {
     const fetchData = async () => {
       const response = await axios.get(
-        `https://api.sellpang.com/api/getSearchShops?search=${searchShop}`
+        `https://api.sellpang.com/api/getSearchShops?search=${searchShop}&ucode=${userInfo.data[0].code_user}`
       );
       setShops(response.data.shops);
     };
@@ -101,10 +103,26 @@ export default function index() {
           ร้านค้า ({totalItem})
         </Text>
         <Spacer />
-        <Input
+        <Box>
+            <InputGroup>
+              <InputLeftElement pointerEvents="none" ml={"5px"}>
+                <Image src="/images/search.png" h="20px" w="20px" />
+              </InputLeftElement>
+              <Input
+                borderRadius="3xl"
+                type="text"
+                fontSize="21px"
+                borderColor="gray.500"
+                placeholder="ค้นหาชื่อร้านค้า"
+                // value={query || ""}
+                onChange={(e) => setSearchShop(e.target.value)}
+              />
+            </InputGroup>
+          </Box>
+        {/* <Input
           maxWidth="200px"
           onChange={(e) => setSearchShop(e.target.value)}
-        />
+        /> */}
       </Flex>
 
       <Table

@@ -21,9 +21,11 @@ import {
 } from "react-icons/bs";
 import axios from "axios";
 import { connect, useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/router";
 export default function Purchase() {
   const userInfo = useSelector((App) => App.userInfo);
   const [activeCOD, setActiveCOD] = useState();
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchData() {
@@ -49,18 +51,33 @@ export default function Purchase() {
     formdata.append("user_id", userInfo.data[0]?.id);
     formdata.append("bankacc_id", activeCOD?.id);
     formdata.append("checked", check);
-    formdata.append("type","COD")
+    formdata.append("type", "COD");
     const res = await axios.post(
       `https://api.sellpang.com/api/activeBankAcc`,
       formdata
     );
     setActiveCOD(res.data.banks);
   };
+  const buttonBack = () => {
+    router.push({ pathname: "/setting" });
+  };
   return (
     <>
       <Box p={[5, 10]}>
         <Box>
-          <ButtonBack />
+          {/* <ButtonBack /> */}
+          <Button
+            size="sm"
+            onClick={() => buttonBack()}
+            leftIcon={<BsArrowLeftCircle />}
+            borderRadius="20"
+            background="#f84c01"
+            color="white"
+            fontWeight="none"
+            fontSize="20px"
+          >
+            ย้อนกลับ
+          </Button>
         </Box>
         <Box>
           <Center>

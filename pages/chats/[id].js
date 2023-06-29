@@ -9,6 +9,7 @@ import {
   Button,
   InputGroup,
   InputRightElement,
+  InputLeftElement,
   GridItem,
   Grid,
 } from "@chakra-ui/react";
@@ -18,40 +19,23 @@ import axios from "axios";
 import Link from "next/link";
 import moment from "moment";
 import { useRouter } from "next/router";
+import Pusher from "pusher-js";
+import { ArrowLeftIcon, RepeatIcon } from "@chakra-ui/icons";
 
 export default function useChats() {
   const [users, setUsers] = useState([]);
-  const [detailUser,setDetailUser] = useState([]);
+  const [detailUser, setDetailUser] = useState([]);
   const router = useRouter();
   const shopId = router.query.id;
   const [userId, setUserId] = useState(null);
   const [room, setRoom] = useState("");
   let date = "";
+  let num = 1;
 
-  const [messages, setMessages] = useState(null);
+  const [messages, setMessages] = useState([]);
   const [searchUser, setSearchUser] = useState(null);
-
-  const [socket, setSocket] = useState(null);
-  useEffect(() => {
-    const newSocket = new WebSocket("ws://192.168.0.86:3004/test");
-    setSocket(newSocket);
-    newSocket.addEventListener("open", () => {
-      console.log("WebSocket connection established");
-    });
-    newSocket.addEventListener("message", (event) => {
-      const message = JSON.parse(event.data);
-      setMessages((messages) => {
-        const messageIds = messages.map((m) => m.id);
-        if (!messageIds.includes(message.id)) {
-          return [...messages, message];
-        }
-        return messages;
-      });
-    });
-    return () => {
-      newSocket.close();
-    };
-  }, []);
+  const [message, setMessage] = useState("");
+  let allMessages = [];
 
   useEffect(() => {
     async function fecthdata() {
@@ -71,6 +55,7 @@ export default function useChats() {
     chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
   };
   const chatBoxRef = useRef(null);
+
   const sendMessage = () => {
     event.preventDefault();
     if (text !== "" && userId !== null) {
@@ -84,12 +69,9 @@ export default function useChats() {
         formdata.append("shop_id", shop_id);
         formdata.append("message", text);
         const res = await axios.post(
-          `https://api.sellpang.com/api/sendMessage`,
+          `http://127.0.0.1:8000/api/sendMessage`,
           formdata
         );
-
-        const newMess = { ...res.data.message[0], type: "message", room };
-        socket.send(JSON.stringify(newMess));
         setText("");
       }
       newMessage();
@@ -123,7 +105,6 @@ export default function useChats() {
   }, [messages]);
 
   useEffect(() => {
-    setMessages([]);
     if (userId !== null) {
       // eslint-disable-next-line no-inner-declarations
       async function fetchData() {
@@ -131,7 +112,7 @@ export default function useChats() {
         const formdata = new FormData();
         formdata.append("user_id", userId);
         formdata.append("shop_id", shopId);
-        formdata.append("type",'shop');
+        formdata.append("type", "shop");
         const res = await axios.post(
           `https://api.sellpang.com/api/getMessage`,
           formdata
@@ -139,31 +120,94 @@ export default function useChats() {
         setMessages(res.data.message);
       }
       fetchData();
-      
-      const data = { type: "joinRoom", room };
-      socket.send(JSON.stringify(data));
     }
   }, [userId]);
 
   useEffect(() => {
+    if (searchUser !== null) {
+      async function fecthdata() {
+        const formdata = new FormData();
+        formdata.append("shop_id", shopId);
+        formdata.append("name", searchUser);
+        const res = await axios.post(
+          `https://api.sellpang.com/api/searchUserChats`,
+          formdata
+        );
+        setUsers(res.data.users);
+      }
+      fecthdata();
+    }
+  }, [searchUser]);
+
+  const refreshUserChat = () => {
     async function fecthdata() {
       const formdata = new FormData();
       formdata.append("shop_id", shopId);
-      formdata.append("name", searchUser);
       const res = await axios.post(
-        `https://api.sellpang.com/api/searchUserChats`,
+        "https://api.sellpang.com/api/getUserChats",
         formdata
       );
       setUsers(res.data.users);
     }
     fecthdata();
-  }, [searchUser]);
+  };
 
+  useEffect(() => {
+    // if (!renderAfterCalled.current) {
+    if (userId) {
+      Pusher.logToConsole = false;
+      
+      const pusher = new Pusher("bf877b740f5cd647307e", {
+        cluster: "ap1",
+      });
+
+      const channel = pusher.subscribe("chat." + userId + "." + shopId);
+      channel.bind("message." + userId + "." + shopId, function (data) {
+        console.log('data recived_id:', data.recived_id);
+        setMessages((prevMessages) => {
+          const newArray = [...prevMessages, data];
+          return newArray;
+        });
+      });
+    }
+    // }
+    // renderAfterCalled.current = true;
+  }, [userId]);
+
+  const formatDateThai = (dateString, timeString) => {
+    const date = new Date(dateString);
+    const options = {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    };
+    const formattedDate = date.toLocaleDateString("th-TH", options);
+    const formattedYear = date.toLocaleDateString("th-TH", { year: "numeric" });
+    // const yearThai = Number(formattedYear) + 543;
+
+    return `${formattedDate} ${timeString}`;
+  };
   return (
     <Box m="10px" height={`calc(100vh - 137px)`}>
-      <Text borderBottom="1px solid grey" fontSize="30px">
-        ข้อความ
-      </Text>
+      <Flex alignItems="center">
+        <Link href={"/chats"}>
+          <Button
+            bgColor="red"
+            color="white"
+            borderRadius="15"
+            ml={"20px"}
+            mt={"5px"}
+            leftIcon={<ArrowLeftIcon h={3} />}
+          >
+            ย้อนกลับ
+          </Button>
+        </Link>
+        <Grid placeItems="center" flexGrow={1}>
+          <Text borderBottom="1px solid grey" fontSize="30px">
+            ข้อความ
+          </Text>
+        </Grid>
+      </Flex>
       <Grid
         templateColumns="repeat(5, 1fr)"
         m="20px"
@@ -174,13 +218,27 @@ export default function useChats() {
       >
         <GridItem colSpan={1}>
           <Flex p="20px" borderBottom="1px solid grey" h="96px">
-            <Input
+            {/* <Input
               type="text"
               placeholder="ค้นหา"
               onChange={(e) => setSearchUser(e.target.value)}
-            />
+            /> */}
+            <InputGroup>
+              <InputLeftElement pointerEvents="none" ml={"5px"}>
+                <Image src="/images/search.png" h="20px" w="20px" />
+              </InputLeftElement>
+              <Input
+                borderRadius="xl"
+                type="text"
+                fontSize="18px"
+                borderColor="gray.500"
+                placeholder="ค้นหา..."
+                // value={query || ""}
+                onChange={(e) => setSearchUser(e.target.value)}
+              />
+            </InputGroup>
           </Flex>
-          <Box>
+          <Box height={"calc(100vh - 395px)"} overflowY={"scroll"}>
             {users?.map((item, index) => {
               const datatime = moment(item.created_at);
               const dateString = datatime.format("MM-DD");
@@ -191,7 +249,7 @@ export default function useChats() {
                   p="20px"
                   onClick={(e) => {
                     setUserId(item.id);
-                    setRoom(item.id+shopId);
+                    setRoom(item.id + shopId);
                     setDetailUser([item]);
                   }}
                   bg={item.user_id == userId ? "gray.200" : "white"}
@@ -224,6 +282,30 @@ export default function useChats() {
               );
             })}
           </Box>
+          <Box className="test" bottom={0}>
+            <Box
+              className="test"
+              px="15px"
+              // mt="10px"
+              // py="8px"
+              pt={"15px"}
+              bg="white"
+              mr="8px"
+              borderTop="1px solid #efefef"
+            >
+              <Flex justifyContent={"center"}>
+                <Button
+                  leftIcon={<RepeatIcon />}
+                  borderRadius={"15px"}
+                  bgColor={"#fced20"}
+                  _hover={{ bgColor: "#fff021a3" }}
+                  onClick={refreshUserChat}
+                >
+                  Refresh
+                </Button>
+              </Flex>
+            </Box>
+          </Box>
         </GridItem>
         <GridItem colSpan={4} borderLeft="1px solid" borderColor="grey">
           <Box fontSize="24px">
@@ -231,7 +313,7 @@ export default function useChats() {
               <Flex p="20px" borderBottom="1px solid grey" h="96px">
                 <Image
                   borderRadius="50%"
-                  src={`/images/${detailUser[0]?.avatar}`}
+                  src={`https://api.sellpang.com/images/shopee/avatar/${detailUser[0]?.avatar}`}
                   alt=""
                   h="55px "
                   w="55px "
@@ -253,7 +335,7 @@ export default function useChats() {
               overflow="auto"
               ref={chatBoxRef}
             >
-              <Box px="5px" bg="white" pt="10px" overflow="auto">
+              <Box px="5px" bg="white" pb={"10px"} overflow="auto">
                 {messages !== null ? (
                   messages.map((item, index) => {
                     const datatime = moment(item.created_at);
@@ -266,8 +348,10 @@ export default function useChats() {
                           return (
                             <Box key={index}>
                               <Flex pt="15px" justifyContent="center">
-                                <Box bg="gray.200" borderRadius="xl">
-                                  <Text px="10px">{dateString}</Text>
+                                <Box>
+                                  <Text px="10px" fontSize={"18px"}>
+                                    {formatDateThai(dateString, timeString)}
+                                  </Text>
                                 </Box>
                               </Flex>
                               <Flex direction="row-reverse" pt="10px">
@@ -276,7 +360,8 @@ export default function useChats() {
                                   px="10px"
                                   py="5px"
                                   borderRadius="xl"
-                                  bg="gray.200"
+                                  bg="#fbfbfb"
+                                  boxShadow="lg"
                                   alignSelf="center"
                                 >
                                   {item.message !== null ? (
@@ -308,8 +393,10 @@ export default function useChats() {
                           return (
                             <Box key={index}>
                               <Flex pt="10px" justifyContent="center">
-                                <Box bg="gray.200" borderRadius="xl">
-                                  <Text px="10px">{dateString}</Text>
+                                <Box>
+                                  <Text px="10px" fontSize={"18px"}>
+                                    {formatDateThai(dateString, timeString)}
+                                  </Text>
                                 </Box>
                               </Flex>
                               <Flex pt="10px">
@@ -325,7 +412,7 @@ export default function useChats() {
                                 >
                                   <Image
                                     borderRadius="50%"
-                                    src={`/images/${item.avatar}`}
+                                    src={`https://api.sellpang.com/images/shopee/avatar/${item.avatar}`}
                                     alt=""
                                     h="35px !important"
                                     w="35px !important"
@@ -336,11 +423,14 @@ export default function useChats() {
                                   px="10px"
                                   py="5px"
                                   borderRadius="xl"
-                                  bg="gray.200"
+                                  bg="#cd2626"
+                                  // bg="gray.200"
                                   alignSelf="center"
                                 >
                                   {item.message !== null ? (
-                                    <Text maxWidth="300px">{item.message}</Text>
+                                    <Text maxWidth="300px" color={"white"}>
+                                      {item.message}
+                                    </Text>
                                   ) : (
                                     false
                                   )}
@@ -371,7 +461,8 @@ export default function useChats() {
                                 px="10px"
                                 py="5px"
                                 borderRadius="xl"
-                                bg="gray.200"
+                                bg="#fbfbfb"
+                                boxShadow="lg"
                                 alignSelf="center"
                               >
                                 {item.message !== null ? (
@@ -413,7 +504,7 @@ export default function useChats() {
                               >
                                 <Image
                                   borderRadius="50%"
-                                  src={`/images/${item.avatar}`}
+                                  src={`https://api.sellpang.com/images/shopee/avatar/${item.avatar}`}
                                   alt=""
                                   h="35px !important"
                                   w="35px !important"
@@ -424,11 +515,14 @@ export default function useChats() {
                                 px="10px"
                                 py="5px"
                                 borderRadius="xl"
-                                bg="gray.200"
+                                bg="#cd2626"
+                                // bg="gray.200"
                                 alignSelf="center"
                               >
                                 {item.message !== null ? (
-                                  <Text maxWidth="300px">{item.message}</Text>
+                                  <Text maxWidth="300px" color={"white"}>
+                                    {item.message}
+                                  </Text>
                                 ) : (
                                   false
                                 )}
@@ -467,14 +561,14 @@ export default function useChats() {
                 <Box
                   className="test"
                   px="15px"
-                  mt="10px"
-                  py="8px"
+                  // mt="10px"
+                  pt="15px"
                   bg="white"
                   mr="8px"
                   borderTop="1px solid #efefef"
                 >
                   <Flex alignItems="center">
-                    <Image src="/img/plus.png" h="25px" w="25px" />
+                    {/* <Image src="/img/plus.png" h="25px" w="25px" /> */}
                     <InputGroup mx="10px">
                       <Input
                         type="text"
@@ -482,7 +576,7 @@ export default function useChats() {
                         placeholder="พิมข้อความ"
                         borderRadius="3xl"
                         onChange={(e) => setText(e.target.value)}
-                        onClick={handleTouch}
+                        // onClick={handleTouch}
                       />
                       <InputRightElement>
                         <Image src="/img/emoji.png" alt="" h="25px" />
@@ -496,7 +590,7 @@ export default function useChats() {
                       h="35px"
                     >
                       <TiLocationArrow
-                        style={{ height: "35px", width: "35px" }}
+                        style={{ height: "40px", width: "40px", color: "red" }}
                       />
                     </Button>
                   </Flex>
