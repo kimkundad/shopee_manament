@@ -21,12 +21,17 @@ import moment from "moment";
 import { useRouter } from "next/router";
 import Pusher from "pusher-js";
 import { ArrowLeftIcon, RepeatIcon } from "@chakra-ui/icons";
+import { getUserChats } from '@/hooks/getUserChats'
+import useSWR from "swr";
+import { fetcher } from "@/services/test";
 
 export default function useChats() {
   const [users, setUsers] = useState([]);
   const [detailUser, setDetailUser] = useState([]);
   const router = useRouter();
-  const shopId = router.query.id;
+
+  const [shopId, setShopId] = useState(router.query.id);
+
   const [userId, setUserId] = useState(null);
   const [room, setRoom] = useState("");
   let date = "";
@@ -35,28 +40,57 @@ export default function useChats() {
   const [messages, setMessages] = useState([]);
   const [searchUser, setSearchUser] = useState(null);
   const [message, setMessage] = useState("");
+  const [type, setTypee] = useState("shop");
+  const [text, setText] = useState("");
+  const chatBoxRef = useRef(null);
   let allMessages = [];
 
   useEffect(() => {
-    async function fecthdata() {
-      const formdata = new FormData();
-      formdata.append("shop_id", shopId);
-      const res = await axios.post(
-        "https://api.sellpang.com/api/getUserChats",
-        formdata
-      );
-      setUsers(res.data.users);
-    }
-    fecthdata();
-  }, [shopId]);
+    setShopId(router.query.id)
+  }, []);
 
-  const [text, setText] = useState("");
+  const { data: UserChats, isLoading: fetchLoadingUserChats } = getUserChats(router.query.id)
+
+  
+  // useEffect(() => {
+  //   async function fecthdata() {
+  //     const formdata = new FormData();
+  //     formdata.append("shop_id", shopId);
+  //     const res = await axios.post(
+  //       "https://api.sellpang.com/api/getUserChats",
+  //       formdata
+  //     );
+  //     setUsers(res.data.users);
+  //   }
+  //   fecthdata();
+  // }, [shopId]);
+
+
+
+  const handleChangeRoom = async (item) => {
+
+          async function fetchData() {
+            const res = await axios.get(
+              `https://api.sellpang.com/api/getMessage2/${item.id}/${router.query.id}/${type}`
+            );
+            console.log('res?.message-->', res?.data?.message);
+            setMessages(res?.data?.message);
+          }
+          fetchData();
+
+    setUserId(item.id);
+    setRoom(item.id + shopId);
+    setDetailUser([item]);
+    
+  }
+
+
   const handleTouch = () => {
     chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
   };
-  const chatBoxRef = useRef(null);
+  
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     event.preventDefault();
     if (text !== "" && userId !== null) {
       // eslint-disable-next-line no-inner-declarations
@@ -66,15 +100,25 @@ export default function useChats() {
         let shop_id = shopId;
         formdata.append("recived_id", user_id);
         formdata.append("user_id", user_id);
-        formdata.append("shop_id", shop_id);
+        formdata.append("shop_id", router.query.id);
         formdata.append("message", text);
         const res = await axios.post(
           `http://127.0.0.1:8000/api/sendMessage`,
           formdata
         );
         setText("");
+
+        async function reload_msg() {
+          const res = await axios.get(
+            `https://api.sellpang.com/api/getMessage2/${userId}/${router.query.id}/${type}`
+          );
+          console.log('res?.message-->', res?.data?.message);
+          setMessages(res?.data?.message);
+        }
+        reload_msg();
       }
       newMessage();
+
     }
     chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
   };
@@ -91,37 +135,31 @@ export default function useChats() {
         );
         setUsers(res.data.users);
       } else {
-        const formdataUserChat = new FormData();
-        formdataUserChat.append("shop_id", shopId);
-        const userChats = await axios.post(
-          "https://api.sellpang.com/api/getUserChats",
-          formdataUserChat
-        );
-        setUsers(userChats.data.users);
+        
       }
     }
     fecthdata();
     chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
   }, [messages]);
 
-  useEffect(() => {
-    if (userId !== null) {
-      // eslint-disable-next-line no-inner-declarations
-      async function fetchData() {
-        console.log(shopId);
-        const formdata = new FormData();
-        formdata.append("user_id", userId);
-        formdata.append("shop_id", shopId);
-        formdata.append("type", "shop");
-        const res = await axios.post(
-          `https://api.sellpang.com/api/getMessage`,
-          formdata
-        );
-        setMessages(res.data.message);
-      }
-      fetchData();
-    }
-  }, [userId]);
+  // useEffect(() => {
+  //   if (userId !== null) {
+  //     // eslint-disable-next-line no-inner-declarations
+  //     async function fetchData() {
+  //       console.log(shopId);
+  //       const formdata = new FormData();
+  //       formdata.append("user_id", userId);
+  //       formdata.append("shop_id", shopId);
+  //       formdata.append("type", "shop");
+  //       const res = await axios.post(
+  //         `https://api.sellpang.com/api/getMessage`,
+  //         formdata
+  //       );
+  //       setMessages(res.data.message);
+  //     }
+  //     fetchData();
+  //   }
+  // }, [userId]);
 
   useEffect(() => {
     if (searchUser !== null) {
@@ -143,8 +181,8 @@ export default function useChats() {
     async function fecthdata() {
       const formdata = new FormData();
       formdata.append("shop_id", shopId);
-      const res = await axios.post(
-        "https://api.sellpang.com/api/getUserChats",
+      const res = await axios.get(
+        `https://api.sellpang.com/api/getUserChats/${router.query.id}`,
         formdata
       );
       setUsers(res.data.users);
@@ -152,14 +190,15 @@ export default function useChats() {
     fecthdata();
   };
 
-  useEffect(() => {
-    // if (!renderAfterCalled.current) {
-    if (userId) {
-      Pusher.logToConsole = false;
+  Pusher.logToConsole = false;
       
       const pusher = new Pusher("bf877b740f5cd647307e", {
         cluster: "ap1",
       });
+
+  useEffect(() => {
+    // if (!renderAfterCalled.current) {
+    if (userId) {
 
       const channel = pusher.subscribe("chat." + userId + "." + shopId);
       channel.bind("message." + userId + "." + shopId, function (data) {
@@ -169,10 +208,14 @@ export default function useChats() {
           return newArray;
         });
       });
+
+
     }
     // }
     // renderAfterCalled.current = true;
   }, [userId]);
+
+
 
   const formatDateThai = (dateString, timeString) => {
     const date = new Date(dateString);
@@ -239,7 +282,11 @@ export default function useChats() {
             </InputGroup>
           </Flex>
           <Box height={"calc(100vh - 395px)"} overflowY={"scroll"}>
-            {users?.map((item, index) => {
+          {fetchLoadingUserChats ?
+          <Box></Box>
+          :
+          <Box>
+            {UserChats?.users.map((item, index) => {
               const datatime = moment(item.created_at);
               const dateString = datatime.format("MM-DD");
               const timeString = datatime.format("HH:mm");
@@ -247,11 +294,7 @@ export default function useChats() {
                 <Flex
                   key={index}
                   p="20px"
-                  onClick={(e) => {
-                    setUserId(item.id);
-                    setRoom(item.id + shopId);
-                    setDetailUser([item]);
-                  }}
+                  onClick={(e) => { handleChangeRoom(item) }}
                   bg={item.user_id == userId ? "gray.200" : "white"}
                   id={item.id}
                 >
@@ -282,6 +325,10 @@ export default function useChats() {
               );
             })}
           </Box>
+          }
+            
+          </Box>
+
           <Box className="test" bottom={0}>
             <Box
               className="test"
