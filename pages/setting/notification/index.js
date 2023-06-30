@@ -27,7 +27,7 @@ export default function Notification() {
         const formdata = new FormData();
         formdata.append("user_id", userInfo?.data[0]?.id);
       const res = await axios.post(
-        `http://127.0.0.1:8000/api/getOwnerSetting`, formdata
+        `https://api.sellpang.com/api/getOwnerSetting`, formdata
         // {
         //   headers: {
         //     Authorization: `Bearer ${userAuthen.token}`,
@@ -51,7 +51,7 @@ export default function Notification() {
       formdata.append("user_id", userInfo?.data[0]?.id);
       formdata.append("setting", setting);
       const res = await axios.post(
-        `http://127.0.0.1:8000/api/setNotification`,
+        `https://api.sellpang.com/api/setNotification`,
         formdata,
         {
           headers: {
