@@ -273,9 +273,10 @@ function UseEditProduct() {
         // setDiv(div);
         setDataTable(product.data.product[0].allOption1);
         setDataTable((prevData) => {
-          const newData = prevData.map((item) => {
+          const newData = prevData?.map((item) => {
             return {
               ...item,
+              allOption2: item?.allOption2?.length > 0 ? item.allOption2 : [],
               indexImageOption: [],
               imagePreviewOption: "",
             };
@@ -299,7 +300,7 @@ function UseEditProduct() {
           setSelected(productSelect);
         }
 
-        // console.log("imageUrls", imageUrls);
+        console.log("dataTable", dataTable);
       }
     }
 
@@ -598,7 +599,7 @@ function UseEditProduct() {
 
   const updateDataTable = (newSelected) => {
     setDataTable((prevData) => {
-      let newData = [...prevData]; // Create a copy of the existing data
+      let newData = Array.isArray(prevData) ? [...prevData] : []; // Create a copy of the existing data
 
       if (newData.length === 0) {
         // If the data is empty, create a new array with the new object
@@ -636,17 +637,19 @@ function UseEditProduct() {
             newData.push(newObj);
           }
         } else {
-          const newObj = {
-            op_name: newSelected[newSelected.length - 1],
-            price: "0",
-            stock: "0",
-            sku: "0",
-            indexImageOption: [],
-            imagePreviewOption: "",
-            status: true,
-            allOption2: [],
-          };
-          newData.push(newObj);
+          if(newSelected.length > selected.length){
+            const newObj = {
+              op_name: newSelected[newSelected.length - 1],
+              price: "0",
+              stock: "0",
+              sku: "0",
+              indexImageOption: [],
+              imagePreviewOption: "",
+              status: true,
+              allOption2: [],
+            };
+            newData.push(newObj);
+          }
         }
       }
 
@@ -720,7 +723,7 @@ function UseEditProduct() {
         status: true,
       };
       dataTable.forEach((datatable) => {
-        datatable.allOption2.push(newData);
+        datatable?.allOption2?.push(newData);
       });
       setDataTable(dataTable);
     }
@@ -1832,27 +1835,27 @@ function UseEditProduct() {
             </Box> */}
             <Box pl="115px" pt="15px">
               <Table minWidth="100%" border="1px solid">
-                <Thead bg="gray.100">
+                <Thead bg="#cd2626">
                   <Tr>
-                    <Td border="1px solid" textAlign="center">
+                    <Td border="1px solid black" textAlign="center" color={'white'} fontSize={'22px'} fontWeight={'bold'}>
                       {option}
                     </Td>
-                    <Td border="1px solid" textAlign="center">
+                    <Td border="1px solid black" textAlign="center" color={'white'} fontSize={'22px'} fontWeight={'bold'}>
                       {subOption}
                     </Td>
-                    <Td border="1px solid" textAlign="center">
+                    <Td border="1px solid black" textAlign="center" color={'white'} fontSize={'22px'} fontWeight={'bold'}>
                       ราคา
                     </Td>
-                    <Td border="1px solid" textAlign="center">
+                    <Td border="1px solid black" textAlign="center" color={'white'} fontSize={'22px'} fontWeight={'bold'}>
                       สต็อกสินค้า
                     </Td>
-                    <Td border="1px solid" textAlign="center">
+                    <Td border="1px solid black" textAlign="center" color={'white'} fontSize={'22px'} fontWeight={'bold'}>
                       รหัสสินค้า
                     </Td>
-                    <Td border="1px solid" textAlign="center">
+                    <Td border="1px solid black" textAlign="center" color={'white'} fontSize={'22px'} fontWeight={'bold'}>
                       ใช้งาน
                     </Td>
-                    <Td border="1px solid" textAlign="center">
+                    <Td border="1px solid black" textAlign="center" color={'white'} fontSize={'22px'} fontWeight={'bold'}>
                       ดำเนินการ
                     </Td>
                   </Tr>
@@ -1870,7 +1873,7 @@ function UseEditProduct() {
                               : 1
                           }
                         >
-                          {item.op_name}
+                          <Text fontSize={'20px'}>{item.op_name}</Text>
                           {item.id ? (
                             <Box
                               position="relative"
@@ -1908,6 +1911,7 @@ function UseEditProduct() {
                                     size="sm"
                                     variant="ghost"
                                     zIndex="2"
+                                    bgColor={'#f5f5f5a8'}
                                     onClick={() => deleteImage(index)}
                                   />
                                 </React.Fragment>
@@ -2014,7 +2018,7 @@ function UseEditProduct() {
                             </Box>
                           )}
                         </Td>
-                        <Td border="1px solid">
+                        <Td border="1px solid" textAlign="center">
                           {item?.allOption2?.length > 0 ? (
                             <Input
                               value={
@@ -2029,7 +2033,7 @@ function UseEditProduct() {
                           ) : null}
                         </Td>
                         {item?.allOption2?.length > 0 ? (
-                          <Td border="1px solid">
+                          <Td border="1px solid" textAlign="center">
                             <Input
                               value={item?.allOption2[0].price}
                               onChange={(e) =>
@@ -2038,7 +2042,7 @@ function UseEditProduct() {
                             />
                           </Td>
                         ) : (
-                          <Td border="1px solid">
+                          <Td border="1px solid" textAlign="center">
                             <Input
                               value={item?.price}
                               onChange={(e) =>
@@ -2048,7 +2052,7 @@ function UseEditProduct() {
                           </Td>
                         )}
                         {item?.allOption2?.length > 0 ? (
-                          <Td border="1px solid">
+                          <Td border="1px solid" textAlign="center">
                             <Input
                               value={item?.allOption2[0].stock}
                               onChange={(e) =>
@@ -2057,7 +2061,7 @@ function UseEditProduct() {
                             />
                           </Td>
                         ) : (
-                          <Td border="1px solid">
+                          <Td border="1px solid" textAlign="center">
                             <Input
                               value={item?.stock}
                               onChange={(e) =>
@@ -2067,7 +2071,7 @@ function UseEditProduct() {
                           </Td>
                         )}
                         {item?.allOption2?.length > 0 ? (
-                          <Td border="1px solid">
+                          <Td border="1px solid" textAlign="center">
                             <Input
                               value={item?.allOption2[0].sku}
                               onChange={(e) =>
@@ -2076,7 +2080,7 @@ function UseEditProduct() {
                             />
                           </Td>
                         ) : (
-                          <Td border="1px solid">
+                          <Td border="1px solid" textAlign="center">
                             <Input
                               value={item?.sku}
                               onChange={(e) =>
@@ -2086,7 +2090,7 @@ function UseEditProduct() {
                           </Td>
                         )}
                         {item?.allOption2?.length > 0 ? (
-                          <Td border="1px solid">
+                          <Td border="1px solid" textAlign="center">
                             <Switch
                               colorScheme="brand"
                               isChecked={item?.allOption2[0].status}
@@ -2096,7 +2100,7 @@ function UseEditProduct() {
                             />
                           </Td>
                         ) : (
-                          <Td border="1px solid">
+                          <Td border="1px solid" textAlign="center">
                             <Switch
                               colorScheme="brand"
                               isChecked={item?.status}
@@ -2107,7 +2111,7 @@ function UseEditProduct() {
                           </Td>
                         )}
                         {item?.allOption2?.length == 0 ? (
-                          <Td border="1px solid">
+                          <Td border="1px solid" textAlign="center">
                             <Image
                               src="/images/trash-bin.png"
                               h="25px"
@@ -2117,10 +2121,11 @@ function UseEditProduct() {
                             />
                           </Td>
                         ) : (
-                          <Td border="1px solid">
+                          <Td border="1px solid" textAlign="center">
                             <Image
                               src="/images/trash-bin.png"
                               h="25px"
+                              style={{ display: "block", margin: "auto" }}
                               onClick={() =>
                                 deleteOption(index, 0, item?.allOption2[0].id)
                               }
@@ -2131,7 +2136,7 @@ function UseEditProduct() {
                       {item?.allOption2?.map((subItem, subIndex) => {
                         return subIndex !== 0 ? (
                           <Tr key={`${item.sub_op_name}-${subIndex}`}>
-                            <Td border="1px solid">
+                            <Td border="1px solid" textAlign="center">
                               <Input
                                 value={subItem.sub_op_name}
                                 onChange={(e) =>
@@ -2144,7 +2149,7 @@ function UseEditProduct() {
                                 }
                               />
                             </Td>
-                            <Td border="1px solid">
+                            <Td border="1px solid" textAlign="center">
                               <Input
                                 value={subItem.price}
                                 onChange={(e) =>
@@ -2152,7 +2157,7 @@ function UseEditProduct() {
                                 }
                               />
                             </Td>
-                            <Td border="1px solid">
+                            <Td border="1px solid" textAlign="center">
                               <Input
                                 value={subItem.stock}
                                 onChange={(e) =>
@@ -2160,7 +2165,7 @@ function UseEditProduct() {
                                 }
                               />
                             </Td>
-                            <Td border="1px solid">
+                            <Td border="1px solid" textAlign="center">
                               <Input
                                 value={subItem.sku}
                                 onChange={(e) =>
@@ -2168,7 +2173,7 @@ function UseEditProduct() {
                                 }
                               />
                             </Td>
-                            <Td border="1px solid">
+                            <Td border="1px solid" textAlign="center">
                               <Switch
                                 colorScheme="brand"
                                 isChecked={subItem.status}
@@ -2177,10 +2182,11 @@ function UseEditProduct() {
                                 }
                               />
                             </Td>
-                            <Td border="1px solid">
+                            <Td border="1px solid" textAlign="center">
                               <Image
                                 src="/images/trash-bin.png"
                                 h="25px"
+                                style={{ display: "block", margin: "auto" }}
                                 onClick={() =>
                                   deleteOption(index, subIndex, subItem.id)
                                 }

@@ -1510,26 +1510,26 @@ function addProduct() {
             <Box pl="115px" pt="15px">
               <Table minWidth="100%" border="1px solid" textAlign="center">
                 <Thead>
-                  <Tr bgColor={"whitesmoke"}>
-                    <Th border="1px solid" whiteSpace={"nowrap"}>
+                  <Tr bgColor={"#cd2626"}>
+                    <Th border="1px solid black" textAlign="center" whiteSpace={"nowrap"} color={'white'} fontSize={'18px'} fontWeight={'bold'}>
                       {option}
                     </Th>
-                    <Th border="1px solid" whiteSpace={"nowrap"}>
+                    <Th border="1px solid black" textAlign="center" whiteSpace={"nowrap"} color={'white'} fontSize={'18px'} fontWeight={'bold'}>
                       {subOption}
                     </Th>
-                    <Th border="1px solid" whiteSpace={"nowrap"}>
+                    <Th border="1px solid black" textAlign="center" whiteSpace={"nowrap"} color={'white'} fontSize={'18px'} fontWeight={'bold'}>
                       ราคา
                     </Th>
-                    <Th border="1px solid" whiteSpace={"nowrap"}>
+                    <Th border="1px solid black" textAlign="center" whiteSpace={"nowrap"} color={'white'} fontSize={'18px'} fontWeight={'bold'}>
                       สต็อกสินค้า
                     </Th>
-                    <Th border="1px solid" whiteSpace={"nowrap"}>
+                    <Th border="1px solid black" textAlign="center" whiteSpace={"nowrap"} color={'white'} fontSize={'18px'} fontWeight={'bold'}>
                       รหัสสินค้า
                     </Th>
-                    <Th border="1px solid" whiteSpace={"nowrap"}>
+                    <Th border="1px solid black" textAlign="center" whiteSpace={"nowrap"} color={'white'} fontSize={'18px'} fontWeight={'bold'}>
                       ใช้งาน
                     </Th>
-                    <Th border="1px solid" whiteSpace={"nowrap"}>
+                    <Th border="1px solid black" textAlign="center" whiteSpace={"nowrap"} color={'white'} fontSize={'18px'} fontWeight={'bold'}>
                       ดำเนินการ
                     </Th>
                   </Tr>
@@ -1540,13 +1540,14 @@ function addProduct() {
                       <Tr>
                         <Td
                           border="1px solid"
+                          textAlign="center"
                           rowSpan={
                             item?.subOption?.length > 0
                               ? item?.subOption?.length
                               : 1
                           }
                         >
-                          {item.nameOption}
+                          <Text fontSize={'20px'} textAlign={'center'}>{item.nameOption}</Text>
                           <Box
                             position="relative"
                             display="inline-block"
@@ -1577,6 +1578,7 @@ function addProduct() {
                                   colorScheme="red"
                                   size="sm"
                                   variant="ghost"
+                                  bgColor={'#f5f5f5a8'}
                                   zIndex="2"
                                   onClick={() => deleteImage(index)}
                                 />
@@ -1615,7 +1617,7 @@ function addProduct() {
                             )}
                           </Box>
                         </Td>
-                        <Td border="1px solid">
+                        <Td border="1px solid" textAlign="center">
                           {item?.subOption?.length > 0 ? (
                             <Input
                               value={item?.subOption[0]?.nameSubOption}
@@ -1626,7 +1628,7 @@ function addProduct() {
                           ) : null}
                         </Td>
                         {item?.subOption?.length > 0 ? (
-                          <Td border="1px solid">
+                          <Td border="1px solid" textAlign="center">
                             <Input
                               value={item?.subOption[0].priceSubOption}
                               onChange={(e) =>
@@ -1635,7 +1637,7 @@ function addProduct() {
                             />
                           </Td>
                         ) : (
-                          <Td border="1px solid">
+                          <Td border="1px solid" textAlign="center">
                             <Input
                               value={item?.priceOption}
                               onChange={(e) =>
@@ -1645,7 +1647,7 @@ function addProduct() {
                           </Td>
                         )}
                         {item?.subOption?.length > 0 ? (
-                          <Td border="1px solid">
+                          <Td border="1px solid" textAlign="center">
                             <Input
                               value={item?.subOption[0].stockSubOption}
                               onChange={(e) =>
@@ -1654,7 +1656,7 @@ function addProduct() {
                             />
                           </Td>
                         ) : (
-                          <Td border="1px solid">
+                          <Td border="1px solid" textAlign="center">
                             <Input
                               value={item?.stockOption}
                               onChange={(e) =>
@@ -1664,7 +1666,7 @@ function addProduct() {
                           </Td>
                         )}
                         {item?.subOption?.length > 0 ? (
-                          <Td border="1px solid">
+                          <Td border="1px solid" textAlign="center">
                             <Input
                               value={item?.subOption[0].skuSubOption}
                               onChange={(e) =>
@@ -1673,7 +1675,7 @@ function addProduct() {
                             />
                           </Td>
                         ) : (
-                          <Td border="1px solid">
+                          <Td border="1px solid" textAlign="center">
                             <Input
                               value={item?.skuOption}
                               onChange={(e) =>
@@ -1683,7 +1685,7 @@ function addProduct() {
                           </Td>
                         )}
                         {item?.subOption?.length > 0 ? (
-                          <Td border="1px solid">
+                          <Td border="1px solid" textAlign="center">
                             <Switch
                               colorScheme="brand"
                               isChecked={item?.subOption[0].statusSubOption}
@@ -1693,7 +1695,7 @@ function addProduct() {
                             />
                           </Td>
                         ) : (
-                          <Td border="1px solid">
+                          <Td border="1px solid" textAlign="center">
                             <Switch
                               colorScheme="brand"
                               isChecked={item?.statusOption}
@@ -1704,7 +1706,7 @@ function addProduct() {
                           </Td>
                         )}
                         {item?.subOption?.length == 0 ? (
-                          <Td border="1px solid">
+                          <Td border="1px solid" textAlign="center">
                             <Image
                               src="/images/trash-bin.png"
                               h="25px"
@@ -1712,10 +1714,11 @@ function addProduct() {
                             />
                           </Td>
                         ) : (
-                          <Td border="1px solid">
+                          <Td border="1px solid" textAlign="center">
                             <Image
                               src="/images/trash-bin.png"
                               h="25px"
+                              style={{ display: "block", margin: "auto" }}
                               onClick={() => deleteOption(index, 0)}
                             />
                           </Td>
@@ -1724,7 +1727,7 @@ function addProduct() {
                       {item?.subOption?.map((subItem, subIndex) => {
                         return subIndex !== 0 ? (
                           <Tr key={`${item.nameOption}-${subIndex}`}>
-                            <Td border="1px solid">
+                            <Td border="1px solid" textAlign="center">
                               <Input
                                 value={subItem.nameSubOption}
                                 onChange={(e) =>
@@ -1737,7 +1740,7 @@ function addProduct() {
                                 }
                               />
                             </Td>
-                            <Td border="1px solid">
+                            <Td border="1px solid" textAlign="center">
                               <Input
                                 type="number"
                                 value={subItem.priceSubOption}
@@ -1751,7 +1754,7 @@ function addProduct() {
                                 }
                               />
                             </Td>
-                            <Td border="1px solid">
+                            <Td border="1px solid" textAlign="center">
                               <Input
                                 type="number"
                                 value={subItem.stockSubOption}
@@ -1765,7 +1768,7 @@ function addProduct() {
                                 }
                               />
                             </Td>
-                            <Td border="1px solid">
+                            <Td border="1px solid" textAlign="center">
                               <Input
                                 value={subItem.skuSubOption}
                                 onChange={(e) =>
@@ -1778,7 +1781,7 @@ function addProduct() {
                                 }
                               />
                             </Td>
-                            <Td border="1px solid">
+                            <Td border="1px solid" textAlign="center">
                               <Switch
                                 colorScheme="brand"
                                 isChecked={subItem.statusSubOption}
@@ -1792,10 +1795,11 @@ function addProduct() {
                                 }
                               />
                             </Td>
-                            <Td border="1px solid">
+                            <Td border="1px solid" textAlign="center">
                               <Image
                                 src="/images/trash-bin.png"
                                 h="25px"
+                                style={{ display: "block", margin: "auto" }}
                                 onClick={() => deleteOption(index, subIndex)}
                               />
                             </Td>
