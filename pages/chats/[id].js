@@ -21,7 +21,7 @@ import moment from "moment";
 import { useRouter } from "next/router";
 import Pusher from "pusher-js";
 import { ArrowLeftIcon, RepeatIcon } from "@chakra-ui/icons";
-import { getUserChats } from '@/hooks/getUserChats'
+import { getUserChats } from "@/hooks/getUserChats";
 import useSWR from "swr";
 import { fetcher } from "@/services/test";
 
@@ -46,12 +46,13 @@ export default function useChats() {
   let allMessages = [];
 
   useEffect(() => {
-    setShopId(router.query.id)
+    setShopId(router.query.id);
   }, []);
 
-  const { data: UserChats, isLoading: fetchLoadingUserChats } = getUserChats(router.query.id)
+  const { data: UserChats, isLoading: fetchLoadingUserChats } = getUserChats(
+    router.query.id
+  );
 
-  
   // useEffect(() => {
   //   async function fecthdata() {
   //     const formdata = new FormData();
@@ -65,30 +66,24 @@ export default function useChats() {
   //   fecthdata();
   // }, [shopId]);
 
-
-
   const handleChangeRoom = async (item) => {
-
-          async function fetchData() {
-            const res = await axios.get(
-              `https://api.sellpang.com/api/getMessage2/${item.id}/${router.query.id}/${type}`
-            );
-            console.log('res?.message-->', res?.data?.message);
-            setMessages(res?.data?.message);
-          }
-          fetchData();
+    async function fetchData() {
+      const res = await axios.get(
+        `https://api.sellpang.com/api/getMessage2/${item.id}/${router.query.id}/${type}`
+      );
+      console.log("res?.message-->", res?.data?.message);
+      setMessages(res?.data?.message);
+    }
+    fetchData();
 
     setUserId(item.id);
     setRoom(item.id + shopId);
     setDetailUser([item]);
-    
-  }
-
+  };
 
   const handleTouch = () => {
     chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
   };
-  
 
   const sendMessage = async () => {
     event.preventDefault();
@@ -112,13 +107,12 @@ export default function useChats() {
           const res = await axios.get(
             `https://api.sellpang.com/api/getMessage2/${userId}/${router.query.id}/${type}`
           );
-          console.log('res?.message-->', res?.data?.message);
+          // console.log("res?.message-->", res?.data?.message);
           setMessages(res?.data?.message);
         }
         reload_msg();
       }
       newMessage();
-
     }
     chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
   };
@@ -135,7 +129,6 @@ export default function useChats() {
         );
         setUsers(res.data.users);
       } else {
-        
       }
     }
     fecthdata();
@@ -191,31 +184,33 @@ export default function useChats() {
   };
 
   Pusher.logToConsole = false;
-      
-      const pusher = new Pusher("bf877b740f5cd647307e", {
-        cluster: "ap1",
-      });
+
+  const pusher = new Pusher("bf877b740f5cd647307e", {
+    cluster: "ap1",
+  });
 
   useEffect(() => {
     // if (!renderAfterCalled.current) {
     if (userId) {
-
-      const channel = pusher.subscribe("chat." + userId + "." + shopId);
-      channel.bind("message." + userId + "." + shopId, function (data) {
-        console.log('data recived_id:', data.recived_id);
-        setMessages((prevMessages) => {
-          const newArray = [...prevMessages, data];
-          return newArray;
-        });
-      });
-
-
+      const channel = pusher.subscribe(
+        "chat." + userId + "." + router.query.id
+      );
+      channel.bind(
+        "message." + userId + "." + router.query.id,
+        function (data) {
+          setMessages((prevMessages) => {
+            const newArray = [...prevMessages, data];
+            return newArray;
+          });
+        }
+      );
+      return () => {
+        pusher.unsubscribe("chat." + userId + "." + router.query.id);
+      };
     }
     // }
     // renderAfterCalled.current = true;
   }, [userId]);
-
-
 
   const formatDateThai = (dateString, timeString) => {
     const date = new Date(dateString);
@@ -282,51 +277,52 @@ export default function useChats() {
             </InputGroup>
           </Flex>
           <Box height={"calc(100vh - 395px)"} overflowY={"scroll"}>
-          {fetchLoadingUserChats ?
-          <Box></Box>
-          :
-          <Box>
-            {UserChats?.users.map((item, index) => {
-              const datatime = moment(item.created_at);
-              const dateString = datatime.format("MM-DD");
-              const timeString = datatime.format("HH:mm");
-              return (
-                <Flex
-                  key={index}
-                  p="20px"
-                  onClick={(e) => { handleChangeRoom(item) }}
-                  bg={item.user_id == userId ? "gray.200" : "white"}
-                  id={item.id}
-                >
-                  <Image
-                    borderRadius="50%"
-                    src={`https://api.sellpang.com/images/shopee/avatar/${item.avatar}`}
-                    alt=""
-                    h="55px "
-                    w="55px "
-                  />
-                  <Box alignSelf="center" pl="10px" w="50%">
-                    <Text fontSize="20px" fontWeight="bold" w="">
-                      {item.name?.length > 10
-                        ? item.name?.slice(0, 10) + "..."
-                        : item.name}
-                    </Text>
-                    <Text fontSize="18px" color="gray">
-                      {item.message?.length > 15
-                        ? item.message?.slice(0, 15) + "..."
-                        : item.message}
-                    </Text>
-                  </Box>
-                  <Spacer />
-                  <Box>
-                    <Text fontSize="10px">{dateString}</Text>
-                  </Box>
-                </Flex>
-              );
-            })}
-          </Box>
-          }
-            
+            {fetchLoadingUserChats ? (
+              <Box></Box>
+            ) : (
+              <Box>
+                {UserChats?.users.map((item, index) => {
+                  const datatime = moment(item.created_at);
+                  const dateString = datatime.format("MM-DD");
+                  const timeString = datatime.format("HH:mm");
+                  return (
+                    <Flex
+                      key={index}
+                      p="20px"
+                      onClick={(e) => {
+                        handleChangeRoom(item);
+                      }}
+                      bg={item.user_id == userId ? "gray.200" : "white"}
+                      id={item.id}
+                    >
+                      <Image
+                        borderRadius="50%"
+                        src={`https://api.sellpang.com/images/shopee/avatar/${item.avatar}`}
+                        alt=""
+                        h="55px "
+                        w="55px "
+                      />
+                      <Box alignSelf="center" pl="10px" w="50%">
+                        <Text fontSize="20px" fontWeight="bold" w="">
+                          {item.name?.length > 10
+                            ? item.name?.slice(0, 10) + "..."
+                            : item.name}
+                        </Text>
+                        <Text fontSize="18px" color="gray">
+                          {item.message?.length > 15
+                            ? item.message?.slice(0, 15) + "..."
+                            : item.message}
+                        </Text>
+                      </Box>
+                      <Spacer />
+                      <Box>
+                        <Text fontSize="10px">{dateString}</Text>
+                      </Box>
+                    </Flex>
+                  );
+                })}
+              </Box>
+            )}
           </Box>
 
           <Box className="test" bottom={0}>
@@ -622,6 +618,8 @@ export default function useChats() {
                         value={text}
                         placeholder="พิมข้อความ"
                         borderRadius="3xl"
+                        border={'2px solid #dc2626'}
+                        bgColor={'gray.100'}
                         onChange={(e) => setText(e.target.value)}
                         // onClick={handleTouch}
                       />
