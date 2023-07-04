@@ -326,6 +326,12 @@ export default function shop() {
         modalConfirm.onClose();
         modalConfirmSuccess.onOpen();
         fetchAllShops();
+        setNameShop("")
+        setDetailShop("")
+        setFileImgShop([])
+        setFileImgCoverShop([])
+        setSelectedProducts([])
+        setTheme(0)
       }
     });
   };

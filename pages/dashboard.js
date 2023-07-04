@@ -22,8 +22,11 @@ import ModalLogin from "@/components/ModalLogin";
 import moment from "moment";
 import axios from "axios";
 import DateRangePicker from "@/components/DateRangePicker";
+import { connect, useDispatch, useSelector } from "react-redux";
 
 export default function DashBoard() {
+  const userInfo = useSelector((App) => App.userInfo);
+  const userAuthen = useSelector((App) => App.authen);
   const [dataTable, setDataTable] = useState([]);
   const [dataPieProducts, setDataPieProducts] = useState([]);
   const [dataPieShops, setDataPieShops] = useState([]);
@@ -50,36 +53,11 @@ export default function DashBoard() {
     setStartDateBar(start.unix());
     setEndDateBar(end.unix());
   };
+  console.log(userInfo);
   useEffect(() => {
     async function fecthdata() {
       const formdata = new FormData();
-      let user_id = 8863299; // ถ้ามี login เปลี่ยนเป็น user_code ของคน login
-      formdata.append("uid", user_id);
-      formdata.append("startDatePie", startDatePie);
-      formdata.append("endDatePie", endDatePie);
-      formdata.append("startDateBar", startDateBar);
-      formdata.append("endDateBar", endDateBar);
-      const res = await axios.post(
-        `https://api.sellpang.com/api/dashboard`,
-        formdata
-      );
-      setDataTable(res.data.data_table);
-      setDataPieProducts(res.data.data_chart_pie_products);
-      setDataPieShops(res.data.data_chart_pie_shops);
-      setDataLine(res.data.data_chart_line);
-      setDataBars(res.data.data_chart_bar);
-      setAllStock(res.data.all_stock[0].allStock);
-      setTotalSales(res.data.total_sales[0].total_sales);
-      setTotalDelivery(res.data.total_delivery[0]);
-      setTotalPayment(res.data.total_payment[0]);
-      setDataShopBars(res.data.data_shop_bar);
-    }
-    fecthdata();
-  }, []);
-  useEffect(() => {
-    async function fecthdata() {
-      const formdata = new FormData();
-      let user_id = 8863299; // ถ้ามี login เปลี่ยนเป็น uid ของคน login
+      let user_id = userInfo.data[0].code_user; // ถ้ามี login เปลี่ยนเป็น user_code ของคน login
       formdata.append("uid", user_id);
       formdata.append("startDatePie", startDatePie);
       formdata.append("endDatePie", endDatePie);
@@ -102,6 +80,32 @@ export default function DashBoard() {
     }
     fecthdata();
   }, [startDateBar, startDatePie]);
+  // useEffect(() => {
+  //   async function fecthdata() {
+  //     const formdata = new FormData();
+  //     let user_id = 8863299; // ถ้ามี login เปลี่ยนเป็น uid ของคน login
+  //     formdata.append("uid", user_id);
+  //     formdata.append("startDatePie", startDatePie);
+  //     formdata.append("endDatePie", endDatePie);
+  //     formdata.append("startDateBar", startDateBar);
+  //     formdata.append("endDateBar", endDateBar);
+  //     const res = await axios.post(
+  //       `https://api.sellpang.com/api/dashboard`,
+  //       formdata
+  //     );
+  //     setDataTable(res.data.data_table);
+  //     setDataPieProducts(res.data.data_chart_pie_products);
+  //     setDataPieShops(res.data.data_chart_pie_shops);
+  //     setDataLine(res.data.data_chart_line);
+  //     setDataBars(res.data.data_chart_bar);
+  //     setAllStock(res.data.all_stock[0].allStock);
+  //     setTotalSales(res.data.total_sales[0].total_sales);
+  //     setTotalDelivery(res.data.total_delivery[0]);
+  //     setTotalPayment(res.data.total_payment[0]);
+  //     setDataShopBars(res.data.data_shop_bar);
+  //   }
+  //   fecthdata();
+  // }, [startDateBar, startDatePie]);
   ChartJS.register(ArcElement, Tooltip, Legend);
   const months = [
     "January",
