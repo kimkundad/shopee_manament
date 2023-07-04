@@ -1,0 +1,7 @@
+version: "1.0"
+services:
+  web:
+    ports:
+      - "3003:3003"
+    build: .
+    image: zonepangcloud/shopee_manament:v1
