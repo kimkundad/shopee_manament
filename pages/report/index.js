@@ -204,6 +204,7 @@ function index() {
         `https://api.sellpang.com/api/getReports?page=${i}`,
         formdata
       );
+      console.log('res', res);
       doc.addFileToVFS("DBAdmanX.ttf", DBadmanX);
       doc.addFileToVFS("DB-Adman-X-Bd.ttf", DBadmanXBold);
       doc.addFont("DBAdmanX.ttf", "DBadmanX", "normal");
@@ -277,7 +278,7 @@ function index() {
                 item.created_at,
                 item.name_shop,
                 item.name_product,
-                item.sku_type_1,
+                item.sku_type_1 == null ? "0" : item.sku_type_1,
                 item.invoice_id,
                 item.name,
                 item.province,
@@ -290,7 +291,7 @@ function index() {
                 item.created_at,
                 item.name_shop,
                 item.name_product,
-                item.sku_type_2,
+                item.sku_type_2 == null ? "0" : item.sku_type_2,
                 item.invoice_id,
                 item.name,
                 item.province,
@@ -302,7 +303,7 @@ function index() {
                 item.created_at,
                 item.name_shop,
                 item.name_product,
-                item.sku_type_3,
+                item.sku_type_3 == null ? "0" : item.sku_type_3,
                 item.invoice_id,
                 item.name,
                 item.province,
@@ -316,11 +317,13 @@ function index() {
         ...newArr,
         ["ยอดขายรวม", "", "", "", "", "", "", "", sumOrders, sumSales],
       ];
+      console.log('newArr', newArr);
       const rowHeights = [];
       newArr.map((row) => {
         let maxHeight = 0; // Maximum height of the current row
-
+        console.log('row', row);
         row.forEach((cell) => {
+          console.log('cell', cell);
           const cellHeight =
             doc.getTextDimensions(cell, { maxWidth: cellWidth - padding * 2 })
               .h +

@@ -163,7 +163,7 @@ const Navbar = (props: Props) => {
               _focus={{ boxShadow: "outline" }}
             >
               <Image
-                src={`https://api.sellpang.com/images/shopee/avatar/${userInfo.data[0]?.avatar}`}
+                src={userInfo.data[0]?.avatar === null ? '/images/user.png' : `https://api.sellpang.com/images/shopee/avatar/${userInfo.data[0]?.avatar}`}
                 width="40px"
                 height="40px"
                 alt="user"
@@ -174,7 +174,7 @@ const Navbar = (props: Props) => {
               <MenuItem>
                 <Flex>
                   <Image
-                    src={`https://api.sellpang.com/images/shopee/avatar/${userInfo.data[0]?.avatar}`}
+                    src={userInfo.data[0]?.avatar === null ? '/images/user.png' : `https://api.sellpang.com/images/shopee/avatar/${userInfo.data[0]?.avatar}`}
                     width="50px"
                     height="50px"
                     alt="user"

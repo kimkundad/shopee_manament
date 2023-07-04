@@ -12,6 +12,7 @@ export const defaultNavItems: NavItem[] = [
 	{
 		label: "Dashboard",
 		href: "/dashboard",
+		namePermission: "permission_dashboard",
 		icon: (
 			<Image
 				src="/images/menu/dashboard.png"
@@ -28,11 +29,13 @@ export const defaultNavItems: NavItem[] = [
 				height={30}
 			/>
 		),
+		
 	},
 
 	{
 		label: "ร้านค้าของฉัน",
 		href: "/shop",
+		namePermission: "permission_my_shop",
 		icon: (
 			<Image
 				src="/images/menu/ร้านค้าของฉัน.png"
@@ -53,6 +56,7 @@ export const defaultNavItems: NavItem[] = [
 	{
 		label: "คำสั่งซื้อ",
 		href: "/order",
+		namePermission: "permission_order",
 		icon: (
 			<Image
 				src="/images/menu/คำสั่งซื้อ.png"
@@ -73,6 +77,7 @@ export const defaultNavItems: NavItem[] = [
 	{
 		label: "คลังสินค้า",
 		href: "/stock",
+		namePermission: "permission_stock",
 		icon: (
 			<Image
 				src="/images/menu/คลังสินค้า.png"
@@ -93,6 +98,7 @@ export const defaultNavItems: NavItem[] = [
 	{
 		label: "แชทร้านค้า",
 		href: "/chats",
+		namePermission: "permission_chats",
 		icon: (
 			<Image
 				src="/images/menu/Chats.png"
@@ -113,6 +119,7 @@ export const defaultNavItems: NavItem[] = [
 	{
 		label: "รายงาน",
 		href: "/report",
+		namePermission: "permission_report",
 		icon: (
 			<Image
 				src="/images/menu/report.png"
@@ -134,6 +141,7 @@ export const defaultNavItems: NavItem[] = [
 	{
 		label: "จัดการแอดมิน",
 		href: "/admin",
+		namePermission: "permission_admin_manage",
 		icon: (
 			<Image
 				src="/images/menu/จัดการแอดมิน.png"
@@ -154,6 +162,7 @@ export const defaultNavItems: NavItem[] = [
 	{
 		label: "ตั้งค่า",
 		href: "/setting",
+		namePermission: "permission_settings",
 		icon: (
 			<Image
 				src="/images/menu/ตั้งค่า.png"

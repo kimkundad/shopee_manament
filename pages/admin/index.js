@@ -718,11 +718,11 @@ export default function AdminManagement() {
               <FormControl mt={4}>
                 <HStack justify="center">
                   <Box>
-                    <FormLabel>Email : </FormLabel>
+                    <FormLabel>Phone : </FormLabel>
                   </Box>
                   <Box>
                     <Input
-                      placeholder="username@gmail.com"
+                      placeholder="กรุณากรอกเบอร์โทรศัพท์..."
                       onChange={(event) =>
                         setCreateEmailSubAdmin(event.target.value)
                       }

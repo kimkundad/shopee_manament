@@ -1,14 +1,17 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import classNames from "classnames";
 import Link from "next/link";
 import { defaultNavItems } from "./defaultNavItems";
 import { useOnClickOutside } from "usehooks-ts";
 import { useRouter } from "next/router";
 import Image from "next/image";
+import { connect, useDispatch, useSelector } from "react-redux";
+import Axios from "axios";
 // define a NavItem prop
 export type NavItem = {
   label: string;
   href: string;
+  namePermission: string;
   icon: React.ReactNode;
   iconcurrentpage: React.ReactNode;
 };
@@ -19,6 +22,23 @@ type Props = {
   setOpen(open: boolean): void;
 };
 const Sidebar = ({ open, navItems = defaultNavItems, setOpen }: Props) => {
+  const userInfo = useSelector((App) => App.userInfo);
+  const userAuthen = useSelector((App) => App.authen);
+  const [isSubadmin, setIsSubadmin] = useState(0);
+  const [permission, setPermission] = useState(null);
+  useEffect(() => {
+    // const formData = new FormData();
+    // formData.append("userId", userInfo.data[0].id);
+    Axios.get(
+      "https://api.sellpang.com/api/getCheckSubadmin/" + userInfo.data[0].id
+    ).then(function (response) {
+      if (response.data.isSubadmin == 1) {
+        setIsSubadmin(response.data.isSubadmin);
+        setPermission(response.data.permission);
+      }
+    });
+  }, []);
+
   const ref = useRef<HTMLDivElement>(null);
   useOnClickOutside(ref, (e) => {
     setOpen(false);
@@ -52,36 +72,314 @@ const Sidebar = ({ open, navItems = defaultNavItems, setOpen }: Props) => {
         {/* nav items */}
         <ul className="py-7 flex flex-col gap-2 px-5">
           {navItems.map((item, index) => {
-            const imageName = isHovering === index ? item.iconcurrentpage : item.icon;
-            return currentPath.match(item.href) ? (
-              <Link key={index} href={item.href}>
-                <li
-                  className={classNames({
-                    "text-white bg-red-600 text-2xl": true, //colors
-                    "flex gap-4 items-center ": true, //layout
-                    "transition-colors duration-300": true, //animation
-                    "rounded-xl p-2 mx-2 pl-10": true, //self style
-                  })}
-                >
-                  {item.iconcurrentpage} {item.label}
-                </li>
-              </Link>
-            ) : (
-              <Link key={index} href={item.href}>
-                <li
-                  onMouseEnter={() => handleMouseOver(index)}
-                  onMouseLeave={() => handleMouseOut()}
-                  className={classNames({
-                    "text-black hover:bg-red-600 hover:text-white text-2xl": true, //colors
-                    "flex gap-4 items-center ": true, //layout
-                    "transition-colors duration-300": true, //animation
-                    "rounded-xl p-2 mx-2 pl-10": true, //self style
-                  })}
-                >
-                  {imageName} {item.label}
-                </li>
-              </Link>
-            );
+            const imageName =
+              isHovering === index ? item.iconcurrentpage : item.icon;
+            if (isSubadmin == 0) {
+              return currentPath.match(item.href) ? (
+                <Link key={index} href={item.href}>
+                  <li
+                    className={classNames({
+                      "text-white bg-red-600 text-2xl": true, //colors
+                      "flex gap-4 items-center ": true, //layout
+                      "transition-colors duration-300": true, //animation
+                      "rounded-xl p-2 mx-2 pl-10": true, //self style
+                    })}
+                  >
+                    {item.iconcurrentpage} {item.label}
+                  </li>
+                </Link>
+              ) : (
+                <Link key={index} href={item.href}>
+                  <li
+                    onMouseEnter={() => handleMouseOver(index)}
+                    onMouseLeave={() => handleMouseOut()}
+                    className={classNames({
+                      "text-black hover:bg-red-600 hover:text-white text-2xl":
+                        true, //colors
+                      "flex gap-4 items-center ": true, //layout
+                      "transition-colors duration-300": true, //animation
+                      "rounded-xl p-2 mx-2 pl-10": true, //self style
+                    })}
+                  >
+                    {imageName} {item.label}
+                  </li>
+                </Link>
+              );
+            } else {
+              if (
+                item.namePermission == "permission_dashboard" &&
+                permission.set_permission_dashboard == true
+              ) {
+                return currentPath.match(item.href) ? (
+                  <Link key={index} href={item.href}>
+                    <li
+                      className={classNames({
+                        "text-white bg-red-600 text-2xl": true, //colors
+                        "flex gap-4 items-center ": true, //layout
+                        "transition-colors duration-300": true, //animation
+                        "rounded-xl p-2 mx-2 pl-10": true, //self style
+                      })}
+                    >
+                      {item.iconcurrentpage} {item.label}
+                    </li>
+                  </Link>
+                ) : (
+                  <Link key={index} href={item.href}>
+                    <li
+                      onMouseEnter={() => handleMouseOver(index)}
+                      onMouseLeave={() => handleMouseOut()}
+                      className={classNames({
+                        "text-black hover:bg-red-600 hover:text-white text-2xl":
+                          true, //colors
+                        "flex gap-4 items-center ": true, //layout
+                        "transition-colors duration-300": true, //animation
+                        "rounded-xl p-2 mx-2 pl-10": true, //self style
+                      })}
+                    >
+                      {imageName} {item.label}
+                    </li>
+                  </Link>
+                );
+              } else if (
+                item.namePermission == "permission_my_shop" &&
+                permission.set_permission_my_shop == true
+              ) {
+                return currentPath.match(item.href) ? (
+                  <Link key={index} href={item.href}>
+                    <li
+                      className={classNames({
+                        "text-white bg-red-600 text-2xl": true, //colors
+                        "flex gap-4 items-center ": true, //layout
+                        "transition-colors duration-300": true, //animation
+                        "rounded-xl p-2 mx-2 pl-10": true, //self style
+                      })}
+                    >
+                      {item.iconcurrentpage} {item.label}
+                    </li>
+                  </Link>
+                ) : (
+                  <Link key={index} href={item.href}>
+                    <li
+                      onMouseEnter={() => handleMouseOver(index)}
+                      onMouseLeave={() => handleMouseOut()}
+                      className={classNames({
+                        "text-black hover:bg-red-600 hover:text-white text-2xl":
+                          true, //colors
+                        "flex gap-4 items-center ": true, //layout
+                        "transition-colors duration-300": true, //animation
+                        "rounded-xl p-2 mx-2 pl-10": true, //self style
+                      })}
+                    >
+                      {imageName} {item.label}
+                    </li>
+                  </Link>
+                );
+              } else if (
+                item.namePermission == "permission_order" &&
+                permission.set_permission_order == true
+              ) {
+                return currentPath.match(item.href) ? (
+                  <Link key={index} href={item.href}>
+                    <li
+                      className={classNames({
+                        "text-white bg-red-600 text-2xl": true, //colors
+                        "flex gap-4 items-center ": true, //layout
+                        "transition-colors duration-300": true, //animation
+                        "rounded-xl p-2 mx-2 pl-10": true, //self style
+                      })}
+                    >
+                      {item.iconcurrentpage} {item.label}
+                    </li>
+                  </Link>
+                ) : (
+                  <Link key={index} href={item.href}>
+                    <li
+                      onMouseEnter={() => handleMouseOver(index)}
+                      onMouseLeave={() => handleMouseOut()}
+                      className={classNames({
+                        "text-black hover:bg-red-600 hover:text-white text-2xl":
+                          true, //colors
+                        "flex gap-4 items-center ": true, //layout
+                        "transition-colors duration-300": true, //animation
+                        "rounded-xl p-2 mx-2 pl-10": true, //self style
+                      })}
+                    >
+                      {imageName} {item.label}
+                    </li>
+                  </Link>
+                );
+              } else if (
+                item.namePermission == "permission_stock" &&
+                permission.set_permission_stock == true
+              ) {
+                return currentPath.match(item.href) ? (
+                  <Link key={index} href={item.href}>
+                    <li
+                      className={classNames({
+                        "text-white bg-red-600 text-2xl": true, //colors
+                        "flex gap-4 items-center ": true, //layout
+                        "transition-colors duration-300": true, //animation
+                        "rounded-xl p-2 mx-2 pl-10": true, //self style
+                      })}
+                    >
+                      {item.iconcurrentpage} {item.label}
+                    </li>
+                  </Link>
+                ) : (
+                  <Link key={index} href={item.href}>
+                    <li
+                      onMouseEnter={() => handleMouseOver(index)}
+                      onMouseLeave={() => handleMouseOut()}
+                      className={classNames({
+                        "text-black hover:bg-red-600 hover:text-white text-2xl":
+                          true, //colors
+                        "flex gap-4 items-center ": true, //layout
+                        "transition-colors duration-300": true, //animation
+                        "rounded-xl p-2 mx-2 pl-10": true, //self style
+                      })}
+                    >
+                      {imageName} {item.label}
+                    </li>
+                  </Link>
+                );
+              } else if (
+                item.namePermission == "permission_chats" &&
+                permission.set_permission_chats == true
+              ) {
+                return currentPath.match(item.href) ? (
+                  <Link key={index} href={item.href}>
+                    <li
+                      className={classNames({
+                        "text-white bg-red-600 text-2xl": true, //colors
+                        "flex gap-4 items-center ": true, //layout
+                        "transition-colors duration-300": true, //animation
+                        "rounded-xl p-2 mx-2 pl-10": true, //self style
+                      })}
+                    >
+                      {item.iconcurrentpage} {item.label}
+                    </li>
+                  </Link>
+                ) : (
+                  <Link key={index} href={item.href}>
+                    <li
+                      onMouseEnter={() => handleMouseOver(index)}
+                      onMouseLeave={() => handleMouseOut()}
+                      className={classNames({
+                        "text-black hover:bg-red-600 hover:text-white text-2xl":
+                          true, //colors
+                        "flex gap-4 items-center ": true, //layout
+                        "transition-colors duration-300": true, //animation
+                        "rounded-xl p-2 mx-2 pl-10": true, //self style
+                      })}
+                    >
+                      {imageName} {item.label}
+                    </li>
+                  </Link>
+                );
+              } else if (
+                item.namePermission == "permission_report" &&
+                permission.set_permission_report == true
+              ) {
+                return currentPath.match(item.href) ? (
+                  <Link key={index} href={item.href}>
+                    <li
+                      className={classNames({
+                        "text-white bg-red-600 text-2xl": true, //colors
+                        "flex gap-4 items-center ": true, //layout
+                        "transition-colors duration-300": true, //animation
+                        "rounded-xl p-2 mx-2 pl-10": true, //self style
+                      })}
+                    >
+                      {item.iconcurrentpage} {item.label}
+                    </li>
+                  </Link>
+                ) : (
+                  <Link key={index} href={item.href}>
+                    <li
+                      onMouseEnter={() => handleMouseOver(index)}
+                      onMouseLeave={() => handleMouseOut()}
+                      className={classNames({
+                        "text-black hover:bg-red-600 hover:text-white text-2xl":
+                          true, //colors
+                        "flex gap-4 items-center ": true, //layout
+                        "transition-colors duration-300": true, //animation
+                        "rounded-xl p-2 mx-2 pl-10": true, //self style
+                      })}
+                    >
+                      {imageName} {item.label}
+                    </li>
+                  </Link>
+                );
+              } else if (
+                item.namePermission == "permission_admin_manage" &&
+                permission.set_permission_admin_manage == true
+              ) {
+                return currentPath.match(item.href) ? (
+                  <Link key={index} href={item.href}>
+                    <li
+                      className={classNames({
+                        "text-white bg-red-600 text-2xl": true, //colors
+                        "flex gap-4 items-center ": true, //layout
+                        "transition-colors duration-300": true, //animation
+                        "rounded-xl p-2 mx-2 pl-10": true, //self style
+                      })}
+                    >
+                      {item.iconcurrentpage} {item.label}
+                    </li>
+                  </Link>
+                ) : (
+                  <Link key={index} href={item.href}>
+                    <li
+                      onMouseEnter={() => handleMouseOver(index)}
+                      onMouseLeave={() => handleMouseOut()}
+                      className={classNames({
+                        "text-black hover:bg-red-600 hover:text-white text-2xl":
+                          true, //colors
+                        "flex gap-4 items-center ": true, //layout
+                        "transition-colors duration-300": true, //animation
+                        "rounded-xl p-2 mx-2 pl-10": true, //self style
+                      })}
+                    >
+                      {imageName} {item.label}
+                    </li>
+                  </Link>
+                );
+              } else if (
+                item.namePermission == "permission_settings" &&
+                permission.set_permission_settings == true
+              ) {
+                return currentPath.match(item.href) ? (
+                  <Link key={index} href={item.href}>
+                    <li
+                      className={classNames({
+                        "text-white bg-red-600 text-2xl": true, //colors
+                        "flex gap-4 items-center ": true, //layout
+                        "transition-colors duration-300": true, //animation
+                        "rounded-xl p-2 mx-2 pl-10": true, //self style
+                      })}
+                    >
+                      {item.iconcurrentpage} {item.label}
+                    </li>
+                  </Link>
+                ) : (
+                  <Link key={index} href={item.href}>
+                    <li
+                      onMouseEnter={() => handleMouseOver(index)}
+                      onMouseLeave={() => handleMouseOut()}
+                      className={classNames({
+                        "text-black hover:bg-red-600 hover:text-white text-2xl":
+                          true, //colors
+                        "flex gap-4 items-center ": true, //layout
+                        "transition-colors duration-300": true, //animation
+                        "rounded-xl p-2 mx-2 pl-10": true, //self style
+                      })}
+                    >
+                      {imageName} {item.label}
+                    </li>
+                  </Link>
+                );
+              }
+            }
           })}
         </ul>
       </nav>

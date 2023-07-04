@@ -68,7 +68,7 @@ export default function index(props) {
             เข้าสู่ระบบ
           </Text>
           <Input
-            type="number"
+            // type="number"
             name="phone"
             onChange={onChangePhone}
             placeholder="ชื่อผู้ใช้งาน"
