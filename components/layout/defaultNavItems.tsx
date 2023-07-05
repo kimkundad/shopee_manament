@@ -6,9 +6,9 @@ import {
 	HomeIcon,
 	UserGroupIcon,
 } from "@heroicons/react/24/outline";
-import { NavItem } from "./Sidebar";
+// import { NavItem } from "./Sidebar";
 import Image from "next/image";
-export const defaultNavItems: NavItem[] = [
+export const defaultNavItems = [
 	{
 		label: "Dashboard",
 		href: "/dashboard",

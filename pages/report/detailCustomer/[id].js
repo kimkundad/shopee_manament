@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import FormData from "form-data";
 import {
   Flex,
   Text,
@@ -22,12 +23,12 @@ import { useRouter } from "next/router";
 function index() {
   const router = useRouter();
   const data = router.query.id;
-  console.log(data);
+  // console.log(data);
   const [customer, setCustomer] = useState([]);
   const [orders, setOrders] = useState([]);
   useEffect(() => {
-    if (data !== undefined) {
-      async function fecthdata() {
+    async function fecthdata() {
+      if (data !== undefined) {
         const formdata = new FormData();
         formdata.append("uid", data);
         const res = await axios.post(
@@ -37,11 +38,11 @@ function index() {
         setCustomer(res.data.customer[0]);
         setOrders(res.data.orders);
       }
-      fecthdata();
     }
+    fecthdata();
   }, [data]);
 
-  console.log(customer, orders);
+  // console.log(customer, orders);
   return (
     <Box w="100%">
       <Box>
@@ -82,7 +83,9 @@ function index() {
           />
           <Box pl="15px">
             <Text fontWeight="bold" fontSize="28px">
-              {customer?.user_name?.length > 15 ? customer.user_name?.slice(0, 15) + "..." : customer.user_name}
+              {customer?.user_name?.length > 15
+                ? customer.user_name?.slice(0, 15) + "..."
+                : customer.user_name}
             </Text>
             <Text fontSize="25px">
               ID User : {customer.uid} แก้ไขล่าสุด : {customer.updated_at}

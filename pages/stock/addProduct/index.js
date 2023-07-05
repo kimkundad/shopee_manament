@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import FormData from "form-data";
+import { createObjectURL, revokeObjectURL } from 'blob-util';
 import {
   Box,
   Flex,
@@ -191,7 +193,7 @@ function addProduct() {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setImages([...images, URL.createObjectURL(file)]);
+      setImages([...images, createObjectURL(file)]);
       setFiles([...files, file]);
     }
   };
@@ -199,7 +201,7 @@ function addProduct() {
   const handleImageSubUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setImagesSub([...imagesSub, URL.createObjectURL(file)]);
+      setImagesSub([...imagesSub, createObjectURL(file)]);
       setFilesSub([...filesSub, file]);
     }
   };
@@ -260,14 +262,14 @@ function addProduct() {
     onClose: onCloseForm4,
   } = useDisclosure();
   const comfirmSave = (event) => {
-    console.log("files", files);
-    console.log("filesSub", filesSub);
+    // console.log("files", files);
+    // console.log("filesSub", filesSub);
     event.preventDefault();
     onOpenForm1();
   };
 
   const comfirmSaveOption = (event) => {
-    console.log("dataTable", dataTable);
+    // console.log("dataTable", dataTable);
     event.preventDefault();
     modalSaveOption.onOpen();
   };
@@ -400,7 +402,7 @@ function addProduct() {
       statusOption: statusOption,
       subOption: [],
     };
-    console.log("valueSelect", valueSelect);
+    // console.log("valueSelect", valueSelect);
     dataTable.push(arrOption);
     setDataTable(dataTable);
     onCloseForm3();
@@ -580,7 +582,7 @@ function addProduct() {
   const [displayAdditionOption, setDisplayAdditionOption] = useState(false);
   const [displayAddProduct, setDisplayAddProduct] = useState(true);
   function additionOption() {
-    console.log("subProductImg", subProductImg);
+    // console.log("subProductImg", subProductImg);
     setDisplayAdditionOption(true);
     setDisplayAddProduct(false);
   }
@@ -614,7 +616,7 @@ function addProduct() {
       }
     } else {
       if (id == "statusSubOption") {
-        console.log("namefield", id);
+        // console.log("namefield", id);
         if (newArr[index].subOption[subIndex].statusSubOption == true) {
           newArr[index].subOption[subIndex] = {
             ...newArr[index].subOption[subIndex],
@@ -664,8 +666,8 @@ function addProduct() {
   // ฟังก์ชันเปิด modal ยืนยันการสร้างหมวดหมู่
   const handleConfirmAddCategory = () => {
     const isEmpty = tags.filter((tag) => tag === "");
-    console.log("isEmpty", isEmpty);
-    console.log("tags", tags);
+    // console.log("isEmpty", isEmpty);
+    // console.log("tags", tags);
     if (tags.length == 0) {
       setCheckInputCategory(false);
     } else {
@@ -700,7 +702,7 @@ function addProduct() {
   };
 
   const openModalEditCategory = () => {
-    console.log("tags2", category);
+    // console.log("tags2", category);
   };
   // ฟังก์ชันเพิ่ม tag input หมวดหมู่
   // const handleAddTag2 = (event) => {
@@ -711,7 +713,7 @@ function addProduct() {
   // ฟังก์ชันลบ tag input หมวดหมู่
   const handleDeleteTag2 = (id) => {
     modalConfirmDeleteCategory.onOpen();
-    console.log("ID:", id);
+    // console.log("ID:", id);
     setCategoryIdDelete(id);
     // const newTags = [...tags2];
     // newTags.splice(index, 1);
@@ -747,7 +749,7 @@ function addProduct() {
   // ฟังก์ชันเปิด modal ยืนยันการแก้ไขหมวดหมู่
   const handleConfirmEditCategory = () => {
     const isEmpty = tags2.filter((tag) => tag.cat_name === "");
-    console.log("isEmpty", isEmpty);
+    // console.log("isEmpty", isEmpty);
     if (isEmpty.length > 0) {
       setCheckInputCategory2(false);
     } else {
@@ -756,7 +758,7 @@ function addProduct() {
   };
 
   const handleConfirmEditSuccess = () => {
-    console.log("Tags2", tags2);
+    // console.log("Tags2", tags2);
     const data = {
       category: tags2,
     };
@@ -778,22 +780,22 @@ function addProduct() {
 
   const handleImageSelect = (event, index) => {
     const file = event.target.files[0];
-    const reader = new FileReader();
+    // const reader = new FileReader();
 
-    reader.onload = (event) => {
-      const imageDataURL = event.target.result;
+    // reader.onload = (event) => {
+    //   const imageDataURL = event.target.result;
 
       setDataTable((prevData) => {
         const newData = [...prevData];
         newData[index].indexImageOption = [file];
-        newData[index].imagePreviewOption = imageDataURL;
+        newData[index].imagePreviewOption = createObjectURL(file);
         return newData;
       });
-    };
+    // };
 
-    if (file) {
-      reader.readAsDataURL(file);
-    }
+    // if (file) {
+    //   reader.readAsDataURL(file);
+    // }
   };
 
   const deleteImage = (optionIndex) => {

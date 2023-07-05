@@ -8,20 +8,16 @@ import Image from "next/image";
 import { connect, useDispatch, useSelector } from "react-redux";
 import Axios from "axios";
 // define a NavItem prop
-export type NavItem = {
-  label: string;
-  href: string;
-  namePermission: string;
-  icon: React.ReactNode;
-  iconcurrentpage: React.ReactNode;
-};
+// export type NavItem = {
+//   label: string;
+//   href: string;
+//   namePermission: string;
+//   icon: React.ReactNode;
+//   iconcurrentpage: React.ReactNode;
+// };
 // add NavItem prop to component prop
-type Props = {
-  open: boolean;
-  navItems?: NavItem[];
-  setOpen(open: boolean): void;
-};
-const Sidebar = ({ open, navItems = defaultNavItems, setOpen }: Props) => {
+
+const Sidebar = ({ open, navItems = defaultNavItems, setOpen }) => {
   const userInfo = useSelector((App) => App.userInfo);
   const userAuthen = useSelector((App) => App.authen);
   const [isSubadmin, setIsSubadmin] = useState(0);
@@ -39,7 +35,7 @@ const Sidebar = ({ open, navItems = defaultNavItems, setOpen }: Props) => {
     });
   }, []);
 
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef(null);
   useOnClickOutside(ref, (e) => {
     setOpen(false);
   });
@@ -47,7 +43,7 @@ const Sidebar = ({ open, navItems = defaultNavItems, setOpen }: Props) => {
   const currentPath = router.asPath; // returns the current path URL
   const [isHovering, setIsHovering] = useState(-1);
 
-  const handleMouseOver = (index: number) => {
+  const handleMouseOver = (index) => {
     setIsHovering(index);
   };
 

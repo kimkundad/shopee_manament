@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import FormData from "form-data";
 import {
   Flex,
   Switch,
@@ -119,7 +120,7 @@ export default function stock() {
   };
 
   const testconsolelog = () => {
-    console.log("selectedColumns", selectedColumns);
+    // console.log("selectedColumns", selectedColumns);
   };
 
   //setChecked Switch

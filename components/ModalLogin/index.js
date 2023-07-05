@@ -68,7 +68,7 @@ import {
     const handleClick = () => {
         onCloseForm1();
         onCloseForm2();
-        console.log('--->handleClick')
+        // console.log('--->handleClick')
       };
 
       const loginClick = () => {

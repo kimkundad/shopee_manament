@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import ButtonBack from "@/components/button/ButtonBack";
+import FormData from "form-data";
 import {
   Box,
   Text,

@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import ButtonBack from "@/components/button/ButtonBack";
+import FormData from "form-data";
 import {
   Box,
   Text,
@@ -49,56 +50,62 @@ import { BsArrowLeftCircle, BsPerson, BsCameraFill } from "react-icons/bs";
 import { FaRegSave } from "react-icons/fa";
 import { VscSave } from "react-icons/vsc";
 import { connect, useDispatch, useSelector } from "react-redux";
-import { createSlice } from '@reduxjs/toolkit';
-import { useToast } from '@chakra-ui/react'
+import { createSlice } from "@reduxjs/toolkit";
+import { useToast } from "@chakra-ui/react";
 
 export default function Profile() {
-  const toast = useToast()
+  const fileInputRef = useRef(null);
+  const toast = useToast();
   const userInfo = useSelector((App) => App.userInfo);
   const [file, setFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const initialState = {
     isLoading: false,
-    data:null,
-    dataBiller:null,
-    isError:false,
+    data: null,
+    dataBiller: null,
+    isError: false,
     errorData: null,
-};
+  };
   const slice = createSlice({
-    name: 'userInfo',
+    name: "userInfo",
     initialState,
     reducers: {
-        getUserSuccess(state,action){
-            state.isLoading = false;
-            state.data = action.payload;
-        },
-    }
-});
+      getUserSuccess(state, action) {
+        state.isLoading = false;
+        state.data = action.payload;
+      },
+    },
+  });
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     setFile(file);
 
-    const reader = new FileReader();
-    reader.addEventListener("load", (event) => {
-      const image = event.target.result;
-      setImagePreview(image);
-    });
-    reader.readAsDataURL(file);
+    // const reader = new FileReader();
+    // reader.addEventListener("load", (event) => {
+    //   const image = event.target.result;
+    //   setImagePreview(image);
+    // });
+    // reader.readAsDataURL(file);
 
     async function update() {
-      const formdata = new FormData();
-      formdata.append("user_id", userInfo.data[0]?.id);
-      formdata.append("avatar", file);
-      const res = await axios.post(
-        `https://api.sellpang.com/api/editAvatar/`,
-        formdata
-      );
-      dispatch(slice.actions.getUserSuccess([res.data.user]))
-      setImagePreview(res.data.user.avatar)
+      if (event.target.files[0] !== undefined) {
+        const formdata = new FormData();
+        formdata.append("user_id", userInfo.data[0]?.id);
+        formdata.append("avatar", file);
+        const res = await axios.post(
+          `https://api.sellpang.com/api/editAvatar/`,
+          formdata
+        );
+        dispatch(slice.actions.getUserSuccess([res.data.user]));
+        setImagePreview(res.data.user.avatar);
+      }
     }
-    
     update();
+  };
+
+  const handleIconClick = () => {
+    fileInputRef.current.click();
   };
 
   const [fname, setFname] = useState(null);
@@ -126,7 +133,7 @@ export default function Profile() {
         `https://api.sellpang.com/api/getUser`,
         formdataUser
       );
-      setImagePreview(user.data.user.avatar)
+      setImagePreview(user.data.user.avatar);
       const formdata = new FormData();
       formdata.append("user_code", userInfo.data[0].code_user);
       const res = await axios.post(
@@ -155,7 +162,7 @@ export default function Profile() {
     fecthdata();
   }, []);
 
-  const updateOwnerShop = async () => {
+  const updateOwnerShop = async (event) => {
     event.preventDefault();
     const formdata = new FormData();
     formdata.append("fname", fname == null ? " " : fname);
@@ -180,15 +187,15 @@ export default function Profile() {
       `https://api.sellpang.com/api/updateOwnerShop`,
       formdata
     );
-    if(res.data.status){
+    if (res.data.status) {
       toast({
         title: `Updated profile successfully`,
-        position: 'top-right',
-        status: 'success',
+        position: "top-right",
+        status: "success",
         isClosable: true,
-      })
+      });
     }
-    console.log(res);
+    // console.log(res);
   };
 
   return (
@@ -254,6 +261,7 @@ export default function Profile() {
                         type="file"
                         accept="image/*"
                         onChange={handleFileChange}
+                        ref={fileInputRef}
                         style={{
                           position: "absolute",
                           top: 0,
@@ -271,9 +279,7 @@ export default function Profile() {
                         boxSize={6}
                         color={"#f84c01"}
                         cursor="pointer"
-                        onClick={() => {
-                          document.querySelector("input[type='file']").click();
-                        }}
+                        onClick={handleIconClick}
                         position="relative"
                         zIndex={2}
                       />

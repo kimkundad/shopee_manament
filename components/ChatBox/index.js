@@ -13,15 +13,15 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import moment from "moment";
 import { useRouter } from "next/router";
-
+import FormData from "form-data";
 
 export default function Layout(props) {
   let date = "";
 
   const [messages, setMessage] = useState(null);
   useEffect(() => {
-    if (props?.userId !== null) {
-      async function fetchData() {
+    async function fetchData() {
+      if (props?.userId !== null) {
         const formdata = new FormData();
         let user_id = props?.userId;
         let shop_id = props?.shop_id;
@@ -33,17 +33,16 @@ export default function Layout(props) {
         );
         setMessage(res.data.message);
       }
-
-      fetchData();
     }
+    fetchData();
   }, [props?.userId]);
 
   useEffect(() => {
-    if(props?.lastMessage?.length > 0 || props?.lastMessage !== null){
-      const newArr = [...messages,props?.lastMessage[0]];
-      setMessage(newArr)
+    if (props?.lastMessage?.length > 0 || props?.lastMessage !== null) {
+      const newArr = [...messages, props?.lastMessage[0]];
+      setMessage(newArr);
     }
-  },[props?.lastMessage])
+  }, [props?.lastMessage]);
 
   return (
     <>
@@ -246,7 +245,6 @@ export default function Layout(props) {
           </Box>
         )}
       </Box>
-      
     </>
   );
 }

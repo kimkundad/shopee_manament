@@ -1,4 +1,5 @@
 import React from "react";
+import FormData from "form-data";
 import {
   Flex,
   Text,
@@ -71,7 +72,6 @@ export default function useChats() {
       const res = await axios.get(
         `https://api.sellpang.com/api/getMessage2/${item.id}/${router.query.id}/${type}`
       );
-      console.log("res?.message-->", res?.data?.message);
       setMessages(res?.data?.message);
     }
     fetchData();
@@ -85,7 +85,7 @@ export default function useChats() {
     chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
   };
 
-  const sendMessage = async () => {
+  const sendMessage = async (event) => {
     event.preventDefault();
     if (text !== "" && userId !== null) {
       // eslint-disable-next-line no-inner-declarations
@@ -128,7 +128,6 @@ export default function useChats() {
           formdata
         );
         setUsers(res.data.users);
-      } else {
       }
     }
     fecthdata();
@@ -155,8 +154,8 @@ export default function useChats() {
   // }, [userId]);
 
   useEffect(() => {
-    if (searchUser !== null) {
-      async function fecthdata() {
+    async function fecthdata() {
+      if (searchUser !== null) {
         const formdata = new FormData();
         formdata.append("shop_id", shopId);
         formdata.append("name", searchUser);
@@ -166,8 +165,8 @@ export default function useChats() {
         );
         setUsers(res.data.users);
       }
-      fecthdata();
     }
+    fecthdata();
   }, [searchUser]);
 
   const refreshUserChat = () => {
@@ -618,8 +617,8 @@ export default function useChats() {
                         value={text}
                         placeholder="พิมข้อความ"
                         borderRadius="3xl"
-                        border={'2px solid #dc2626'}
-                        bgColor={'gray.100'}
+                        border={"2px solid #dc2626"}
+                        bgColor={"gray.100"}
                         onChange={(e) => setText(e.target.value)}
                         // onClick={handleTouch}
                       />

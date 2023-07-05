@@ -1,5 +1,6 @@
 import React, { useLayoutEffect, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import clipboardy from 'clipboardy';
 import {
   Flex,
   Switch,
@@ -85,7 +86,7 @@ function index(product) {
       ...prevState,
       [shopId]: !prevState[shopId],
     }));
-    console.log(modalStates);
+    // console.log(modalStates);
   };
   // end function เปิด modal แก้ไขข้อมูลร้านค้าของแต่ละ shopID
 
@@ -95,7 +96,7 @@ function index(product) {
   const handleCopyClick = (shopUrl) => () => {
     const currentUrl = 'https://sellpang.com';
     const URLShop = `${currentUrl}/${shopUrl}`;
-    navigator.clipboard.writeText(URLShop);
+    clipboardy.write(URLShop);
     setCopiedShopUrl(shopUrl);
   };
   // end function copy url ของร้านค้า
@@ -144,7 +145,7 @@ function index(product) {
       data
     ).then(function (response) {
       if (response.data.success) {
-        console.log("shopID and newStatus : ", shopID, newStatus);
+        // console.log("shopID and newStatus : ", shopID, newStatus);
       }
     });
   };

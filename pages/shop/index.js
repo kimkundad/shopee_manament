@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import FormData from "form-data";
 import {
   Flex,
   Switch,
@@ -286,7 +287,7 @@ export default function shop() {
   // สิ้นสุด modal แสดงว่าจะยืนยันการสร้างร้านค้าใช่หือไม่
 
   const handleConfirm = () => {
-    console.log("selectedProducts", selectedProducts);
+    // console.log("selectedProducts", selectedProducts);
     modalSelectTheme.onClose();
     modalConfirm.onOpen();
   };
@@ -523,7 +524,7 @@ export default function shop() {
   const handleCategorySelect = (selected) => {
     const updatedSelectedCategories = [...selected];
     setSelectedCategories(updatedSelectedCategories);
-    console.log("Selected categories:", updatedSelectedCategories);
+    // console.log("Selected categories:", updatedSelectedCategories);
   };
 
   return (

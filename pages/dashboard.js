@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useLayoutEffect, useRef } from "react";
+import FormData from "form-data";
 import {
   Flex,
   Text,
@@ -53,7 +54,7 @@ export default function DashBoard() {
     setStartDateBar(start.unix());
     setEndDateBar(end.unix());
   };
-  console.log(userInfo);
+  // console.log(userInfo);
   useEffect(() => {
     async function fecthdata() {
       const formdata = new FormData();

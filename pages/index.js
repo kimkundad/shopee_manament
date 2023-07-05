@@ -44,7 +44,6 @@ export default function index(props) {
       password,
     };
     dispatch(getUserAuthen(user));
-    console.log("--->", user);
     /* props.onClose(); */
   };
 

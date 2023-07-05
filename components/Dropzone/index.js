@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { createObjectURL, revokeObjectURL } from 'blob-util';
 import {
   Box,
   Text,
@@ -53,14 +54,14 @@ function Dropzone({ setImage }) {
       setImage(
         acceptedFiles.map((file) =>
           Object.assign(file, {
-            preview: URL.createObjectURL(file),
+            preview: createObjectURL(file),
           })
         )
       );
       setFiles(
         acceptedFiles.map((file) =>
           Object.assign(file, {
-            preview: URL.createObjectURL(file),
+            preview: createObjectURL(file),
           })
         )
       );
@@ -75,7 +76,7 @@ function Dropzone({ setImage }) {
           style={img}
           // Revoke data uri after image is loaded
           onLoad={() => {
-            URL.revokeObjectURL(file.preview);
+            revokeObjectURL(file.preview);
           }}
         />
       </div>
@@ -89,7 +90,7 @@ function Dropzone({ setImage }) {
 
   useEffect(() => {
     // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
-    return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
+    return () => files.forEach((file) => revokeObjectURL(file.preview));
   }, []);
 
   return (

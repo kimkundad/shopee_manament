@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import FormData from "form-data";
+import { createObjectURL, revokeObjectURL } from 'blob-util';
 import {
   Box,
   Flex,
@@ -238,7 +240,7 @@ function UseEditProduct() {
           );
           setImagesSub(subImageUrls);
         }
-        console.log("product", product);
+        // console.log("product", product);
         setImages(imageUrls);
 
         setProduct(product.data.product[0]);
@@ -300,7 +302,7 @@ function UseEditProduct() {
           setSelected(productSelect);
         }
 
-        console.log("dataTable", dataTable);
+        // console.log("dataTable", dataTable);
       }
     }
 
@@ -327,7 +329,7 @@ function UseEditProduct() {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setImages([...images, URL.createObjectURL(file)]);
+      setImages([...images, createObjectURL(file)]);
       setFiles([...files, file]);
     }
   };
@@ -335,7 +337,7 @@ function UseEditProduct() {
   const handleImageSubUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setImagesSub([...imagesSub, URL.createObjectURL(file)]);
+      setImagesSub([...imagesSub, createObjectURL(file)]);
       setFilesSub([...filesSub, file]);
     }
   };
@@ -349,7 +351,7 @@ function UseEditProduct() {
       formdata
     );
     if (deleteImgProduct.data?.success) {
-      console.log(deleteImgProduct.data?.success);
+      // console.log(deleteImgProduct.data?.success);
     }
     const newTags = [...images];
     newTags.splice(index, 1);
@@ -371,10 +373,10 @@ function UseEditProduct() {
         formdata
       );
       if (deleteImgSubProduct.data?.success) {
-        console.log(deleteImgSubProduct.data?.success);
+        // console.log(deleteImgSubProduct.data?.success);
       }
     }
-    console.log("index", index);
+    // console.log("index", index);
     let real_index = "";
     if (index !== 0) {
       real_index = index - 1;
@@ -427,8 +429,8 @@ function UseEditProduct() {
     onClose: onCloseForm4,
   } = useDisclosure();
   const comfirmSave = (event) => {
-    console.log("dataTable", dataTable);
-    console.log("filesSub", filesSub);
+    // console.log("dataTable", dataTable);
+    // console.log("filesSub", filesSub);
     // console.log("imageData", imageData);
     event.preventDefault();
     onOpenForm1();
@@ -787,9 +789,9 @@ function UseEditProduct() {
       )
       .then(function (response) {
         if (response.data.success) {
-          console.log(response.data.success);
+          // console.log(response.data.success);
         } else {
-          console.log("Delete title option not working");
+          // console.log("Delete title option not working");
         }
       });
     setOption("ตัวเลือกที่ 1");
@@ -804,9 +806,9 @@ function UseEditProduct() {
       )
       .then(function (response) {
         if (response.data.success) {
-          console.log(response.data.success);
+          // console.log(response.data.success);
         } else {
-          console.log("Delete title sub option not working");
+          // console.log("Delete title sub option not working");
         }
       });
     setSubOption("ตัวเลือกที่ 2");
@@ -1009,32 +1011,32 @@ function UseEditProduct() {
     // console.log("files", files);
     // console.log("imagesSub", imagesSub);
     // console.log("filesSub", filesSub);
-    console.log("option", option);
-    console.log("Suboption", subOption);
-    console.log("dataTable", dataTable);
+    // console.log("option", option);
+    // console.log("Suboption", subOption);
+    // console.log("dataTable", dataTable);
     event.preventDefault();
     modalSaveOption.onOpen();
   };
 
   const handleImageSelect = (event, index) => {
     const file = event.target.files[0];
-    const reader = new FileReader();
+    // const reader = new FileReader();
 
-    reader.onload = (event) => {
-      const imageDataURL = event.target.result;
+    // reader.onload = (event) => {
+    //   const imageDataURL = event.target.result;
 
       setDataTable((prevData) => {
         const newData = [...prevData];
         newData[index].img_name = [file];
         newData[index].indexImageOption = [file];
-        newData[index].imagePreviewOption = imageDataURL;
+        newData[index].imagePreviewOption = createObjectURL(file);
         return newData;
       });
-    };
+    // };
 
-    if (file) {
-      reader.readAsDataURL(file);
-    }
+    // if (file) {
+    //   reader.readAsDataURL(file);
+    // }
   };
 
   const deleteImage = (optionIndex) => {
@@ -1049,22 +1051,22 @@ function UseEditProduct() {
 
   const handleImageSelect2 = (event, index) => {
     const file = event.target.files[0];
-    const reader = new FileReader();
+    // const reader = new FileReader();
 
-    reader.onload = (event) => {
-      const imageDataURL = event.target.result;
+    // reader.onload = (event) => {
+    //   const imageDataURL = event.target.result;
 
       setDataTable((prevData) => {
         const newData = [...prevData];
         newData[index].indexImageOption = [file];
-        newData[index].imagePreviewOption = imageDataURL;
+        newData[index].imagePreviewOption = createObjectURL(file);
         return newData;
       });
-    };
+    // };
 
-    if (file) {
-      reader.readAsDataURL(file);
-    }
+    // if (file) {
+    //   reader.readAsDataURL(file);
+    // }
   };
 
   const deleteImage2 = (optionIndex) => {

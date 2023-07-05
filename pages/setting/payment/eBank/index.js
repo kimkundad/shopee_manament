@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import FormData from "form-data";
 import {
   Box,
   Text,
@@ -64,8 +65,8 @@ export default function Purchase() {
   const router = useRouter();
 
   useEffect(() => {
-    if (banks == null) {
-      async function fetchData() {
+    async function fetchData() {
+      if (banks == null) {
         const formdataBank = new FormData();
         formdataBank.append("user_id", userInfo.data[0]?.id);
         formdataBank.append("type", "setting");
@@ -75,9 +76,8 @@ export default function Purchase() {
         );
         setBanks(bank.data.banks);
       }
-
-      fetchData();
     }
+    fetchData();
   }, []);
 
   const { isOpen, onOpen, onClose } = useDisclosure([]);
@@ -262,48 +262,47 @@ export default function Purchase() {
         </Center>
       </Box>
       <Modal onClose={onClose} size="md" isOpen={isOpen} isCentered>
-          <ModalOverlay />
-          <ModalContent alignSelf="center" py="20px">
-            <ModalBody alignSelf="center">
-              <ModalCloseButton />
-              <Box textAlign="center">
-                <Image src="/images/binred.png" alt="" h="200px" mx="auto" />
-                <Text fontWeight="bold" fontSize="35px" pt="10px">
-                  ยืนยันการลบบัญชี
-                </Text>
+        <ModalOverlay />
+        <ModalContent alignSelf="center" py="20px">
+          <ModalBody alignSelf="center">
+            <ModalCloseButton />
+            <Box textAlign="center">
+              <Image src="/images/binred.png" alt="" h="200px" mx="auto" />
+              <Text fontWeight="bold" fontSize="35px" pt="10px">
+                ยืนยันการลบบัญชี
+              </Text>
+            </Box>
+          </ModalBody>
+          <ModalFooter alignSelf="center">
+            <HStack justifyContent="center" pt="15px">
+              <Box borderRadius="md" border="1px solid">
+                <Button
+                  w="100%"
+                  onClick={() => {
+                    onClose();
+                  }}
+                >
+                  <Text fontSize="18px">ยกเลิก</Text>
+                </Button>
               </Box>
-            </ModalBody>
-            <ModalFooter alignSelf="center">
-              <HStack justifyContent="center" pt="15px">
-                <Box borderRadius="md" border="1px solid">
-                  <Button
-                    w="100%"
-                    onClick={() => {
-                      onClose();
-                    }}
-                  >
-                    <Text fontSize="18px">ยกเลิก</Text>
-                  </Button>
-                </Box>
-                <Spacer />
-                <Box>
-                  <Button
-                    w="100%"
-                    bg="red"
-                    color="white"
-                    onClick={() => {
-                      onClose();
-                      deleteAccount();
-                    }}
-                  >
-                    <Text fontSize="18px">ยืนยัน</Text>
-                  </Button>
-                </Box>
-              </HStack>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
+              <Spacer />
+              <Box>
+                <Button
+                  w="100%"
+                  bg="red"
+                  color="white"
+                  onClick={() => {
+                    onClose();
+                    deleteAccount();
+                  }}
+                >
+                  <Text fontSize="18px">ยืนยัน</Text>
+                </Button>
+              </Box>
+            </HStack>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
-    
   );
 }

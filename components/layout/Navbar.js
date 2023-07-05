@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import classNames from "classnames";
+import FormData from "form-data";
 import {
   Flex,
   Box,
@@ -19,10 +20,8 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { getUserLogout } from "@/store/slices/authen";
 import { newOrder } from "@/hooks/notification";
-type Props = {
-  onMenuButtonClick(): void;
-};
-const Navbar = (props: Props) => {
+
+const Navbar = (props) => {
   const userInfo = useSelector((App) => App.userInfo);
   const userAuthen = useSelector((App) => App.authen);
   const dispatch = useDispatch();
@@ -54,7 +53,7 @@ const Navbar = (props: Props) => {
         userInfo.data !== null ? userInfo.data[0]?.code_user : null
       }/${userInfo.data !== null ? userInfo.data[0]?.id : null}`
     );
-    console.log(res.data);
+    // console.log(res.data);
     setNotification(res.data.noti);
   };
 

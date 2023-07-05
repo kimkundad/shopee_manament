@@ -58,7 +58,7 @@ export default function TableCreateProduct() {
 
     const allChecked = checkedItems.every(Boolean)
     const isIndeterminate = checkedItems.some(Boolean) && !allChecked
-    console.log(checkedItems);
+    // console.log(checkedItems);
 
     return (
         <>

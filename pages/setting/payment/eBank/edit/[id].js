@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import ButtonBack from "@/components/button/ButtonBack";
+import FormData from 'form-data';
+import { setTimeout, clearTimeout } from 'timers';
 import {
   Box,
   Text,

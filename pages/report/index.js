@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from "react";
+import clipboardy from 'clipboardy';
+import FormData from 'form-data';
+import { createObjectURL, revokeObjectURL } from 'blob-util';
 import {
   Flex,
   Text,
@@ -182,213 +185,213 @@ function index() {
 
   const copyLink = async (link) => {
     try {
-      await navigator.clipboard.writeText(link);
-      console.log("Text copied to clipboard");
+      await clipboardy.write(link);
+      // console.log("Text copied to clipboard");
     } catch (err) {
-      console.error("Failed to copy text: ", err);
+      // console.error("Failed to copy text: ", err);
     }
   };
 
   const doc = new jsPDF();
   const printPDF = async () => {
-    for (let i = 1; i <= totalPages; i++) {
-      const startDateTimestamp = selectedRange.startDate.unix();
-      const endDateTimestamp = selectedRange.endDate.unix();
-      const formdata = new FormData();
-      formdata.append("itemsPerPage", itemsPerPage);
-      formdata.append("startDate", startDateTimestamp);
-      formdata.append("endDate", endDateTimestamp);
-      formdata.append("search", search);
-      formdata.append("user_code", userInfo.data[0].code_user);
-      const res = await axios.post(
-        `https://api.sellpang.com/api/getReports?page=${i}`,
-        formdata
-      );
-      console.log('res', res);
-      doc.addFileToVFS("DBAdmanX.ttf", DBadmanX);
-      doc.addFileToVFS("DB-Adman-X-Bd.ttf", DBadmanXBold);
-      doc.addFont("DBAdmanX.ttf", "DBadmanX", "normal");
-      doc.addFont("DB-Adman-X-Bd.ttf", "DBadmanXBold", "bold");
-      doc.setFont("DBadmanX");
-      doc.setFont("DBadmanXBold", "bold");
-      // Add recipient's name, address and phone number
-      doc.setFontSize(44);
-      doc.setTextColor(255, 0, 0);
-      let y1 = 11;
-      const textWidth1 =
-        (doc.getStringUnitWidth("รายงาน") * doc.internal.getFontSize()) /
-        doc.internal.scaleFactor;
-      const x1 = (doc.internal.pageSize.width - textWidth1 - 14) / 2;
-      // Add the image to the PDF document
-      doc.addImage("/images/menu/report.png", "JPEG", x1, y1, 10, 10);
+    // for (let i = 1; i <= totalPages; i++) {
+    //   const startDateTimestamp = selectedRange.startDate.unix();
+    //   const endDateTimestamp = selectedRange.endDate.unix();
+    //   const formdata = new FormData();
+    //   formdata.append("itemsPerPage", itemsPerPage);
+    //   formdata.append("startDate", startDateTimestamp);
+    //   formdata.append("endDate", endDateTimestamp);
+    //   formdata.append("search", search);
+    //   formdata.append("user_code", userInfo.data[0].code_user);
+    //   const res = await axios.post(
+    //     `https://api.sellpang.com/api/getReports?page=${i}`,
+    //     formdata
+    //   );
+    //   // console.log('res', res);
+    //   doc.addFileToVFS("DBAdmanX.ttf", DBadmanX);
+    //   doc.addFileToVFS("DB-Adman-X-Bd.ttf", DBadmanXBold);
+    //   doc.addFont("DBAdmanX.ttf", "DBadmanX", "normal");
+    //   doc.addFont("DB-Adman-X-Bd.ttf", "DBadmanXBold", "bold");
+    //   doc.setFont("DBadmanX");
+    //   doc.setFont("DBadmanXBold", "bold");
+    //   // Add recipient's name, address and phone number
+    //   doc.setFontSize(44);
+    //   doc.setTextColor(255, 0, 0);
+    //   let y1 = 11;
+    //   const textWidth1 =
+    //     (doc.getStringUnitWidth("รายงาน") * doc.internal.getFontSize()) /
+    //     doc.internal.scaleFactor;
+    //   const x1 = (doc.internal.pageSize.width - textWidth1 - 14) / 2;
+    //   // Add the image to the PDF document
+    //   doc.addImage("/images/menu/report.png", "JPEG", x1, y1, 10, 10);
 
-      // Calculate the width of the image
-      let imgWidth = 10;
+    //   // Calculate the width of the image
+    //   let imgWidth = 10;
 
-      // Add the text to the PDF document, aligned with the right edge of the image
-      doc.text("รายงาน", x1 + imgWidth + 5, 10 + 10);
+    //   // Add the text to the PDF document, aligned with the right edge of the image
+    //   doc.text("รายงาน", x1 + imgWidth + 5, 10 + 10);
 
-      doc.setFont("DBadmanX", "normal");
-      doc.setFontSize(12);
-      doc.setTextColor(0, 0, 0);
+    //   doc.setFont("DBadmanX", "normal");
+    //   doc.setFontSize(12);
+    //   doc.setTextColor(0, 0, 0);
 
-      const x2 = doc.internal.pageSize.width - 35;
-      doc.text("วันที่ : 12/11/55", x2, 30, { align: "left" });
+    //   const x2 = doc.internal.pageSize.width - 35;
+    //   doc.text("วันที่ : 12/11/55", x2, 30, { align: "left" });
 
-      const x3 = doc.internal.pageSize.width - 35;
-      doc.text("เวลา : 14:12:12 น.", x3, 35, { align: "left" });
-      /* const columns = ["วันที่", "ชื่อร้านค้า", "ชื่อสินค้า", "รหัสสินค้า", "ลิงค์ร้านค้า", "เลขคำสั่งชื้อ", "ชื่อลูกค้า", "ที่อยู่", "เบอร์โทรศัพท์", "จำนวนสั่งซื้อ", "ยอดขาย"]; */
+    //   const x3 = doc.internal.pageSize.width - 35;
+    //   doc.text("เวลา : 14:12:12 น.", x3, 35, { align: "left" });
+    //   /* const columns = ["วันที่", "ชื่อร้านค้า", "ชื่อสินค้า", "รหัสสินค้า", "ลิงค์ร้านค้า", "เลขคำสั่งชื้อ", "ชื่อลูกค้า", "ที่อยู่", "เบอร์โทรศัพท์", "จำนวนสั่งซื้อ", "ยอดขาย"]; */
 
-      const headers = [
-        "วันที่",
-        "ชื่อร้านค้า",
-        "ชื่อสินค้า",
-        "รหัสสินค้า",
-        "เลขคำสั่งชื้อ",
-        "ชื่อลูกค้า",
-        "ที่อยู่",
-        "เบอร์โทรศัพท์",
-        "จำนวนสั่งซื้อ",
-        "ยอดขาย",
-      ];
+    //   const headers = [
+    //     "วันที่",
+    //     "ชื่อร้านค้า",
+    //     "ชื่อสินค้า",
+    //     "รหัสสินค้า",
+    //     "เลขคำสั่งชื้อ",
+    //     "ชื่อลูกค้า",
+    //     "ที่อยู่",
+    //     "เบอร์โทรศัพท์",
+    //     "จำนวนสั่งซื้อ",
+    //     "ยอดขาย",
+    //   ];
 
-      // Set the table properties
-      const tableTop = 40; // Y-coordinate for the top of the table
-      const tableLeft = 5; // X-coordinate for the left of the table
-      const lineHeight = 10; // Minimum line height for text
-      const padding = 2; // Padding for each cell
-      // Calculate the cell width based on available space
-      const availableWidth = doc.internal.pageSize.getWidth() - tableLeft * 2;
-      const cellWidth = availableWidth / headers.length;
+    //   // Set the table properties
+    //   const tableTop = 40; // Y-coordinate for the top of the table
+    //   const tableLeft = 5; // X-coordinate for the left of the table
+    //   const lineHeight = 10; // Minimum line height for text
+    //   const padding = 2; // Padding for each cell
+    //   // Calculate the cell width based on available space
+    //   const availableWidth = doc.internal.pageSize.getWidth() - tableLeft * 2;
+    //   const cellWidth = availableWidth / headers.length;
 
-      // Set the initial position for the table
-      let xPos = tableLeft;
-      let yPos = tableTop;
+    //   // Set the initial position for the table
+    //   let xPos = tableLeft;
+    //   let yPos = tableTop;
 
-      // Set the font size and style
-      doc.setFontSize(10);
-      doc.setFont("DBadmanXBold", "bold");
-      // Calculate the maximum cell height in each row
-      let newArr = [];
-      res.data.reports.data.forEach((item, index) => {
-        newArr = [
-          ...newArr,
-          item.type == 1
-            ? [
-                item.created_at,
-                item.name_shop,
-                item.name_product,
-                item.sku_type_1 == null ? "0" : item.sku_type_1,
-                item.invoice_id,
-                item.name,
-                item.province,
-                item.tel,
-                item.num,
-                item.price * item.num,
-              ]
-            : item.type == 2
-            ? [
-                item.created_at,
-                item.name_shop,
-                item.name_product,
-                item.sku_type_2 == null ? "0" : item.sku_type_2,
-                item.invoice_id,
-                item.name,
-                item.province,
-                item.tel,
-                item.num,
-                item.price * item.num,
-              ]
-            : [
-                item.created_at,
-                item.name_shop,
-                item.name_product,
-                item.sku_type_3 == null ? "0" : item.sku_type_3,
-                item.invoice_id,
-                item.name,
-                item.province,
-                item.tel,
-                item.num,
-                item.price * item.num,
-              ],
-        ];
-      });
-      newArr = [
-        ...newArr,
-        ["ยอดขายรวม", "", "", "", "", "", "", "", sumOrders, sumSales],
-      ];
-      console.log('newArr', newArr);
-      const rowHeights = [];
-      newArr.map((row) => {
-        let maxHeight = 0; // Maximum height of the current row
-        console.log('row', row);
-        row.forEach((cell) => {
-          console.log('cell', cell);
-          const cellHeight =
-            doc.getTextDimensions(cell, { maxWidth: cellWidth - padding * 2 })
-              .h +
-            padding * 2;
-          maxHeight = Math.max(maxHeight, cellHeight);
-        });
-        if (maxHeight > 20) {
-          maxHeight = maxHeight / 1.5;
-        }
-        rowHeights.push(maxHeight);
-      });
-      // Draw the table headers
-      headers.forEach((header) => {
-        doc.setFillColor(255, 0, 0); // Set fill color for header
-        doc.rect(xPos, yPos, cellWidth, lineHeight, "F"); // Draw filled rectangle for header
-        doc.setTextColor(255, 255, 255);
-        doc.text(header, xPos + padding, yPos + padding + lineHeight / 2); // Draw header text
-        xPos += cellWidth; // Move to the next column
-      });
-      doc.setFontSize(8);
-      doc.setFont("DBadmanX", "normal");
-      // Draw the table rows
-      yPos += lineHeight; // Move to the first row position
+    //   // Set the font size and style
+    //   doc.setFontSize(10);
+    //   doc.setFont("DBadmanXBold", "bold");
+    //   // Calculate the maximum cell height in each row
+    //   let newArr = [];
+    //   res.data.reports.data.forEach((item, index) => {
+    //     newArr = [
+    //       ...newArr,
+    //       item.type == 1
+    //         ? [
+    //             item.created_at,
+    //             item.name_shop,
+    //             item.name_product,
+    //             item.sku_type_1 == null ? "0" : item.sku_type_1,
+    //             item.invoice_id,
+    //             item.name,
+    //             item.province,
+    //             item.tel,
+    //             item.num,
+    //             item.price * item.num,
+    //           ]
+    //         : item.type == 2
+    //         ? [
+    //             item.created_at,
+    //             item.name_shop,
+    //             item.name_product,
+    //             item.sku_type_2 == null ? "0" : item.sku_type_2,
+    //             item.invoice_id,
+    //             item.name,
+    //             item.province,
+    //             item.tel,
+    //             item.num,
+    //             item.price * item.num,
+    //           ]
+    //         : [
+    //             item.created_at,
+    //             item.name_shop,
+    //             item.name_product,
+    //             item.sku_type_3 == null ? "0" : item.sku_type_3,
+    //             item.invoice_id,
+    //             item.name,
+    //             item.province,
+    //             item.tel,
+    //             item.num,
+    //             item.price * item.num,
+    //           ],
+    //     ];
+    //   });
+    //   newArr = [
+    //     ...newArr,
+    //     ["ยอดขายรวม", "", "", "", "", "", "", "", sumOrders, sumSales],
+    //   ];
+    //   // console.log('newArr', newArr);
+    //   const rowHeights = [];
+    //   newArr.map((row) => {
+    //     let maxHeight = 0; // Maximum height of the current row
+    //     // console.log('row', row);
+    //     row.forEach((cell) => {
+    //       // console.log('cell', cell);
+    //       const cellHeight =
+    //         doc.getTextDimensions(cell, { maxWidth: cellWidth - padding * 2 })
+    //           .h +
+    //         padding * 2;
+    //       maxHeight = Math.max(maxHeight, cellHeight);
+    //     });
+    //     if (maxHeight > 20) {
+    //       maxHeight = maxHeight / 1.5;
+    //     }
+    //     rowHeights.push(maxHeight);
+    //   });
+    //   // Draw the table headers
+    //   headers.forEach((header) => {
+    //     doc.setFillColor(255, 0, 0); // Set fill color for header
+    //     doc.rect(xPos, yPos, cellWidth, lineHeight, "F"); // Draw filled rectangle for header
+    //     doc.setTextColor(255, 255, 255);
+    //     doc.text(header, xPos + padding, yPos + padding + lineHeight / 2); // Draw header text
+    //     xPos += cellWidth; // Move to the next column
+    //   });
+    //   doc.setFontSize(8);
+    //   doc.setFont("DBadmanX", "normal");
+    //   // Draw the table rows
+    //   yPos += lineHeight; // Move to the first row position
 
-      newArr.forEach((row, rowIndex) => {
-        const rowHeight = rowHeights[rowIndex]; // Get the calculated height for the current row
-        xPos = tableLeft; // Reset the X position for each row
-        row.forEach((cell, cellIndex) => {
-          let value = cell.toString();
-          doc.setTextColor(0, 0, 0);
-          if (rowIndex % 2 != 0) {
-            doc.setFillColor(255, 255, 255);
-          } else {
-            doc.setFillColor(238, 238, 238);
-          }
-          doc.rect(xPos, yPos, cellWidth, rowHeight, "F"); // Draw filled rectangle for cell
-          let divide = rowHeight / 10 + rowHeight / 10;
-          doc.text(value, xPos + padding, yPos + rowHeight / divide, {
-            maxWidth: cellWidth - padding * 2,
-            align: "left",
-            baseline: "alphabetic",
-          }); // Draw cell text
+    //   newArr.forEach((row, rowIndex) => {
+    //     const rowHeight = rowHeights[rowIndex]; // Get the calculated height for the current row
+    //     xPos = tableLeft; // Reset the X position for each row
+    //     row.forEach((cell, cellIndex) => {
+    //       let value = cell.toString();
+    //       doc.setTextColor(0, 0, 0);
+    //       if (rowIndex % 2 != 0) {
+    //         doc.setFillColor(255, 255, 255);
+    //       } else {
+    //         doc.setFillColor(238, 238, 238);
+    //       }
+    //       doc.rect(xPos, yPos, cellWidth, rowHeight, "F"); // Draw filled rectangle for cell
+    //       let divide = rowHeight / 10 + rowHeight / 10;
+    //       doc.text(value, xPos + padding, yPos + rowHeight / divide, {
+    //         maxWidth: cellWidth - padding * 2,
+    //         align: "left",
+    //         baseline: "alphabetic",
+    //       }); // Draw cell text
 
-          xPos += cellWidth; // Move to the next column
-        });
-        yPos += rowHeight; // Move to the next row position
-      });
-      if (i !== totalPages) {
-        doc.addPage();
-      }
-    }
+    //       xPos += cellWidth; // Move to the next column
+    //     });
+    //     yPos += rowHeight; // Move to the next row position
+    //   });
+    //   if (i !== totalPages) {
+    //     doc.addPage();
+    //   }
+    // }
 
-    const pdfBlob = doc.output("blob");
+    // const pdfBlob = doc.output("blob");
 
-    // Create a blob URL
-    const url = URL.createObjectURL(pdfBlob);
+    // // Create a blob URL
+    // const url = createObjectURL(pdfBlob);
 
-    // Open the PDF in a new tab
-    window.open(url, "_blank");
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `a.pdf`;
-    link.click();
-    link.remove();
-    URL.revokeObjectURL(url);
+    // // Open the PDF in a new tab
+    // window.open(url, "_blank");
+    // const link = document.createElement("a");
+    // link.href = url;
+    // link.download = `a.pdf`;
+    // link.click();
+    // link.remove();
+    // revokeObjectURL(url);
   };
 
   return (
@@ -434,7 +437,7 @@ function index() {
             variant="solid"
             color="white"
             _hover={{}}
-            onClick={printPDF}
+            // onClick={printPDF}
           >
             พิมพ์รายงาน
           </Button>

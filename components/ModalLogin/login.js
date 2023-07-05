@@ -64,7 +64,7 @@ import {
             password,
           }
           dispatch(getUserAuthen(user))
-          console.log('--->', user)
+          // console.log('--->', user)
           props.onClose()
     }
 

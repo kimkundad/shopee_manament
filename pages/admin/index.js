@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import clipboardy from "clipboardy";
+import FormData from 'form-data';
 import {
   Box,
   Text,
@@ -118,8 +120,6 @@ export default function AdminManagement() {
   const [perAdminManage, setPerAdminManage] = useState(false);
   const [perSettings, setPerSettings] = useState(false);
 
-  console.log('userAuthen', userAuthen)
-
   // function set data craete sub admin
   const handleSwitchDashboardChange = () => {
     setPerDashboard(!perDashboard);
@@ -178,9 +178,7 @@ export default function AdminManagement() {
         "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${userAuthen.token}`,
       },
-    }).then(function (
-      response
-    ) {
+    }).then(function (response) {
       // console.log('response.data.users', response.data.userInfo);
       setAllUsers(response.data.users);
     });
@@ -242,34 +240,34 @@ export default function AdminManagement() {
     );
   };
 
-  const copyUrlAdmin = () => {
-    navigator.clipboard.writeText("http://admin.picpang.com/login");
+  const copyUrlAdmin = async () => {
+    await clipboardy.write("http://admin.picpang.com/login");
     setInputValueURL("คัดลอกสำเร็จ!");
   };
 
-  const copyUrlAdminEdit = () => {
-    navigator.clipboard.writeText("http://admin.picpang.com/login");
+  const copyUrlAdminEdit = async () => {
+    await clipboardy.write("http://admin.picpang.com/login");
     setInputValueURLEdit("คัดลอกสำเร็จ!");
   };
 
-  const copyAllAdmin = () => {
+  const copyAllAdmin = async () => {
     const accountAdmin =
       "ลิงค์เข้าใช้งาน : http://admin.picpang.com/login\nUsername : " +
       createEmailSubAdmin +
       "\nPassword : " +
       createPasswordSubAdmin;
-    navigator.clipboard.writeText(accountAdmin);
+    await clipboardy.write(accountAdmin);
     modalCopy.onClose();
     modalSuccess.onOpen();
   };
 
-  const copyAllAdminEdit = () => {
+  const copyAllAdminEdit = async () => {
     const accountAdmin =
       "ลิงค์เข้าใช้งาน : http://admin.picpang.com/login\nUsername : " +
       editEmailSubAdmin +
       "\nPassword : " +
       editPasswordSubAdmin;
-    navigator.clipboard.writeText(accountAdmin);
+    await clipboardy.write(accountAdmin);
     modalCopyEdit.onClose();
     modalEditSuccess.onOpen();
   };

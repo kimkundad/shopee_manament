@@ -1,5 +1,6 @@
 import React, { useLayoutEffect, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import FormData from 'form-data';
 import {
   Flex,
   Switch,
@@ -208,7 +209,7 @@ function modalEditStep1(props) {
   const [editFileImgShop, setEditFileImgShop] = useState(imageShopCheck);
   const handleSetEditFileImgShop = (fileList) => {
     setEditFileImgShop(fileList);
-    console.log("edit shop image", editFileImgShop);
+    // console.log("edit shop image", editFileImgShop);
   };
 
   const [editFileImgCoverShop, setEditFileImgCoverShop] =
@@ -266,9 +267,9 @@ function modalEditStep1(props) {
         { abortEarly: false }
       );
       // ส่งค่าไปยัง API หรือทำอื่นๆ ที่ต้องการ
-      console.log("Data submitted successfully.");
-      console.log("Theme:", Theme);
-      console.log("Tags:", tags);
+      // console.log("Data submitted successfully.");
+      // console.log("Theme:", Theme);
+      // console.log("Tags:", tags);
       onClose();
       modalEditNextStep.onOpen();
       setInputFieldError("");
