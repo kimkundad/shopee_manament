@@ -12,7 +12,7 @@ export default function Setting() {
 
       <Grid.Container gap={2}>
         <Grid sm={12} md={12} justify="center">
-          <Image width={36} height={36} src={'/images/menu/ตั้งค่า.png'} />
+          <Image width={36} height={36} src={'/images/menu/icon-setting.png'} />
           <Text as='b' fontSize='4xl' pt={3}> ตั้งค่า</Text>
         </Grid>
 

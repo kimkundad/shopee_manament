@@ -207,7 +207,7 @@ export default function Profile() {
         <Box>
           <Center>
             <HStack>
-              <Image width={35} height={35} src={"/images/menu/ตั้งค่า.png"} />
+              <Image width={35} height={35} src={"/images/menu/icon-setting.png"} />
               <Text as="b" fontSize="4xl">
                 {" "}
                 ตั้งค่า

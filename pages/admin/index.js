@@ -409,7 +409,7 @@ export default function AdminManagement() {
               <Image
                 width={42}
                 height={42}
-                src={"/images/menu/จัดการแอดมิน.png"}
+                src={"/images/menu/manage-admin.png"}
                 alt="admin"
               />
               <Text as="b" fontSize="4xl" color="#f84c01" pt={3}>
@@ -839,7 +839,7 @@ export default function AdminManagement() {
                       <Image
                         width={24}
                         height={24}
-                        src={"/images/menu/ตั้งค่า.png"}
+                        src={"/images/menu/icon-setting.png"}
                         alt="setting"
                       />
                       <Text>ตั้งค่า</Text>
@@ -1326,7 +1326,7 @@ export default function AdminManagement() {
                       <Image
                         width={24}
                         height={24}
-                        src={"/images/menu/ตั้งค่า.png"}
+                        src={"/images/menu/icon-setting.png"}
                         alt="setting"
                       />
                       <Text>ตั้งค่า</Text>

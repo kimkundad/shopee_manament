@@ -142,7 +142,7 @@ export default function Purchase() {
               <Image
                 width={"50px"}
                 height={"50px"}
-                src={"/images/menu/ตั้งค่า.png"}
+                src={"/images/menu/icon-setting.png"}
                 alt={"ตั้งค่า"}
               />
               <Text as="b" fontSize="4xl" pt={3}>
