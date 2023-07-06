@@ -14,7 +14,7 @@ import {
   GridItem,
   Grid,
 } from "@chakra-ui/react";
-import { TiLocationArrow } from "react-icons/Ti";
+import { TiLocationArrow } from "react-icons/ti";
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import Link from "next/link";

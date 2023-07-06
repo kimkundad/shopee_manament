@@ -4,4 +4,4 @@ services:
     ports:
       - "3003:3003"
     build: .
-    image: zonepangcloud/shopee_manament:v1
+    image: zonepangcloud/shopee_manament:v3

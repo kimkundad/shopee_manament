@@ -24,7 +24,7 @@ import {
   Th,
   Td,
 } from "@chakra-ui/react";
-import ListCheck from "@/components/MenuList";
+import ListCheck from "@/components/menuList";
 import Link from "next/link";
 import axios from "axios";
 import { jsPDF } from "jspdf";

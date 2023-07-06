@@ -144,7 +144,7 @@ export const defaultNavItems = [
 		namePermission: "permission_admin_manage",
 		icon: (
 			<Image
-				src="/images/menu/จัดการแอดมิน.png"
+				src="/images/menu/manage-admin.png"
 				alt="My Image"
 				width={30}
 				height={30}
@@ -152,7 +152,7 @@ export const defaultNavItems = [
 		),
 		iconcurrentpage: (
 			<Image
-				src="/images/menu/จัดการแอดมิน ขาว.png"
+				src="/images/menu/manage-admin-white.png"
 				alt="My Image"
 				width={30}
 				height={30}
@@ -165,7 +165,7 @@ export const defaultNavItems = [
 		namePermission: "permission_settings",
 		icon: (
 			<Image
-				src="/images/menu/ตั้งค่า.png"
+				src="/images/menu/icon-setting.png"
 				alt="My Image"
 				width={30}
 				height={30}
@@ -173,7 +173,7 @@ export const defaultNavItems = [
 		),
 		iconcurrentpage: (
 			<Image
-				src="/images/menu/ตั้งค่า ขาว.png"
+				src="/images/menu/icon-setting-white.png"
 				alt="My Image"
 				width={30}
 				height={30}

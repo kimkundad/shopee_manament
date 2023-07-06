@@ -19,7 +19,7 @@ import axios from "axios";
 import { Table, useAsyncList, useCollator } from "@nextui-org/react";
 import Link from "next/link";
 import { connect, useDispatch, useSelector } from "react-redux";
-import { FormData } from 'form-data';
+import FormData from 'form-data';
 
 export default function index() {
   const [shops, setShops] = useState([]);

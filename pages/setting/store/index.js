@@ -40,7 +40,7 @@ import {
 import { Icon } from "@chakra-ui/icons";
 import { BsPlusLg, BsStar, BsShop, BsFillPencilFill, BsEye } from "react-icons/bs";
 import { VscSave } from "react-icons/vsc";
-import ListCheck from "@/components/MenuList";
+import ListCheck from "@/components/menuList";
 const colunm = [
     { label: "วันที่" },
     { label: "ชื่อร้านค้า" },

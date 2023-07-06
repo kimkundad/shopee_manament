@@ -41,7 +41,7 @@ import {
   MenuOptionGroup,
   MenuDivider,
 } from "@chakra-ui/react";
-import ListCheck from "@/components/MenuList";
+import ListCheck from "@/components/menuList";
 // import { Table, useAsyncList, useCollator } from "@nextui-org/react";
 import Link from "next/link";
 import axios from "axios";

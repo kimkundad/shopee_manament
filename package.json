@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "build": "NODE_ENV=production next build",
+    "start": "NODE_ENV=production next start -p 3003 ",
+    "export": "npm run build && next export -o _static"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.17",
@@ -17,6 +17,7 @@
     "@nextui-org/react": "^1.0.0-beta.12",
     "@react-pdf/renderer": "^3.1.9",
     "@reduxjs/toolkit": "^1.9.3",
+    "@swc/helpers": "^0.5.1",
     "@types/node": "18.14.0",
     "@types/react": "18.0.28",
     "@types/react-dom": "18.0.11",
@@ -46,7 +47,7 @@
     "react-chartjs-2": "^5.2.0",
     "react-dom": "18.2.0",
     "react-dropzone": "^14.2.3",
-    "react-icons": "^4.8.0",
+    "react-icons": "^4.10.1",
     "react-player": "^2.12.0",
     "react-redux": "^8.0.5",
     "react-scrollbars-custom": "^4.1.1",
