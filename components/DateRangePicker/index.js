@@ -21,63 +21,83 @@ const DateRangePicker = ({ getDate, id, type }) => {
 
       const cb = (start, end, label) => {
         $(`#reportrange${id} span`).html(label);
-        getDate(start.startOf("day"), end.endOf("day"),id);
+        getDate(start.startOf("day"), end.endOf("day"), id);
       };
 
-      $(`#reportrange${id}`).daterangepicker(
-        {
-          startDate: start,
-          endDate: end,
-          ranges: {
-            รายวัน: [moment(), moment()],
-            รายสัปดาห์: [moment().subtract(6, "days"), moment()],
-            รายเดือน: [moment().startOf("month"), moment().endOf("month")],
-            รายปี: [moment().startOf("year"), moment().endOf("year")],
-          },
-          autoApply: true,
-          autoClose: true,
+      const daterangepickerOptions = {
+        startDate: start,
+        endDate: end,
+        ranges: {
+          รายวัน: [moment(), moment()],
+          รายสัปดาห์: [moment().subtract(6, "days"), moment()],
+          รายเดือน: [moment().startOf("month"), moment().endOf("month")],
+          รายปี: [moment().startOf("year"), moment().endOf("year")],
         },
-        cb
-      );
+        autoApply: true,
+        autoUpdateInput: true,
+      };
+
+      $(`#reportrange${id}`).daterangepicker(daterangepickerOptions, cb);
+
+      const reportRangeEl = $(`#reportrange${id}`);
+      reportRangeEl.on("apply.daterangepicker", (ev, picker) => {
+        cb(picker.startDate, picker.endDate, picker.chosenLabel);
+      });
 
       cb(start, end, "วันนี้");
-      $(`#reportrange${id} span`).html("รายวัน");
+      $(`#reportrange${id} span`).html("วันนี้");
+
+      return () => {
+        // Cleanup when the component is unmounted
+        reportRangeEl.data("daterangepicker").remove();
+        reportRangeEl.off();
+      };
     } else {
       const start = moment().startOf("day");
       const end = moment().endOf("day");
 
       const cb = (start, end, label) => {
         $(`#reportrange${id} span`).html(label);
-        getDate(start.startOf("day"), end.endOf("day"));
+        getDate(start.startOf("day"), end.endOf("day"), id);
       };
 
-      $(`#reportrange${id}`).daterangepicker(
-        {
-          startDate: start,
-          endDate: end,
-          ranges: {
-            วันนี้: [moment(), moment()],
-            เมื่อวาน: [
-              moment().subtract(1, "days"),
-              moment().subtract(1, "days"),
-            ],
-            "7 วันก่อน": [moment().subtract(6, "days"), moment()],
-            "30 วันก่อน": [moment().subtract(29, "days"), moment()],
-            เดือนนี้: [moment().startOf("month"), moment().endOf("month")],
-            เดือนที่แล้ว: [
-              moment().subtract(1, "month").startOf("month"),
-              moment().subtract(1, "month").endOf("month"),
-            ],
-            ปีนี้: [moment().startOf("year"), moment().endOf("year")],
-          },
-          autoApply: true,
-          autoClose: true,
+      const daterangepickerOptions = {
+        startDate: start,
+        endDate: end,
+        ranges: {
+          วันนี้: [moment(), moment()],
+          เมื่อวาน: [
+            moment().subtract(1, "days"),
+            moment().subtract(1, "days"),
+          ],
+          "7 วันก่อน": [moment().subtract(6, "days"), moment()],
+          "30 วันก่อน": [moment().subtract(29, "days"), moment()],
+          เดือนนี้: [moment().startOf("month"), moment().endOf("month")],
+          เดือนที่แล้ว: [
+            moment().subtract(1, "month").startOf("month"),
+            moment().subtract(1, "month").endOf("month"),
+          ],
+          ปีนี้: [moment().startOf("year"), moment().endOf("year")],
         },
-        cb
-      );
+        autoApply: true,
+        autoUpdateInput: true,
+      };
+
+      $(`#reportrange${id}`).daterangepicker(daterangepickerOptions, cb);
+
+      const reportRangeEl = $(`#reportrange${id}`);
+      reportRangeEl.on("apply.daterangepicker", (ev, picker) => {
+        cb(picker.startDate, picker.endDate, picker.chosenLabel);
+      });
 
       cb(start, end, "วันนี้");
       $(`#reportrange${id} span`).html("วันนี้");
+
+      return () => {
+        // Cleanup when the component is unmounted
+        reportRangeEl.data("daterangepicker").remove();
+        reportRangeEl.off();
+      };
     }
   }, []);
 
