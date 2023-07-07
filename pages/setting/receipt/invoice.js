@@ -35,6 +35,7 @@ export default function Invoice() {
   }, []);
 
   const handleChangeTypeInvoice = (type_invoice) => {
+    setTypeInvoice(type_invoice);
     const data = {
       userId: userInfo?.data[0]?.id,
       typeinvoice: type_invoice,
@@ -42,7 +43,6 @@ export default function Invoice() {
     Axios.post(`https://api.sellpang.com/api/setSettingTypeInvoice`, data).then(
       function (response) {
         if (response.data.success) {
-          setTypeInvoice(type_invoice);
           toast({
             position: "top-right",
             title: "เปลี่ยนรูปแบบใบกำกับภาษีสำเร็จ!",

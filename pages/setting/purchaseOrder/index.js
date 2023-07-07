@@ -19,50 +19,51 @@ import { connect, useDispatch, useSelector } from "react-redux";
 import Axios from "axios";
 import { useToast } from "@chakra-ui/react";
 
-export default function Bill() {
+export default function index() {
   const userInfo = useSelector((App) => App.userInfo);
-  const [typeBill, setTypeBill] = useState(1);
+  const [typePurchaseOrder, setTypePurchaseOrder] = useState(1);
   const toast = useToast();
 
   useEffect(() => {
     Axios.get(
-      `https://api.sellpang.com/api/getSettingTypeBill/${userInfo?.data[0]?.id}`
+      `https://api.sellpang.com/api/getSettingTypePurchaseOrder/${userInfo?.data[0]?.id}`
     ).then(function (response) {
-      if (response.data.settingTypeBill) {
-        setTypeBill(response.data.settingTypeBill);
+      if (response.data.settingTypePurchaseOrder) {
+        setTypePurchaseOrder(response.data.settingTypePurchaseOrder);
       }
     });
   }, []);
 
-  const handleChangeTypeBill = (type_bill) => {
-    setTypeBill(type_bill);
+  const handleChangeTypePurchaseOrder = (type_purchase_order) => {
+    setTypePurchaseOrder(type_purchase_order);
     const data = {
       userId: userInfo?.data[0]?.id,
-      typebill: type_bill,
+      typepurchaseorder: type_purchase_order,
     };
-    Axios.post(`https://api.sellpang.com/api/setSettingTypeBill`, data).then(
-      function (response) {
-        if (response.data.success) {
-          toast({
-            position: "top-right",
-            title: "เปลี่ยนรูปแบบใบเสร็จสำเร็จ!",
-            description: "คุณได้เปลี่ยนรูปแบบใบเสร็จ 'สำเร็จ'",
-            status: "success",
-            duration: 5000,
-            isClosable: true,
-          });
-        } else {
-          toast({
-            position: "top-right",
-            title: "เปลี่ยนรูปแบบใบเสร็จไม่สำเร็จ!",
-            description: "คุณได้เปลี่ยนรูปแบบใบเสร็จ 'ไม่สำเร็จ'",
-            status: "error",
-            duration: 5000,
-            isClosable: true,
-          });
-        }
+    Axios.post(
+      `https://api.sellpang.com/api/setSettingTypePurchaseOrder`,
+      data
+    ).then(function (response) {
+      if (response.data.success) {
+        toast({
+          position: "top-right",
+          title: "เปลี่ยนรูปแบบใบคำสั่งซื้อสำเร็จ!",
+          description: "คุณได้เปลี่ยนรูปแบบใบคำสั่งซื้อ 'สำเร็จ'",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+      } else {
+        toast({
+          position: "top-right",
+          title: "เปลี่ยนรูปแบบใบคำสั่งซื้อไม่สำเร็จ!",
+          description: "คุณได้เปลี่ยนรูปแบบใบคำสั่งซื้อ 'ไม่สำเร็จ'",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
       }
-    );
+    });
   };
 
   return (
@@ -92,7 +93,7 @@ export default function Bill() {
         <HStack>
           <Icon as={BsReceipt} boxSize={8} />
           <Text as="b" fontSize="lg">
-            ใบเสร็จ
+            ใบคำสั่งซื้อ
           </Text>
         </HStack>
       </Box>
@@ -108,7 +109,7 @@ export default function Bill() {
           >
             <Box px="5" py="2">
               <Text as="b" fontSize="21">
-                เลือกรูปแบบการพิมพ์ใบเสร็จ
+                เลือกรูปแบบการพิมพ์ใบคำสั่งซื้อ
               </Text>
             </Box>
 
@@ -117,7 +118,7 @@ export default function Bill() {
                 <Box align="center" mr={10}>
                   <Box
                     onClick={() => {
-                      handleChangeTypeBill(1);
+                      handleChangeTypePurchaseOrder(1);
                     }}
                     _hover={{ cursor: "pointer" }}
                   >
@@ -125,8 +126,10 @@ export default function Bill() {
                       my="5"
                       p="2"
                       borderRadius="10"
-                      borderWidth={typeBill === 1 ? "3px" : "2px"}
-                      borderColor={typeBill === 1 ? "#cd2626" : "gray.500"}
+                      borderWidth={typePurchaseOrder === 1 ? "3px" : "2px"}
+                      borderColor={
+                        typePurchaseOrder === 1 ? "#cd2626" : "gray.500"
+                      }
                       _hover={{
                         borderRadius: "10",
                         borderWidth: "3px",
@@ -142,14 +145,14 @@ export default function Bill() {
                   </Box>
                   <Box>
                     <Text as="b" color="gray.600" fontSize="17">
-                      ค่าเริ่มต้น - ใบเสร็จ
+                      ค่าเริ่มต้น - ใบคำสั่งซื้อ
                     </Text>
                   </Box>
                 </Box>
                 <Box align="center" mr={10}>
                   <Box
                     onClick={() => {
-                      handleChangeTypeBill(2);
+                      handleChangeTypePurchaseOrder(2);
                     }}
                     _hover={{ cursor: "pointer" }}
                   >
@@ -157,8 +160,10 @@ export default function Bill() {
                       my="5"
                       p="2"
                       borderRadius="10"
-                      borderWidth={typeBill === 2 ? "3px" : "2px"}
-                      borderColor={typeBill === 2 ? "#cd2626" : "gray.500"}
+                      borderWidth={typePurchaseOrder === 2 ? "3px" : "2px"}
+                      borderColor={
+                        typePurchaseOrder === 2 ? "#cd2626" : "gray.500"
+                      }
                       _hover={{
                         borderRadius: "10",
                         borderWidth: "3px",
@@ -181,7 +186,7 @@ export default function Bill() {
                 <Box align="center" mr={5}>
                   <Box
                     onClick={() => {
-                      handleChangeTypeBill(3);
+                      handleChangeTypePurchaseOrder(3);
                     }}
                     _hover={{ cursor: "pointer" }}
                   >
@@ -189,8 +194,10 @@ export default function Bill() {
                       my="5"
                       p="2"
                       borderRadius="10"
-                      borderWidth={typeBill === 3 ? "3px" : "2px"}
-                      borderColor={typeBill === 3 ? "#cd2626" : "gray.500"}
+                      borderWidth={typePurchaseOrder === 3 ? "3px" : "2px"}
+                      borderColor={
+                        typePurchaseOrder === 3 ? "#cd2626" : "gray.500"
+                      }
                       _hover={{
                         borderRadius: "10",
                         borderWidth: "3px",
