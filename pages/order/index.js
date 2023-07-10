@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { saveAs } from "file-saver";
 // import Image from "next/image";
 // import orders from "@/data/orders";
 import FormData from "form-data";
@@ -468,195 +469,196 @@ export default function Order() {
     }
   };
 
-  // const handleCheckSelect = () => {
-  //   // console.log("selectedOrders", selectedOrders);
-  //   const selected = orders.filter((order) =>
-  //     selectedOrders.includes(order.ID)
-  //   );
-  //   if (selectedOrders.length > 0) {
-  //     const optionsDate = {
-  //       day: "numeric",
-  //       month: "numeric",
-  //       year: "numeric",
-  //       hour: "numeric",
-  //       minute: "numeric",
-  //       second: "numeric",
-  //     }; // กำหนดรูปแบบวันที่และเวลา
-  //     const date = new Date();
-  //     const formattedDate = date.toLocaleDateString("th-TH", optionsDate); // แปลงวันที่เป็นรูปแบบ "DD/MM/YYYY"
-  //     // Create a new instance of jsPDF
-  //     const doc = showListOrderPDF ? new jsPDF() : new jsPDF("p", "mm", "a5");
+  const handleCheckSelect = () => {
+    // console.log("selectedOrders", selectedOrders);
+    const selected = orders.filter((order) =>
+      selectedOrders.includes(order.ID)
+    );
+    if (selectedOrders.length > 0) {
+      const optionsDate = {
+        day: "numeric",
+        month: "numeric",
+        year: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        second: "numeric",
+      }; // กำหนดรูปแบบวันที่และเวลา
+      const date = new Date();
+      const formattedDate = date.toLocaleDateString("th-TH", optionsDate); // แปลงวันที่เป็นรูปแบบ "DD/MM/YYYY"
+      // Create a new instance of jsPDF
+      const doc = showListOrderPDF ? new jsPDF() : new jsPDF("p", "mm", "a5");
 
-  //     // Add the Thai font
-  //     doc.addFileToVFS("THSarabunNew.ttf", THSarabunNew);
-  //     doc.addFileToVFS("THSarabunNew Bold.ttf", THSarabunNewBold);
-  //     doc.addFont("THSarabunNew.ttf", "THSarabunNew", "normal");
-  //     doc.addFont("THSarabunNew Bold.ttf", "THSarabunNewBold", "bold");
-  //     doc.setFont("THSarabunNew");
+      // Add the Thai font
+      doc.addFileToVFS("THSarabunNew.ttf", THSarabunNew);
+      doc.addFileToVFS("THSarabunNew Bold.ttf", THSarabunNewBold);
+      doc.addFont("THSarabunNew.ttf", "THSarabunNew", "normal");
+      doc.addFont("THSarabunNew Bold.ttf", "THSarabunNewBold", "bold");
+      doc.setFont("THSarabunNew");
 
-  //     let y = 10; // Start y at the top of the page
-  //     const maxHeight = showListOrderPDF ? 280 : 200;
+      let y = 10; // Start y at the top of the page
+      const maxHeight = showListOrderPDF ? 280 : 200;
 
-  //     selected.forEach((order, index) => {
-  //       if (showListOrderPDF) {
-  //         if (index !== 0) {
-  //           doc.addPage();
-  //           y = 10;
-  //         }
-  //       } else {
-  //         if (y + 90 > maxHeight) {
-  //           doc.addPage();
-  //           y = 10;
-  //         }
-  //       }
+      selected.forEach((order, index) => {
+        if (showListOrderPDF) {
+          if (index !== 0) {
+            doc.addPage();
+            y = 10;
+          }
+        } else {
+          if (y + 90 > maxHeight) {
+            doc.addPage();
+            y = 10;
+          }
+        }
 
-  //       const addressReceiverName = `${order.address} ต.${order.sub_district} อ.${order.district} จ.${order.province} ${order.postcode}`;
-  //       const addressOwnerShopName = `${addressOwnerShop.address} ต.${addressOwnerShop.sub_district} อ.${addressOwnerShop.district} จ.${addressOwnerShop.county} ${addressOwnerShop.zip_code}`;
-  //       // Add recipient's name, address and phone number
-  //       doc.setFont("THSarabunNewBold", "bold");
-  //       doc.setFontSize(20);
-  //       doc.text("ผู้รับ", showListOrderPDF ? 10 : 5, y);
-  //       doc.setFont("THSarabunNew", "normal");
-  //       doc.setFontSize(16);
-  //       doc.text(
-  //         "ชื่อ: " + order.receiverName,
-  //         showListOrderPDF ? 10 : 5,
-  //         y + 10
-  //       );
-  //       doc.text(
-  //         "ที่อยู่: " + addressReceiverName,
-  //         showListOrderPDF ? 10 : 5,
-  //         y + 20
-  //       );
-  //       doc.text(
-  //         "เบอร์โทรศัพท์: " + order.phoneNumber,
-  //         showListOrderPDF ? 10 : 5,
-  //         y + 30
-  //       );
-  //       doc.line(
-  //         showListOrderPDF ? 10 : 5,
-  //         y + 40,
-  //         showListOrderPDF ? 190 : 140,
-  //         y + 40
-  //       );
+        const addressReceiverName = `${order.address} ต.${order.sub_district} อ.${order.district} จ.${order.province} ${order.postcode}`;
+        const addressOwnerShopName = `${addressOwnerShop.address} ต.${addressOwnerShop.sub_district} อ.${addressOwnerShop.district} จ.${addressOwnerShop.county} ${addressOwnerShop.zip_code}`;
+        // Add recipient's name, address and phone number
+        doc.setFont("THSarabunNewBold", "bold");
+        doc.setFontSize(20);
+        doc.text("ผู้รับ", showListOrderPDF ? 10 : 5, y);
+        doc.setFont("THSarabunNew", "normal");
+        doc.setFontSize(16);
+        doc.text(
+          "ชื่อ: " + order.receiverName,
+          showListOrderPDF ? 10 : 5,
+          y + 10
+        );
+        doc.text(
+          "ที่อยู่: " + addressReceiverName,
+          showListOrderPDF ? 10 : 5,
+          y + 20
+        );
+        doc.text(
+          "เบอร์โทรศัพท์: " + order.phoneNumber,
+          showListOrderPDF ? 10 : 5,
+          y + 30
+        );
+        doc.line(
+          showListOrderPDF ? 10 : 5,
+          y + 40,
+          showListOrderPDF ? 190 : 140,
+          y + 40
+        );
 
-  //       doc.setFont("THSarabunNewBold", "bold");
-  //       doc.setFontSize(20);
-  //       doc.text("ผู้ส่ง", showListOrderPDF ? 190 : 140, y + 50, {
-  //         align: "right",
-  //       });
-  //       doc.setFont("THSarabunNew", "normal");
-  //       doc.setFontSize(16);
-  //       doc.text(
-  //         "ชื่อ: " + addressOwnerShop.fname + " " + addressOwnerShop.lname,
-  //         showListOrderPDF ? 190 : 140,
-  //         y + 60,
-  //         {
-  //           align: "right",
-  //         }
-  //       );
-  //       doc.text(
-  //         "ที่อยู่: " + addressOwnerShopName,
-  //         showListOrderPDF ? 190 : 140,
-  //         y + 70,
-  //         {
-  //           align: "right",
-  //         }
-  //       );
-  //       doc.text(
-  //         "เบอร์โทรศัพท์: " + addressOwnerShop.phone,
-  //         showListOrderPDF ? 190 : 140,
-  //         y + 80,
-  //         {
-  //           align: "right",
-  //         }
-  //       );
+        doc.setFont("THSarabunNewBold", "bold");
+        doc.setFontSize(20);
+        doc.text("ผู้ส่ง", showListOrderPDF ? 190 : 140, y + 50, {
+          align: "right",
+        });
+        doc.setFont("THSarabunNew", "normal");
+        doc.setFontSize(16);
+        doc.text(
+          "ชื่อ: " + addressOwnerShop.fname + " " + addressOwnerShop.lname,
+          showListOrderPDF ? 190 : 140,
+          y + 60,
+          {
+            align: "right",
+          }
+        );
+        doc.text(
+          "ที่อยู่: " + addressOwnerShopName,
+          showListOrderPDF ? 190 : 140,
+          y + 70,
+          {
+            align: "right",
+          }
+        );
+        doc.text(
+          "เบอร์โทรศัพท์: " + addressOwnerShop.phone,
+          showListOrderPDF ? 190 : 140,
+          y + 80,
+          {
+            align: "right",
+          }
+        );
 
-  //       if (showListOrderPDF) {
-  //         // Draw the table header
-  //         const header = ["Order ID", "Product Name", "Num", "Price"];
-  //         const columnWidths = showListOrderPDF
-  //           ? [40, 80, 30, 30]
-  //           : [20, 35, 15, 15];
-  //         const headerHeight = 10;
-  //         const cellHeight = 10;
-  //         let x = showListOrderPDF ? 10 : 5;
-  //         for (let i = 0; i < header.length; i++) {
-  //           doc.setFillColor(220, 220, 220);
-  //           doc.rect(x, y + 90, columnWidths[i], headerHeight, "F"); // Draw a filled rectangle for each header cell
-  //           doc.rect(x, y + 90, columnWidths[i], headerHeight); // Draw the cell border
-  //           doc.text(header[i], x + 2, y + 98);
-  //           x += columnWidths[i];
-  //         }
+        if (showListOrderPDF) {
+          // Draw the table header
+          const header = ["Order ID", "Product Name", "Num", "Price"];
+          const columnWidths = showListOrderPDF
+            ? [40, 80, 30, 30]
+            : [20, 35, 15, 15];
+          const headerHeight = 10;
+          const cellHeight = 10;
+          let x = showListOrderPDF ? 10 : 5;
+          for (let i = 0; i < header.length; i++) {
+            doc.setFillColor(220, 220, 220);
+            doc.rect(x, y + 90, columnWidths[i], headerHeight, "F"); // Draw a filled rectangle for each header cell
+            doc.rect(x, y + 90, columnWidths[i], headerHeight); // Draw the cell border
+            doc.text(header[i], x + 2, y + 98);
+            x += columnWidths[i];
+          }
 
-  //         // Draw the table rows
-  //         y += 100; // Start y below the header
-  //         let maxLines = 1;
-  //         for (let i = 0; i < order.orderDetails.length; i++) {
-  //           const product = order.orderDetails[i];
-  //           const row = [
-  //             order.orderId.toString(),
-  //             product.nameProduct,
-  //             product.num.toString(),
-  //             product.price.toString(),
-  //           ];
-  //           x = showListOrderPDF ? 10 : 5;
-  //           for (let j = 0; j < row.length; j++) {
-  //             const lines = doc.splitTextToSize(row[j], columnWidths[j] - 4); // Subtract a bit from the column width for padding
-  //             maxLines = Math.max(maxLines, lines.length);
-  //             for (let k = 0; k < lines.length; k++) {
-  //               doc.text(
-  //                 lines[k],
-  //                 x + 2,
-  //                 y + cellHeight / 2 + 2 + k * cellHeight
-  //               );
-  //             }
-  //             x += columnWidths[j];
-  //           }
-  //           // Now we draw the table lines
-  //           x = showListOrderPDF ? 10 : 5;
-  //           for (let j = 0; j < row.length; j++) {
-  //             doc.rect(x, y, columnWidths[j], cellHeight * maxLines); // Draw the cell border
-  //             x += columnWidths[j];
-  //           }
-  //           y += cellHeight * maxLines;
-  //           maxLines = 1; // Reset maxLines for the next row
-  //         }
-  //         doc.setFont("THSarabunNewBold", "bold");
-  //         doc.text("ยอดรวม ", showListOrderPDF ? 132 : 61, y + 10);
-  //         doc.text(
-  //           order.amount.toString(),
-  //           showListOrderPDF ? 162 : 76,
-  //           y + 10
-  //         );
-  //         // Increment y by a certain amount to leave some space between each order
-  //         y += 20;
-  //       }
-  //       if (!showListOrderPDF) {
-  //         y += 100;
-  //       }
-  //     });
-  //     // Save the PDF as a blob
-  //     const pdfBlob = doc.output("blob");
+          // Draw the table rows
+          y += 100; // Start y below the header
+          let maxLines = 1;
+          for (let i = 0; i < order.orderDetails.length; i++) {
+            const product = order.orderDetails[i];
+            const row = [
+              order.orderId.toString(),
+              product.nameProduct,
+              product.num.toString(),
+              product.price.toString(),
+            ];
+            x = showListOrderPDF ? 10 : 5;
+            for (let j = 0; j < row.length; j++) {
+              const lines = doc.splitTextToSize(row[j], columnWidths[j] - 4); // Subtract a bit from the column width for padding
+              maxLines = Math.max(maxLines, lines.length);
+              for (let k = 0; k < lines.length; k++) {
+                doc.text(
+                  lines[k],
+                  x + 2,
+                  y + cellHeight / 2 + 2 + k * cellHeight
+                );
+              }
+              x += columnWidths[j];
+            }
+            // Now we draw the table lines
+            x = showListOrderPDF ? 10 : 5;
+            for (let j = 0; j < row.length; j++) {
+              doc.rect(x, y, columnWidths[j], cellHeight * maxLines); // Draw the cell border
+              x += columnWidths[j];
+            }
+            y += cellHeight * maxLines;
+            maxLines = 1; // Reset maxLines for the next row
+          }
+          doc.setFont("THSarabunNewBold", "bold");
+          doc.text("ยอดรวม ", showListOrderPDF ? 132 : 61, y + 10);
+          doc.text(
+            order.amount.toString(),
+            showListOrderPDF ? 162 : 76,
+            y + 10
+          );
+          // Increment y by a certain amount to leave some space between each order
+          y += 20;
+        }
+        if (!showListOrderPDF) {
+          y += 100;
+        }
+      });
+      // Save the PDF as a blob
+      const pdfBlob = doc.output("blob");
 
-  //     // Create a blob URL
-  //     const url = createObjectURL(pdfBlob);
+      // Create a blob URL
+      const url = createObjectURL(pdfBlob);
 
-  //     // Open the PDF in a new tab
-  //     window.open(url, "_blank");
+      // // Open the PDF in a new tab
+      // window.open(url, "_blank");
 
-  //     // Create a link element, click it to start the download
-  //     const link = document.createElement("a");
-  //     link.href = url;
-  //     link.download = `orders-${formattedDate}.pdf`;
-  //     link.click();
+      // // Create a link element, click it to start the download
+      // const link = document.createElement("a");
+      // link.href = url;
+      // link.download = `orders-${formattedDate}.pdf`;
+      // link.click();
 
-  //     // Clean up
-  //     link.remove();
-  //     revokeObjectURL(url);
-  //     ModalConfirmSetStatus.onOpen();
-  //   }
-  // };
+      // // Clean up
+      // link.remove();
+      saveAs(url, `orders-${formattedDate}.pdf`, { forceSave: true });
+      revokeObjectURL(url);
+      ModalConfirmSetStatus.onOpen();
+    }
+  };
 
   const handleOpenModalSetStatusMulti = () => {
     if (selectedOrders.length > 0) {
@@ -674,183 +676,184 @@ export default function Order() {
     setIdOrder(id);
     setNextStatus(status);
     modalConfirmSetStatusSingle.onOpen();
-    // const selected = orders.filter((order) => order.ID === id);
-    // const optionsDate = {
-    //   day: "numeric",
-    //   month: "numeric",
-    //   year: "numeric",
-    //   hour: "numeric",
-    //   minute: "numeric",
-    //   second: "numeric",
-    // }; // กำหนดรูปแบบวันที่และเวลา
-    // const date = new Date();
-    // const formattedDate = date.toLocaleDateString("th-TH", optionsDate); // แปลงวันที่เป็นรูปแบบ "DD/MM/YYYY"
-    // // Create a new instance of jsPDF
-    // const doc = showListOrderPDF ? new jsPDF() : new jsPDF("p", "mm", "a5");
+    const selected = orders.filter((order) => order.ID === id);
+    const optionsDate = {
+      day: "numeric",
+      month: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      second: "numeric",
+    }; // กำหนดรูปแบบวันที่และเวลา
+    const date = new Date();
+    const formattedDate = date.toLocaleDateString("th-TH", optionsDate); // แปลงวันที่เป็นรูปแบบ "DD/MM/YYYY"
+    // Create a new instance of jsPDF
+    const doc = showListOrderPDF ? new jsPDF() : new jsPDF("p", "mm", "a5");
 
-    // // Add the Thai font
-    // doc.addFileToVFS("THSarabunNew.ttf", THSarabunNew);
-    // doc.addFileToVFS("THSarabunNew Bold.ttf", THSarabunNewBold);
-    // doc.addFont("THSarabunNew.ttf", "THSarabunNew", "normal");
-    // doc.addFont("THSarabunNew Bold.ttf", "THSarabunNewBold", "bold");
-    // doc.setFont("THSarabunNew");
+    // Add the Thai font
+    doc.addFileToVFS("THSarabunNew.ttf", THSarabunNew);
+    doc.addFileToVFS("THSarabunNew Bold.ttf", THSarabunNewBold);
+    doc.addFont("THSarabunNew.ttf", "THSarabunNew", "normal");
+    doc.addFont("THSarabunNew Bold.ttf", "THSarabunNewBold", "bold");
+    doc.setFont("THSarabunNew");
 
-    // let y = 10; // Start y at the top of the page
-    // const maxHeight = showListOrderPDF ? 280 : 200;
+    let y = 10; // Start y at the top of the page
+    const maxHeight = showListOrderPDF ? 280 : 200;
 
-    // selected.forEach((order, index) => {
-    //   if (showListOrderPDF) {
-    //     if (index !== 0) {
-    //       doc.addPage();
-    //       y = 10;
-    //     }
-    //   } else {
-    //     if (y + 90 > maxHeight) {
-    //       doc.addPage();
-    //       y = 10;
-    //     }
-    //   }
+    selected.forEach((order, index) => {
+      if (showListOrderPDF) {
+        if (index !== 0) {
+          doc.addPage();
+          y = 10;
+        }
+      } else {
+        if (y + 90 > maxHeight) {
+          doc.addPage();
+          y = 10;
+        }
+      }
 
-    //   const addressReceiverName = `${order.address} ต.${order.sub_district} อ.${order.district} จ.${order.province} ${order.postcode}`;
-    //   const addressOwnerShopName = `${addressOwnerShop.address} ต.${addressOwnerShop.sub_district} อ.${addressOwnerShop.district} จ.${addressOwnerShop.county} ${addressOwnerShop.zip_code}`;
-    //   // Add recipient's name, address and phone number
-    //   doc.setFont("THSarabunNewBold", "bold");
-    //   doc.setFontSize(20);
-    //   doc.text("ผู้รับ", showListOrderPDF ? 10 : 5, y);
-    //   doc.setFont("THSarabunNew", "normal");
-    //   doc.setFontSize(16);
-    //   doc.text(
-    //     "ชื่อ: " + order.receiverName,
-    //     showListOrderPDF ? 10 : 5,
-    //     y + 10
-    //   );
-    //   doc.text(
-    //     "ที่อยู่: " + addressReceiverName,
-    //     showListOrderPDF ? 10 : 5,
-    //     y + 20
-    //   );
-    //   doc.text(
-    //     "เบอร์โทรศัพท์: " + order.phoneNumber,
-    //     showListOrderPDF ? 10 : 5,
-    //     y + 30
-    //   );
-    //   doc.line(
-    //     showListOrderPDF ? 10 : 5,
-    //     y + 40,
-    //     showListOrderPDF ? 190 : 140,
-    //     y + 40
-    //   );
+      const addressReceiverName = `${order.address} ต.${order.sub_district} อ.${order.district} จ.${order.province} ${order.postcode}`;
+      const addressOwnerShopName = `${addressOwnerShop.address} ต.${addressOwnerShop.sub_district} อ.${addressOwnerShop.district} จ.${addressOwnerShop.county} ${addressOwnerShop.zip_code}`;
+      // Add recipient's name, address and phone number
+      doc.setFont("THSarabunNewBold", "bold");
+      doc.setFontSize(20);
+      doc.text("ผู้รับ", showListOrderPDF ? 10 : 5, y);
+      doc.setFont("THSarabunNew", "normal");
+      doc.setFontSize(16);
+      doc.text(
+        "ชื่อ: " + order.receiverName,
+        showListOrderPDF ? 10 : 5,
+        y + 10
+      );
+      doc.text(
+        "ที่อยู่: " + addressReceiverName,
+        showListOrderPDF ? 10 : 5,
+        y + 20
+      );
+      doc.text(
+        "เบอร์โทรศัพท์: " + order.phoneNumber,
+        showListOrderPDF ? 10 : 5,
+        y + 30
+      );
+      doc.line(
+        showListOrderPDF ? 10 : 5,
+        y + 40,
+        showListOrderPDF ? 190 : 140,
+        y + 40
+      );
 
-    //   doc.setFont("THSarabunNewBold", "bold");
-    //   doc.setFontSize(20);
-    //   doc.text("ผู้ส่ง", showListOrderPDF ? 190 : 140, y + 50, {
-    //     align: "right",
-    //   });
-    //   doc.setFont("THSarabunNew", "normal");
-    //   doc.setFontSize(16);
-    //   doc.text(
-    //     "ชื่อ: " + addressOwnerShop.fname + " " + addressOwnerShop.lname,
-    //     showListOrderPDF ? 190 : 140,
-    //     y + 60,
-    //     {
-    //       align: "right",
-    //     }
-    //   );
-    //   doc.text(
-    //     "ที่อยู่: " + addressOwnerShopName,
-    //     showListOrderPDF ? 190 : 140,
-    //     y + 70,
-    //     {
-    //       align: "right",
-    //     }
-    //   );
-    //   doc.text(
-    //     "เบอร์โทรศัพท์: " + addressOwnerShop.phone,
-    //     showListOrderPDF ? 190 : 140,
-    //     y + 80,
-    //     {
-    //       align: "right",
-    //     }
-    //   );
+      doc.setFont("THSarabunNewBold", "bold");
+      doc.setFontSize(20);
+      doc.text("ผู้ส่ง", showListOrderPDF ? 190 : 140, y + 50, {
+        align: "right",
+      });
+      doc.setFont("THSarabunNew", "normal");
+      doc.setFontSize(16);
+      doc.text(
+        "ชื่อ: " + addressOwnerShop.fname + " " + addressOwnerShop.lname,
+        showListOrderPDF ? 190 : 140,
+        y + 60,
+        {
+          align: "right",
+        }
+      );
+      doc.text(
+        "ที่อยู่: " + addressOwnerShopName,
+        showListOrderPDF ? 190 : 140,
+        y + 70,
+        {
+          align: "right",
+        }
+      );
+      doc.text(
+        "เบอร์โทรศัพท์: " + addressOwnerShop.phone,
+        showListOrderPDF ? 190 : 140,
+        y + 80,
+        {
+          align: "right",
+        }
+      );
 
-    //   if (showListOrderPDF) {
-    //     // Draw the table header
-    //     const header = ["Order ID", "Product Name", "Num", "Price"];
-    //     const columnWidths = showListOrderPDF
-    //       ? [40, 80, 30, 30]
-    //       : [20, 35, 15, 15];
-    //     const headerHeight = 10;
-    //     const cellHeight = 10;
-    //     let x = showListOrderPDF ? 10 : 5;
-    //     for (let i = 0; i < header.length; i++) {
-    //       doc.setFillColor(220, 220, 220);
-    //       doc.rect(x, y + 90, columnWidths[i], headerHeight, "F"); // Draw a filled rectangle for each header cell
-    //       doc.rect(x, y + 90, columnWidths[i], headerHeight); // Draw the cell border
-    //       doc.text(header[i], x + 2, y + 98);
-    //       x += columnWidths[i];
-    //     }
+      if (showListOrderPDF) {
+        // Draw the table header
+        const header = ["Order ID", "Product Name", "Num", "Price"];
+        const columnWidths = showListOrderPDF
+          ? [40, 80, 30, 30]
+          : [20, 35, 15, 15];
+        const headerHeight = 10;
+        const cellHeight = 10;
+        let x = showListOrderPDF ? 10 : 5;
+        for (let i = 0; i < header.length; i++) {
+          doc.setFillColor(220, 220, 220);
+          doc.rect(x, y + 90, columnWidths[i], headerHeight, "F"); // Draw a filled rectangle for each header cell
+          doc.rect(x, y + 90, columnWidths[i], headerHeight); // Draw the cell border
+          doc.text(header[i], x + 2, y + 98);
+          x += columnWidths[i];
+        }
 
-    //     // Draw the table rows
-    //     y += 100; // Start y below the header
-    //     let maxLines = 1;
-    //     for (let i = 0; i < order.orderDetails.length; i++) {
-    //       const product = order.orderDetails[i];
-    //       const row = [
-    //         order.orderId.toString(),
-    //         product.nameProduct,
-    //         product.num.toString(),
-    //         product.price.toString(),
-    //       ];
-    //       x = showListOrderPDF ? 10 : 5;
-    //       for (let j = 0; j < row.length; j++) {
-    //         const lines = doc.splitTextToSize(row[j], columnWidths[j] - 4); // Subtract a bit from the column width for padding
-    //         maxLines = Math.max(maxLines, lines.length);
-    //         for (let k = 0; k < lines.length; k++) {
-    //           doc.text(
-    //             lines[k],
-    //             x + 2,
-    //             y + cellHeight / 2 + 2 + k * cellHeight
-    //           );
-    //         }
-    //         x += columnWidths[j];
-    //       }
-    //       // Now we draw the table lines
-    //       x = showListOrderPDF ? 10 : 5;
-    //       for (let j = 0; j < row.length; j++) {
-    //         doc.rect(x, y, columnWidths[j], cellHeight * maxLines); // Draw the cell border
-    //         x += columnWidths[j];
-    //       }
-    //       y += cellHeight * maxLines;
-    //       maxLines = 1; // Reset maxLines for the next row
-    //     }
-    //     doc.setFont("THSarabunNewBold", "bold");
-    //     doc.text("ยอดรวม ", showListOrderPDF ? 132 : 61, y + 10);
-    //     doc.text(order.amount.toString(), showListOrderPDF ? 162 : 76, y + 10);
-    //     // Increment y by a certain amount to leave some space between each order
-    //     y += 20;
-    //   }
-    //   if (!showListOrderPDF) {
-    //     y += 100;
-    //   }
-    // });
-    // // Save the PDF as a blob
-    // const pdfBlob = doc.output("blob");
+        // Draw the table rows
+        y += 100; // Start y below the header
+        let maxLines = 1;
+        for (let i = 0; i < order.orderDetails.length; i++) {
+          const product = order.orderDetails[i];
+          const row = [
+            order.orderId.toString(),
+            product.nameProduct,
+            product.num.toString(),
+            product.price.toString(),
+          ];
+          x = showListOrderPDF ? 10 : 5;
+          for (let j = 0; j < row.length; j++) {
+            const lines = doc.splitTextToSize(row[j], columnWidths[j] - 4); // Subtract a bit from the column width for padding
+            maxLines = Math.max(maxLines, lines.length);
+            for (let k = 0; k < lines.length; k++) {
+              doc.text(
+                lines[k],
+                x + 2,
+                y + cellHeight / 2 + 2 + k * cellHeight
+              );
+            }
+            x += columnWidths[j];
+          }
+          // Now we draw the table lines
+          x = showListOrderPDF ? 10 : 5;
+          for (let j = 0; j < row.length; j++) {
+            doc.rect(x, y, columnWidths[j], cellHeight * maxLines); // Draw the cell border
+            x += columnWidths[j];
+          }
+          y += cellHeight * maxLines;
+          maxLines = 1; // Reset maxLines for the next row
+        }
+        doc.setFont("THSarabunNewBold", "bold");
+        doc.text("ยอดรวม ", showListOrderPDF ? 132 : 61, y + 10);
+        doc.text(order.amount.toString(), showListOrderPDF ? 162 : 76, y + 10);
+        // Increment y by a certain amount to leave some space between each order
+        y += 20;
+      }
+      if (!showListOrderPDF) {
+        y += 100;
+      }
+    });
+    // Save the PDF as a blob
+    const pdfBlob = doc.output("blob");
 
-    // // Create a blob URL
-    // const url = createObjectURL(pdfBlob);
+    // Create a blob URL
+    const url = createObjectURL(pdfBlob);
 
-    // // Open the PDF in a new tab
+    // Open the PDF in a new tab
     // window.open(url, "_blank");
 
-    // // Create a link element, click it to start the download
+    // Create a link element, click it to start the download
     // const link = document.createElement("a");
     // link.href = url;
     // link.download = `orders-${formattedDate}.pdf`;
     // link.click();
+    saveAs(url, `orders-${formattedDate}.pdf`, { forceSave: true });
 
-    // // Clean up
+    // Clean up
     // link.remove();
-    // revokeObjectURL(url);
+    revokeObjectURL(url);
   };
 
   const handleSetStatusCancelOrderSingle = (index, id) => {
@@ -1212,7 +1215,7 @@ export default function Order() {
                     variant="solid"
                     color="white"
                     _hover={{}}
-                    // onClick={handleCheckSelect}
+                    onClick={handleCheckSelect}
                   >
                     พิมพ์ใบคำสั่งซื้อ
                   </Button>
