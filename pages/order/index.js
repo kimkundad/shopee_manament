@@ -644,7 +644,7 @@ export default function Order() {
       const url = createObjectURL(pdfBlob);
 
       // // Open the PDF in a new tab
-      // window.open(url, "_blank");
+      window.open(url, "_blank");
 
       // // Create a link element, click it to start the download
       // const link = document.createElement("a");
@@ -842,7 +842,7 @@ export default function Order() {
     const url = createObjectURL(pdfBlob);
 
     // Open the PDF in a new tab
-    // window.open(url, "_blank");
+    window.open(url, "_blank");
 
     // Create a link element, click it to start the download
     // const link = document.createElement("a");
