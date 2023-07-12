@@ -23,7 +23,7 @@ export const defaultNavItems = [
 		),
 		iconcurrentpage: (
 			<Image
-				src="/images/menu/dashboard ขาว.png"
+				src="/images/menu/dashboard-white.png"
 				alt="My Image"
 				width={30}
 				height={30}
@@ -38,7 +38,7 @@ export const defaultNavItems = [
 		namePermission: "permission_my_shop",
 		icon: (
 			<Image
-				src="/images/menu/ร้านค้าของฉัน.png"
+				src="/images/menu/my-shop.png"
 				alt="My Image"
 				width={30}
 				height={30}
@@ -46,7 +46,7 @@ export const defaultNavItems = [
 		),
 		iconcurrentpage: (
 			<Image
-				src="/images/menu/ร้านค้าของฉัน ขาว.png"
+				src="/images/menu/my-shop-white.png"
 				alt="My Image"
 				width={30}
 				height={30}
@@ -59,7 +59,7 @@ export const defaultNavItems = [
 		namePermission: "permission_order",
 		icon: (
 			<Image
-				src="/images/menu/คำสั่งซื้อ.png"
+				src="/images/menu/order.png"
 				alt="My Image"
 				width={30}
 				height={30}
@@ -67,7 +67,7 @@ export const defaultNavItems = [
 		),
 		iconcurrentpage: (
 			<Image
-				src="/images/menu/คำสั่งซื้อ ขาว.png"
+				src="/images/menu/order-white.png"
 				alt="My Image"
 				width={30}
 				height={30}
@@ -80,7 +80,7 @@ export const defaultNavItems = [
 		namePermission: "permission_stock",
 		icon: (
 			<Image
-				src="/images/menu/คลังสินค้า.png"
+				src="/images/menu/stock.png"
 				alt="My Image"
 				width={30}
 				height={30}
@@ -88,7 +88,7 @@ export const defaultNavItems = [
 		),
 		iconcurrentpage: (
 			<Image
-				src="/images/menu/คลังสินค้า ขาว.png"
+				src="/images/menu/stock-white.png"
 				alt="My Image"
 				width={30}
 				height={30}
@@ -98,7 +98,7 @@ export const defaultNavItems = [
 	{
 		label: "แชทร้านค้า",
 		href: "/chats",
-		namePermission: "permission_chats",
+		namePermission: "permission_chat",
 		icon: (
 			<Image
 				src="/images/menu/Chats.png"
@@ -130,7 +130,7 @@ export const defaultNavItems = [
 		),
 		iconcurrentpage: (
 			<Image
-				src="/images/menu/รายงาน ขาว.png"
+				src="/images/menu/report-white.png"
 				alt="My Image"
 				width={30}
 				height={30}

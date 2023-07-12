@@ -56,6 +56,7 @@ import {
 import { DeleteIcon } from "@chakra-ui/icons";
 import { TagsInput } from "react-tag-input-component";
 import { useToast } from "@chakra-ui/react";
+import { connect, useDispatch, useSelector } from "react-redux";
 class PicturesWall extends React.Component {
   state = {
     fileList: [],
@@ -145,6 +146,8 @@ class VideoWall extends React.Component {
   }
 }
 function UseEditProduct() {
+  const userInfo = useSelector((App) => App.userInfo);
+  const userAuthen = useSelector((App) => App.authen);
   const router = useRouter();
   const productId = router.query.id;
 
@@ -184,8 +187,10 @@ function UseEditProduct() {
   const [selected2, setSelected2] = useState([]);
 
   const fetchDataCategory = async () => {
+    const formData = new FormData();
+    formData.append("userId", userInfo.data[0].id);
     axios
-      .get("https://api.sellpang.com/api/get_category_all")
+      .post("https://api.sellpang.com/api/get_category_all", formData)
       .then(function (response) {
         setCategory(response.data.category);
         setTags2(response.data.category);
@@ -924,7 +929,7 @@ function UseEditProduct() {
 
   const handleConfirmSuccess = () => {
     const formData = new FormData();
-    formData.append("userID", 34);
+    formData.append("userID", userInfo.data[0].id);
     tags.forEach((category, index) => {
       formData.append(`category[${index}]`, category);
     });

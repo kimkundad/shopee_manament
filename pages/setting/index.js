@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -19,8 +19,10 @@ import {
   BsCashCoin,
   BsBell,
 } from "react-icons/bs";
+import { useSelector } from "react-redux";
 
 export default function Setting() {
+  const userInfo = useSelector((App) => App.userInfo);
   return (
     <>
       <Box p="10">
@@ -43,28 +45,30 @@ export default function Setting() {
 
       <Box p={10} minHeight={400}>
         <VStack spacing={5} align="stretch">
-          <Link href="/setting/profile">
-            <Box
-              p="5"
-              borderWidth="2px"
-              borderColor="gray.500"
-              borderRadius="lg"
-              _hover={{ borderColor: '#cd2626'}}
-            >
-              <Flex color="gray.600" _hover={{ color: '#cd2626' }}>
-                <HStack>
-                  <Icon as={BsPerson} boxSize={10} />
-                  <Text pt="1" pl="2" as="b" fontSize="21">
-                    โปรไฟล์ของฉัน
-                  </Text>
-                </HStack>
-                <Spacer />
-                <Box>
-                  <Icon as={BsArrowRightCircle} boxSize={8} />
-                </Box>
-              </Flex>
-            </Box>
-          </Link>
+          {userInfo && userInfo.data && userInfo.data.length > 0 && userInfo.data[0].is_subadmin === 0 && (
+            <Link href="/setting/profile">
+              <Box
+                p="5"
+                borderWidth="2px"
+                borderColor="gray.500"
+                borderRadius="lg"
+                _hover={{ borderColor: "#cd2626" }}
+              >
+                <Flex color="gray.600" _hover={{ color: "#cd2626" }}>
+                  <HStack>
+                    <Icon as={BsPerson} boxSize={10} />
+                    <Text pt="1" pl="2" as="b" fontSize="21">
+                      โปรไฟล์ของฉัน
+                    </Text>
+                  </HStack>
+                  <Spacer />
+                  <Box>
+                    <Icon as={BsArrowRightCircle} boxSize={8} />
+                  </Box>
+                </Flex>
+              </Box>
+            </Link>
+          )}
           {/* <Box p='5' borderWidth='2px' borderColor='gray.500' borderRadius='lg'>
                         <Flex color='gray.600'>
                             <HStack>
@@ -85,9 +89,9 @@ export default function Setting() {
               borderWidth="2px"
               borderColor="gray.500"
               borderRadius="lg"
-              _hover={{ borderColor: '#cd2626'}}
+              _hover={{ borderColor: "#cd2626" }}
             >
-              <Flex color="gray.600" _hover={{ color: '#cd2626' }}>
+              <Flex color="gray.600" _hover={{ color: "#cd2626" }}>
                 <HStack>
                   <Icon as={BsCashCoin} boxSize={8} />
                   <Text pt="1" pl="2" as="b" fontSize="21">
@@ -108,9 +112,9 @@ export default function Setting() {
               borderWidth="2px"
               borderColor="gray.500"
               borderRadius="lg"
-              _hover={{ borderColor: '#cd2626'}}
+              _hover={{ borderColor: "#cd2626" }}
             >
-              <Flex color="gray.600" _hover={{ color: '#cd2626' }}>
+              <Flex color="gray.600" _hover={{ color: "#cd2626" }}>
                 <HStack>
                   <Icon as={BsReceipt} boxSize={8} />
                   <Text pt="1" pl="2" as="b" fontSize="21">
@@ -131,9 +135,9 @@ export default function Setting() {
               borderWidth="2px"
               borderColor="gray.500"
               borderRadius="lg"
-              _hover={{ borderColor: '#cd2626'}}
+              _hover={{ borderColor: "#cd2626" }}
             >
-              <Flex color="gray.600" _hover={{ color: '#cd2626' }}>
+              <Flex color="gray.600" _hover={{ color: "#cd2626" }}>
                 <HStack>
                   <Icon as={BsReceipt} boxSize={8} />
                   <Text pt="1" pl="2" as="b" fontSize="21">
@@ -154,9 +158,9 @@ export default function Setting() {
               borderWidth="2px"
               borderColor="gray.500"
               borderRadius="lg"
-              _hover={{ borderColor: '#cd2626'}}
+              _hover={{ borderColor: "#cd2626" }}
             >
-              <Flex color="gray.600" _hover={{ color: '#cd2626' }}>
+              <Flex color="gray.600" _hover={{ color: "#cd2626" }}>
                 <HStack>
                   <Icon as={BsBell} boxSize={8} />
                   <Text pt="1" pl="2" as="b" fontSize="21">
@@ -170,7 +174,6 @@ export default function Setting() {
               </Flex>
             </Box>
           </Link>
-
         </VStack>
       </Box>
     </>

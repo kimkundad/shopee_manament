@@ -70,7 +70,7 @@ const Sidebar = ({ open, navItems = defaultNavItems, setOpen }) => {
           {navItems.map((item, index) => {
             const imageName =
               isHovering === index ? item.iconcurrentpage : item.icon;
-            if (isSubadmin == 0) {
+            if (userInfo && userInfo.data && userInfo.data.length > 0 && userInfo.data[0].is_subadmin === 0) {
               return currentPath.match(item.href) ? (
                 <Link key={index} href={item.href}>
                   <li
@@ -104,7 +104,7 @@ const Sidebar = ({ open, navItems = defaultNavItems, setOpen }) => {
             } else {
               if (
                 item.namePermission == "permission_dashboard" &&
-                permission.set_permission_dashboard == true
+                permission?.set_permission_dashboard == true
               ) {
                 return currentPath.match(item.href) ? (
                   <Link key={index} href={item.href}>
@@ -138,7 +138,7 @@ const Sidebar = ({ open, navItems = defaultNavItems, setOpen }) => {
                 );
               } else if (
                 item.namePermission == "permission_my_shop" &&
-                permission.set_permission_my_shop == true
+                permission?.set_permission_my_shop == true
               ) {
                 return currentPath.match(item.href) ? (
                   <Link key={index} href={item.href}>
@@ -172,7 +172,7 @@ const Sidebar = ({ open, navItems = defaultNavItems, setOpen }) => {
                 );
               } else if (
                 item.namePermission == "permission_order" &&
-                permission.set_permission_order == true
+                permission?.set_permission_order == true
               ) {
                 return currentPath.match(item.href) ? (
                   <Link key={index} href={item.href}>
@@ -206,7 +206,7 @@ const Sidebar = ({ open, navItems = defaultNavItems, setOpen }) => {
                 );
               } else if (
                 item.namePermission == "permission_stock" &&
-                permission.set_permission_stock == true
+                permission?.set_permission_stock == true
               ) {
                 return currentPath.match(item.href) ? (
                   <Link key={index} href={item.href}>
@@ -239,8 +239,8 @@ const Sidebar = ({ open, navItems = defaultNavItems, setOpen }) => {
                   </Link>
                 );
               } else if (
-                item.namePermission == "permission_chats" &&
-                permission.set_permission_chats == true
+                item.namePermission == "permission_chat" &&
+                permission?.set_permission_chat == true
               ) {
                 return currentPath.match(item.href) ? (
                   <Link key={index} href={item.href}>
@@ -274,7 +274,7 @@ const Sidebar = ({ open, navItems = defaultNavItems, setOpen }) => {
                 );
               } else if (
                 item.namePermission == "permission_report" &&
-                permission.set_permission_report == true
+                permission?.set_permission_report == true
               ) {
                 return currentPath.match(item.href) ? (
                   <Link key={index} href={item.href}>
@@ -308,7 +308,7 @@ const Sidebar = ({ open, navItems = defaultNavItems, setOpen }) => {
                 );
               } else if (
                 item.namePermission == "permission_admin_manage" &&
-                permission.set_permission_admin_manage == true
+                permission?.set_permission_admin_manage == true
               ) {
                 return currentPath.match(item.href) ? (
                   <Link key={index} href={item.href}>
@@ -342,7 +342,7 @@ const Sidebar = ({ open, navItems = defaultNavItems, setOpen }) => {
                 );
               } else if (
                 item.namePermission == "permission_settings" &&
-                permission.set_permission_settings == true
+                permission?.set_permission_settings == true
               ) {
                 return currentPath.match(item.href) ? (
                   <Link key={index} href={item.href}>
@@ -390,7 +390,7 @@ const Sidebar = ({ open, navItems = defaultNavItems, setOpen }) => {
         >
           <div className="flex gap-4 items-center">
             <Image
-              src={"/images/menu/ติดต่อทีมงาน.png"}
+              src={"/images/menu/contact.png"}
               height={40}
               width={40}
               alt="profile image"

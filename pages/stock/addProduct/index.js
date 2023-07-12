@@ -366,8 +366,10 @@ function addProduct() {
 
   const [category, setCategory] = useState([]);
   const fetchData = async () => {
+    const formData = new FormData();
+    formData.append("userId", userInfo.data[0].id);
     axios
-      .get("https://api.sellpang.com/api/get_category_all")
+      .post("https://api.sellpang.com/api/get_category_all", formData)
       .then(function (response) {
         setCategory(response.data.category);
         setTags2(response.data.category);
@@ -682,7 +684,7 @@ function addProduct() {
 
   const handleConfirmSuccess = () => {
     const formData = new FormData();
-    formData.append("userID", 34);
+    formData.append("userID", userInfo.data[0].id);
     tags.forEach((category, index) => {
       formData.append(`category[${index}]`, category);
     });

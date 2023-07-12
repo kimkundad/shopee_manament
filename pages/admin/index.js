@@ -107,6 +107,8 @@ export default function AdminManagement() {
   const [editPerStock, setEditStock] = useState(false);
   const [editPerReport, setEditPerReport] = useState(false);
   const [editPerAdminManage, setEditPerAdminManage] = useState(false);
+  const [editPerChat, setEditPerChat] = useState(false);
+  const [editPerOrder, setEditPerOrder] = useState(false);
   const [editPerSettings, setEditPerSettings] = useState(false);
 
   // create sub-admin
@@ -118,6 +120,8 @@ export default function AdminManagement() {
   const [perStock, setStock] = useState(false);
   const [perReport, setPerReport] = useState(false);
   const [perAdminManage, setPerAdminManage] = useState(false);
+  const [perChat, setPerChat] = useState(false);
+  const [perOrder, setPerOrder] = useState(false);
   const [perSettings, setPerSettings] = useState(false);
 
   // function set data craete sub admin
@@ -139,6 +143,13 @@ export default function AdminManagement() {
 
   const handleSwitchAdminManageChange = () => {
     setPerAdminManage(!perAdminManage);
+  };
+
+  const handleSwitchChatChange = () => {
+    setPerChat(!perChat);
+  };
+  const handleSwitchOrderChange = () => {
+    setPerOrder(!perOrder);
   };
 
   const handleSwitchSettingsChange = () => {
@@ -164,6 +175,13 @@ export default function AdminManagement() {
 
   const handleSwitchAdminManageEditChange = () => {
     setEditPerAdminManage(!editPerAdminManage);
+  };
+
+  const handleSwitchChatEditChange = () => {
+    setEditPerChat(!editPerChat);
+  };
+  const handleSwitchOrderEditChange = () => {
+    setEditPerOrder(!editPerOrder);
   };
 
   const handleSwitchSettingsEditChange = () => {
@@ -198,6 +216,8 @@ export default function AdminManagement() {
       set_permission_stock: perStock,
       set_permission_report: perReport,
       set_permission_admin_manage: perAdminManage,
+      set_permission_chat: perChat,
+      set_permission_order: perOrder,
       set_permission_settings: perSettings,
     };
     Axios.post("https://api.sellpang.com/api/createSubAdmin", data).then(
@@ -222,6 +242,8 @@ export default function AdminManagement() {
       set_permission_stock: editPerStock,
       set_permission_report: editPerReport,
       set_permission_admin_manage: editPerAdminManage,
+      set_permission_chat: editPerChat,
+      set_permission_order: editPerOrder,
       set_permission_settings: editPerSettings,
     };
     Axios.post("https://api.sellpang.com/api/updateSubAdmin", data).then(
@@ -385,6 +407,8 @@ export default function AdminManagement() {
     perStock,
     perReport,
     perAdminManage,
+    perOrder,
+    perChat,
     perSettings
   ) => {
     setUserIDSubAdmin(userID);
@@ -396,6 +420,8 @@ export default function AdminManagement() {
     setEditStock(perStock);
     setEditPerReport(perReport);
     setEditPerAdminManage(perAdminManage);
+    setEditPerOrder(perOrder);
+    setEditPerChat(perChat);
     setEditPerSettings(perSettings);
     modalEdit.onOpen();
   };
@@ -532,8 +558,14 @@ export default function AdminManagement() {
                         {permissions.set_permission_my_shop == true && (
                           <option value="option1">ร้านค้าของฉัน</option>
                         )}
+                        {permissions.set_permission_order == true && (
+                          <option value="option1">คำสั่งซื้อ</option>
+                        )}
                         {permissions.set_permission_stock == true && (
                           <option value="option1">คลังสินค้า</option>
+                        )}
+                        {permissions.set_permission_chat == true && (
+                          <option value="option1">แชทร้านค้า</option>
                         )}
                         {permissions.set_permission_report == true && (
                           <option value="option1">รายงาน</option>
@@ -567,6 +599,8 @@ export default function AdminManagement() {
                                 permissions.set_permission_stock,
                                 permissions.set_permission_report,
                                 permissions.set_permission_admin_manage,
+                                permissions.set_permission_order,
+                                permissions.set_permission_chat,
                                 permissions.set_permission_settings
                               )
                             }
@@ -670,7 +704,7 @@ export default function AdminManagement() {
           size="custom"
         >
           <ModalOverlay />
-          <ModalContent width={"500px"} height={"460px"} mt={"160px"}>
+          <ModalContent width={"500px"} height={"500px"} mt={"160px"}>
             <ModalHeader>
               <Box>
                 <Center>
@@ -678,7 +712,7 @@ export default function AdminManagement() {
                     <Image
                       width={28}
                       height={28}
-                      src={"/images/menu/จัดการแอดมิน.png"}
+                      src={"/images/menu/manage-admin.png"}
                       alt="admin"
                     />
                     <Text fontSize="3xl">เพิ่มแอดมิน</Text>
@@ -807,10 +841,42 @@ export default function AdminManagement() {
                       <Image
                         width={24}
                         height={24}
-                        src={"/images/menu/จัดการแอดมิน.png"}
+                        src={"/images/menu/manage-admin.png"}
                         alt="admin"
                       />
                       <Text>จัดการแอดมิน</Text>
+                    </HStack>
+                  </GridItem>
+                  <GridItem>
+                    <HStack>
+                      <Switch
+                        id="switch-order"
+                        colorScheme={"green"}
+                        onChange={handleSwitchOrderChange}
+                      />
+                      <Image
+                        width={24}
+                        height={24}
+                        src={"/images/menu/order.png"}
+                        alt="shop"
+                      />
+                      <Text>คำสั่งซื้อ</Text>
+                    </HStack>
+                  </GridItem>
+                  <GridItem>
+                    <HStack>
+                      <Switch
+                        id="switch-chat"
+                        colorScheme={"green"}
+                        onChange={handleSwitchChatChange}
+                      />
+                      <Image
+                        width={24}
+                        height={24}
+                        src={"/images/menu/Chats.png"}
+                        alt="admin"
+                      />
+                      <Text>แชทร้านค้า</Text>
                     </HStack>
                   </GridItem>
                   <GridItem>
@@ -1155,7 +1221,7 @@ export default function AdminManagement() {
           size="custom"
         >
           <ModalOverlay />
-          <ModalContent width={"500px"} height={"460px"} mt={"160px"}>
+          <ModalContent width={"500px"} height={"500px"} mt={"160px"}>
             <ModalHeader>
               <Box>
                 <Center>
@@ -1163,7 +1229,7 @@ export default function AdminManagement() {
                     <Image
                       width={28}
                       height={28}
-                      src={"/images/menu/จัดการแอดมิน.png"}
+                      src={"/images/menu/manage-admin.png"}
                       alt="admin"
                     />
                     <Text fontSize="3xl">แก้ไไขแอดมิน</Text>
@@ -1292,10 +1358,44 @@ export default function AdminManagement() {
                       <Image
                         width={24}
                         height={24}
-                        src={"/images/menu/จัดการแอดมิน.png"}
+                        src={"/images/menu/manage-admin.png"}
                         alt="admin"
                       />
                       <Text>จัดการแอดมิน</Text>
+                    </HStack>
+                  </GridItem>
+                  <GridItem>
+                    <HStack>
+                      <Switch
+                        id="switch-order"
+                        colorScheme={"green"}
+                        isChecked={editPerOrder}
+                        onChange={handleSwitchOrderEditChange}
+                      />
+                      <Image
+                        width={24}
+                        height={24}
+                        src={"/images/menu/order.png"}
+                        alt="shop"
+                      />
+                      <Text>คำสั่งซื้อ</Text>
+                    </HStack>
+                  </GridItem>
+                  <GridItem>
+                    <HStack>
+                      <Switch
+                        id="switch-chat"
+                        colorScheme={"green"}
+                        isChecked={editPerChat}
+                        onChange={handleSwitchChatEditChange}
+                      />
+                      <Image
+                        width={24}
+                        height={24}
+                        src={"/images/menu/Chats.png"}
+                        alt="admin"
+                      />
+                      <Text>แชทร้านค้า</Text>
                     </HStack>
                   </GridItem>
                   <GridItem>

@@ -925,7 +925,7 @@ export default function Order() {
             <Image
               width={"36px"}
               height={"36px"}
-              src={"/images/menu/คำสั่งซื้อ.png"}
+              src={"/images/menu/order.png"}
               alt={"รูปคำสั่งซื้อ"}
             />
             <Text as="b" fontSize="4xl" color={"#fe4900"} p={3}>

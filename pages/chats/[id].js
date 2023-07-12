@@ -53,13 +53,12 @@ export default function useChats() {
   const { data: UserChats, isLoading: fetchLoadingUserChats } = getUserChats(
     router.query.id
   );
-
   // useEffect(() => {
   //   async function fecthdata() {
   //     const formdata = new FormData();
   //     formdata.append("shop_id", shopId);
-  //     const res = await axios.post(
-  //       "https://api.sellpang.com/api/getUserChats",
+  //     const res = await axios.get(
+  //       `https://api.sellpang.com/api/getUserChats/${router.query.id}`,
   //       formdata
   //     );
   //     setUsers(res.data.users);
@@ -201,6 +200,7 @@ export default function useChats() {
             const newArray = [...prevMessages, data];
             return newArray;
           });
+          refreshUserChat();
         }
       );
       return () => {
@@ -307,11 +307,19 @@ export default function useChats() {
                             ? item.name?.slice(0, 10) + "..."
                             : item.name}
                         </Text>
-                        <Text fontSize="18px" color="gray">
-                          {item.message?.length > 15
-                            ? item.message?.slice(0, 15) + "..."
-                            : item.message}
-                        </Text>
+                        {item.sender_id == null ? (
+                          <Text fontSize="18px" color="gray">
+                            You : {item.message?.length > 15
+                              ? item.message?.slice(0, 15) + "..."
+                              : item.message}
+                          </Text>
+                        ) : (
+                          <Text fontSize="18px" color="gray">
+                            {item.message?.length > 15
+                              ? item.message?.slice(0, 15) + "..."
+                              : item.message}
+                          </Text>
+                        )}
                       </Box>
                       <Spacer />
                       <Box>
