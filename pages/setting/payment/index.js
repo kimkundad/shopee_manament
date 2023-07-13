@@ -83,7 +83,11 @@ export default function Purchase() {
         <Box>
           <Center>
             <HStack>
-              <Image width={36} height={36} src={"/images/menu/icon-setting.png"} />
+              <Image
+                width={36}
+                height={36}
+                src={"/images/menu/icon-setting.png"}
+              />
               <Text as="b" fontSize="4xl" pt={3}>
                 {" "}
                 ตั้งค่า
@@ -105,27 +109,27 @@ export default function Purchase() {
 
       <Box p={10} minHeight={400}>
         <VStack spacing={5} align="stretch">
-          <Box
-            p={5}
-            borderWidth="2px"
-            borderColor={"gray.500"}
-            borderRadius="lg"
-          >
-            <Flex>
-              <Box as="span" color="gray.600" fontSize="sm">
-                <Text as="b" fontSize="lg">
-                  ชำระเงินแบบโอน
-                </Text>
-              </Box>
-              <Spacer />
-              <Box as="span" color="gray.600" fontSize="sm">
-                <Link href="/setting/payment/eBank">
+          <Link href="/setting/payment/eBank">
+            <Box
+              p={5}
+              borderWidth="2px"
+              borderColor={"gray.500"}
+              borderRadius="lg"
+              _hover={{ borderWidth: '3px', borderColor: '#cd2626', textColor: '#cd2626' }}
+            >
+              <Flex>
+                <Box as="span" fontSize="sm">
+                  <Text as="b" fontSize="lg">
+                    ชำระเงินแบบโอน
+                  </Text>
+                </Box>
+                <Spacer />
+                <Box as="span" fontSize="sm">
                   <Icon as={BsArrowRightCircle} boxSize={8} />
-                </Link>
-              </Box>
-            </Flex>
-          </Box>
-
+                </Box>
+              </Flex>
+            </Box>
+          </Link>
           <Box
             p={5}
             borderWidth="2px"

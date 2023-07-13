@@ -52,9 +52,9 @@ export default function Setting() {
                 borderWidth="2px"
                 borderColor="gray.500"
                 borderRadius="lg"
-                _hover={{ borderColor: "#cd2626" }}
+                _hover={{ borderColor: "#cd2626", borderWidth: "3px", textColor: '#cd2626' }}
               >
-                <Flex color="gray.600" _hover={{ color: "#cd2626" }}>
+                <Flex>
                   <HStack>
                     <Icon as={BsPerson} boxSize={10} />
                     <Text pt="1" pl="2" as="b" fontSize="21">
@@ -89,9 +89,9 @@ export default function Setting() {
               borderWidth="2px"
               borderColor="gray.500"
               borderRadius="lg"
-              _hover={{ borderColor: "#cd2626" }}
+              _hover={{ borderColor: "#cd2626", borderWidth: "3px", textColor: '#cd2626' }}
             >
-              <Flex color="gray.600" _hover={{ color: "#cd2626" }}>
+              <Flex>
                 <HStack>
                   <Icon as={BsCashCoin} boxSize={8} />
                   <Text pt="1" pl="2" as="b" fontSize="21">
@@ -112,9 +112,9 @@ export default function Setting() {
               borderWidth="2px"
               borderColor="gray.500"
               borderRadius="lg"
-              _hover={{ borderColor: "#cd2626" }}
+              _hover={{ borderColor: "#cd2626", borderWidth: "3px", textColor: '#cd2626' }}
             >
-              <Flex color="gray.600" _hover={{ color: "#cd2626" }}>
+              <Flex>
                 <HStack>
                   <Icon as={BsReceipt} boxSize={8} />
                   <Text pt="1" pl="2" as="b" fontSize="21">
@@ -135,9 +135,9 @@ export default function Setting() {
               borderWidth="2px"
               borderColor="gray.500"
               borderRadius="lg"
-              _hover={{ borderColor: "#cd2626" }}
+              _hover={{ borderColor: "#cd2626", borderWidth: "3px", textColor: '#cd2626' }}
             >
-              <Flex color="gray.600" _hover={{ color: "#cd2626" }}>
+              <Flex>
                 <HStack>
                   <Icon as={BsReceipt} boxSize={8} />
                   <Text pt="1" pl="2" as="b" fontSize="21">
@@ -158,9 +158,9 @@ export default function Setting() {
               borderWidth="2px"
               borderColor="gray.500"
               borderRadius="lg"
-              _hover={{ borderColor: "#cd2626" }}
+              _hover={{ borderColor: "#cd2626", borderWidth: "3px", textColor: '#cd2626' }}
             >
-              <Flex color="gray.600" _hover={{ color: "#cd2626" }}>
+              <Flex>
                 <HStack>
                   <Icon as={BsBell} boxSize={8} />
                   <Text pt="1" pl="2" as="b" fontSize="21">

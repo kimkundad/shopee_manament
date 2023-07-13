@@ -18,10 +18,14 @@ import { Icon } from "@chakra-ui/icons";
 import { BsArrowLeftCircle, BsBell } from "react-icons/bs";
 import { connect, useDispatch, useSelector } from "react-redux";
 import axios from "axios";
+import { useToast } from "@chakra-ui/react";
+
+
 export default function Notification() {
   const userInfo = useSelector((App) => App.userInfo);
   const userAuthen = useSelector((App) => App.authen);
   const [active, setActive] = useState(false);
+  const toast = useToast();
 
   useEffect(() => {
     async function fecthdata() {
@@ -60,11 +64,28 @@ export default function Notification() {
           },
         }
       );
-      // console.log(res.data);
-      if (res.data.setting === true) {
-        setActive(res.data.setting);
+      // console.log(JSON.parse(res.data.setting.setting));
+      const setting_noti = JSON.parse(res.data.setting.setting);
+      if (setting_noti.notification === true) {
+        setActive(setting_noti);
+        toast({
+          position: "top-right",
+          title: '"เปิด" สถานะการแจ้งเตือนสำเร็จ',
+          description: 'คุณได้ "เปิด" การแจ้งเตือนสำเร็จ',
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
       } else {
-        setActive(JSON.parse(res.data.setting.setting));
+        setActive(setting_noti);
+        toast({
+          position: "top-right",
+          title: '"ปิด" สถานะการแจ้งเตือนสำเร็จ',
+          description: 'คุณได้ "ปิด" การแจ้งเตือนสำเร็จ',
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
       }
     }
     fecthdata();
