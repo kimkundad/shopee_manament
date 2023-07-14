@@ -127,7 +127,7 @@ export default function useChats() {
       setMessages(res?.data?.message);
       axios
         .get(
-          `http://127.0.0.1:8000/api/getImagesMessage/${item.id}/${router.query.id}`
+          `https://api.sellpang.com/api/getImagesMessage/${item.id}/${router.query.id}`
         )
         .then(function (response) {
           if (response.data.img_chat) {
@@ -170,7 +170,7 @@ export default function useChats() {
         function reload_img() {
           axios
             .get(
-              `http://127.0.0.1:8000/api/getImagesMessage/${userId}/${router.query.id}`
+              `https://api.sellpang.com/api/getImagesMessage/${userId}/${router.query.id}`
             )
             .then(function (response) {
               if (response.data.img_chat) {
