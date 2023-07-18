@@ -843,7 +843,7 @@ function modalEditStep1(props) {
         scrollBehavior={"inside"}
       >
         <ModalOverlay />
-        <ModalContent width="800px" height="600px">
+        <ModalContent width="1000px" height="600px">
           <ModalHeader>
             <Flex justifyContent={"center"}>
               <Image
@@ -913,8 +913,8 @@ function modalEditStep1(props) {
                               "https://api.sellpang.com/images/shopee/products/" +
                               getPro.img_product
                             }
-                            width={"30px"}
-                            height={"25px"}
+                            // width={"30px"}
+                            height={"50px"}
                           />
                         </Td>
                         <Td>{nameProduct}</Td>

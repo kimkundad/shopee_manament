@@ -144,7 +144,7 @@ export default function index() {
             <Text fontSize="21px">ชื่อร้านค้า</Text>
           </Table.Column>
           <Table.Column style={{ backgroundColor: "red", color: "white" }}>
-            <Text fontSize="21px">สิทธิ์</Text>
+            <Text fontSize="21px" textAlign={'center'}>ข้อความที่ยังไม่อ่าน</Text>
           </Table.Column>
         </Table.Header>
         <Table.Body>
@@ -176,7 +176,7 @@ export default function index() {
                 </Table.Cell>
 
                 <Table.Cell>
-                  <Text>0</Text>
+                  <Text textAlign={'center'}>{item.chat}</Text>
                 </Table.Cell>
               </Table.Row>
             );

@@ -790,7 +790,7 @@ export default function useChats() {
                   })
                 ) : (
                   <Box>
-                    <Text>ยังไม่เริ่มต้นแชท</Text>
+                    <Text textAlign={'center'}>ยังไม่เริ่มต้นแชท</Text>
                   </Box>
                 )}
                 <Lightbox

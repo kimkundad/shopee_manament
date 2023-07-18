@@ -5,7 +5,7 @@ import { saveAs } from "file-saver";
 // import orders from "@/data/orders";
 import FormData from "form-data";
 import axios from "axios";
-import { createObjectURL, revokeObjectURL } from 'blob-util';
+import { createObjectURL, revokeObjectURL } from "blob-util";
 import {
   Flex,
   Text,
@@ -210,6 +210,7 @@ export default function Order() {
   const [datePayment, setDatePayment] = useState("");
   const [timePayment, setTimePayment] = useState("");
   const [pricePayment, setPricePayment] = useState("");
+  const [priceTotalPayment, setPriceTotalPayment] = useState("");
   const [codePayment, setCodePayment] = useState("");
   const [imageSlip, setImageSlip] = useState("");
   const [typePayment, setTypePayment] = useState("");
@@ -236,6 +237,8 @@ export default function Order() {
   const [countCancel, setCountCancel] = useState("");
   const [selectedOption, setSelectedOption] = useState("");
   const [addressOwnerShop, setAddressOwnerShop] = useState([]);
+  let realPrice = 0;
+  let totalCheckOrder = 0;
 
   const optionsShipping = [
     {
@@ -283,8 +286,8 @@ export default function Order() {
     const res = await axios.get(
       `https://api.sellpang.com/api/getAddressOwnerShop/${userInfo.data[0].code_user}`
     );
-    if(res.data.ownerShop){
-      setAddressOwnerShop(res.data.ownerShop)
+    if (res.data.ownerShop) {
+      setAddressOwnerShop(res.data.ownerShop);
     }
   };
 
@@ -365,6 +368,7 @@ export default function Order() {
 
   const handleOpenModalDetailOrder = (id) => {
     modalDetailOrder.onOpen();
+    totalCheckOrder = 0;
     const data = orders.filter((item) => item.ID === id);
     const optionsDate = {
       day: "numeric",
@@ -383,8 +387,23 @@ export default function Order() {
       month: "numeric",
       year: "numeric",
     }; // กำหนดรูปแบบแค่วันที่อย่างเดียว
-    const amountOrder = data[0].amount;
+    
+    data[0].orderDetails.map((orderDetails) => {
+      if(orderDetails.option1 == 0 && orderDetails.option2 == 0){
+        totalCheckOrder = totalCheckOrder + orderDetails.price
+      }else if(orderDetails.option1 != 0 && orderDetails.option2 == 0){
+        totalCheckOrder = totalCheckOrder + orderDetails.priceProductOption1
+      }else if(orderDetails.option2 != 0){
+        totalCheckOrder = totalCheckOrder + orderDetails.priceProductOption2
+      }
+    })
+    const amountOrder = totalCheckOrder;
+    const amountTotalOrder = totalCheckOrder + 40;
     const formattedPrice = amountOrder.toLocaleString("en-US", optionsPrice);
+    const formattedPriceTotal = amountTotalOrder.toLocaleString(
+      "en-US",
+      optionsPrice
+    );
     const dateOrder = new Date(data[0].createAt); // แปลงค่าวันที่ให้เป็น Date object
     const formattedDate = dateOrder.toLocaleDateString("th-TH", optionsDate); // แปลงวันที่เป็นรูปแบบ "DD/MM/YYYY"
     const datePayment = new Date(data[0].dateSlipPayment); // แปลงค่าวันที่ให้เป็น Date object
@@ -400,6 +419,7 @@ export default function Order() {
     setDatePayment(formattedDatePayment);
     setTimePayment(data[0].timeSlipPayment);
     setPricePayment(formattedPrice);
+    setPriceTotalPayment(formattedPriceTotal);
     setCodePayment(data[0].orderId);
     setImageSlip(data[0].slipPayment);
     setDetailOrder(data[0].orderDetails);
@@ -575,7 +595,7 @@ export default function Order() {
 
         if (showListOrderPDF) {
           // Draw the table header
-          const header = ["Order ID", "Product Name", "Num", "Price"];
+          const header = ["รหัสสินค้า", "รายละเอียดสินค้า", "จำนวน", "ราคา"];
           const columnWidths = showListOrderPDF
             ? [40, 80, 30, 30]
             : [20, 35, 15, 15];
@@ -593,14 +613,36 @@ export default function Order() {
           // Draw the table rows
           y += 100; // Start y below the header
           let maxLines = 1;
+          let totalOrder = 0;
+          let row = [];
           for (let i = 0; i < order.orderDetails.length; i++) {
             const product = order.orderDetails[i];
-            const row = [
-              order.orderId.toString(),
-              product.nameProduct,
-              product.num.toString(),
-              product.price.toString(),
-            ];
+            if (product.option1 == 0 && product.option2 == 0) {
+              row = [
+                order.orderId.toString(),
+                product.nameProduct,
+                product.num.toString(),
+                product.price.toString(),
+              ];
+              totalOrder = totalOrder + product.price;
+            } else if (product.option1 != 0 && product.option2 == 0) {
+              row = [
+                order.orderId.toString(),
+                product.nameProduct,
+                product.num.toString(),
+                product.priceProductOption1.toString(),
+              ];
+              totalOrder = totalOrder + product.priceProductOption1;
+            } else if (product.option2 != 0) {
+              row = [
+                order.orderId.toString(),
+                product.nameProduct,
+                product.num.toString(),
+                product.priceProductOption2.toString(),
+              ];
+              totalOrder = totalOrder + product.priceProductOption2;
+            }
+            
             x = showListOrderPDF ? 10 : 5;
             for (let j = 0; j < row.length; j++) {
               const lines = doc.splitTextToSize(row[j], columnWidths[j] - 4); // Subtract a bit from the column width for padding
@@ -623,15 +665,15 @@ export default function Order() {
             y += cellHeight * maxLines;
             maxLines = 1; // Reset maxLines for the next row
           }
+          totalOrder = totalOrder + 40;
           doc.setFont("THSarabunNewBold", "bold");
-          doc.text("ยอดรวม ", showListOrderPDF ? 132 : 61, y + 10);
-          doc.text(
-            order.amount.toString(),
-            showListOrderPDF ? 162 : 76,
-            y + 10
-          );
+          doc.text("ค่าส่ง ", showListOrderPDF ? 132 : 61, y + 10);
+          doc.text("40", showListOrderPDF ? 162 : 76, y + 10);
+          doc.setFont("THSarabunNewBold", "bold");
+          doc.text("ยอดรวม ", showListOrderPDF ? 132 : 61, y + 20);
+          doc.text(totalOrder.toString(), showListOrderPDF ? 162 : 76, y + 20);
           // Increment y by a certain amount to leave some space between each order
-          y += 20;
+          y += 30;
         }
         if (!showListOrderPDF) {
           y += 100;
@@ -777,7 +819,7 @@ export default function Order() {
 
       if (showListOrderPDF) {
         // Draw the table header
-        const header = ["Order ID", "Product Name", "Num", "Price"];
+        const header = ["รหัสสินค้า", "รายละเอียดสินค้า", "จำนวน", "ราคา"];
         const columnWidths = showListOrderPDF
           ? [40, 80, 30, 30]
           : [20, 35, 15, 15];
@@ -795,14 +837,37 @@ export default function Order() {
         // Draw the table rows
         y += 100; // Start y below the header
         let maxLines = 1;
+        let totalOrder = 0;
+        let row = [];
         for (let i = 0; i < order.orderDetails.length; i++) {
           const product = order.orderDetails[i];
-          const row = [
-            order.orderId.toString(),
-            product.nameProduct,
-            product.num.toString(),
-            product.price.toString(),
-          ];
+          if (product.option1 == 0 && product.option2 == 0) {
+            row = [
+              order.orderId.toString(),
+              product.nameProduct,
+              product.num.toString(),
+              product.price.toString(),
+            ];
+            totalOrder = totalOrder + product.price;
+          } else if (product.option1 != 0 && product.option2 == 0) {
+            row = [
+              order.orderId.toString(),
+              product.nameProduct,
+              product.num.toString(),
+              product.priceProductOption1.toString(),
+            ];
+            totalOrder = totalOrder + product.priceProductOption1;
+          } else if (product.option2 != 0) {
+            row = [
+              order.orderId.toString(),
+              product.nameProduct,
+              product.num.toString(),
+              product.priceProductOption2.toString(),
+            ];
+            totalOrder = totalOrder + product.priceProductOption2;
+          }
+
+          
           x = showListOrderPDF ? 10 : 5;
           for (let j = 0; j < row.length; j++) {
             const lines = doc.splitTextToSize(row[j], columnWidths[j] - 4); // Subtract a bit from the column width for padding
@@ -825,11 +890,15 @@ export default function Order() {
           y += cellHeight * maxLines;
           maxLines = 1; // Reset maxLines for the next row
         }
+        totalOrder = totalOrder + 40;
         doc.setFont("THSarabunNewBold", "bold");
-        doc.text("ยอดรวม ", showListOrderPDF ? 132 : 61, y + 10);
-        doc.text(order.amount.toString(), showListOrderPDF ? 162 : 76, y + 10);
+        doc.text("ค่าส่ง ", showListOrderPDF ? 132 : 61, y + 10);
+        doc.text("40", showListOrderPDF ? 162 : 76, y + 10);
+        doc.setFont("THSarabunNewBold", "bold");
+        doc.text("ยอดรวม ", showListOrderPDF ? 132 : 61, y + 20);
+        doc.text(totalOrder.toString(), showListOrderPDF ? 162 : 76, y + 20);
         // Increment y by a certain amount to leave some space between each order
-        y += 20;
+        y += 30;
       }
       if (!showListOrderPDF) {
         y += 100;
@@ -1312,6 +1381,7 @@ export default function Order() {
                   //   }
                   // })
                   .map((filteredOrder, index) => {
+                    realPrice = 0;
                     const optionsDate = {
                       day: "numeric",
                       month: "numeric",
@@ -1325,6 +1395,23 @@ export default function Order() {
                       "th-TH",
                       optionsDate
                     ); // แปลงวันที่เป็นรูปแบบ "DD/MM/YYYY"
+                    filteredOrder.orderDetails.map((orderDetails) => {
+                      if (
+                        orderDetails.option1 != 0 &&
+                        orderDetails.option2 == 0
+                      ) {
+                        realPrice =
+                          realPrice + orderDetails.priceProductOption1;
+                      } else if (orderDetails.option2 != 0) {
+                        realPrice =
+                          realPrice + orderDetails.priceProductOption2;
+                      } else if (
+                        orderDetails.option1 == 0 &&
+                        orderDetails.option2 == 0
+                      ) {
+                        realPrice = realPrice + orderDetails.price;
+                      }
+                    });
                     return (
                       <Tr key={`${filteredOrder.orderId}-${index}`}>
                         {checkBoxData[0] && checkBoxData[0].isShow ? (
@@ -1386,7 +1473,7 @@ export default function Order() {
                         ) : null}
                         {checkBoxData[6] && checkBoxData[6].isShow ? (
                           <Td p={2} textAlign={"center"}>
-                            {filteredOrder.amount}
+                            {realPrice}
                           </Td>
                         ) : null}
                         {checkBoxData[7] && checkBoxData[7].isShow ? (
@@ -1941,14 +2028,14 @@ export default function Order() {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
                       };
-                      // if (detail.option1 === 0 && detail.option2 === 0) {
-                      //   amountProduct = detail.priceProduct;
-                      // } else if (detail.option1 !== 0 && detail.option2 === 0) {
-                      //   amountProduct = detail.priceProductOption1;
-                      // } else if (detail.option1 !== 0 && detail.option2 !== 0) {
-                      //   amountProduct = detail.priceProductOption2;
-                      // }
-                      amountProduct = detail.price;
+                      if (detail.option1 === 0 && detail.option2 === 0) {
+                        amountProduct = detail.price;
+                      } else if (detail.option1 !== 0 && detail.option2 === 0) {
+                        amountProduct = detail.priceProductOption1;
+                      } else if (detail.option2 !== 0) {
+                        amountProduct = detail.priceProductOption2;
+                      }
+                      // amountProduct = detail.price;
 
                       const formattedPriceProduct =
                         amountProduct.toLocaleString(
@@ -2008,9 +2095,9 @@ export default function Order() {
                   {pricePayment}
                 </GridItem>
                 <GridItem colSpan={1} textAlign={"end"}>
-                  ขนส่ง :{" "}
+                  {" "}
                 </GridItem>
-                <GridItem colSpan={1}>รูป</GridItem>
+                <GridItem colSpan={1}>{""}</GridItem>
                 <GridItem colSpan={1} textAlign={"end"}>
                   ค่าส่ง
                 </GridItem>
@@ -2030,7 +2117,7 @@ export default function Order() {
                   รวมทั้งสิ้น
                 </GridItem>
                 <GridItem colSpan={1} textAlign={"end"}>
-                  {pricePayment}
+                  {priceTotalPayment}
                 </GridItem>
               </Grid>
             </Box>
