@@ -134,9 +134,10 @@ export default function useChats() {
             setImagesChat(response.data.img_chat);
           }
         });
+        handleTouch();
     }
     fetchData();
-
+    
     setUserId(item.id);
     setRoom(item.id + shopId);
     setDetailUser([item]);
@@ -187,8 +188,8 @@ export default function useChats() {
         }
         reload_img();
         reload_msg();
-        setHeightMessage(38)
-        setLineTextareaMessage(null)
+        setHeightMessage(38);
+        setLineTextareaMessage(null);
       }
       newMessage();
     }
@@ -266,7 +267,19 @@ export default function useChats() {
             const newArray = [...prevMessages, data];
             return newArray;
           });
+          if (data.img_message != null) {
+            axios
+              .get(
+                `https://api.sellpang.com/api/getImagesMessage/${userId}/${router.query.id}`
+              )
+              .then(function (response) {
+                if (response.data.img_chat) {
+                  setImagesChat(response.data.img_chat);
+                }
+              });
+          }
           mutateUserChats();
+          chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
         }
       );
       return () => {
@@ -316,7 +329,6 @@ export default function useChats() {
     const lineCount = lines.length;
     setLineTextareaMessage(lineCount);
     if (lineCount > 1) {
-
       // กรณีเกิน 3 บรรทัด ให้ปรับแก้ความสูงของ textarea ได้ตามต้องการ
       // ตัวอย่างเช่น คำนวณและกำหนด rows ให้สอดคล้องกับข้อความที่มีอยู่
       const lineHeight = 20; // สมมติว่าสูงของแต่ละบรรทัดเท่ากับ 20px
@@ -325,13 +337,12 @@ export default function useChats() {
       e.target.rows = rows; // ปรับแก้ความสูงของ textarea ให้ตรงกับข้อความที่มีอยู่
       // e.target.style.height = `120px`; // ปรับแก้ความสูงของ textarea ใน CSS
       // e.target.style.height = `${lineHeight * rows}px`; // ปรับแก้ความสูงของ textarea ใน CSS
-      setHeightMessage(lineHeight * rows)
-      setCalLineHeight(lineHeight * rows)
+      setHeightMessage(lineHeight * rows);
+      setCalLineHeight(lineHeight * rows);
     } else if (e.target.value == "") {
-
       e.target.rows = 1; // ปรับแก้ความสูงของ textarea ให้ตรงกับข้อความที่มีอยู่
       // e.target.style.height = `38px`; // ปรับแก้ความสูงของ textarea ใน CSS
-      setHeightMessage(38)
+      setHeightMessage(38);
     }
 
     setText(e.target.value);
@@ -393,56 +404,60 @@ export default function useChats() {
             ) : (
               <Box>
                 {UserChats?.users
-                .filter(item => searchUser === null || item.name.toLowerCase().includes(searchUser.toLowerCase()))
-                .map((item, index) => {
-                  const datatime = moment(item.created_at);
-                  const dateString = datatime.format("MM-DD");
-                  const timeString = datatime.format("HH:mm");
-                  return (
-                    <Flex
-                      key={index}
-                      p="20px"
-                      onClick={(e) => {
-                        handleChangeRoom(item);
-                      }}
-                      bg={item.user_id == userId ? "gray.200" : "white"}
-                      id={item.id}
-                    >
-                      <Image
-                        borderRadius="50%"
-                        src={`https://api.sellpang.com/images/shopee/avatar/${item.avatar}`}
-                        alt=""
-                        h="55px "
-                        w="55px "
-                      />
-                      <Box alignSelf="center" pl="10px" w="50%">
-                        <Text fontSize="20px" fontWeight="bold" w="">
-                          {item.name?.length > 10
-                            ? item.name?.slice(0, 10) + "..."
-                            : item.name}
-                        </Text>
-                        {item.sender_id == null ? (
-                          <Text fontSize="18px" color="gray">
-                            You :{" "}
-                            {item.message?.length > 15
-                              ? item.message?.slice(0, 15) + "..."
-                              : item.message}
+                  .filter(
+                    (item) =>
+                      searchUser === null ||
+                      item.name.toLowerCase().includes(searchUser.toLowerCase())
+                  )
+                  .map((item, index) => {
+                    const datatime = moment(item.created_at);
+                    const dateString = datatime.format("MM-DD");
+                    const timeString = datatime.format("HH:mm");
+                    return (
+                      <Flex
+                        key={index}
+                        p="20px"
+                        onClick={(e) => {
+                          handleChangeRoom(item);
+                        }}
+                        bg={item.user_id == userId ? "gray.200" : "white"}
+                        id={item.id}
+                      >
+                        <Image
+                          borderRadius="50%"
+                          src={`https://api.sellpang.com/images/shopee/avatar/${item.avatar}`}
+                          alt=""
+                          h="55px "
+                          w="55px "
+                        />
+                        <Box alignSelf="center" pl="10px" w="50%">
+                          <Text fontSize="20px" fontWeight="bold" w="">
+                            {item.name?.length > 10
+                              ? item.name?.slice(0, 10) + "..."
+                              : item.name}
                           </Text>
-                        ) : (
-                          <Text fontSize="18px" color="gray">
-                            {item.message?.length > 15
-                              ? item.message?.slice(0, 15) + "..."
-                              : item.message}
-                          </Text>
-                        )}
-                      </Box>
-                      <Spacer />
-                      <Box>
-                        <Text fontSize="10px">{dateString}</Text>
-                      </Box>
-                    </Flex>
-                  );
-                })}
+                          {item.sender_id == null ? (
+                            <Text fontSize="18px" color="gray">
+                              You :{" "}
+                              {item.message?.length > 15
+                                ? item.message?.slice(0, 15) + "..."
+                                : item.message}
+                            </Text>
+                          ) : (
+                            <Text fontSize="18px" color="gray">
+                              {item.message?.length > 15
+                                ? item.message?.slice(0, 15) + "..."
+                                : item.message}
+                            </Text>
+                          )}
+                        </Box>
+                        <Spacer />
+                        <Box>
+                          <Text fontSize="10px">{dateString}</Text>
+                        </Box>
+                      </Flex>
+                    );
+                  })}
               </Box>
             )}
           </Box>
@@ -598,7 +613,8 @@ export default function useChats() {
                                   px="10px"
                                   py="5px"
                                   borderRadius="xl"
-                                  bg="#e4e6eb"
+                                  // bg="#e4e6eb"
+                                  bg={item.img_message !== null ? "" : "#e4e6eb"}
                                   // bg="gray.200"
                                   alignSelf="center"
                                 >
@@ -619,6 +635,7 @@ export default function useChats() {
                                       src={`https://api.sellpang.com/images/shopee/img_message/${item.img_message}`}
                                       alt=""
                                       // maxWidth="200px"
+                                      borderRadius={"15px"}
                                       maxHeight="200px"
                                       py="5px"
                                       _hover={{
@@ -735,7 +752,8 @@ export default function useChats() {
                                 px="10px"
                                 py="5px"
                                 borderRadius="xl"
-                                bg="#e4e6eb"
+                                // bg="#e4e6eb"
+                                bg={item.img_message !== null ? "" : "#e4e6eb"}
                                 // bg="gray.200"
                                 alignSelf="center"
                               >
@@ -756,6 +774,7 @@ export default function useChats() {
                                     src={`https://api.sellpang.com/images/shopee/img_message/${item.img_message}`}
                                     alt=""
                                     // maxWidth="200px"
+                                    borderRadius={"15px"}
                                     maxHeight="200px"
                                     py="5px"
                                     _hover={{
@@ -790,7 +809,7 @@ export default function useChats() {
                   })
                 ) : (
                   <Box>
-                    <Text textAlign={'center'}>ยังไม่เริ่มต้นแชท</Text>
+                    <Text textAlign={"center"}>ยังไม่เริ่มต้นแชท</Text>
                   </Box>
                 )}
                 <Lightbox
